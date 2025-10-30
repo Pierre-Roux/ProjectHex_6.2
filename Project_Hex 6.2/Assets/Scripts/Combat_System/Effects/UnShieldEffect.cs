@@ -155,6 +155,8 @@ public class UnShieldEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
+                    Debug.Log("zergz   " + ParentEffect.TargetForLinked_Player);
+
                     if (targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;

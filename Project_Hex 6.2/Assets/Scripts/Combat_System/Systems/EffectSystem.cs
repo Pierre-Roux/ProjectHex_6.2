@@ -875,12 +875,20 @@ public class EffectSystem : Singleton<EffectSystem>
                         }
                     }
 
-                    if (clonedEffect.LinkedEffect != null)
-                    {
-                        clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                    }
                     clonedEffect.Actionner = permanentView.gameObject;
-                    clonedEffect = clonedEffect.LinkedEffect;
+
+                    if (clonedEffect.Events != Events.OnActivate)
+                    {
+                        if (clonedEffect.LinkedEffect != null)
+                        {
+                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
+                        }
+                        clonedEffect = clonedEffect.LinkedEffect;
+                    }
+                    else
+                    {
+                        clonedEffect = null;
+                    }
                     y++;
                 }
             }

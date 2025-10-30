@@ -85,7 +85,7 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
                         if (clonedEffect.Events != Events.EnemyTurn &&
                             clonedEffect.Events != Events.Instant)
                         {
-                            Debug.Log("Register " + clonedEffect);
+                            //Debug.Log("Register " + clonedEffect);
                             GameEventSystem.Instance.AddEffectToEvent(clonedEffect);
                         }
                     }
@@ -98,8 +98,12 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
                         {
                             clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
                         }
+                        clonedEffect = clonedEffect.LinkedEffect;
                     }
-                    clonedEffect = clonedEffect.LinkedEffect;
+                    else
+                    {
+                        clonedEffect = null;
+                    }
                 }
             }
         }

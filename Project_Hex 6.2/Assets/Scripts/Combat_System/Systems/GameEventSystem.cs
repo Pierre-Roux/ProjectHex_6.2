@@ -113,18 +113,20 @@ public class GameEventSystem : Singleton<GameEventSystem>
                 }
                 else
                 {
-                    Debug.Log("effect déclanché : " + effect);
+                    //Debug.Log("effect déclanché : " + effect);
                     GameAction ga = effect.GetGameAction();
                     if (ga != null)
                         ActionSystem.Instance.AddReaction(ga);
                 }
                 
-                /*if (effect.LinkedEffect != null && effect.Events == Events.OnActivate)
+                if (effect.LinkedEffect != null && effect.Events == Events.OnActivate)
                 {
-                    Debug.Log("Resiter Event : " + effect.LinkedEffect);
-                    Effect Linked = effect.LinkedEffect;
+                    //Debug.Log("Resiter Event : " + effect.LinkedEffect);
+                    Effect Linked = effect.LinkedEffect.Clone();
+                    Linked.ParentEffect = effect;
+                    Linked.Actionner = effect.Actionner;
                     AddEffectToEvent(Linked);               
-                }*/
+                }
 
             }
 

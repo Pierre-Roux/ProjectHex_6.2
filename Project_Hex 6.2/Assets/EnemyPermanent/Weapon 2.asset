@@ -1,0 +1,160 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7673c6f485dfa54c802241195118466, type: 3}
+  m_Name: Weapon 2
+  m_EditorClassIdentifier: 
+  Title: Weapon
+  PermanentImage: {fileID: 21300000, guid: bb73985b8d22ae043aff5705febaf6de, type: 3}
+  PermanentLife: 7
+  IsCore: 0
+  IsInvoc: 0
+  UnShieldable: 0
+  permanentArea: 1
+  DecayCounter: 0
+  <PossibleIntent>k__BackingField:
+  - rid: 1273756971758780417
+  RDMSequence: 1
+  <IntentSequence>k__BackingField: []
+  LoopingSequence: 0
+  SummonEPermanentSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  DieSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingShieldSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  LoseShieldSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  GainPowerSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  LosePowerSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  TakeLifeLossSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BuffLifeSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  DebuffLifeSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  UnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1273756971758780417
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        actionnerType: 1
+        Events: 1
+        HollowEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        Intent_Title: Deal 5
+        number: A
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 0
+        DynamicCondition: 0
+        TestValue: 0
+        TestDynamicAmount: 0
+        TestType: 0
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        BypassEntryCondition: 0
+        EffectID: 054402dc-9e3d-4edf-a831-1fe5c0276f8f
+        damageAmount: 5
+        DynamicAmount: 0
+        targetMode: 6
+        TargetUpTo: 0
+        targetNumber: 0
+        targetLimitations: []

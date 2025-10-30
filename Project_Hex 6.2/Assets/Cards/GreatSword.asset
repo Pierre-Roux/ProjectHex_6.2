@@ -1,0 +1,328 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
+  m_Name: GreatSword
+  m_EditorClassIdentifier: 
+  <Title>k__BackingField: GreatSword
+  <Description>k__BackingField: 'A : Deal 6 / Weapon Gain +1pwr / Whenever Greatsword
+    kill gain 1 favor'
+  <cost>k__BackingField: 3
+  <Image>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
+  <Money_Cost>k__BackingField: 0
+  <life>k__BackingField: 7
+  <DecayCounter>k__BackingField: 0
+  <Durability>k__BackingField: 3
+  <MaxDurability>k__BackingField: 3
+  <PermanentImage>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
+  <permanentArea>k__BackingField: 1
+  UnShieldable: 0
+  isInvoc: 0
+  isArtillery: 0
+  <IsSpell>k__BackingField: 0
+  <Effects>k__BackingField:
+  - rid: 3469642561335328786
+  - rid: 3469642561335328787
+  - rid: 3469642561335328788
+  - rid: 3469642561335328789
+  PlayCardSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CannotPlayCardSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  DiscardCardSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  DrawCardSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  HoverCardSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  PlaySpellSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SummonPPermanentSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  DieSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  HollowDieSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingShieldSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  LoseShieldSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  GainPowerSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  LosePowerSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  TakeLifeLossSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BuffLifeSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  DebuffLifeSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  UnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 3469642561335328786
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        actionnerType: 0
+        Events: 13
+        HollowEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicCondition: 0
+        TestValue: 0
+        TestDynamicAmount: 0
+        TestType: 0
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        BypassEntryCondition: 0
+        EffectID: f6383640-119c-4532-929e-4d6a8656ae4c
+        damageAmount: 6
+        DynamicAmount: 0
+        targetMode: 24
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 3469642561335328787
+      type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
+      data:
+        actionnerType: 0
+        Events: 0
+        HollowEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 0
+        DynamicCondition: 0
+        TestValue: 0
+        TestDynamicAmount: 0
+        TestType: 0
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        BypassEntryCondition: 0
+        EffectID: 6a96a213-250d-4733-8e3c-4e10afc785fc
+        alterAmount: 1
+        DynamicAmount: 0
+        targetMode: 15
+        passive: 1
+        permaTypes: 0
+        TargetUpTo: 0
+        targetNumber: 0
+        targetLimitations: []
+    - rid: 3469642561335328788
+      type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
+      data:
+        actionnerType: 0
+        Events: 11
+        HollowEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 0
+        DynamicCondition: 0
+        TestValue: 0
+        TestDynamicAmount: 0
+        TestType: 0
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        BypassEntryCondition: 0
+        EffectID: 2cfd0435-659a-4b34-97fd-6272219ec35c
+        alterAmount: -1
+        DynamicAmount: 0
+        targetMode: 17
+        passive: 1
+        permaTypes: 0
+        TargetUpTo: 0
+        targetNumber: 0
+        targetLimitations: []
+    - rid: 3469642561335328789
+      type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
+      data:
+        actionnerType: 0
+        Events: 16
+        HollowEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicCondition: 0
+        TestValue: 0
+        TestDynamicAmount: 0
+        TestType: 0
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        BypassEntryCondition: 0
+        EffectID: 57d5349e-2183-48c3-a9e9-cbc70eb3ecd6
+        GainAmount: 1
+        DynamicAmount: 0

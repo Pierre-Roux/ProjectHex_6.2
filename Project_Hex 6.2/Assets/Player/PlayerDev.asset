@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fbab093c2a16fd4682c0e8475f723aa, type: 3}
+  m_Name: PlayerDev
+  m_EditorClassIdentifier: 
+  Name: Player
+  deckData:
+  - {fileID: 11400000, guid: 26818a42b046dac44ade4e7eaebf2599, type: 2}
+  - {fileID: 11400000, guid: 26818a42b046dac44ade4e7eaebf2599, type: 2}
+  - {fileID: 11400000, guid: 3d95119bd44e98f4fb42825472decd7d, type: 2}
+  - {fileID: 11400000, guid: 3d95119bd44e98f4fb42825472decd7d, type: 2}
+  - {fileID: 11400000, guid: 3d95119bd44e98f4fb42825472decd7d, type: 2}
+  - {fileID: 11400000, guid: 0711ba7b16a098d40b6ad065af3960f7, type: 2}
+  - {fileID: 11400000, guid: 6b1968e1d396b6c4ba25977ab0607c59, type: 2}
+  - {fileID: 11400000, guid: c34e880faf5cbdd4183ada8a5b335db6, type: 2}
+  - {fileID: 11400000, guid: 3219c11c5b6b71a46a0c378be293ae4c, type: 2}
+  - {fileID: 11400000, guid: 4d5f634d26370ea4698be2bcdbc52e64, type: 2}
+  - {fileID: 11400000, guid: 4d5f634d26370ea4698be2bcdbc52e64, type: 2}
+  - {fileID: 11400000, guid: 4d5f634d26370ea4698be2bcdbc52e64, type: 2}
+  - {fileID: 11400000, guid: 26818a42b046dac44ade4e7eaebf2599, type: 2}
+  - {fileID: 11400000, guid: 6c03944918fc628499e746e4e13b9fb8, type: 2}
+  - {fileID: 11400000, guid: 6c03944918fc628499e746e4e13b9fb8, type: 2}
+  - {fileID: 11400000, guid: 6c33d79adcc5699489c09cc9fbad779e, type: 2}
+  - {fileID: 11400000, guid: d4611f571714a504e8c51ca87eba26eb, type: 2}
+  - {fileID: 11400000, guid: c70aec307f28a1e448edbf6a445ada20, type: 2}
+  - {fileID: 11400000, guid: dc38aad089b4fad49ad714c4a95a67c2, type: 2}
+  - {fileID: 11400000, guid: 78d6e4c55dea6504c86b077f8b758d07, type: 2}
+  - {fileID: 11400000, guid: 23881e86e1429cf4ba10c3e62b08aafc, type: 2}
+  - {fileID: 11400000, guid: c9b3e5f1bc6cfc44a9340c61732d315d, type: 2}
+  - {fileID: 11400000, guid: 6a430c560d01905478966b433d00c6d2, type: 2}
+  - {fileID: 11400000, guid: 41cc67e76c6713e4985686113ead1b23, type: 2}
+  - {fileID: 11400000, guid: 38bcdfd0679283641aba6f75d1ab2fa6, type: 2}
+  - {fileID: 11400000, guid: afc9533d4ea0922499b810802ed699a2, type: 2}
+  - {fileID: 11400000, guid: 322a36c9c1879ec4386754ce9314fcb1, type: 2}
+  - {fileID: 11400000, guid: 7f1a8ad4d7fa1c349b46127709735e4c, type: 2}
+  - {fileID: 11400000, guid: cecac6a651d13e14092fb96d477f7402, type: 2}
+  - {fileID: 11400000, guid: e4cca47acd452b549b5d3bccb6d3ec95, type: 2}
+  - {fileID: 11400000, guid: e4cca47acd452b549b5d3bccb6d3ec95, type: 2}
+  - {fileID: 11400000, guid: e4cca47acd452b549b5d3bccb6d3ec95, type: 2}
+  - {fileID: 11400000, guid: e4cca47acd452b549b5d3bccb6d3ec95, type: 2}
+  - {fileID: 11400000, guid: cecac6a651d13e14092fb96d477f7402, type: 2}
+  - {fileID: 11400000, guid: c9b3e5f1bc6cfc44a9340c61732d315d, type: 2}
+  CoreHealth: 30
+  CoreImage: {fileID: 21300000, guid: 7fb252da1857bb44696d06ffe588632e, type: 3}
+  DieSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingDamageSound:
+    Guid:
+      Data1: -1553389401
+      Data2: 1270679182
+      Data3: 1556566658
+      Data4: -654338292
+    Path: event:/Place Holder/Place Holder Short Sound
+  BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingShieldSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  LoseShieldSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  TakeLifeLossSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BuffLifeSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  DebuffLifeSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  SelectedSound:
+    Guid:
+      Data1: 905812866
+      Data2: 1213785481
+      Data3: -1396295283
+      Data4: 717533454
+    Path: event:/Audio Manager/Selection
+  UnSelectedSound:
+    Guid:
+      Data1: -1261828738
+      Data2: 1246447463
+      Data3: -960289106
+      Data4: -1360623957
+    Path: event:/Audio Manager/Unselection

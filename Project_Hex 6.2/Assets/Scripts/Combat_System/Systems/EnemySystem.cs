@@ -129,7 +129,7 @@ public class EnemySystem : Singleton<EnemySystem>
         yield return null;
     }
 
-    public int CalculateBonusPower(int BaseAmount, EnemySlotView enemySlotView)
+    public int CalculateBonusPower(EnemySlotView enemySlotView)
     {
         int PassiveBonus = 0;
 
@@ -144,7 +144,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
 
         int finalDMG = 0;
-        finalDMG = BaseAmount + enemySlotView.BonusPower + PassiveBonus + CombatSystem.Instance.EnemyGeneralPower + CombatSystem.Instance.GeneralPower; ;
+        finalDMG = enemySlotView.BonusPower + PassiveBonus + CombatSystem.Instance.EnemyGeneralPower + CombatSystem.Instance.GeneralPower; ;
         if (finalDMG < 0) finalDMG = 0;
         return finalDMG;
     }
@@ -161,16 +161,16 @@ public class EnemySystem : Singleton<EnemySystem>
 
             if (attackPlayerGA.playerTargets != null && attackPlayerGA.playerTargets.Count > 0)
             {
-                int DamageAmount = CalculateBonusPower(attackPlayerGA.Damage, Attacker);
-                DealDamageGA dealDamageGA = new(DamageAmount, attackPlayerGA.DynamicAmount, attackPlayerGA.playerTargets, null);
+                int DamageBonus = CalculateBonusPower(Attacker);
+                DealDamageGA dealDamageGA = new(attackPlayerGA.Damage,DamageBonus,attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, attackPlayerGA.playerTargets, null);
                 dealDamageGA.Actionner = attackPlayerGA.Actionner;
                 ActionSystem.Instance.AddReaction(dealDamageGA);
             }
 
             if (attackPlayerGA.enemyTargets != null && attackPlayerGA.enemyTargets.Count > 0)
             {
-                int DamageAmount = CalculateBonusPower(attackPlayerGA.Damage, Attacker);
-                DealDamageGA dealDamageGA = new(DamageAmount, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets);
+                int DamageBonus = CalculateBonusPower(Attacker);
+                DealDamageGA dealDamageGA = new(attackPlayerGA.Damage,DamageBonus,attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets);
                 dealDamageGA.Actionner = attackPlayerGA.Actionner;
                 ActionSystem.Instance.AddReaction(dealDamageGA);
             }
@@ -180,12 +180,12 @@ public class EnemySystem : Singleton<EnemySystem>
         {
             if (attackPlayerGA.playerTargets != null && attackPlayerGA.playerTargets.Count > 0)
             {
-                ActionSystem.Instance.AddReaction(new DealDamageGA(attackPlayerGA.Damage, attackPlayerGA.DynamicAmount, attackPlayerGA.playerTargets, null));
+                ActionSystem.Instance.AddReaction(new DealDamageGA(attackPlayerGA.Damage,0,attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, attackPlayerGA.playerTargets, null));
             }
 
             if (attackPlayerGA.enemyTargets != null && attackPlayerGA.enemyTargets.Count > 0)
             {
-                ActionSystem.Instance.AddReaction(new DealDamageGA(attackPlayerGA.Damage, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets));
+                ActionSystem.Instance.AddReaction(new DealDamageGA(attackPlayerGA.Damage,0,attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets));
             }
         }            
     }
@@ -201,19 +201,19 @@ public class EnemySystem : Singleton<EnemySystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
             if (healEnemyGA.playerTargets != null && healEnemyGA.playerTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount, healEnemyGA.DynamicAmount, healEnemyGA.playerTargets, null));
+                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount,healEnemyGA.multiplyAmount, healEnemyGA.DynamicAmount, healEnemyGA.playerTargets, null));
 
             if (healEnemyGA.enemyTargets != null && healEnemyGA.enemyTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount, healEnemyGA.DynamicAmount, null, healEnemyGA.enemyTargets));
+                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount,healEnemyGA.multiplyAmount, healEnemyGA.DynamicAmount, null, healEnemyGA.enemyTargets));
         }
         // dans le cas ou il n'y a pas de d'actionner c'est que c'est une attaque non directe mais du a un effet spécifique qui n'est pas cancel en cas de mort
         else
         {
             if (healEnemyGA.playerTargets != null && healEnemyGA.playerTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount, healEnemyGA.DynamicAmount, healEnemyGA.playerTargets, null));
+                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount,healEnemyGA.multiplyAmount, healEnemyGA.DynamicAmount, healEnemyGA.playerTargets, null));
 
             if (healEnemyGA.enemyTargets != null && healEnemyGA.enemyTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount, healEnemyGA.DynamicAmount, null, healEnemyGA.enemyTargets));
+                ActionSystem.Instance.AddReaction(new HealGA(healEnemyGA.HealAmount,healEnemyGA.multiplyAmount, healEnemyGA.DynamicAmount, null, healEnemyGA.enemyTargets));
         }
     }
 
@@ -306,15 +306,15 @@ public class EnemySystem : Singleton<EnemySystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
             if (enemyAlterPowerGA.passive)
             {
-                ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.permaTypes, null, null, enemyAlterPowerGA.targetMode));
+                ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount,enemyAlterPowerGA.multiplyAmount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, null, null, enemyAlterPowerGA.targetModeInfo));
             }
             else
             {
                 if (enemyAlterPowerGA.playerTargets != null && enemyAlterPowerGA.playerTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.permaTypes, enemyAlterPowerGA.playerTargets, null));
+                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount,enemyAlterPowerGA.multiplyAmount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.playerTargets, null));
 
                 if (enemyAlterPowerGA.enemyTargets != null && enemyAlterPowerGA.enemyTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.permaTypes, null, enemyAlterPowerGA.enemyTargets));
+                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount,enemyAlterPowerGA.multiplyAmount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, null, enemyAlterPowerGA.enemyTargets));
             }
         }
         // dans le cas ou il n'y a pas de d'actionner c'est que c'est une attaque non directe mais du a un effet spécifique qui n'est pas cancel en cas de mort
@@ -322,15 +322,15 @@ public class EnemySystem : Singleton<EnemySystem>
         {
             if (enemyAlterPowerGA.passive)
             {
-                ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.permaTypes, null, null, enemyAlterPowerGA.targetMode));
+                ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount,enemyAlterPowerGA.multiplyAmount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, null, null, enemyAlterPowerGA.targetModeInfo));
             }
             else
             {
                 if (enemyAlterPowerGA.playerTargets != null && enemyAlterPowerGA.playerTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.permaTypes, enemyAlterPowerGA.playerTargets, null));
+                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount,enemyAlterPowerGA.multiplyAmount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.playerTargets, null));
 
                 if (enemyAlterPowerGA.enemyTargets != null && enemyAlterPowerGA.enemyTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, enemyAlterPowerGA.permaTypes, null, enemyAlterPowerGA.enemyTargets));
+                    ActionSystem.Instance.AddReaction(new AlterPowerGA(enemyAlterPowerGA.Amount,enemyAlterPowerGA.multiplyAmount, enemyAlterPowerGA.DynamicAmount, enemyAlterPowerGA.passive, null, enemyAlterPowerGA.enemyTargets));
             }
         }
     }
@@ -346,20 +346,20 @@ public class EnemySystem : Singleton<EnemySystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
             if (enemyAlterStaminaGA.playerTargets != null && enemyAlterStaminaGA.playerTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, enemyAlterStaminaGA.playerTargets, null));
+                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount,enemyAlterStaminaGA.multiplyAmount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, enemyAlterStaminaGA.playerTargets, null));
 
             if (enemyAlterStaminaGA.enemyTargets != null && enemyAlterStaminaGA.enemyTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, null, enemyAlterStaminaGA.enemyTargets));
+                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount,enemyAlterStaminaGA.multiplyAmount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, null, enemyAlterStaminaGA.enemyTargets));
             
         }
         // dans le cas ou il n'y a pas de d'actionner c'est que c'est une attaque non directe mais du a un effet spécifique qui n'est pas cancel en cas de mort
         else
         {
             if (enemyAlterStaminaGA.playerTargets != null && enemyAlterStaminaGA.playerTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, enemyAlterStaminaGA.playerTargets, null));
+                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount,enemyAlterStaminaGA.multiplyAmount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, enemyAlterStaminaGA.playerTargets, null));
 
             if (enemyAlterStaminaGA.enemyTargets != null && enemyAlterStaminaGA.enemyTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, null, enemyAlterStaminaGA.enemyTargets));
+                ActionSystem.Instance.AddReaction(new AlterStaminaGA(enemyAlterStaminaGA.Amount,enemyAlterStaminaGA.multiplyAmount, enemyAlterStaminaGA.DynamicAmount, enemyAlterStaminaGA.permaTypes, null, enemyAlterStaminaGA.enemyTargets));
         }
     }
 
@@ -374,19 +374,19 @@ public class EnemySystem : Singleton<EnemySystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
             if (enemyLifeLossGA.playerTargets != null && enemyLifeLossGA.playerTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount, enemyLifeLossGA.DynamicAmount, enemyLifeLossGA.playerTargets, null));
+                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount,enemyLifeLossGA.multiplyAmount, enemyLifeLossGA.DynamicAmount, enemyLifeLossGA.playerTargets, null));
 
             if (enemyLifeLossGA.enemyTargets != null && enemyLifeLossGA.enemyTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount, enemyLifeLossGA.DynamicAmount, null, enemyLifeLossGA.enemyTargets));
+                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount,enemyLifeLossGA.multiplyAmount, enemyLifeLossGA.DynamicAmount, null, enemyLifeLossGA.enemyTargets));
         }
         // dans le cas ou il n'y a pas de d'actionner c'est que c'est une attaque non directe mais du a un effet spécifique qui n'est pas cancel en cas de mort
         else
         {
             if (enemyLifeLossGA.playerTargets != null && enemyLifeLossGA.playerTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount, enemyLifeLossGA.DynamicAmount, enemyLifeLossGA.playerTargets, null));
+                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount,enemyLifeLossGA.multiplyAmount, enemyLifeLossGA.DynamicAmount, enemyLifeLossGA.playerTargets, null));
 
             if (enemyLifeLossGA.enemyTargets != null && enemyLifeLossGA.enemyTargets.Count > 0)
-                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount, enemyLifeLossGA.DynamicAmount, null, enemyLifeLossGA.enemyTargets));
+                ActionSystem.Instance.AddReaction(new LifeLossGA(enemyLifeLossGA.Amount,enemyLifeLossGA.multiplyAmount, enemyLifeLossGA.DynamicAmount, null, enemyLifeLossGA.enemyTargets));
         }
     }
 
@@ -401,15 +401,15 @@ public class EnemySystem : Singleton<EnemySystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
             if (enemyGainLifeGA.passive)
             {
-                ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.permaTypes, null, null, enemyGainLifeGA.targetMode));
+                ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, null, null, enemyGainLifeGA.targetModeInfo));
             }
             else
             {
                 if (enemyGainLifeGA.playerTargets != null && enemyGainLifeGA.playerTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.permaTypes, enemyGainLifeGA.playerTargets, null));
+                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.playerTargets, null));
 
                 if (enemyGainLifeGA.enemyTargets != null && enemyGainLifeGA.enemyTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.permaTypes, null, enemyGainLifeGA.enemyTargets));
+                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, null, enemyGainLifeGA.enemyTargets));
             }
         }
         // dans le cas ou il n'y a pas de d'actionner c'est que c'est une attaque non directe mais du a un effet spécifique qui n'est pas cancel en cas de mort
@@ -417,15 +417,15 @@ public class EnemySystem : Singleton<EnemySystem>
         {
             if (enemyGainLifeGA.passive)
             {
-                ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.permaTypes, null, null, enemyGainLifeGA.targetMode));
+                ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, null, null, enemyGainLifeGA.targetModeInfo));
             }
             else
             {
                 if (enemyGainLifeGA.playerTargets != null && enemyGainLifeGA.playerTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.permaTypes, enemyGainLifeGA.playerTargets, null));
+                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.playerTargets, null));
 
                 if (enemyGainLifeGA.enemyTargets != null && enemyGainLifeGA.enemyTargets.Count > 0)
-                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.permaTypes, null, enemyGainLifeGA.enemyTargets));
+                    ActionSystem.Instance.AddReaction(new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, null, enemyGainLifeGA.enemyTargets));
             }
         }
     }
@@ -468,7 +468,7 @@ public class EnemySystem : Singleton<EnemySystem>
                             {
                                 foreach (EnemyPermanentData data in selected.EnemyData)
                                 {
-                                    EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(data, data.permanentArea, false, enemyView);
+                                    EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(data, data.permanentArea, false);
                                 }
                             }
                         }
@@ -491,13 +491,13 @@ public class EnemySystem : Singleton<EnemySystem>
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
-            InvocGA invocGA = new(invocEGA.Amount, invocEGA.DynamicAmount, null, invocEGA.EnemyToInvoc);
+            InvocGA invocGA = new(invocEGA.Amount,invocEGA.multiplyAmount, invocEGA.DynamicAmount, null, invocEGA.EnemyToInvoc);
             ActionSystem.Instance.AddReaction(invocGA);
         }
         // dans le cas ou il n'y a pas de d'actionner c'est que c'est une attaque non directe mais du a un effet spécifique qui n'est pas cancel en cas de mort
         else
         {
-            InvocGA invocGA = new(invocEGA.Amount, invocEGA.DynamicAmount, null, invocEGA.EnemyToInvoc);
+            InvocGA invocGA = new(invocEGA.Amount,invocEGA.multiplyAmount, invocEGA.DynamicAmount, null, invocEGA.EnemyToInvoc);
             ActionSystem.Instance.AddReaction(invocGA);
         }
         yield return null;

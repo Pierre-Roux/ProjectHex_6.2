@@ -49,7 +49,6 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public List<EnemySlotView> EnemyShielded;
     [HideInInspector] public bool UnTargetable;
     [HideInInspector] public bool Shielded;
-    [HideInInspector] public bool Activated;
 
     [HideInInspector] public List<PermaTypes> permaTypes = new List<PermaTypes>();
 
@@ -113,7 +112,7 @@ public class PermanentView : MonoBehaviour
         UnTargetable = false;
         IsCore = true;
         PermanentSpriteRenderer.sprite = CoreData.CoreImage;
-        permanentArea = PermanentArea.none;
+        permanentArea = PermanentArea.NONE;
         baseLife = CoreData.CoreHealth;
         MaxLife = CalculateBonusLife(baseLife);
         currentLife = MaxLife; 
@@ -154,7 +153,7 @@ public class PermanentView : MonoBehaviour
         if (permaTypes.Contains(PermaTypes.Hollow))
         {
             Color c = PermanentSpriteRenderer.color;
-            c.a = 0.5f;
+            c.a = 0.3f;
             PermanentSpriteRenderer.color = c;
         }
         else
@@ -175,22 +174,6 @@ public class PermanentView : MonoBehaviour
         AuraSpriteRenderer.gameObject.SetActive(false);
     }
 
-    public int CalculateBonusPower(int baseAmount)
-    {
-        int passiveBonus = 0;
-
-        if (permaTypes.Contains(PermaTypes.Invoc))
-            passiveBonus += CombatSystem.Instance.Invoc_PlayerGeneralHPGain + CombatSystem.Instance.Invoc_GeneralPower;
-        if (permaTypes.Contains(PermaTypes.Decay))
-            passiveBonus += CombatSystem.Instance.Decay_PlayerGeneralHPGain + CombatSystem.Instance.Decay_GeneralPower;
-        if (permaTypes.Contains(PermaTypes.Hollow))
-            passiveBonus += CombatSystem.Instance.Hollow_PlayerGeneralHPGain + CombatSystem.Instance.Hollow_GeneralPower;
-        if (permaTypes.Contains(PermaTypes.Artillery))
-            passiveBonus += CombatSystem.Instance.Artillery_PlayerGeneralHPGain + CombatSystem.Instance.Artillery_GeneralPower;
-
-        int finalDMG = baseAmount + BonusPower + passiveBonus + CombatSystem.Instance.EnemyGeneralPower + CombatSystem.Instance.GeneralPower;
-        return Mathf.Max(0, finalDMG);
-    }
     public int CalculateBonusLife(int baseAmount)
     {
         int passiveBonus = 0;
@@ -242,8 +225,16 @@ public class PermanentView : MonoBehaviour
         if (!IsDead)
         {
             transform.DOShakePosition(0.2f, 0.5f);
-            TriggerEventGA triggerPermanentEventGA = new(Events.OnDamaged,null,this,null);
-            ActionSystem.Instance.AddReaction(triggerPermanentEventGA);
+            TriggerEventGA triggerEventGA;
+            if (IsCore)
+            {
+                triggerEventGA = new(Events.WhenPCoreDamaged,null,this,null);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+            }
+            triggerEventGA = new(Events.WhenPermaDamaged,null,this,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+            triggerEventGA = new(Events.OnDamaged,null,this,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
         if (currentLife <= 0)
@@ -491,9 +482,12 @@ public class PermanentView : MonoBehaviour
     
     public void Refresh()
     {
-        if (Activated)
+        foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,this,null))
         {
-            Activated = false;
+            if (effect.Events == Events.OnSelect)
+            {
+                effect.ActivateLeft = effect.ActivateNumber;
+            }
         }
     }
 

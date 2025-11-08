@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Umbra
   <Description>k__BackingField: 'A: Umbra Shields target Object until EoT'
   <cost>k__BackingField: 1
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 4
@@ -24,6 +25,7 @@ MonoBehaviour:
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <permanentArea>k__BackingField: 2
   UnShieldable: 0
+  UnTargetable: 0
   isInvoc: 0
   isArtillery: 0
   <IsSpell>k__BackingField: 0
@@ -187,6 +189,47 @@ MonoBehaviour:
         actionnerType: 0
         Events: 13
         HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 1
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 26
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: 3469642677219491932
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: e34ece53-ced5-4cb7-a0ed-b3e5fa02bf5e
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 0
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 3469642677219491932
+      type: {class: UnShieldEffect, ns: , asm: Assembly-CSharp}
+      data:
+        actionnerType: 0
+        Events: 3
+        HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -195,24 +238,28 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 0
         Intent_Title: 
         number: 
-        Duration: 0
-        DurationType: 23
-        TriggerOnDurationEnd: 0
-        CancelOnDeath: 1
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        Duration: 1
+        DurationType: 3
+        TriggerOnDurationEnd: 1
+        CancelOnDeath: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: e34ece53-ced5-4cb7-a0ed-b3e5fa02bf5e
-        targetMode: 24
+        EffectID: de60119d-5a23-4a16-b21c-f8e00e054790
+        targetModeInfo:
+          targetMode: 7
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
         TargetUpTo: 0
-        targetNumber: 1
+        targetNumber: 0
         targetLimitations: []

@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Stone
   <Description>k__BackingField: 'A : Gain 1 favor'
   <cost>k__BackingField: 1
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: efb1c7e40235c2a42b0198bdbc4f93cc, type: 3}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 2
@@ -24,6 +25,7 @@ MonoBehaviour:
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: efb1c7e40235c2a42b0198bdbc4f93cc, type: 3}
   <permanentArea>k__BackingField: 3
   UnShieldable: 0
+  UnTargetable: 0
   isInvoc: 0
   isArtillery: 0
   <IsSpell>k__BackingField: 0
@@ -155,6 +157,13 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  ActivateSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   SelectedSound:
     Guid:
       Data1: 0
@@ -180,6 +189,7 @@ MonoBehaviour:
         actionnerType: 0
         Events: 13
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -188,22 +198,23 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: ea51c610-4015-4616-b0c4-db3b3f1b5f65
         GainAmount: 1
+        multiplyAmount: 1
         DynamicAmount: 0

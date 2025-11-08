@@ -205,36 +205,6 @@ public class CombatSystem : Singleton<CombatSystem>
         EnemySlotViewCreator.Instance.ShieldZone = EnemyShieldZone = enemyView.ShieldZone;
         EnemySlotViewCreator.Instance.SupportZone = EnemySupportZone = enemyView.SupportZone;
         enemyView.Setup();
-        foreach (EnemySlotView enemySlotView in Enemy_Permanents)
-        {
-            if (enemySlotView.PossibleIntent == null) continue;
-            foreach (Effect effect in enemySlotView.PossibleIntent)
-            {
-                int MultiHit = effect.MultiHit;
-                if (MultiHit < 1) MultiHit = 1;
-                for (int i = 0; i < MultiHit; i++)
-                {
-                    Effect clonedEffect = effect.Clone();
-                    while (clonedEffect != null)
-                    {
-                        if (clonedEffect.Events != Events.EnemyTurn &&
-                            clonedEffect.Events != Events.Instant
-                            )
-                        {
-                            GameEventSystem.Instance.AddEffectToEvent(clonedEffect);
-                        }
-
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-                        clonedEffect.Actionner = enemySlotView.gameObject;
-                        clonedEffect = clonedEffect.LinkedEffect;
-
-                    }
-                }
-            }
-        }
 
         ManaSystem.Instance.SetManaMax(DataBase.Instance.MaxMana);
 
@@ -393,11 +363,23 @@ public class CombatSystem : Singleton<CombatSystem>
     {
         foreach (PermanentView item in Player_Permanents)
         {
-            item.Activated = false;
+            foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,item,null))
+            {
+                if (effect.Events == Events.OnSelect)
+                {
+                    effect.ActivateNumber = effect.ActivateLeft;
+                }
+            }
         }
         foreach (EnemySlotView item in Enemy_Permanents)
         {
-            item.Activated = false;
+            foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,null,item))
+            {
+                if (effect.Events == Events.OnSelect)
+                {
+                    effect.ActivateNumber = effect.ActivateLeft;
+                }
+            }
         }
         yield return null;
     }
@@ -433,7 +415,7 @@ public class CombatSystem : Singleton<CombatSystem>
 
         ReffilManaGA reffilManaGA = new();
         ActionSystem.Instance.AddReaction(reffilManaGA);
-        DrawCardsGA drawCardsGA = new(5,DynamicAmount.NULL);
+        DrawCardsGA drawCardsGA = new(5,1,DynamicAmount.NULL);
         ActionSystem.Instance.AddReaction(drawCardsGA);
         DecountPlayerDecayGA decountPlayerDecayGA = new();
         ActionSystem.Instance.AddReaction(decountPlayerDecayGA);

@@ -25,7 +25,7 @@ public class EnemyView : MonoBehaviour
 
         foreach (EnemyPermanentData enemy in EnemyPreset)
         {
-            EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(enemy, enemy.permanentArea, true, this);
+            EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(enemy, enemy.permanentArea, true);
         }
     }
 }

@@ -7,23 +7,26 @@ using UnityEngine;
 public class InvocEffect : Effect
 {
     [Header("Effect Param")]
-    [SerializeField] public int amount;
+    [SerializeField] public int amount = 1;
+    [SerializeField] public int multiplyAmount = 1;
     [SerializeField] public DynamicAmount DynamicAmount;
     [SerializeField] public List<CardData> CardsToInvoc;
     [SerializeField] public List<EnemyPermanentData> EnemyToInvoc;
 
     public InvocEffect() { }
 
-    public InvocEffect(int Amount, int multiHit, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , int testValue,DynamicCondition dynamicCondition, DynamicAmount testDynamicAmount,PermaTypes testType, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
+    public InvocEffect(int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
     {
         amount = Amount;
+        multiplyAmount = MultiplyAmount;
+        PayXEffect = payXEffect;
+        PayXValue = payXValue;
         MultiHit = multiHit;
+        ActivateNumber = activateNumber;
+        ActivateLeft = activateLeft;
         CardsToInvoc = cardsToInvoc;
         EnemyToInvoc = enemyToInvoc;
-        TestValue = testValue;
-        TestDynamicAmount = testDynamicAmount;
-        DynamicCondition = dynamicCondition;
-        TestType = testType;
+        DynamicConditionInfos = dynamicConditionInfos;
         actionnerType = ActionnerType;
         Events = Event;
         CancelOnDeath = cancelOnDeath;
@@ -45,30 +48,38 @@ public class InvocEffect : Effect
     {
         if (!BypassEntryCondition)
         {
-            if (DynamicCondition != DynamicCondition.NULL)
+            if (DynamicConditionInfos.Count != 0)
             {
                 if (Actionner == null)
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, null, null))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, null, null))
                     {
                         return null;
                     }
                 }
                 else
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
                     {
                         return null;
                     }
                 }
             }
         }
+
+        if (PayXValue != 0)
+        {
+            DynamicAmount = DynamicAmount.NULL;
+            amount = PayXValue;
+        }
+
         // SI CARTE
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-                InvocGA invocGA = new(amount, DynamicAmount, CardsToInvoc, EnemyToInvoc);
-                if (AudioManager.Instance.IsValid(SFX)) { invocGA.SFX = SFX; }
-                return invocGA;
+            InvocGA invocGA = new(amount,multiplyAmount, DynamicAmount, CardsToInvoc, EnemyToInvoc);
+            invocGA.CardActionner = CardActionner;
+            if (AudioManager.Instance.IsValid(SFX)) { invocGA.SFX = SFX; }
+            return invocGA;
         }
         // SI PERMANENT
         else
@@ -76,7 +87,7 @@ public class InvocEffect : Effect
             // SI ENEMY
             if (actionnerType == ActionnerType.ENEMY)
             {
-                InvocEGA invocEGA = new(amount, DynamicAmount, EnemyToInvoc);
+                InvocEGA invocEGA = new(amount,multiplyAmount, DynamicAmount, EnemyToInvoc);
                 invocEGA.Actionner = Actionner;
                 if (AudioManager.Instance.IsValid(SFX)) { invocEGA.SFX = SFX; }
                 return invocEGA;
@@ -84,7 +95,7 @@ public class InvocEffect : Effect
             // SI PLAYER
             else if (actionnerType == ActionnerType.PLAYER)
             {
-                InvocPGA invocPGA = new(amount, DynamicAmount, CardsToInvoc);
+                InvocPGA invocPGA = new(amount,multiplyAmount, DynamicAmount, CardsToInvoc);
                 invocPGA.Actionner = Actionner;
                 if (AudioManager.Instance.IsValid(SFX)) { invocPGA.SFX = SFX; }
                 return invocPGA;
@@ -112,13 +123,15 @@ public class InvocEffect : Effect
 
         return new InvocEffect(
             amount,
+            multiplyAmount,
+            PayXEffect,
+            PayXValue,
             MultiHit,
+            ActivateNumber,
+            ActivateLeft,
             CardsToInvoc,
             EnemyToInvoc,
-            TestValue,
-            DynamicCondition,
-            TestDynamicAmount,
-            TestType,
+            DynamicConditionInfos,
             actionnerType,
             Events,
             CancelOnDeath,

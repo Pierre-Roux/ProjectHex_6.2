@@ -131,13 +131,15 @@ public class TargetSystem : Singleton<TargetSystem>
         ActionSystem.Instance.AddReaction(startCardTargetingGA.ActionToRealiseAfterTargetting);
     }
 
-    public static (List<PermanentView> playerTargets, List<EnemySlotView> enemyTargets) GetTargets(TargetMode mode, GameObject actionner)
+    public static (List<PermanentView> playerTargets, List<EnemySlotView> enemyTargets) GetTargets(TargetModeInfo TargetModeInfo, GameObject actionner)
     {
+        List<PermanentView> ValidatePlayerTargets = new();
         List<PermanentView> playerTargets = new();
+        List<EnemySlotView> ValidateEnemyTargets = new();
         List<EnemySlotView> enemyTargets = new();
 
-        var playerPermanents = CombatSystem.Instance.Player_Permanents;
-        var enemyPermanents = CombatSystem.Instance.Enemy_Permanents;
+        List<PermanentView> playerPermanents = CombatSystem.Instance.Player_Permanents;
+        List<EnemySlotView> enemyPermanents = CombatSystem.Instance.Enemy_Permanents;
 
         List<PermanentView> TampontargetsP = new List<PermanentView>();
         List<EnemySlotView> TampontargetsE = new List<EnemySlotView>();
@@ -154,11 +156,10 @@ public class TargetSystem : Singleton<TargetSystem>
             else
             {
                 RedirectionActive = true;
-            }              
+            }
         }
-      
 
-        switch (mode)
+        switch (TargetModeInfo.targetMode)
         {
             case TargetMode.Self:
                 if (actionner != null)
@@ -175,372 +176,359 @@ public class TargetSystem : Singleton<TargetSystem>
                         var self = actionner.GetComponent<EnemySlotView>();
                         if (self != null)
                             enemyTargets.Add(self);
-                    }              
-                }
-                break;
-
-            case TargetMode.Random_Player:
-                var targetablePlayers = playerPermanents
-                    .Where(p => !p.UnTargetable)
-                    .ToList();
-
-                if (targetablePlayers.Count > 0)
-                {
-                    var rnd = Random.Range(0, targetablePlayers.Count);
-                    playerTargets.Add(targetablePlayers[rnd]);
-                }
-                break;
-
-            case TargetMode.Core_Player:
-                foreach (var perm in playerPermanents)
-                    if (perm.IsCore && !perm.UnTargetable) playerTargets.Add(perm);
-                break;
-
-            case TargetMode.HighHP_Player:
-                int maxTotal = playerPermanents.Max(p => p.currentLife);
-                var highestTargets = playerPermanents
-                    .Where(p => p.currentLife == maxTotal && !p.UnTargetable)
-                    .ToList();
-
-                if (highestTargets.Count > 0)
-                {
-                    var selected = highestTargets[Random.Range(0, highestTargets.Count)];
-                    playerTargets.Add(selected);
-                }
-                break;
-
-            case TargetMode.LowHP_Player:
-                int minTotal = playerPermanents.Min(p => p.currentLife);
-                var lowestTargets = playerPermanents
-                    .Where(p => p.currentLife == minTotal && !p.UnTargetable)
-                    .ToList();
-
-                if (lowestTargets.Count > 0)
-                {
-                    var selected = lowestTargets[Random.Range(0, lowestTargets.Count)];
-                    playerTargets.Add(selected);
-                }
-                break;
-
-            case TargetMode.Random_Enemy:
-                var targetableEnemies = enemyPermanents
-                    .Where(p => !p.UnTargetable)
-                    .ToList();
-
-                if (playerPermanents.Count > 0 && targetableEnemies.Count > 0)
-                {
-                    var rnd = Random.Range(0, targetableEnemies.Count);
-                    enemyTargets.Add(targetableEnemies[rnd]);
-                }
-                break;
-
-            case TargetMode.Core_Enemy:
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.IsCore && !perm.UnTargetable)
-                    {
-                        enemyTargets.Add(perm);
                     }
                 }
                 break;
-
-            case TargetMode.HighHP_Enemy:
-                int maxTotal2 = enemyPermanents.Max(p => p.currentLife);
-                var highestTargets2 = enemyPermanents
-                    .Where(p => p.currentLife == maxTotal2 && !p.UnTargetable)
-                    .ToList();
-
-                if (highestTargets2.Count > 0)
+            case TargetMode.All:
+                switch (TargetModeInfo.PlayerOrEnemy)
                 {
-                    var selected = highestTargets2[Random.Range(0, highestTargets2.Count)];
-                    enemyTargets.Add(selected);
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;                                
+                            playerTargets.Add(perm);
+                        }
+                        break;
+                        
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;    
+                            enemyTargets.Add(perm);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            playerTargets.Add(perm);
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;   
+                            enemyTargets.Add(perm);
+                        }    
+                        break;
                 }
                 break;
 
-            case TargetMode.LowHP_Enemy:
-                int minTotal2 = enemyPermanents.Min(p => p.currentLife);
-                var lowestTargets2 = enemyPermanents
-                    .Where(p => p.currentLife == minTotal2 && !p.UnTargetable)
-                    .ToList();
+            case TargetMode.RDM:
 
-                if (lowestTargets2.Count > 0)
+                List<PermanentView> targetablePlayers = new();
+                List<EnemySlotView> targetableEnemies = new();
+
+                switch (TargetModeInfo.PlayerOrEnemy)
                 {
-                    var selected = lowestTargets2[Random.Range(0, lowestTargets2.Count)];
-                    enemyTargets.Add(selected);
+                    case Enemy_Player_ENUM.Player:                        
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            targetablePlayers.Add(perm);
+                        }
+                        if (targetablePlayers.Count > 0)
+                        {
+                            var rnd = Random.Range(0, targetablePlayers.Count);
+                            playerTargets.Add(targetablePlayers[rnd]);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            targetableEnemies.Add(perm);
+                        }   
+                        if (playerPermanents.Count > 0 && targetableEnemies.Count > 0)
+                        {
+                            var rnd = Random.Range(0, targetableEnemies.Count);
+                            enemyTargets.Add(targetableEnemies[rnd]);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            targetablePlayers.Add(perm);
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            targetableEnemies.Add(perm);
+                        }
+
+                        PermanentView permanentViewSelected = null;
+                        EnemySlotView enemySlotViewSelected = null;
+
+                        if (targetablePlayers.Count > 0)
+                        {
+                            var rnd = Random.Range(0, targetablePlayers.Count);
+                            permanentViewSelected = targetablePlayers[rnd];
+                        }
+                        if (playerPermanents.Count > 0 && targetableEnemies.Count > 0)
+                        {
+                            var rnd = Random.Range(0, targetableEnemies.Count);
+                            enemySlotViewSelected = targetableEnemies[rnd];
+                        }
+
+                        if (permanentViewSelected != null && enemySlotViewSelected == null)
+                        {
+                            playerTargets.Add(permanentViewSelected);
+                        }
+                        else if (permanentViewSelected == null && enemySlotViewSelected != null)
+                        {
+                            enemyTargets.Add(enemySlotViewSelected);
+                        }
+                        else
+                        {
+                            var rnd = Random.Range(0, 1);
+                            if (rnd == 0)
+                            {
+                                playerTargets.Add(permanentViewSelected);
+                            }
+                            else
+                            {
+                                enemyTargets.Add(enemySlotViewSelected);
+                            }
+                        }
+                        break;
                 }
                 break;
 
-            case TargetMode.All_Player:
-                foreach (var perm in playerPermanents)
+            case TargetMode.Core:
+                switch (TargetModeInfo.PlayerOrEnemy)
                 {
-                    if (perm.UnTargetable) continue;
-                    playerTargets.Add(perm);
-
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                            if (perm.IsCore && !perm.UnTargetable) playerTargets.Add(perm);
+                        break;
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                            if (perm.IsCore && !perm.UnTargetable) enemyTargets.Add(perm);
+                        break;
                 }
                 break;
 
-            case TargetMode.All_Enemy:
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    enemyTargets.Add(perm);
+            case TargetMode.HighHP:
 
-                }
+                List<PermanentView> ValidPlayers = new();
+                List<EnemySlotView> ValidEnemies = new();
+                int maxTotal = 0;
+                List<PermanentView> highestTargetsP = new();
+                List<EnemySlotView> highestTargetsE = new();
+
+                switch (TargetModeInfo.PlayerOrEnemy)
+                {
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidPlayers.Add(perm);
+                        }
+                        maxTotal = highestTargetsP.Max(p => p.currentLife);
+                        highestTargetsP = ValidPlayers.Where(p => p.currentLife == maxTotal).ToList();
+                        if (highestTargetsP.Count > 0)
+                        {
+                            var selected = highestTargetsP[Random.Range(0, highestTargetsP.Count)];
+                            playerTargets.Add(selected);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidEnemies.Add(perm);
+                        }
+                        maxTotal = highestTargetsE.Max(p => p.currentLife);
+                        highestTargetsE = ValidEnemies.Where(p => p.currentLife == maxTotal).ToList();
+                        if (highestTargetsE.Count > 0)
+                        {
+                            var selected = highestTargetsE[Random.Range(0, highestTargetsE.Count)];
+                            enemyTargets.Add(selected);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+
+                        PermanentView permanentViewSelected = null;
+                        EnemySlotView enemySlotViewSelected = null;
+
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidPlayers.Add(perm);
+                        }
+                        maxTotal = highestTargetsP.Max(p => p.currentLife);
+                        highestTargetsP = ValidPlayers.Where(p => p.currentLife == maxTotal).ToList();
+                        if (highestTargetsP.Count > 0)
+                        {
+                            var selected = highestTargetsP[Random.Range(0, highestTargetsP.Count)];
+                            permanentViewSelected = selected;
+                        }
+
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidEnemies.Add(perm);
+                        }
+                        maxTotal = highestTargetsE.Max(p => p.currentLife);
+                        highestTargetsE = ValidEnemies.Where(p => p.currentLife == maxTotal).ToList();
+                        if (highestTargetsE.Count > 0)
+                        {
+                            var selected = highestTargetsE[Random.Range(0, highestTargetsE.Count)];
+                            enemySlotViewSelected = selected;
+                        }
+
+                        if (permanentViewSelected != null && enemySlotViewSelected == null)
+                        {
+                            playerTargets.Add(permanentViewSelected);
+                        }
+                        else if (permanentViewSelected == null && enemySlotViewSelected != null)
+                        {
+                            enemyTargets.Add(enemySlotViewSelected);
+                        }
+                        else
+                        {
+                            var rnd = Random.Range(0, 1);
+                            if (rnd == 0)
+                            {
+                                playerTargets.Add(permanentViewSelected);
+                            }
+                            else
+                            {
+                                enemyTargets.Add(enemySlotViewSelected);
+                            }
+                        }
+                        break;
+                }            
                 break;
 
-            case TargetMode.All_All:
-                foreach (var perm in playerPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    playerTargets.Add(perm);
+            case TargetMode.LowHP:
+                List<PermanentView> ValidPlayers2 = new();
+                List<EnemySlotView> ValidEnemies2 = new();
+                int minTotal = 0;
+                List<PermanentView> LowestTargetsP = new();
+                List<EnemySlotView> LowestTargetsE = new();
 
-                }
-                foreach (var perm in enemyPermanents)
+                switch (TargetModeInfo.PlayerOrEnemy)
                 {
-                    if (perm.UnTargetable) continue;
-                    enemyTargets.Add(perm);
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidPlayers2.Add(perm);
+                        }
+                        minTotal = LowestTargetsP.Min(p => p.currentLife);
+                        LowestTargetsP = ValidPlayers2.Where(p => p.currentLife == minTotal).ToList();
+                        if (LowestTargetsP.Count > 0)
+                        {
+                            var selected = LowestTargetsP[Random.Range(0, LowestTargetsP.Count)];
+                            playerTargets.Add(selected);
+                        }
+                        break;
 
-                }
-                break;
-            case TargetMode.ALL_Player_Weapons:
-                foreach (var perm in playerPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Weapon)
-                    {
-                        playerTargets.Add(perm);
-                    }
-                }
-                if (RedirectionActive)
-                {
-                    if (playerTargets.Count <= 0)
-                    {
-                        foreach (var Core in playerPermanents)
-                            if (Core.IsCore && !Core.UnTargetable) playerTargets.Add(Core);
-                    }                    
-                }
-                break;
-            case TargetMode.ALL_Player_Shields:
-                foreach (var perm in playerPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Shield)
-                    {
-                        playerTargets.Add(perm);
-                    }
-                }
-                if (RedirectionActive)
-                {
-                    if (playerTargets.Count <= 0)
-                    {
-                        foreach (var Core in playerPermanents)
-                            if (Core.IsCore && !Core.UnTargetable) playerTargets.Add(Core);
-                    }                    
-                }
-                break;
-            case TargetMode.ALL_Player_Supports:
-                foreach (var perm in playerPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Support)
-                    {
-                        playerTargets.Add(perm);
-                    }
-                }
-                if (RedirectionActive)
-                {
-                    if (playerTargets.Count <= 0)
-                    {
-                        foreach (var Core in playerPermanents)
-                            if (Core.IsCore && !Core.UnTargetable) playerTargets.Add(Core);
-                    }                    
-                }
-                break;
-            case TargetMode.ALL_Enemy_Weapons:
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Weapon)
-                    {
-                        enemyTargets.Add(perm);
-                    }
-                }
-                if (RedirectionActive)
-                {
-                    if (enemyTargets.Count <= 0)
-                    {
-                        foreach (var Core in enemyPermanents)
-                            if (Core.IsCore && !Core.UnTargetable) enemyTargets.Add(Core);
-                    }                    
-                }
-                break;
-            case TargetMode.ALL_Enemy_Shields:
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Shield)
-                    {
-                        enemyTargets.Add(perm);
-                    }
-                }
-                if (RedirectionActive)
-                {
-                    if (enemyTargets.Count <= 0)
-                    {
-                        foreach (var Core in enemyPermanents)
-                            if (Core.IsCore && !Core.UnTargetable) enemyTargets.Add(Core);
-                    }                    
-                }
-                break;
-            case TargetMode.ALL_Enemy_Supports:
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Support)
-                    {
-                        enemyTargets.Add(perm);
-                    }
-                }
-                if (RedirectionActive)
-                {
-                    if (enemyTargets.Count <= 0)
-                    {
-                        foreach (var Core in enemyPermanents)
-                            if (Core.IsCore && !Core.UnTargetable) enemyTargets.Add(Core);
-                    }                    
-                }
-                break;
-            case TargetMode.RDM_Player_Weapons:
-                TampontargetsP = new List<PermanentView>();
-                foreach (var perm in playerPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Weapon)
-                    {
-                        TampontargetsP.Add(perm);
-                    }
-                }
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidEnemies2.Add(perm);
+                        }
+                        minTotal = LowestTargetsE.Min(p => p.currentLife);
+                        LowestTargetsE = ValidEnemies2.Where(p => p.currentLife == minTotal).ToList();
+                        if (LowestTargetsE.Count > 0)
+                        {
+                            var selected = LowestTargetsE[Random.Range(0, LowestTargetsE.Count)];
+                            enemyTargets.Add(selected);
+                        }
+                        break;
 
-                if (TampontargetsP.Count <= 0)
-                {
-                    foreach (var Core in playerPermanents)
-                        if (Core.IsCore && !Core.UnTargetable) playerTargets.Add(Core);
-                }
-                else
-                {
-                    playerTargets.Add(TampontargetsP[Random.Range(0, TampontargetsP.Count - 1)]);
-                }
+                    case Enemy_Player_ENUM.NULL:
 
-                break;
-            case TargetMode.RDM_Player_Shields:
-                TampontargetsP = new List<PermanentView>();
-                foreach (var perm in playerPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Shield)
-                    {
-                        TampontargetsP.Add(perm);
-                    }
-                }
+                        PermanentView permanentViewSelected = null;
+                        EnemySlotView enemySlotViewSelected = null;
 
-                if (TampontargetsP.Count <= 0)
-                {
-                    foreach (var Core in playerPermanents)
-                        if (Core.IsCore && !Core.UnTargetable) playerTargets.Add(Core);
-                }
-                else
-                {
-                    playerTargets.Add(TampontargetsP[Random.Range(0, TampontargetsP.Count - 1)]);
-                }
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidPlayers2.Add(perm);
+                        }
+                        minTotal = LowestTargetsP.Min(p => p.currentLife);
+                        LowestTargetsP = ValidPlayers2.Where(p => p.currentLife == minTotal).ToList();
+                        if (LowestTargetsP.Count > 0)
+                        {
+                            var selected = LowestTargetsP[Random.Range(0, LowestTargetsP.Count)];
+                            permanentViewSelected = selected;
+                        }
 
-                break;
-            case TargetMode.RDM_Player_Supports:
-                TampontargetsP = new List<PermanentView>();
-                foreach (var perm in playerPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Support)
-                    {
-                        TampontargetsP.Add(perm);
-                    }
-                }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if(TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if(TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;  
+                            ValidEnemies2.Add(perm);
+                        }
+                        minTotal = LowestTargetsE.Min(p => p.currentLife);
+                        LowestTargetsE = ValidEnemies2.Where(p => p.currentLife == minTotal).ToList();
+                        if (LowestTargetsE.Count > 0)
+                        {
+                            var selected = LowestTargetsE[Random.Range(0, LowestTargetsE.Count)];
+                            enemySlotViewSelected = selected;
+                        }
 
-                if (TampontargetsP.Count <= 0)
-                {
-                    foreach (var Core in playerPermanents)
-                        if (Core.IsCore && !Core.UnTargetable) playerTargets.Add(Core);
-                }
-                else
-                {
-                    playerTargets.Add(TampontargetsP[Random.Range(0, TampontargetsP.Count - 1)]);
-                }
-
-                break;
-            case TargetMode.RDM_Enemy_Weapons:
-                TampontargetsE = new List<EnemySlotView>();
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Weapon)
-                    {
-                        TampontargetsE.Add(perm);
-                    }
-                }
-
-                if (TampontargetsE.Count <= 0)
-                {
-                    foreach (var Core in enemyPermanents)
-                        if (Core.IsCore && !Core.UnTargetable) enemyTargets.Add(Core);
-                }
-                else
-                {
-                    enemyTargets.Add(TampontargetsE[Random.Range(0, TampontargetsE.Count - 1)]);
-                }
-
-                break;
-            case TargetMode.RDM_Enemy_Shields:
-                TampontargetsE = new List<EnemySlotView>();
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Shield)
-                    {
-                        TampontargetsE.Add(perm);
-                    }
-                }
-
-                if (TampontargetsE.Count <= 0)
-                {
-                    foreach (var Core in enemyPermanents)
-                        if (Core.IsCore && !Core.UnTargetable) enemyTargets.Add(Core);
-                }
-                else
-                {
-                    enemyTargets.Add(TampontargetsE[Random.Range(0, TampontargetsE.Count - 1)]);
-                }
-
-                break;
-            case TargetMode.RDM_Enemy_Supports:
-                TampontargetsE = new List<EnemySlotView>();
-                foreach (var perm in enemyPermanents)
-                {
-                    if (perm.UnTargetable) continue;
-                    if (perm.permanentArea == PermanentArea.Support)
-                    {
-                        TampontargetsE.Add(perm);
-                    }
-                }
-
-                if (TampontargetsE.Count <= 0)
-                {
-                    foreach (var Core in enemyPermanents)
-                        if (Core.IsCore && !Core.UnTargetable) enemyTargets.Add(Core);
-                }
-                else
-                {
-                    enemyTargets.Add(TampontargetsE[Random.Range(0, TampontargetsE.Count - 1)]);
-                }
-
+                        if (permanentViewSelected != null && enemySlotViewSelected == null)
+                        {
+                            playerTargets.Add(permanentViewSelected);
+                        }
+                        else if (permanentViewSelected == null && enemySlotViewSelected != null)
+                        {
+                            enemyTargets.Add(enemySlotViewSelected);
+                        }
+                        else
+                        {
+                            var rnd = Random.Range(0, 1);
+                            if (rnd == 0)
+                            {
+                                playerTargets.Add(permanentViewSelected);
+                            }
+                            else
+                            {
+                                enemyTargets.Add(enemySlotViewSelected);
+                            }
+                        }
+                        break;
+                }      
                 break;
         }
 
@@ -736,29 +724,55 @@ public class TargetSystem : Singleton<TargetSystem>
                 if (ActionSystem.Instance.IsPerforming) return;
                 if (Physics.Raycast(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit raycastHit, 10f, TargetingLayerMask) && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out EnemySlotView enemyView))
                 {
-                    if (!enemyView.Activated)
+                    if (enemyView != null)
                     {
-                        TriggerEventGA triggerEnemyEventGA = new(Events.OnActivate, null, null, enemyView);
-                        ActionSystem.Instance.Perform(triggerEnemyEventGA);
+                        bool HasEffectsToActivate = false;
+                        if (enemyView.IntentAction.Events == Events.OnSelect && enemyView.IntentAction.ActivateNumber >= 1)
+                        {
+                            if(enemyView.IntentAction.ActivateLeft > 0)
+                            {
+                                HasEffectsToActivate = true;
+                            }
+                        }
+                        
+                        if (HasEffectsToActivate)
+                        {
+                            TriggerEventGA triggerEnemyEventGA = new(Events.OnSelect, null, null, enemyView);
+                            ActionSystem.Instance.Perform(triggerEnemyEventGA);
+                        }                   
                     }
-
                 }
                 else if (Physics.Raycast(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit raycastHit2, 10f, TargetingLayerMask) && raycastHit2.collider != null && raycastHit2.transform.TryGetComponent(out PermanentView permanentView))
                 {
-                    if (!permanentView.Activated)
+                    if (permanents != null)
                     {
-                        TriggerEventGA triggerPermanentEventGA = new(Events.OnActivate, null, permanentView, null);
-                        ActionSystem.Instance.Perform(triggerPermanentEventGA);
+                        bool HasEffectsToActivate = false;
+                        foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,permanentView,null))
+                        {
+                            if (effect.Events == Events.OnSelect && effect.ActivateNumber >= 1)
+                            {
+                                if (effect.ActivateLeft > 0)
+                                {
+                                    HasEffectsToActivate = true;
+                                }
+                            }                           
+                        }                 
+
+                        if (HasEffectsToActivate)
+                        {
+                            TriggerEventGA triggerPermanentEventGA = new(Events.OnSelect, null, permanentView, null);
+                            ActionSystem.Instance.Perform(triggerPermanentEventGA);
+                        }                        
                     }
                 }
             }
         }
     }
 
-    public int GetDynamicAmount(DynamicAmount dynamicAmount, PermanentView permanentView = null, EnemySlotView enemySlotView = null)
+    public int GetDynamicAmount(DynamicAmount dynamicAmount, PermanentView permanentView = null, EnemySlotView enemySlotView = null, Card CardActionner = null)
     {
         int FinalAmount = 0;
-
+    
         switch (dynamicAmount)
         {
             case DynamicAmount.Vessel_Count:
@@ -769,8 +783,80 @@ public class TargetSystem : Singleton<TargetSystem>
                 FinalAmount = CombatSystem.Instance.Player_Permanents.Count;
                 break;
 
+            case DynamicAmount.Player_Weapon_Count:
+                int i = 0;
+                foreach (var perm in CombatSystem.Instance.Player_Permanents)
+                {
+                    if (perm.permanentArea == PermanentArea.Weapon)
+                    {
+                        i++;
+                    }
+                }
+                FinalAmount = i;
+                break;
+
+            case DynamicAmount.Player_Shield_Count:
+                i = 0;
+                foreach (var perm in CombatSystem.Instance.Player_Permanents)
+                {
+                    if (perm.permanentArea == PermanentArea.Shield)
+                    {
+                        i++;
+                    }
+                }
+                FinalAmount = i;
+                break;
+
+            case DynamicAmount.Player_Support_Count:
+                i = 0;
+                foreach (var perm in CombatSystem.Instance.Player_Permanents)
+                {
+                    if (perm.permanentArea == PermanentArea.Support)
+                    {
+                        i++;
+                    }
+                }
+                FinalAmount = i;
+                break;
+
             case DynamicAmount.Enemy_Vessel_Count:
                 FinalAmount = CombatSystem.Instance.Enemy_Permanents.Count;
+                break;
+
+            case DynamicAmount.Enemy_Weapon_Count:
+                i = 0;
+                foreach (var perm in CombatSystem.Instance.Enemy_Permanents)
+                {
+                    if (perm.permanentArea == PermanentArea.Weapon)
+                    {
+                        i++;
+                    }
+                }
+                FinalAmount = i;
+                break;
+
+            case DynamicAmount.Enemy_Shield_Count:
+                i = 0;
+                foreach (var perm in CombatSystem.Instance.Enemy_Permanents)
+                {
+                    if (perm.permanentArea == PermanentArea.Shield)
+                    {
+                        i++;
+                    }
+                }
+                FinalAmount = i;
+                break;
+
+            case DynamicAmount.Enemy_Support_Count:
+                i = 0;
+                foreach (var perm in CombatSystem.Instance.Enemy_Permanents)
+                {
+                    if (perm.permanentArea == PermanentArea.Support)
+                    {
+                        i++;
+                    }
+                }
+                FinalAmount = i;
                 break;
 
             case DynamicAmount.Player_Vessel_Shielded:
@@ -870,9 +956,22 @@ public class TargetSystem : Singleton<TargetSystem>
                     FinalAmount = 0;
                 }
                 break;
+
             case DynamicAmount.CardsInHand_Count:
                 FinalAmount = CardSystem.Instance.hand.Count;
                 break;
+
+            case DynamicAmount.PayXValue:
+                if (permanentView != null)
+                {
+                    FinalAmount = permanentView.CardReferenceArchive.PayXValue;
+                }
+                else if (CardActionner != null)
+                {
+                    FinalAmount = CardActionner.PayXValue;
+                }
+                break;
+
 
             case DynamicAmount.NULL:
                 break;
@@ -905,14 +1004,14 @@ public class TargetSystem : Singleton<TargetSystem>
                     return enemySlot.permaTypes.Contains(info.PermaType);
                 return false;
 
-            case TargetLimitations.Only_ActivablePermanent:
+            case TargetLimitations.Only_SelectablePermanent:
                 if (permanent != null)
                 {
                     if (permanent.CardReferenceArchive != null)
                     {
                         foreach (Effect effect in permanent.CardReferenceArchive.Effects)
                         {
-                            if (effect.Events == Events.OnActivate)
+                            if (effect.Events == Events.OnSelect)
                             {
                                 return true;
                             }
@@ -923,7 +1022,7 @@ public class TargetSystem : Singleton<TargetSystem>
                 {
                     foreach (Effect effect in enemySlot.PossibleIntent)
                     {
-                        if (effect.Events == Events.OnActivate)
+                        if (effect.Events == Events.OnSelect)
                         {
                             return true;
                         }
@@ -987,6 +1086,40 @@ public class TargetSystem : Singleton<TargetSystem>
 
             case TargetLimitations.Card_Cost_Less_Than_Value:
                 return Card != null && Card.cost < info.IntValue;
+
+            case TargetLimitations.Only_Activated:
+                if (permanent != null)
+                {
+                    bool HasEffectsActivated = false;
+                    foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,permanent,null))
+                    {
+                        if (effect.Events == Events.OnSelect && effect.ActivateNumber >= 1)
+                        {
+                            if (effect.ActivateLeft != effect.ActivateNumber)
+                            {
+                                HasEffectsActivated = true;
+                            }
+                        }
+                    }
+                    return HasEffectsActivated;       
+                }
+                if (enemySlot != null)
+                {
+                    bool HasEffectsToActivate = false;
+                    foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null, null, enemySlot))
+                    {
+                        if (effect.Events == Events.OnSelect && effect.ActivateNumber >= 1)
+                        {
+                            if (effect.ActivateLeft != effect.ActivateNumber)
+                            {
+                                HasEffectsToActivate = true;
+                            }
+                        }                        
+                    }
+
+                    return HasEffectsToActivate;                
+                }
+                return false;
 
             default:
                 return false;

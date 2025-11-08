@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Fires
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Fires
-  <Description>k__BackingField: OnSpellCast Deal 1 | Wenever you destroy an enmy
+  <Description>k__BackingField: OnSpellCast Deal 1 | Wenever you destroy an enemy
     draw 1
   <cost>k__BackingField: 2
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 4
@@ -25,6 +26,7 @@ MonoBehaviour:
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <permanentArea>k__BackingField: 3
   UnShieldable: 0
+  UnTargetable: 0
   isInvoc: 0
   isArtillery: 0
   <IsSpell>k__BackingField: 0
@@ -189,6 +191,7 @@ MonoBehaviour:
         actionnerType: 0
         Events: 6
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -203,21 +206,24 @@ MonoBehaviour:
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
         BypassEntryCondition: 0
         EffectID: 8757b63c-2784-4204-87fd-156a0ec258c4
         damageAmount: 1
+        multiplyAmount: 1
         DynamicAmount: 0
-        targetMode: 24
-        TargetUpTo: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
     - rid: 3469642561335328813
@@ -226,6 +232,7 @@ MonoBehaviour:
         actionnerType: 0
         Events: 17
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -240,16 +247,15 @@ MonoBehaviour:
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
-        DynamicCondition: 15
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
         BypassEntryCondition: 0
         EffectID: 7f43a3bf-2134-493a-b831-4cc6a10a7b4c
         drawAmount: 1
+        multiplyAmount: 1
         DynamicAmount: 0

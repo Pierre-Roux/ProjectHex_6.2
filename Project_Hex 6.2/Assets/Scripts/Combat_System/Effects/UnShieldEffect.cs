@@ -9,12 +9,12 @@ public class UnShieldEffect : Effect
 {
     [Header("Effect Param")]
 
-    public TargetMode targetMode;
-    public override TargetMode EffectTargetMode => targetMode;
+    [SerializeField] public TargetModeInfo targetModeInfo;
+    [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
     [Header("For Manual Target only")]
 
-    [SerializeField] private bool TargetUpTo;
+    [SerializeField] private bool TargetUpTo = true;
     public override bool EffectTargetUpTo => TargetUpTo;
 
     [SerializeField] private int targetNumber;
@@ -25,14 +25,12 @@ public class UnShieldEffect : Effect
 
     public UnShieldEffect() { }
 
-    public UnShieldEffect(int multiHit, int testValue,DynamicCondition dynamicCondition, DynamicAmount testDynamicAmount,PermaTypes testType, TargetMode TargetMode, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
+    public UnShieldEffect(int activateNumber, int activateLeft,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
     {
-        MultiHit = multiHit;
-        targetMode = TargetMode;
-        TestValue = testValue;
-        TestDynamicAmount = testDynamicAmount;
-        DynamicCondition = dynamicCondition;
-        TestType = testType;
+        ActivateNumber = activateNumber;
+        ActivateLeft = activateLeft;
+        targetModeInfo = TargetModeInfo;
+        DynamicConditionInfos = dynamicConditionInfos;
         targetNumber = TargetNumber;
         TargetUpTo = targetUpTo;
         targetLimitations = TargetLimitations;
@@ -56,18 +54,18 @@ public class UnShieldEffect : Effect
     {
         if (!BypassEntryCondition)
         {
-            if (DynamicCondition != DynamicCondition.NULL)
+            if (DynamicConditionInfos.Count != 0)
             {
                 if (Actionner == null)
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, null, null))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, null, null))
                     {
                         return null;
                     }
                 }
                 else
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
                     {
                         return null;
                     }
@@ -77,7 +75,7 @@ public class UnShieldEffect : Effect
 
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-            if (targetMode == TargetMode.Manual)
+            if (targetModeInfo.targetMode == TargetMode.Manual)
             {
                 UnShieldGA unShieldGA = new(null, null);
                 unShieldGA.CardActionner = CardActionner;
@@ -85,7 +83,7 @@ public class UnShieldEffect : Effect
                 StartManualTargetingGA startManualTargetingGA = new(unShieldGA, targetNumber, TargetUpTo, this, targetLimitations);
                 return startManualTargetingGA;
             }
-            else if (targetMode == TargetMode.EffectParent_Targets)
+            else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 UnShieldGA unShieldGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 unShieldGA.CardActionner = CardActionner;
@@ -94,7 +92,7 @@ public class UnShieldEffect : Effect
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
@@ -108,7 +106,7 @@ public class UnShieldEffect : Effect
         {
             if (actionnerType == ActionnerType.ENEMY)
             {
-                if (targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
                     EnemyUnShieldGA enemyUnShieldGA = new(null, null);
                     enemyUnShieldGA.Actionner = Actionner;
@@ -121,14 +119,14 @@ public class UnShieldEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetMode == TargetMode.EffectParent_Targets)
+                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -142,7 +140,7 @@ public class UnShieldEffect : Effect
             }
             else if (actionnerType == ActionnerType.PLAYER)
             {
-                if (targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
                     PlayerUnShieldGA playerUnShieldGA = new(null, null);
                     playerUnShieldGA.Actionner = Actionner;
@@ -157,14 +155,14 @@ public class UnShieldEffect : Effect
 
                     Debug.Log("zergz   " + ParentEffect.TargetForLinked_Player);
 
-                    if (targetMode == TargetMode.EffectParent_Targets)
+                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -197,12 +195,10 @@ public class UnShieldEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new UnShieldEffect(
-            MultiHit,
-            TestValue,
-            DynamicCondition,
-            TestDynamicAmount,
-            TestType,
-            targetMode,
+            ActivateNumber,
+            ActivateLeft,
+            DynamicConditionInfos,
+            targetModeInfo,
             targetLimitations,
             targetNumber,
             TargetUpTo,

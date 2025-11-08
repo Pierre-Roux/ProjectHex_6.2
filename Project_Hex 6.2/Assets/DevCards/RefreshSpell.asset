@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Refresh
   <Description>k__BackingField: Refresh
   <cost>k__BackingField: 0
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: a0d983601a33d954fb9ea40b78f3ef3b, type: 3}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 0
@@ -188,6 +189,7 @@ MonoBehaviour:
         actionnerType: 2
         Events: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 1
         SFX:
           Guid:
@@ -196,30 +198,35 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 308c6d84-1df8-4a58-8715-e9a4aeadc531
-        targetMode: 24
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
         TargetUpTo: 0
         targetNumber: 1
         targetLimitations:
         - rid: 3469642561335328829
         - rid: 3469642561335328830
         - rid: 3469642561335328831
+        - rid: 7119591880825503814
     - rid: 3469642561335328829
       type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
       data:
@@ -238,6 +245,13 @@ MonoBehaviour:
       type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
       data:
         targetLimitations: 6
+        PermaType: 0
+        IntValue: -1
+        MandatoryLimitation: 1
+    - rid: 7119591880825503814
+      type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
+      data:
+        targetLimitations: 16
         PermaType: 0
         IntValue: -1
         MandatoryLimitation: 1

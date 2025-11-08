@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using FMODUnity;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -21,10 +23,17 @@ public class CardSystem : Singleton<CardSystem>
     [SerializeField] public GameObject ChoicePanel;
     [SerializeField] public GameObject ChoicePanelContent;
 
+    [SerializeField] public GameObject PayXPanel;
+    [SerializeField] public TMP_Text PayXCounter;
+    [SerializeField] public Transform CardTamponPoint;
+
     [SerializeField] public ScrollRect ScryScrollRect;
 
     [HideInInspector] public List<CardView> ScryCardViews;
     [HideInInspector] public Effect EffectChoosed;
+    [HideInInspector] public CardView PayXCardView;
+    [HideInInspector] public bool IsPayXValidate;
+    [HideInInspector] public int PayXValue;
     
     public List<Card> drawPile = new();
     public List<Card> discardPile = new();
@@ -75,8 +84,28 @@ public class CardSystem : Singleton<CardSystem>
     {
         if (drawCardsGA.DynamicAmount != DynamicAmount.NULL)
         {
-            drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount);
+            if (drawCardsGA.Actionner == null)
+            {
+                if (drawCardsGA.CardActionner != null)
+                {
+                    drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, null, null, drawCardsGA.CardActionner);
+                }
+                else
+                {
+                    drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, null, null);
+                }
+            }
+            else if (drawCardsGA.Actionner.GetComponent<PermanentView>() != null)
+            {
+                drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, drawCardsGA.Actionner.GetComponent<PermanentView>(), null);
+            }
+            else
+            {
+                drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, null, drawCardsGA.Actionner.GetComponent<EnemySlotView>());
+            }
         }
+
+
         int actualAmount = Mathf.Min(drawCardsGA.Amount, drawPile.Count);
         int notDrawAmount = drawCardsGA.Amount - actualAmount;
         for (int i = 0; i < actualAmount; i++)
@@ -208,49 +237,9 @@ public class CardSystem : Singleton<CardSystem>
         yield return DiscardCard(cardView, false);
 
         SpendManaGA spendManaGA = new(playCardGA.Card.cost);
-        ActionSystem.Instance.AddReaction(spendManaGA);        
+        ActionSystem.Instance.AddReaction(spendManaGA);
 
-        foreach (var effect in playCardGA.Card.Effects)
-        {
-            int MultiHit = effect.MultiHit;
-            if (MultiHit < 1) MultiHit = 1;
-            for (int i = 0; i < MultiHit; i++)
-            {
-                // On clone l’effet de base pour éviter les références partagées
-                Effect clonedEffect = effect.Clone();
-                clonedEffect.Actionner = null;
-                clonedEffect.CardActionner = playCardGA.CardActionner;
-
-                while (clonedEffect != null)
-                {
-                    if (clonedEffect.Events == Events.Instant)
-                    {
-                        ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
-                    }
-                    else
-                    {
-                        // Ajout aux Events (sauf cas spéciaux)
-                        if (clonedEffect.Events != Events.OnDeath &&
-                            clonedEffect.Events != Events.OnDestroy &&
-                            clonedEffect.Events != Events.OnDamaged &&
-                            clonedEffect.Events != Events.OnActivate &&
-                            clonedEffect.Events != Events.EnemyTurn)
-                        {
-                            GameEventSystem.Instance.AddEffectToEvent(clonedEffect);
-                        }
-                    }
-
-                    // On lie le parent au linked effect (utile si la chaîne est clonée)
-                    if (clonedEffect.LinkedEffect != null)
-                    {
-                        clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                    }
-
-                    // Avancer dans la chaîne
-                    clonedEffect = clonedEffect.LinkedEffect;
-                }                
-            }
-        }
+        GameEventSystem.Instance.ManageEffects(playCardGA.Card,null,null);
     }
 
     public IEnumerator InsertCard(CardView card)
@@ -271,9 +260,9 @@ public class CardSystem : Singleton<CardSystem>
         CombatSystem.Instance.Interactable = true;
     }
 
-    public void ShowChoicePanel(List<Effect> effects, Card cardVisual, GameObject actionner = null)
+    public void ShowChoicePanel(List<Effect> effects, bool SelectMode, bool MayChoice)
     {
-        DisplayChoiceCards(effects,cardVisual,actionner);
+        DisplayChoiceCards(effects,SelectMode,MayChoice);
         ChoicePanel.SetActive(true);
         CombatSystem.Instance.Interactable = false;
     }
@@ -299,19 +288,57 @@ public class CardSystem : Singleton<CardSystem>
         }
     }
 
-    public void DisplayChoiceCards(List<Effect> effectsToDisplay, Card cardVisual, GameObject Actionner)
+    public void DisplayChoiceCards(List<Effect> effectsToDisplay, bool SelectMode, bool MayChoice)
     {
         CleanChoicePanel();
-        foreach (var effect in effectsToDisplay)
+        if (MayChoice)
         {
-            CardView cardView = CardViewCreator.Instance.CreateCardView(cardVisual, Vector3.zero, Quaternion.identity, ChoicePanelContent.transform);
+            CardData noneChoiceCardData = ScriptableObject.CreateInstance<CardData>();
+            noneChoiceCardData.Title = "Do Nothing";
+            noneChoiceCardData.Description = "Do Nothing";
+            Card noneChoiceCard = new(noneChoiceCardData);
+            CardView cardView = CardViewCreator.Instance.CreateCardView(noneChoiceCard, Vector3.zero, Quaternion.identity, ChoicePanelContent.transform);
             cardView.IsChoiceCard = true;
-            cardView.EffectHolder = effect;
-            cardView.EffectHolder.Actionner = Actionner;
             cardView.gameObject.GetComponent<SortingGroup>().sortingOrder = 5;
             cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
             cardView.gameObject.transform.position.Set(cardView.gameObject.transform.position.x, cardView.gameObject.transform.position.y, 0);
             cardView.transform.DOScale(60, 0.5f);
+        }
+
+        foreach (var effect in effectsToDisplay)
+        {
+            Card cardVisual = null;
+            if (effect.Actionner != null)
+            {
+                if (effect.Actionner.GetComponent<PermanentView>() != null)
+                {
+                    cardVisual = effect.Actionner.GetComponent<PermanentView>().CardReferenceArchive;
+                }
+                else if (effect.Actionner.GetComponent<EnemySlotView>() != null)
+                {
+                    //Pas de visuel pour les enemy :/
+                    //cardVisual = effect.Actionner.GetComponent<EnemySlotView>().;
+                }
+            }
+            else if (effect.CardActionner != null)
+            {
+                cardVisual = effect.CardActionner;
+            }
+
+            CardView cardView = CardViewCreator.Instance.CreateCardView(cardVisual, Vector3.zero, Quaternion.identity, ChoicePanelContent.transform);
+            cardView.IsChoiceCard = true;
+            cardView.EffectHolder = effect;
+            cardView.EffectHolder.Actionner = effect.Actionner;
+            cardView.EffectHolder.CardActionner = effect.CardActionner;
+            cardView.gameObject.GetComponent<SortingGroup>().sortingOrder = 5;
+            cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
+            cardView.gameObject.transform.position.Set(cardView.gameObject.transform.position.x, cardView.gameObject.transform.position.y, 0);
+            cardView.transform.DOScale(60, 0.5f);
+
+            if (effect.ActivateLeft == 0 && SelectMode)
+            {
+                cardView.UnvalidChoiceCard();
+            }
         }
     }
 
@@ -328,6 +355,140 @@ public class CardSystem : Singleton<CardSystem>
         foreach (Transform child in ChoicePanelContent.transform)
             Destroy(child.gameObject);
     }
+
+    public IEnumerator PutCardViewOnSide(CardView cardView)
+    {
+        Tween tween = cardView.gameObject.transform.DOMove(new Vector3 (CardTamponPoint.position.x,CardTamponPoint.position.y, 0f),0.25f);
+        yield return tween.WaitForCompletion();
+    }
+
+    public void PayXPlus()
+    {
+        if (PayXCardView != null)
+        {
+            if (ManaSystem.Instance.currentMana - PayXCardView.Card.cost - 1 >= 0)
+            {
+                int value = int.Parse(PayXCounter.text);
+                value++;
+                PayXCounter.text = value.ToString();
+                ManaSystem.Instance.VisualsubtractMana(1);
+            }
+        }
+        else
+        {
+            if (ManaSystem.Instance.currentMana - 1 >= 0)
+            {
+                int value = int.Parse(PayXCounter.text);
+                value++;
+                PayXCounter.text = value.ToString();
+                ManaSystem.Instance.VisualsubtractMana(1);
+            }            
+        }
+    }
+
+    public void PayXMinus()
+    {
+        if (ManaSystem.Instance.currentMana + 1 <= ManaSystem.Instance.PayXInitialMana)
+        {
+            int value = int.Parse(PayXCounter.text);
+            value--;
+            PayXCounter.text = value.ToString();
+            ManaSystem.Instance.VisualAddMana(1);
+        }
+    }
+
+    public void PayXValidate()
+    {
+        if (PayXCardView != null)
+        {
+            PayXCardView.PayXValue = int.Parse(PayXCounter.text);
+            int i = 0;
+            PayXCounter.text = i.ToString();
+            PayXCardView.IsPayXValidate = true;
+        }
+        else
+        {
+            PayXValue = int.Parse(PayXCounter.text);
+            int i = 0;
+            PayXCounter.text = i.ToString();
+            IsPayXValidate = true;            
+        }
+    }
+    
+    public void PayXCancel()
+    {
+        ManaSystem.Instance.currentMana = ManaSystem.Instance.PayXInitialMana;
+        ManaSystem.Instance.UpdateManaText();
+        ManaSystem.Instance.Mana_Spent_Count -= int.Parse(PayXCounter.text);
+        if (PayXCardView != null)
+        {
+            PayXCardView.PayXValue = -1;
+            int i = 0;
+            PayXCounter.text = i.ToString();
+            PayXCardView.IsPayXValidate = true;
+        }
+        else
+        {
+            PayXValue = -1;
+            int i = 0;
+            PayXCounter.text = i.ToString();
+            IsPayXValidate = true;            
+        }
+    }
+
+    public IEnumerator ManagePayX(bool Canceled, System.Action<bool> onFinished, Effect effect = null, CardView cardview = null)
+    {
+        PayXPanel.SetActive(true);
+        CombatSystem.Instance.Interactable = false;
+        PayXValue = 0;
+        ManaSystem.Instance.PayXInitialMana = ManaSystem.Instance.currentMana;
+
+        if (cardview != null)
+        {
+            cardview.WhaitForPayX = true;
+            cardview.PayXValue = 0;
+            yield return StartCoroutine(PutCardViewOnSide(cardview));
+        }
+
+        while (!IsPayXValidate)
+        {
+            yield return null;
+        }
+
+        if (PayXValue != -1)
+        {
+            if (effect != null)
+            {
+                effect.PayXValue = PayXValue;
+            }
+            else if (cardview.Card != null)
+            {
+                cardview.Card.PayXValue = PayXValue;
+                cardview.WhaitForPayX = false;
+            }
+        }
+        else
+        {
+            if (effect != null)
+            {
+                effect.PayXValue = 0;
+            }
+            else if (cardview.Card != null)
+            {
+                cardview.Card.PayXValue = 0;
+                cardview.WhaitForPayX = false;
+            }
+            Canceled = true;
+        }
+
+        IsPayXValidate = false;
+        CombatSystem.Instance.Interactable = true;
+        PayXCardView = null;
+        PayXPanel.SetActive(false);
+
+        onFinished?.Invoke(Canceled);
+    }
+    
 
     // REACTIONS
 

@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Puncture
   <Description>k__BackingField: 'A : Deal 3 MultiHit 2'
   <cost>k__BackingField: 2
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 4
@@ -188,6 +189,7 @@ MonoBehaviour:
         actionnerType: 0
         Events: 13
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 2
         SFX:
           Guid:
@@ -196,26 +198,31 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 2662d2a0-1aaf-41dd-9277-31dcf578d4dc
         damageAmount: 3
+        multiplyAmount: 1
         DynamicAmount: 0
-        targetMode: 24
-        TargetUpTo: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []

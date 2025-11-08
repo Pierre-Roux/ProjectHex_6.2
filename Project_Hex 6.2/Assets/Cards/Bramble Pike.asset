@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Bramble Pike
   <Description>k__BackingField: 'A : deal 3 / SoT : +1pwr +1hp'
   <cost>k__BackingField: 1
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 2
@@ -24,6 +25,7 @@ MonoBehaviour:
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <permanentArea>k__BackingField: 1
   UnShieldable: 0
+  UnTargetable: 0
   isInvoc: 0
   isArtillery: 0
   <IsSpell>k__BackingField: 0
@@ -157,6 +159,13 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  ActivateSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   SelectedSound:
     Guid:
       Data1: 0
@@ -182,7 +191,8 @@ MonoBehaviour:
         actionnerType: 0
         Events: 13
         HollowEffect: 0
-        MultiHit: 0
+        PayXEffect: 0
+        MultiHit: 1
         SFX:
           Guid:
             Data1: 0
@@ -190,26 +200,31 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 80694026-7230-46ff-8a5e-6db54b2f8b46
         damageAmount: 3
+        multiplyAmount: 1
         DynamicAmount: 0
-        targetMode: 24
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
@@ -219,6 +234,7 @@ MonoBehaviour:
         actionnerType: 0
         Events: 3
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -227,28 +243,32 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: b06c89b7-2eb8-4352-ba17-5bf3b7a6db64
         alterAmount: 1
+        multiplyAmount: 1
         DynamicAmount: 0
-        targetMode: 0
+        targetModeInfo:
+          targetMode: 1
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
         passive: 0
-        permaTypes: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
@@ -258,6 +278,7 @@ MonoBehaviour:
         actionnerType: 0
         Events: 3
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -266,28 +287,32 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 6a7b774f-63ba-4513-9d64-e623e57fbfbd
         GainAmount: 1
+        multiplyAmount: 1
         DynamicAmount: 0
-        targetMode: 0
+        targetModeInfo:
+          targetMode: 1
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
         passive: 0
-        permaTypes: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []

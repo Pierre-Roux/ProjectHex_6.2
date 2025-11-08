@@ -11,8 +11,12 @@ public abstract class Effect
     [SerializeField] public ActionnerType actionnerType;
     [SerializeField] public Events Events;
     [SerializeField] public bool HollowEffect;
+    [SerializeField] public bool PayXEffect;
     [SerializeField] public int MultiHit;
     [SerializeField] public EventReference SFX;
+
+    [Header("For Select Event")]
+    [SerializeField] public int ActivateNumber = 1;
 
     [Header("Enemy_Only")]
     [SerializeField] public String Intent_Title;
@@ -23,19 +27,16 @@ public abstract class Effect
     [SerializeField] public int Duration;
     [SerializeField] public Events DurationType;
     [SerializeField] public bool TriggerOnDurationEnd;
-    [SerializeField] public bool CancelOnDeath;
+    [SerializeField] public bool CancelOnDeath = true;
 
     [Header("On Condition Effect")]
-    public DynamicCondition DynamicCondition;
-    public int TestValue;
-    public DynamicAmount TestDynamicAmount;
-    public PermaTypes TestType;
+    [field: SerializeReference, SR] public List<DynamicConditionInfo> DynamicConditionInfos;
 
+    [Header("Linked Effect")]
     [field: SerializeReference, SR] public Effect LinkedEffect;
 
-
     [HideInInspector] public virtual List<TargetLimitationInfo> EffectTargetLimitations => null;
-    [HideInInspector] public virtual TargetMode EffectTargetMode => TargetMode.Null;
+    [HideInInspector] public virtual TargetModeInfo EffectTargetModeInfo => null;
     [HideInInspector] public virtual int EffectTargetNumber => 0;
     [HideInInspector] public virtual bool EffectTargetUpTo => true;
     [HideInInspector] public GameObject Actionner;
@@ -44,13 +45,15 @@ public abstract class Effect
     [HideInInspector] public List<EnemySlotView> TargetForLinked_Enemy;
     [HideInInspector] public List<Card> TargetForLinked_Card;
     [HideInInspector] public Effect ParentEffect;
+    [HideInInspector] public int PayXValue;
+    [HideInInspector] public int ActivateLeft;
 
     [HideInInspector] public bool BypassEntryCondition = false;
     [HideInInspector] public string EffectID;
 
     protected Effect()
     {
-        // Génère un identifiant unique si non encore défini
+        // Génère un identifiant unique
         if (string.IsNullOrEmpty(EffectID))
             EffectID = System.Guid.NewGuid().ToString();
     }

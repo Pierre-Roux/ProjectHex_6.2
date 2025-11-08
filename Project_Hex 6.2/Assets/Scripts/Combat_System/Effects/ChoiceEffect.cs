@@ -9,6 +9,7 @@ public class ChoiceEffect : Effect
 {
     [Header ("For player choice")]
     [SerializeField] bool PlayerChoice;
+    [SerializeField] bool MayChoice;
     [field: SerializeReference, SR] public List<Effect> EffectsForPlayerChoice;
 
     [Header ("For non player choice")]
@@ -19,43 +20,42 @@ public class ChoiceEffect : Effect
     {
         if (PlayerChoice)
         {
-            if (Actionner != null)
-            {
-                if (Actionner.GetComponent<PermanentView>() != null)
-                {
-                    LetChoiceGA letChoiceGA = new(EffectsForPlayerChoice, Actionner.GetComponent<PermanentView>().CardReferenceArchive, Actionner);
-                    return letChoiceGA;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else if (CardActionner != null)
-            {
-                LetChoiceGA letChoiceGA = new(EffectsForPlayerChoice, CardActionner);
-                return letChoiceGA;
-            }
-            else
-            {
-                return null;
-            }      
+            LetChoiceGA letChoiceGA = new(EffectsForPlayerChoice,false,MayChoice);
+            return letChoiceGA; 
         }
         else
         {
-            TestConditionGA testConditionGA = new(DynamicCondition, EffectOnTrue, EffectOnFalse, TestValue, TestDynamicAmount);
-            return testConditionGA;
+            if (Actionner == null)
+            {
+                if (ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, null, null))
+                {
+                    return EffectOnTrue.GetGameAction();
+                }
+                else
+                {
+                    return EffectOnFalse.GetGameAction();
+                }
+            }
+            else
+            {
+                if (ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
+                {
+                    return EffectOnTrue.GetGameAction();
+                }
+                else
+                {
+                    return EffectOnFalse.GetGameAction();
+                }
+            }
         }        
     }
 
     public ChoiceEffect() { }
 
-    public ChoiceEffect(int value,PermaTypes testType, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx, DynamicCondition dynamicCondition, Effect effectOnTrue, Effect effectOnFalse, bool playerChoice, List<Effect> effectsForPlayerChoice)
+    public ChoiceEffect(List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx, Effect effectOnTrue, Effect effectOnFalse, bool playerChoice,bool mayChoice, List<Effect> effectsForPlayerChoice)
     {
         Events = Event;
-        TestValue = value;
-        TestDynamicAmount = dynamicAmount;
-        TestType = testType;
+        DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
         actionnerType = ActionnerType;
         Actionner = actionner;
@@ -68,11 +68,10 @@ public class ChoiceEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        TestDynamicAmount = dynamicAmount;
-        DynamicCondition = dynamicCondition;
         EffectOnTrue = effectOnTrue;
         EffectOnFalse = effectOnFalse;
         PlayerChoice = playerChoice;
+        MayChoice = mayChoice;
         EffectsForPlayerChoice = effectsForPlayerChoice;
         SFX = sfx;
     }
@@ -96,8 +95,7 @@ public class ChoiceEffect : Effect
         }
 
         return new ChoiceEffect(
-            TestValue,
-            TestType,
+            DynamicConditionInfos,
             actionnerType,
             Events,
             CancelOnDeath,
@@ -111,12 +109,11 @@ public class ChoiceEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            TestDynamicAmount,
             SFX,
-            DynamicCondition,
             EffectOnTrue,
             EffectOnFalse,
             PlayerChoice,
+            MayChoice,
             ClonedChoiceEffects
         );
     }

@@ -10,11 +10,13 @@ public class LifeLossEffect : Effect
     [Header("Effect Param")]
 
     [SerializeField] public int LifeLossAmount;
+    [SerializeField] public int multiplyAmount = 1;
     [SerializeField] public DynamicAmount DynamicAmount;
-    [SerializeField] public TargetMode targetMode;
+    [SerializeField] public TargetModeInfo targetModeInfo;
+    [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
     [Header("For Manual Target only")]
-    [SerializeField] private bool TargetUpTo;
+    [SerializeField] private bool TargetUpTo = true;
     public override bool EffectTargetUpTo => TargetUpTo;
 
     [SerializeField] private int targetNumber;
@@ -25,15 +27,17 @@ public class LifeLossEffect : Effect
 
     public LifeLossEffect() { }
 
-    public LifeLossEffect(int lifeLossAmount, int multiHit, int testValue,DynamicCondition dynamicCondition, DynamicAmount testDynamicAmount,PermaTypes testType, TargetMode TargetMode, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
+    public LifeLossEffect(int lifeLossAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
     {
         LifeLossAmount = lifeLossAmount;
+        multiplyAmount = MultiplyAmount;
+        PayXEffect = payXEffect;
+        PayXValue = payXValue;
         MultiHit = multiHit;
-        targetMode = TargetMode;
-        TestValue = testValue;
-        TestDynamicAmount = testDynamicAmount;
-        DynamicCondition = dynamicCondition;
-        TestType = testType;
+        ActivateNumber = activateNumber;
+        ActivateLeft = activateLeft;
+        targetModeInfo = TargetModeInfo;
+        DynamicConditionInfos = dynamicConditionInfos;
         targetNumber = TargetNumber;
         TargetUpTo = targetUpTo;
         targetLimitations = TargetLimitations;
@@ -58,46 +62,56 @@ public class LifeLossEffect : Effect
     {
         if (!BypassEntryCondition)
         {
-            if (DynamicCondition != DynamicCondition.NULL)
+            if (DynamicConditionInfos.Count != 0)
             {
                 if (Actionner == null)
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, null, null))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, null, null))
                     {
                         return null;
                     }
                 }
                 else
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
                     {
                         return null;
                     }
                 }
             }
         }
+
+        if (PayXValue != 0)
+        {
+            DynamicAmount = DynamicAmount.NULL;
+            LifeLossAmount = PayXValue;
+        }
+
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-            if (targetMode == TargetMode.Manual)
+            if (targetModeInfo.targetMode == TargetMode.Manual)
             {
-                LifeLossGA lifeLossGA = new(LifeLossAmount, DynamicAmount, null, null);
+                LifeLossGA lifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, null, null);
+                lifeLossGA.CardActionner = CardActionner;
                 if (AudioManager.Instance.IsValid(SFX)) { lifeLossGA.SFX = SFX; }
                 StartManualTargetingGA startManualTargetingGA = new(lifeLossGA, targetNumber,TargetUpTo, this,targetLimitations);
                 return startManualTargetingGA;
             }
-            else if (targetMode == TargetMode.EffectParent_Targets)
+            else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                LifeLossGA lifeLossGA = new(LifeLossAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                LifeLossGA lifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                lifeLossGA.CardActionner = CardActionner;
                 if (AudioManager.Instance.IsValid(SFX)) { lifeLossGA.SFX = SFX; }
                 return lifeLossGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
-                LifeLossGA lifeLossGA = new(LifeLossAmount, DynamicAmount, playerTargets, enemyTargets);
+                LifeLossGA lifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                lifeLossGA.CardActionner = CardActionner;
                 if (AudioManager.Instance.IsValid(SFX)) { lifeLossGA.SFX = SFX; }
                 return lifeLossGA;
             }
@@ -106,9 +120,9 @@ public class LifeLossEffect : Effect
         {
             if (actionnerType == ActionnerType.ENEMY)
             {
-                if (targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount, DynamicAmount, null, null);
+                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, null, null);
                     enemyLifeLossGA.Actionner = Actionner;
                     if (AudioManager.Instance.IsValid(SFX)) { enemyLifeLossGA.SFX = SFX; }
                     StartManualTargetingGA startManualTargetingGA = new(enemyLifeLossGA, targetNumber,TargetUpTo, this,targetLimitations);
@@ -119,20 +133,20 @@ public class LifeLossEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetMode == TargetMode.EffectParent_Targets)
+                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount, DynamicAmount, playerTargets, enemyTargets);
+                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     enemyLifeLossGA.Actionner = Actionner;
                     if (AudioManager.Instance.IsValid(SFX)) { enemyLifeLossGA.SFX = SFX; }
                     return enemyLifeLossGA;
@@ -140,9 +154,9 @@ public class LifeLossEffect : Effect
             }
             else if (actionnerType == ActionnerType.PLAYER)
             {
-                if (targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount, DynamicAmount, null, null);
+                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, null, null);
                     playerLifeLossGA.Actionner = Actionner;
                     if (AudioManager.Instance.IsValid(SFX)) { playerLifeLossGA.SFX = SFX; }
                     StartManualTargetingGA startManualTargetingGA = new(playerLifeLossGA, targetNumber,TargetUpTo, this,targetLimitations);
@@ -153,20 +167,20 @@ public class LifeLossEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetMode == TargetMode.EffectParent_Targets)
+                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount, DynamicAmount, playerTargets, enemyTargets);
+                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     playerLifeLossGA.Actionner = Actionner;
                     if (AudioManager.Instance.IsValid(SFX)) { playerLifeLossGA.SFX = SFX; }
                     return playerLifeLossGA;
@@ -194,12 +208,14 @@ public class LifeLossEffect : Effect
 
         return new LifeLossEffect(
             LifeLossAmount,
+            multiplyAmount,
+            PayXEffect,
+            PayXValue,
             MultiHit,
-            TestValue,
-            DynamicCondition,
-            TestDynamicAmount,
-            TestType,
-            targetMode,
+            ActivateNumber,
+            ActivateLeft,
+            DynamicConditionInfos,
+            targetModeInfo,
             targetLimitations,
             targetNumber,
             TargetUpTo,

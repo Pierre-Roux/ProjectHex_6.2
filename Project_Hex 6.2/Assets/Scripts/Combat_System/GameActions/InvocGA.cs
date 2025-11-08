@@ -5,13 +5,15 @@ using UnityEngine;
 public class InvocGA : GameAction
 {
     public int Amount { get; set; }
+    public int multiplyAmount { get; set; }
     public DynamicAmount DynamicAmount;
     public List<CardData> CardsToInvoc;
     public List<EnemyPermanentData> EnemyToInvoc;
 
-    public InvocGA(int amount, DynamicAmount dynamicAmount, List<CardData> cardsToInvoc = null, List<EnemyPermanentData> enemyToInvoc = null)
+    public InvocGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, List<CardData> cardsToInvoc = null, List<EnemyPermanentData> enemyToInvoc = null)
     {
         Amount = amount;
+        multiplyAmount = MultiplyAmount;
         DynamicAmount = dynamicAmount;
         CardsToInvoc = cardsToInvoc;
         EnemyToInvoc = enemyToInvoc;

@@ -5,11 +5,12 @@ using UnityEngine;
 public class LetChoiceGA : GameAction
 {
     public List<Effect> ChoicesEffects;
-    public Card CardVisual;
-    public LetChoiceGA(List<Effect> choicesEffects, Card cardVisual,GameObject actionner = null)
+    public bool OnSelectMode;
+    public bool MayChoice;
+    public LetChoiceGA(List<Effect> choicesEffects, bool onSelectMode = false, bool mayChoice = false)
     {
         ChoicesEffects = choicesEffects;
-        CardVisual = cardVisual;
-        Actionner = actionner;
+        OnSelectMode = onSelectMode;
+        MayChoice = mayChoice;
     }
 }

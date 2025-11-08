@@ -8,10 +8,11 @@ using SerializeReferenceEditor;
 public class ShieldEffect : Effect
 {
     [Header("Effect Param")]
-    [SerializeField] public TargetMode targetMode;
+    [SerializeField] public TargetModeInfo targetModeInfo;
+    [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
     [Header("For Manual Target only")]
-    [SerializeField] private bool TargetUpTo;
+    [SerializeField] private bool TargetUpTo = true;
     public override bool EffectTargetUpTo => TargetUpTo;
 
     [SerializeField] private int targetNumber;
@@ -22,18 +23,17 @@ public class ShieldEffect : Effect
 
     public ShieldEffect() { }
 
-    public ShieldEffect(TargetMode TargetMode, int testValue,DynamicCondition dynamicCondition, DynamicAmount testDynamicAmount,PermaTypes testType, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
+    public ShieldEffect(int activateNumber, int activateLeft,TargetModeInfo TargetModeInfo, List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
     {
-        targetMode = TargetMode;
+        ActivateNumber = activateNumber;
+        ActivateLeft = activateLeft;
+        targetModeInfo = TargetModeInfo;
         targetNumber = TargetNumber;
         TargetUpTo = targetUpTo;
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         Events = Event;
-        TestValue = testValue;
-        TestDynamicAmount = testDynamicAmount;
-        DynamicCondition = dynamicCondition;
-        TestType = testType;
+        DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         CardActionner = cardActionner;
@@ -52,18 +52,18 @@ public class ShieldEffect : Effect
     {
         if (!BypassEntryCondition)
         {
-            if (DynamicCondition != DynamicCondition.NULL)
+            if (DynamicConditionInfos.Count != 0)
             {
                 if (Actionner == null)
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, null, null))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, null, null))
                     {
                         return null;
                     }
                 }
                 else
                 {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicCondition, TestDynamicAmount, TestValue, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
                     {
                         return null;
                     }
@@ -73,14 +73,14 @@ public class ShieldEffect : Effect
         // SI CARTE
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-            if (targetMode == TargetMode.Manual)
+            if (targetModeInfo.targetMode == TargetMode.Manual)
             {
                 ShieldGA shieldGA = new(null, null);
                 if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
                 StartManualTargetingGA startManualTargetingGA = new(shieldGA, targetNumber,TargetUpTo, this,targetLimitations);
                 return startManualTargetingGA;
             }
-            else if (targetMode == TargetMode.EffectParent_Targets)
+            else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 ShieldGA shieldGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
@@ -88,7 +88,7 @@ public class ShieldEffect : Effect
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
@@ -103,7 +103,7 @@ public class ShieldEffect : Effect
             // SI ENEMY
             if (actionnerType == ActionnerType.ENEMY && Actionner != null)
             {
-                if (targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
                     ShieldEnemyGA shieldEnemyGA = new(null, null);
                     shieldEnemyGA.Actionner = Actionner;
@@ -116,14 +116,14 @@ public class ShieldEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetMode == TargetMode.EffectParent_Targets)
+                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
@@ -137,7 +137,7 @@ public class ShieldEffect : Effect
             // SI PLAYER
             else if (actionnerType == ActionnerType.PLAYER && Actionner != null)
             {
-                if (targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
                     ShieldPlayerGA shieldPlayerGA = new(null, null);
                     shieldPlayerGA.Actionner = Actionner;
@@ -150,14 +150,14 @@ public class ShieldEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetMode == TargetMode.EffectParent_Targets)
+                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetMode, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
@@ -190,11 +190,10 @@ public class ShieldEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new ShieldEffect(
-            targetMode,
-            TestValue,
-            DynamicCondition,
-            TestDynamicAmount,
-            TestType,
+            ActivateNumber,
+            ActivateLeft,
+            targetModeInfo,
+            DynamicConditionInfos,
             targetLimitations,
             targetNumber,
             TargetUpTo,

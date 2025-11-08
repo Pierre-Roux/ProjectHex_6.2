@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Veil
   <Description>k__BackingField: shield core
   <cost>k__BackingField: 1
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 3
@@ -24,6 +25,7 @@ MonoBehaviour:
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <permanentArea>k__BackingField: 2
   UnShieldable: 1
+  UnTargetable: 0
   isInvoc: 0
   isArtillery: 0
   <IsSpell>k__BackingField: 0
@@ -155,6 +157,13 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  ActivateSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   SelectedSound:
     Guid:
       Data1: 0
@@ -180,6 +189,7 @@ MonoBehaviour:
         actionnerType: 0
         Events: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -194,18 +204,20 @@ MonoBehaviour:
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
         BypassEntryCondition: 0
         EffectID: adc89aa1-9aa5-450c-b6a0-381b020647d5
-        targetMode: 4
+        targetModeInfo:
+          targetMode: 2
+          PlayerOrEnemy: 1
+          permanentArea: 0
+          PermaType: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []

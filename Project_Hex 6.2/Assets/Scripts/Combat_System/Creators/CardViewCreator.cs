@@ -12,9 +12,12 @@ public class CardViewCreator : Singleton<CardViewCreator>
         cardView.transform.localScale = Vector3.zero;
         cardView.transform.DOScale(cardViewPrefab.transform.localScale, 0.15f);
         cardView.Setup(Card);
-        foreach (Effect effect in Card.Effects)
+        if (Card.Effects != null)
         {
-            effect.CardActionner = Card;
+            foreach (Effect effect in Card.Effects)
+            {
+                effect.CardActionner = Card;
+            }            
         }
         return cardView;
     }

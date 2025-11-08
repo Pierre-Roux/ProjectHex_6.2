@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class ManaSystem : Singleton<ManaSystem>
 {
@@ -8,6 +9,7 @@ public class ManaSystem : Singleton<ManaSystem>
     public int MAX_MANA;
     public int currentMana;
     public int Mana_Spent_Count;
+    public int PayXInitialMana;
 
     public void OnEnable()
     {
@@ -37,7 +39,7 @@ public class ManaSystem : Singleton<ManaSystem>
             gainManaGA.GainAmount = TargetSystem.Instance.GetDynamicAmount(gainManaGA.DynamicAmount);
         }
         currentMana += gainManaGA.GainAmount;
-        manaUI.UpdateManaText(currentMana);
+        UpdateManaText();
         yield return null;
     }
 
@@ -45,7 +47,7 @@ public class ManaSystem : Singleton<ManaSystem>
     {
         currentMana -= spendManaGA.Amount;
         Mana_Spent_Count += spendManaGA.Amount;
-        manaUI.UpdateManaText(currentMana);
+        UpdateManaText();
         yield return null;
     }
 
@@ -53,12 +55,31 @@ public class ManaSystem : Singleton<ManaSystem>
     {
         currentMana = MAX_MANA;
         Mana_Spent_Count = 0;
-        manaUI.UpdateManaText(currentMana);
+        UpdateManaText();
         yield return null;
     }
 
     public bool HasEnoughMana(int manacost)
     {
         return currentMana >= manacost;
+    }
+
+    public void UpdateManaText()
+    {
+        manaUI.UpdateManaText(currentMana);
+    }
+
+    public void VisualAddMana(int Amount)
+    {
+        currentMana += Amount;
+        Mana_Spent_Count += Amount;
+        UpdateManaText();
+    }
+    
+    public void VisualsubtractMana(int Amount)
+    {
+        currentMana -= Amount;
+        Mana_Spent_Count -= Amount;
+        UpdateManaText();
     }
 }

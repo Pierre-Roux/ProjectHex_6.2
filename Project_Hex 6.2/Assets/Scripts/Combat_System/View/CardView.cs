@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using FMODUnity;
@@ -36,6 +37,10 @@ public class CardView : MonoBehaviour
 
     [HideInInspector] public bool IsScryCard;
     [HideInInspector] public bool IsChoiceCard;
+    [HideInInspector] public bool IsInvalidChoice;
+    [HideInInspector] public bool IsPayXValidate;
+    [HideInInspector] public bool WhaitForPayX;
+    [HideInInspector] public int PayXValue;
     [HideInInspector] public Effect EffectHolder;
 
     public void Setup(Card card)
@@ -107,9 +112,17 @@ public class CardView : MonoBehaviour
     {
         if (!IsReward)
         {
-            if (IsChoiceCard)
+            if (IsChoiceCard && !IsInvalidChoice)
             {
-                CardSystem.Instance.EffectChoosed = EffectHolder;
+                if (EffectHolder != null)
+                {
+                    CardSystem.Instance.EffectChoosed = EffectHolder;
+                }
+                else
+                {
+                    ZZZ_EmptyEffect DoNothingEffect = new ZZZ_EmptyEffect();
+                    CardSystem.Instance.EffectChoosed = DoNothingEffect;
+                }
             }
             else
             {
@@ -130,123 +143,144 @@ public class CardView : MonoBehaviour
     {
         if (isDragging)
         {
-            if (IsScryCard)
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out hit, 10f, DropDeckLayer))
-                {
-                    isDragging = false;
-                    CardSystem.Instance.ScryCardViews.Remove(this);
-                    CardSystem.Instance.drawPile.PutTop(new[] { this.Card });
-                    Destroy(this.gameObject);
+            StartCoroutine(ManageMouseUp());
+        }
+    }
 
-                }
-                else if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out hit, 10f, DropDiscardLayer))
-                {
-                    isDragging = false;
-                    CardSystem.Instance.ScryCardViews.Remove(this);
-                    CardSystem.Instance.discardPile.PutTop(new[] { this.Card });
-                    Destroy(this.gameObject);
-                }
-                else
-                {
-                    isDragging = false;
-                    return;
-                }
+    public IEnumerator ManageMouseUp()
+    {
+        if (Card.PayX)
+        {
+            bool EffectCanceled = false;
+            yield return StartCoroutine(CardSystem.Instance.ManagePayX(false, (result) =>
+            {
+                EffectCanceled = result;
+            },null,this));
+
+            if (EffectCanceled)
+            {
+                returnCardToHand();
+                yield break;
+            }
+        }
+        if (IsScryCard)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out hit, 10f, DropDeckLayer))
+            {
+                isDragging = false;
+                CardSystem.Instance.ScryCardViews.Remove(this);
+                CardSystem.Instance.drawPile.PutTop(new[] { this.Card });
+                Destroy(this.gameObject);
+
+            }
+            else if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out hit, 10f, DropDiscardLayer))
+            {
+                isDragging = false;
+                CardSystem.Instance.ScryCardViews.Remove(this);
+                CardSystem.Instance.discardPile.PutTop(new[] { this.Card });
+                Destroy(this.gameObject);
             }
             else
             {
-                if (ManaSystem.Instance.HasEnoughMana(Card.cost))
+                isDragging = false;
+                yield break;
+            }
+        }
+        else
+        {
+            if (ManaSystem.Instance.HasEnoughMana(Card.cost))
+            {
+                if (Card.IsSpell)
                 {
-                    if (Card.IsSpell)
+                    if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit hit, 10f, DropAreaLayer))
                     {
-                        if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit hit, 10f, DropAreaLayer))
+                        foreach (var effect in Card.Effects)
                         {
-                            foreach (var effect in Card.Effects)
+                            if (effect?.EffectTargetLimitations != null && effect.EffectTargetLimitations.Count > 0)
                             {
-                                if (effect?.EffectTargetLimitations != null && effect.EffectTargetLimitations.Count > 0)
+                                if (effect.MultiHit < 1) effect.MultiHit = 1;
+                                if (!TargetSystem.Instance.limitationHasEnoughtTarget(effect.EffectTargetLimitations, effect.EffectTargetNumber, effect.MultiHit))
                                 {
-                                    if (effect.MultiHit < 1) effect.MultiHit = 1;
-                                    if (!TargetSystem.Instance.limitationHasEnoughtTarget(effect.EffectTargetLimitations, effect.EffectTargetNumber, effect.MultiHit))
-                                    {
-                                        returnCardToHand(true);
-                                        return;
-                                    }
+                                    returnCardToHand(true);
+                                    yield break;
                                 }
                             }
-
-                            isDragging = false;
-                            PlayCardGA playCardGA = new(Card);
-                            playCardGA.CardActionner = Card;
-                            ActionSystem.Instance.Perform(playCardGA);
-                            CombatSystem.Instance.SpellCast_This_Turn++;
                         }
-                        else
+
+                        isDragging = false;
+                        PlayCardGA playCardGA = new(Card);
+                        playCardGA.CardActionner = Card;
+                        ActionSystem.Instance.Perform(playCardGA);
+                        CombatSystem.Instance.SpellCast_This_Turn++;
+                    }
+                    else
+                    {
+                        returnCardToHand();
+                    }
+                }
+                else
+                {
+                    if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit hit, 10f, DropAreaLayer))
+                    {
+                        GameObject Parent = null;
+                        switch (Card.permanentArea)
                         {
-                            returnCardToHand();
+                            case PermanentArea.Weapon:
+                                Parent = CombatSystem.Instance.PlayerWeaponZone.gameObject;
+                                break;
+                            case PermanentArea.Shield:
+                                Parent = CombatSystem.Instance.PlayerShieldZone.gameObject;
+                                break;
+                            case PermanentArea.Support:
+                                Parent = CombatSystem.Instance.PlayerSupportZone.gameObject;
+                                break;
+                            default:
+                                Debug.LogError("No Type For Perm " + Card.data.name);
+                                break;
+                        }
+                        if (Parent != null)
+                        {
+                            int childCount = Parent.transform.childCount;
+                            if (childCount >= CombatSystem.Instance.MaxPermPlayer)
+                            {
+                                // LimitReached
+                                returnCardToHand(true);
+                            }
+                            else
+                            {
+                                foreach (var effect in Card.Effects)
+                                {
+                                    if (effect?.EffectTargetLimitations != null && effect.EffectTargetLimitations.Count > 0)
+                                    {
+                                        if (effect.MultiHit < 1) effect.MultiHit = 1;
+                                        if (!TargetSystem.Instance.limitationHasEnoughtTarget(effect.EffectTargetLimitations, effect.EffectTargetNumber, effect.MultiHit))
+                                        {
+                                            returnCardToHand(true);
+                                            yield break;
+                                        }
+                                    }
+                                }
+                                isDragging = false;
+                                SummonGA summonGA = new(Card);
+                                ActionSystem.Instance.Perform(summonGA);
+                                CombatSystem.Instance.PermanentCast_This_Turn++;
+                            }
                         }
                     }
                     else
                     {
-                        if (Physics.Raycast(transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit hit, 10f, DropAreaLayer))
-                        {
-                            GameObject Parent = null;
-                            switch (Card.permanentArea)
-                            {
-                                case PermanentArea.Weapon:
-                                    Parent = CombatSystem.Instance.PlayerWeaponZone.gameObject;
-                                    break;
-                                case PermanentArea.Shield:
-                                    Parent = CombatSystem.Instance.PlayerShieldZone.gameObject;
-                                    break;
-                                case PermanentArea.Support:
-                                    Parent = CombatSystem.Instance.PlayerSupportZone.gameObject;
-                                    break;
-                                default:
-                                    Debug.LogError("No Type For Perm " + Card.data.name);
-                                    break;
-                            }
-                            if (Parent != null)
-                            {
-                                int childCount = Parent.transform.childCount;
-                                if (childCount >= CombatSystem.Instance.MaxPermPlayer)
-                                {
-                                    // LimitReached
-                                    returnCardToHand(true);
-                                }
-                                else
-                                {
-                                    foreach (var effect in Card.Effects)
-                                    {
-                                        if (effect?.EffectTargetLimitations != null && effect.EffectTargetLimitations.Count > 0)
-                                        {
-                                            if (effect.MultiHit < 1) effect.MultiHit = 1;
-                                            if (!TargetSystem.Instance.limitationHasEnoughtTarget(effect.EffectTargetLimitations, effect.EffectTargetNumber,effect.MultiHit))
-                                            {
-                                                returnCardToHand(true);
-                                                return;
-                                            }
-                                        }
-                                    }
-                                    isDragging = false;
-                                    SummonGA summonGA = new(Card);
-                                    ActionSystem.Instance.Perform(summonGA);
-                                    CombatSystem.Instance.PermanentCast_This_Turn++;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            returnCardToHand();
-                        }
+                        returnCardToHand();
                     }
                 }
-                else
-                {
-                    returnCardToHand(true);
-                }
+            }
+            else
+            {
+                returnCardToHand(true);
             }
         }
+
+        yield return null;
     }
 
     public void returnCardToHand(bool ErrorSound = false)
@@ -269,7 +303,7 @@ public class CardView : MonoBehaviour
 
     void Update()
     {
-        if (isDragging)
+        if (isDragging && !WhaitForPayX)
         {
             if (IsScryCard)
             {
@@ -282,7 +316,7 @@ public class CardView : MonoBehaviour
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mousePos.z = 0;
                 transform.DOMove(mousePos, 0.25f).SetEase(Ease.OutCubic);
-            }
+            }                
         }
     }
 
@@ -297,7 +331,15 @@ public class CardView : MonoBehaviour
         if (SoundUp)
         {
             PermanentSpriteRenderer.color = Color.white;
-            RuntimeManager.PlayOneShot(UnSelectedSound);            
+            RuntimeManager.PlayOneShot(UnSelectedSound);
         }
+    }
+
+    public void UnvalidChoiceCard()
+    {
+        IsInvalidChoice = true;
+        Color c = PermanentSpriteRenderer.color;
+        c.a = 0.3f;
+        PermanentSpriteRenderer.color = c;
     }
 }

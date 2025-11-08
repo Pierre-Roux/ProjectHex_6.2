@@ -26,7 +26,7 @@ public class DataBase : Singleton<DataBase>
     [HideInInspector] public float MasterVolume;
 
     //For fight
-    public bool IsElite;
+    [HideInInspector] public bool IsElite;
     [HideInInspector] public int CoreLife;
     [HideInInspector] public int BaseCoreLife;
 

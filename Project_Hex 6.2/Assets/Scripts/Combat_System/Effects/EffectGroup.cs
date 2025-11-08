@@ -12,13 +12,12 @@ public class EffectGroup : Effect
 
     public EffectGroup() { }
 
-    public EffectGroup(List<Effect> effectGroup, int testValue,DynamicCondition dynamicCondition, DynamicAmount testDynamicAmount,PermaTypes testType, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
+    public EffectGroup(int activateNumber, int activateLeft,List<Effect> effectGroup,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
     {
         EffectGroups = effectGroup;
-        TestValue = testValue;
-        TestDynamicAmount = testDynamicAmount;
-        DynamicCondition = dynamicCondition;
-        TestType = testType;
+        ActivateNumber = activateNumber;
+        ActivateLeft = activateLeft;
+        DynamicConditionInfos = dynamicConditionInfos;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
         Events = Event;
@@ -59,11 +58,10 @@ public class EffectGroup : Effect
         }
 
         return new EffectGroup(
+            ActivateNumber,
+            ActivateLeft,
             ClonedEffectGroup,
-            TestValue,
-            DynamicCondition,
-            TestDynamicAmount,
-            TestType,
+            DynamicConditionInfos,
             actionnerType,
             Events,
             CancelOnDeath,

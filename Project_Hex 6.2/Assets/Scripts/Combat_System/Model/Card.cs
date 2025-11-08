@@ -17,6 +17,8 @@ public class Card
 
     public bool IsSpell { get; private set; }
     public int cost { get; private set; }
+    public bool PayX { get; private set; }
+    public int PayXValue;
     public int life { get; private set; }
     public int Shield { get; private set; }
     public int Durability { get; set; }
@@ -55,6 +57,7 @@ public class Card
     {
         data = cardData;
         cost = cardData.cost;
+        PayX = cardData.PayX;
         IsSpell = cardData.IsSpell;
         Money_Cost = data.Money_Cost;
         isInvoc = data.isInvoc;

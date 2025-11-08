@@ -52,12 +52,11 @@ public class EnemySlotView : MonoBehaviour
 
     [HideInInspector] public bool UnTargetable;
     [HideInInspector] public bool Shielded;
-    [HideInInspector] public bool Activated;
 
     [HideInInspector] public bool RDMSequence;
     [HideInInspector] public List<string> IntentSequence = new List<string>();
     [HideInInspector] public bool LoopingSequence;
-    private int sequenceIndex = 0;
+    public int sequenceIndex = 0;
     public void setup()
     {
         PossibleIntent = PermanentData.PossibleIntent;
@@ -82,7 +81,7 @@ public class EnemySlotView : MonoBehaviour
 
         if (IsCore)
         {
-            permanentArea = PermanentArea.none;
+            permanentArea = PermanentArea.NONE;
         }
         else
         {
@@ -200,11 +199,11 @@ public class EnemySlotView : MonoBehaviour
             case DealDamageEffect dmg:
                 int damagetext = CalculateBonusPower(dmg.damageAmount);
 
-                intentText = $"Deal {damagetext} damage to {dmg.targetMode}";
+                intentText = $"Deal {damagetext} damage to {dmg.targetModeInfo.targetMode}";
                 break;
 
             case HealEffect heal:
-                intentText = $"Heal {heal.amount} HP to {heal.targetMode}";
+                intentText = $"Heal {heal.amount} HP to {heal.targetModeInfo.targetMode}";
                 break;
 
             case DrawCardsEffect draw:
@@ -212,11 +211,11 @@ public class EnemySlotView : MonoBehaviour
                 break;
 
             case ShieldEffect shield:
-                intentText = $"Shield {shield.targetMode} ";
+                intentText = $"Shield {shield.targetModeInfo.targetMode} ";
                 break;
 
             case AlterPowerEffect alter:
-                intentText = $"Alter power by {alter.alterAmount} of {alter.targetMode}";
+                intentText = $"Alter power by {alter.alterAmount} of {alter.targetModeInfo.targetMode}";
                 break;
         }
 
@@ -320,8 +319,16 @@ public class EnemySlotView : MonoBehaviour
         if (Amount <= 0) return;
         if (!IsDead)
         {
+            TriggerEventGA triggerEventGA;
+            if (IsCore)
+            {
+                triggerEventGA = new(Events.WhenECoreDamaged,null,null,this);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+            }
             transform.DOShakePosition(0.2f, 0.5f);
-            TriggerEventGA triggerEventGA = new(Events.OnDamaged,null,null,this);
+            triggerEventGA = new(Events.WhenPermaDamaged,null,null,this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+            triggerEventGA = new(Events.OnDamaged,null,null,this);
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
@@ -523,10 +530,13 @@ public class EnemySlotView : MonoBehaviour
     
     public void Refresh()
     {
-        if (Activated)
+        foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,null,this))
         {
-            Activated = false;
-        }    
+            if (effect.Events == Events.OnSelect)
+            {
+                effect.ActivateLeft = effect.ActivateNumber;
+            }
+        }
     }
 
     public void ActiveSelectEffect()

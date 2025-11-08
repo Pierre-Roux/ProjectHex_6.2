@@ -58,55 +58,7 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
         ShieldZone.RepositionChildrenPermanentView();
         SupportZone.RepositionChildrenPermanentViewCenterOut();
 
-        foreach (var effect in cardReference.Effects)
-        {
-            int MultiHit = effect.MultiHit;
-            if (MultiHit < 1) MultiHit = 1;
-            for (int i = 0; i < MultiHit; i++)
-            {
-                // Vérifie Hollow
-                bool canApply = (PermanentView.permaTypes.Contains(PermaTypes.Hollow) && effect.HollowEffect)
-                            || (!PermanentView.permaTypes.Contains(PermaTypes.Hollow) && !effect.HollowEffect);
-                if (!canApply) continue;
-
-                // On démarre par l’effet cloné
-                Effect clonedEffect = effect.Clone();
-
-                while (clonedEffect != null)
-                {
-                    if (clonedEffect.Events == Events.Instant)
-                    {
-                        clonedEffect.Actionner = PermanentView.gameObject;
-                        DoEffectGA performEffectGA = new(clonedEffect);
-                        ActionSystem.Instance.AddReaction(performEffectGA);
-                    }
-                    else
-                    {
-                        if (clonedEffect.Events != Events.EnemyTurn &&
-                            clonedEffect.Events != Events.Instant)
-                        {
-                            //Debug.Log("Register " + clonedEffect);
-                            GameEventSystem.Instance.AddEffectToEvent(clonedEffect);
-                        }
-                    }
-
-                    clonedEffect.Actionner = PermanentView.gameObject;
-
-                    if (clonedEffect.Events != Events.OnActivate)
-                    {
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-                        clonedEffect = clonedEffect.LinkedEffect;
-                    }
-                    else
-                    {
-                        clonedEffect = null;
-                    }
-                }
-            }
-        }
+        GameEventSystem.Instance.ManageEffects(null, PermanentView, null);
 
         TriggerEventGA triggerEventGA = new(Events.WhenPermaETB,null,PermanentView,null);
         ActionSystem.Instance.AddReaction(triggerEventGA);

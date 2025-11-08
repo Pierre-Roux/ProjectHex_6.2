@@ -9,7 +9,7 @@ public class EnemySlotViewCreator : Singleton<EnemySlotViewCreator>
     [HideInInspector] public EnemyZoneView WeaponZone;
     [HideInInspector] public EnemyZoneView ShieldZone;
     [HideInInspector] public EnemyZoneView SupportZone;
-    public EnemySlotView CreateEnemySlotViewCreator(EnemyPermanentData data, PermanentArea type, bool setup = false, EnemyView enemyView = null)
+    public EnemySlotView CreateEnemySlotViewCreator(EnemyPermanentData data, PermanentArea type, bool setup = false)
     {
         GameObject Parent = null;
         switch (type)
@@ -57,68 +57,11 @@ public class EnemySlotViewCreator : Singleton<EnemySlotViewCreator>
 
         if (setup == true)
         {
-            foreach (Effect effect in enemySlotView.PossibleIntent)
-            {
-                int MultiHit = effect.MultiHit;
-                if (MultiHit < 1) MultiHit = 1;
-                for (int i = 0; i < MultiHit; i++)
-                {
-                    Effect clonedEffect = effect.Clone();
-
-                    while (clonedEffect != null)
-                    {
-                        if (clonedEffect.Events == Events.Instant)
-                        {
-                            clonedEffect.Actionner = enemySlotView.gameObject;
-                            if(effect.EffectTargetMode == TargetMode.Manual) TargetSystem.Instance.ActivateAuraForTargets(effect.EffectTargetLimitations);
-                            enemyView.SetupActions.Add(clonedEffect.GetGameAction());
-                        }
-
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-                        clonedEffect.Actionner = enemySlotView.gameObject;
-                        clonedEffect = clonedEffect.LinkedEffect;
-                    }
-                }
-            }
+            GameEventSystem.Instance.ManageEffects(null, null, enemySlotView, true);
         }
         else
         {
-            foreach (Effect effect in enemySlotView.PossibleIntent)
-            {
-                int MultiHit = effect.MultiHit;
-                if (MultiHit < 1) MultiHit = 1;
-                for (int i = 0; i < MultiHit; i++)
-                {
-                    Effect clonedEffect = effect.Clone();
-
-                    while (clonedEffect != null)
-                    {
-                        if (clonedEffect.Events == Events.Instant)
-                        {
-                            clonedEffect.Actionner = enemySlotView.gameObject;
-                            if(effect.EffectTargetMode == TargetMode.Manual) TargetSystem.Instance.ActivateAuraForTargets(effect.EffectTargetLimitations);
-                            ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
-                        }
-                        else
-                        {
-                            if (clonedEffect.Events != Events.EnemyTurn &&
-                                clonedEffect.Events != Events.Instant)
-                            {
-                                GameEventSystem.Instance.AddEffectToEvent(clonedEffect);
-                            }
-                        }
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-                        clonedEffect.Actionner = enemySlotView.gameObject;
-                        clonedEffect = clonedEffect.LinkedEffect;
-                    }
-                }
-            }
+            GameEventSystem.Instance.ManageEffects(null, null, enemySlotView);
         }
 
         TriggerEventGA triggerEventGA = new(Events.WhenPermaETB,null,null,enemySlotView);

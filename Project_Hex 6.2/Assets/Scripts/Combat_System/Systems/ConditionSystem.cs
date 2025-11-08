@@ -4,451 +4,342 @@ using UnityEngine;
 
 public class ConditionSystem : Singleton<ConditionSystem>
 {
-    void OnEnable()
+    public bool TestCondition(List<DynamicConditionInfo> DynamicConditionInfos, Card TestCard = null, PermanentView TestpermanentView = null, EnemySlotView TestenemySlotView = null)
     {
-        ActionSystem.AttachPerformer<TestConditionGA>(TestChoiceConditionPerformer);
-    }
-
-    void OnDisable()
-    {
-        ActionSystem.DetachPerformer<TestConditionGA>();
-    }
-    public IEnumerator TestChoiceConditionPerformer(TestConditionGA testConditionGA)
-    {
-        int Amount = 0;
-        if (testConditionGA.DynamicCondition != DynamicCondition.NULL)
+        foreach (DynamicConditionInfo Condition in DynamicConditionInfos)
         {
-            switch (testConditionGA.DynamicCondition)
+            int Amount;
+            bool ConditionResult;
+            if (Condition.DynamicCondition != DynamicCondition.NULL)
             {
-                case DynamicCondition.NoCardsInHands:
-                    if (CardSystem.Instance.hand.Count == 0)
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
-                case DynamicCondition.isHollow:
-                    if (testConditionGA.TestPermanentView.permaTypes.Contains(PermaTypes.Hollow))
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
-                case DynamicCondition.isDecay:
-                    if (testConditionGA.TestPermanentView.permaTypes.Contains(PermaTypes.Decay))
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
-                case DynamicCondition.isInvoc:
-                    if (testConditionGA.TestPermanentView.permaTypes.Contains(PermaTypes.Invoc))
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
-                case DynamicCondition.isArtillery:
-                    if (testConditionGA.TestPermanentView.permaTypes.Contains(PermaTypes.Artillery))
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
-                case DynamicCondition.ifYouControlHollow:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Hollow))
+                switch (Condition.DynamicCondition)
+                {
+                    case DynamicCondition.NoCardsInHands:
+                        if (CardSystem.Instance.hand.Count == 0)
                         {
-                            ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                            break;
+                            ConditionResult = true;
                         }
-                    }
-                    ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    break;
-                case DynamicCondition.ifYouControlDecay:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Decay))
+                        else
                         {
-                            ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                            break;
+                            ConditionResult = false;
                         }
-                    }
-                    ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    break;
-                case DynamicCondition.ifYouControlInvoc:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Invoc))
-                        {
-                            ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                            break;
-                        }
-                    }
-                    ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    break;
-                case DynamicCondition.ifYouControlArtillery:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Artillery))
-                        {
-                            ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                            break;
-                        }
-                    }
-                    ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    break;
-                case DynamicCondition.ValueSupToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(testConditionGA.TestDynamicAmount);
-                    if (testConditionGA.Value > Amount)
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
-                case DynamicCondition.ValueInfToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(testConditionGA.TestDynamicAmount);
-                    if (testConditionGA.Value < Amount)
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
+                        break;
 
-                case DynamicCondition.ValueSupOrEqualsToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(testConditionGA.TestDynamicAmount);
-                    if (testConditionGA.Value >= Amount)
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
+                    case DynamicCondition.isHollow:
+                        if (TestpermanentView != null)
+                        {
+                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Hollow))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Hollow))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
 
-                case DynamicCondition.ValueInfOrEqualsToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(testConditionGA.TestDynamicAmount);
-                    if (testConditionGA.Value <= Amount)
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnTrue.GetGameAction());
-                    }
-                    else
-                    {
-                        ActionSystem.Instance.AddReaction(testConditionGA.EffectOnFalse.GetGameAction());
-                    }
-                    break;
-                default:
-                    break;
+
+
+                    case DynamicCondition.isDecay:
+                        if (TestpermanentView != null)
+                        {
+                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Decay))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Decay))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+
+                    case DynamicCondition.isInvoc:
+                        if (TestpermanentView != null)
+                        {
+                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Invoc))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Invoc))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+
+                    case DynamicCondition.isArtillery:
+                        if (TestpermanentView != null)
+                        {
+                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Artillery))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Artillery))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifYouControlHollow:
+                        bool trueConditionFound1 = false;
+                        foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
+                        {
+                            if (item.permaTypes.Contains(PermaTypes.Hollow))
+                            {
+                                trueConditionFound1 = true;
+                            }
+                        }
+                        if (trueConditionFound1)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+
+                    case DynamicCondition.ifYouControlDecay:
+                        bool trueConditionFound2 = false;
+                        foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
+                        {
+                            if (item.permaTypes.Contains(PermaTypes.Decay))
+                            {
+                                trueConditionFound2 = true;
+                            }
+                        }
+                        if (trueConditionFound2)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifYouControlInvoc:
+                        bool trueConditionFound3 = false;
+                        foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
+                        {
+                            if (item.permaTypes.Contains(PermaTypes.Invoc))
+                            {
+                                trueConditionFound3 = true;
+                            }
+                        }
+                        if (trueConditionFound3)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifYouControlArtillery:
+                        bool trueConditionFound4 = false;
+                        foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
+                        {
+                            if (item.permaTypes.Contains(PermaTypes.Artillery))
+                            {
+                                trueConditionFound4 = true;
+                            }
+                        }
+                        if (trueConditionFound4)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifEventPermanentIsTypeOfTestType:
+                        if (TestpermanentView != null)
+                        {
+                            if (TestpermanentView.permaTypes.Contains(Condition.TestType))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            if (TestenemySlotView.permaTypes.Contains(Condition.TestType))
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifEventPermanentIsPlayer:
+                        if (TestpermanentView != null)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifEventPermanentIsEnemy:
+                        if (TestenemySlotView != null)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.DynamicAmountSupOrEqualsToValue:
+                        Amount = TargetSystem.Instance.GetDynamicAmount(Condition.TestDynamicAmount);
+                        if (Amount >= Condition.TestValue)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+
+                    case DynamicCondition.DynamicAmountInfOrEqualsToValue:
+                        Amount = TargetSystem.Instance.GetDynamicAmount(Condition.TestDynamicAmount);
+                        if (Amount <= Condition.TestValue)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+
+                    case DynamicCondition.DynamicAmountSupToValue:
+                        Amount = TargetSystem.Instance.GetDynamicAmount(Condition.TestDynamicAmount);
+                        if (Amount > Condition.TestValue)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+
+                    case DynamicCondition.DynamicAmountInfToValue:
+                        Amount = TargetSystem.Instance.GetDynamicAmount(Condition.TestDynamicAmount);
+                        if (Amount < Condition.TestValue)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    default:
+                        ConditionResult = false;
+                        break;
+                }
+            }
+            else
+            {
+                ConditionResult = true;
+            }
+
+            if (ConditionResult == false)
+            {
+                return false;
             }
         }
-        else
-        {
 
-        }
-        yield return null;
-    }
-
-    public bool TestCondition(DynamicCondition TestDynamicCondition, DynamicAmount TestDynamicAmount, int TestValue, Card TestCard = null, PermanentView TestpermanentView = null, EnemySlotView TestenemySlotView = null, PermaTypes TestType = PermaTypes.NULL)
-    {
-        int Amount = 0;
-        if (TestDynamicCondition != DynamicCondition.NULL)
-        {
-            switch (TestDynamicCondition)
-            {
-                case DynamicCondition.NoCardsInHands:
-                    if (CardSystem.Instance.hand.Count == 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                case DynamicCondition.isHollow:
-                    if (TestpermanentView != null)
-                    {
-                        if (TestpermanentView.permaTypes.Contains(PermaTypes.Hollow))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if (TestenemySlotView != null)
-                    {
-                        if (TestenemySlotView.permaTypes.Contains(PermaTypes.Hollow))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-
-                case DynamicCondition.isDecay:
-                    if (TestpermanentView != null)
-                    {
-                        if (TestpermanentView.permaTypes.Contains(PermaTypes.Decay))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if (TestenemySlotView != null)
-                    {
-                        if (TestenemySlotView.permaTypes.Contains(PermaTypes.Decay))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                case DynamicCondition.isInvoc:
-                    if (TestpermanentView != null)
-                    {
-                        if (TestpermanentView.permaTypes.Contains(PermaTypes.Invoc))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if (TestenemySlotView != null)
-                    {
-                        if (TestenemySlotView.permaTypes.Contains(PermaTypes.Invoc))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                case DynamicCondition.isArtillery:
-                    if (TestpermanentView != null)
-                    {
-                        if (TestpermanentView.permaTypes.Contains(PermaTypes.Artillery))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if (TestenemySlotView != null)
-                    {
-                        if (TestenemySlotView.permaTypes.Contains(PermaTypes.Artillery))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                case DynamicCondition.ifYouControlHollow:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Hollow))
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-
-
-                case DynamicCondition.ifYouControlDecay:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Decay))
-                        {
-                            return true;
-
-                        }
-                    }
-                    return false;
-
-                case DynamicCondition.ifYouControlInvoc:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Invoc))
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-
-                case DynamicCondition.ifYouControlArtillery:
-                    foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                    {
-                        if (item.permaTypes.Contains(PermaTypes.Artillery))
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-
-                case DynamicCondition.ifEventPermanentIsTypeOfTestType:
-                    if (TestpermanentView != null)
-                    {
-                        if (TestpermanentView.permaTypes.Contains(TestType))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if (TestenemySlotView != null)
-                    {
-                        if (TestenemySlotView.permaTypes.Contains(TestType))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                case DynamicCondition.ifEventPermanentIsPlayer:
-                    if (TestpermanentView != null)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                case DynamicCondition.ifEventPermanentIsEnemy:
-                    if (TestenemySlotView != null)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                case DynamicCondition.ValueSupToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(TestDynamicAmount);
-                    if (TestValue > Amount)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                case DynamicCondition.ValueInfToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(TestDynamicAmount);
-                    if (TestValue < Amount)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                case DynamicCondition.ValueSupOrEqualsToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(TestDynamicAmount);
-                    if (TestValue >= Amount)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                case DynamicCondition.ValueInfOrEqualsToDynamicAmount:
-                    Amount = TargetSystem.Instance.GetDynamicAmount(TestDynamicAmount);
-                    if (TestValue <= Amount)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                default:
-                    return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
+        return true;
     }
 }

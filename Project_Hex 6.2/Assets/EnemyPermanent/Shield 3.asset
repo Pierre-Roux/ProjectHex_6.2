@@ -18,6 +18,7 @@ MonoBehaviour:
   IsCore: 0
   IsInvoc: 0
   UnShieldable: 1
+  UnTargetable: 0
   permanentArea: 2
   DecayCounter: 0
   <PossibleIntent>k__BackingField:
@@ -102,6 +103,13 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  ActivateSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   SelectedSound:
     Guid:
       Data1: 0
@@ -127,6 +135,7 @@ MonoBehaviour:
         actionnerType: 1
         Events: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -141,18 +150,20 @@ MonoBehaviour:
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
         BypassEntryCondition: 0
         EffectID: 9164efbd-b988-4f0a-b8fe-8955beaccbf3
-        targetMode: 11
+        targetModeInfo:
+          targetMode: 2
+          PlayerOrEnemy: 2
+          permanentArea: 0
+          PermaType: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []

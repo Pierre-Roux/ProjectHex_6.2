@@ -15,7 +15,7 @@ public class SacEffect : Effect
     [SerializeField] private bool TargetUpTo = true;
     public override bool EffectTargetUpTo => TargetUpTo;
 
-    [SerializeField] private int targetNumber;
+    [SerializeField] private int targetNumber = 1;
     public override int EffectTargetNumber => targetNumber;
 
     [field: SerializeReference, SR] private List<TargetLimitationInfo> targetLimitations;
@@ -23,10 +23,12 @@ public class SacEffect : Effect
 
     public SacEffect() { }
 
-    public SacEffect(int activateNumber, int activateLeft,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
+    public SacEffect(string effectID, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         targetModeInfo = TargetModeInfo;
         DynamicConditionInfos = dynamicConditionInfos;
         targetNumber = TargetNumber;
@@ -46,6 +48,9 @@ public class SacEffect : Effect
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
         SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override GameAction GetGameAction()
@@ -77,14 +82,18 @@ public class SacEffect : Effect
             {
                 SacGA sacGA = new(null, null);
                 sacGA.CardActionner = CardActionner;
+                sacGA.SourceEffect = this;
+                sacGA.ActivateToolTip = false;
                 if (AudioManager.Instance.IsValid(SFX)) { sacGA.SFX = SFX; }
-                StartManualTargetingGA startManualTargetingGA = new(sacGA, targetNumber,TargetUpTo, this,targetLimitations);
+                StartManualTargetingGA startManualTargetingGA = new(sacGA, targetNumber, TargetUpTo, this, targetLimitations);
+                startManualTargetingGA.SourceEffect = this;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 SacGA sacGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 sacGA.CardActionner = CardActionner;
+                sacGA.SourceEffect = this;
                 if (AudioManager.Instance.IsValid(SFX)) { sacGA.SFX = SFX; }
                 return sacGA;
             }
@@ -96,6 +105,7 @@ public class SacEffect : Effect
 
                 SacGA sacGA = new(playerTargets, enemyTargets);
                 sacGA.CardActionner = CardActionner;
+                sacGA.SourceEffect = this;
                 if (AudioManager.Instance.IsValid(SFX)) { sacGA.SFX = SFX; }
                 return sacGA;
             }
@@ -110,8 +120,11 @@ public class SacEffect : Effect
                 {
                     SacEGA sacEGA = new(null, null);
                     sacEGA.Actionner = Actionner;
+                    sacEGA.SourceEffect = this;
+                    sacEGA.ActivateToolTip = false;
                     if (AudioManager.Instance.IsValid(SFX)) { sacEGA.SFX = SFX; }
-                    StartManualTargetingGA startManualTargetingGA = new(sacEGA, targetNumber,TargetUpTo, this,targetLimitations);
+                    StartManualTargetingGA startManualTargetingGA = new(sacEGA, targetNumber, TargetUpTo, this, targetLimitations);
+                    startManualTargetingGA.SourceEffect = this;
                     return startManualTargetingGA;
                 }
                 else
@@ -134,6 +147,7 @@ public class SacEffect : Effect
 
                     SacEGA sacEGA = new(playerTargets, enemyTargets);
                     sacEGA.Actionner = Actionner;
+                    sacEGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { sacEGA.SFX = SFX; }
                     return sacEGA;
                 }
@@ -145,8 +159,11 @@ public class SacEffect : Effect
                 {
                     SacPGA sacPGA = new(null, null);
                     sacPGA.Actionner = Actionner;
+                    sacPGA.SourceEffect = this;
+                    sacPGA.ActivateToolTip = false;
                     if (AudioManager.Instance.IsValid(SFX)) { sacPGA.SFX = SFX; }
-                    StartManualTargetingGA startManualTargetingGA = new(sacPGA, targetNumber,TargetUpTo, this,targetLimitations);
+                    StartManualTargetingGA startManualTargetingGA = new(sacPGA, targetNumber, TargetUpTo, this, targetLimitations);
+                    startManualTargetingGA.SourceEffect = this;
                     return startManualTargetingGA;
                 }
                 else
@@ -169,6 +186,7 @@ public class SacEffect : Effect
 
                     SacPGA sacPGA = new(playerTargets, enemyTargets);
                     sacPGA.Actionner = Actionner;
+                    sacPGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { sacPGA.SFX = SFX; }
                     return sacPGA;
                 }
@@ -195,8 +213,10 @@ public class SacEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new SacEffect(
+            EffectID,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             DynamicConditionInfos,
             targetModeInfo,
             targetLimitations,
@@ -215,7 +235,10 @@ public class SacEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

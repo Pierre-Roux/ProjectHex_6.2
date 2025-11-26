@@ -12,11 +12,13 @@ public class EffectGroup : Effect
 
     public EffectGroup() { }
 
-    public EffectGroup(int activateNumber, int activateLeft,List<Effect> effectGroup,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
+    public EffectGroup(string effectID, int activateNumber, int activateLeft, bool orChoice,List<Effect> effectGroup,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         EffectGroups = effectGroup;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         DynamicConditionInfos = dynamicConditionInfos;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
@@ -32,6 +34,9 @@ public class EffectGroup : Effect
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
         SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override GameAction GetGameAction()
@@ -58,8 +63,10 @@ public class EffectGroup : Effect
         }
 
         return new EffectGroup(
+            EffectID,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             ClonedEffectGroup,
             DynamicConditionInfos,
             actionnerType,
@@ -75,7 +82,10 @@ public class EffectGroup : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

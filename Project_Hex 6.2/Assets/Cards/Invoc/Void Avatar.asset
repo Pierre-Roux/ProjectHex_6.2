@@ -188,7 +188,10 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 21
+        Events: 14000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -199,6 +202,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -213,6 +218,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 140d72c4-cc28-486e-a207-d7cce917584a
         damageAmount: 4
@@ -225,6 +231,7 @@ MonoBehaviour:
           PermaType: 0
         TargetUpTo: 1
         targetNumber: 1
+        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 7119591904511000648
       type: {class: DynamicConditionInfo, ns: , asm: Assembly-CSharp}
@@ -232,4 +239,4 @@ MonoBehaviour:
         DynamicCondition: 13
         TestValue: 0
         TestDynamicAmount: 0
-        TestType: 1
+        TestType: 3

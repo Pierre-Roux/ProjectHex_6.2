@@ -188,7 +188,10 @@ MonoBehaviour:
       type: {class: SacEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 1
@@ -199,6 +202,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -212,6 +217,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: ca4df72e-42f7-4db4-b60a-2c7ecafe3a00
         targetModeInfo:
@@ -235,7 +241,10 @@ MonoBehaviour:
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -246,6 +255,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -259,6 +270,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 4a7ba4bb-dd5f-471b-8c81-4d3e1423f3fe
         drawAmount: 2

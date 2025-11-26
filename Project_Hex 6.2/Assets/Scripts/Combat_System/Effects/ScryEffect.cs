@@ -10,6 +10,39 @@ public class ScryEffect : Effect
     [SerializeField] public int multiplyAmount = 1;
     [SerializeField] public DynamicAmount DynamicAmount;
 
+    public ScryEffect(){}
+
+    public ScryEffect(string effectID, int Amount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    {
+        EffectID = effectID;
+        ScryAmount = Amount;
+        PayXEffect = payXEffect;
+        PayXValue = payXValue;
+        MultiHit = multiHit;
+        ActivateNumber = activateNumber;
+        ActivateLeft = activateLeft;
+        ORChoice = orChoice;
+        Events = Event;
+        DynamicConditionInfos = dynamicConditionInfos;
+        CancelOnDeath = cancelOnDeath;
+        actionnerType = ActionnerType;
+        Actionner = actionner;
+        CardActionner = cardActionner;
+        Intent_Title = intent_Title;
+        number = Number;
+        Duration = duration;
+        DurationType = durationType;
+        TriggerOnDurationEnd = triggerOnDurationEnd;
+        LinkedEffect = linkedEffect;
+        TargetForLinked_Player = targetForLinked_Player;
+        TargetForLinked_Enemy = targetForLinked_Enemy;
+        DynamicAmount = dynamicAmount;
+        SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
+    }
+
     public override GameAction GetGameAction()
     {
         if (!BypassEntryCondition)
@@ -42,56 +75,32 @@ public class ScryEffect : Effect
         ScryGA scryGA = new(ScryAmount,multiplyAmount, DynamicAmount);
         scryGA.CardActionner = CardActionner;
         scryGA.Actionner = Actionner;
+        scryGA.SourceEffect = this;
         if (AudioManager.Instance.IsValid(SFX)){ scryGA.SFX = SFX; }
         return scryGA;
-    }
-    public ScryEffect(){}
-
-    public ScryEffect(int Amount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
-    {
-        ScryAmount = Amount;
-        PayXEffect = payXEffect;
-        PayXValue = payXValue;
-        MultiHit = multiHit;
-        ActivateNumber = activateNumber;
-        ActivateLeft = activateLeft;
-        Events = Event;
-        DynamicConditionInfos = dynamicConditionInfos;
-        CancelOnDeath = cancelOnDeath;
-        actionnerType = ActionnerType;
-        Actionner = actionner;
-        CardActionner = cardActionner;
-        Intent_Title = intent_Title;
-        number = Number;
-        Duration = duration;
-        DurationType = durationType;
-        TriggerOnDurationEnd = triggerOnDurationEnd;
-        LinkedEffect = linkedEffect;
-        TargetForLinked_Player = targetForLinked_Player;
-        TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
-        SFX = sfx;
     }
 
     public override Effect Clone()
     {
-        var clonedPlayerTargets = TargetForLinked_Player != null 
-            ? new List<PermanentView>(TargetForLinked_Player) 
+        var clonedPlayerTargets = TargetForLinked_Player != null
+            ? new List<PermanentView>(TargetForLinked_Player)
             : null;
 
-        var clonedEnemyTargets = TargetForLinked_Enemy != null 
-            ? new List<EnemySlotView>(TargetForLinked_Enemy) 
+        var clonedEnemyTargets = TargetForLinked_Enemy != null
+            ? new List<EnemySlotView>(TargetForLinked_Enemy)
             : null;
 
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new ScryEffect(
+            EffectID,
             ScryAmount,
             PayXEffect,
             PayXValue,
             MultiHit,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             DynamicConditionInfos,
             actionnerType,
             Events,
@@ -107,7 +116,10 @@ public class ScryEffect : Effect
             clonedPlayerTargets,
             clonedEnemyTargets,
             DynamicAmount,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

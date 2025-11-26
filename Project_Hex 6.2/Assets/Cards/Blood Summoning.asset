@@ -188,7 +188,10 @@ MonoBehaviour:
       type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -199,33 +202,32 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: a7e95ad9-7333-4a59-b9d9-1ac67483f0cd
         LifeLossAmount: 2
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:
-          targetMode: 1
+          targetMode: 2
           PlayerOrEnemy: 1
           permanentArea: 0
           PermaType: 0
-          IntValue: -1
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
@@ -233,7 +235,10 @@ MonoBehaviour:
       type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -244,22 +249,22 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 12f09ff7-655e-455c-954b-aad252d2eebf
         amount: 1

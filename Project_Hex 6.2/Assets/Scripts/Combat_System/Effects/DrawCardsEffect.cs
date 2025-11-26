@@ -42,13 +42,15 @@ public class DrawCardsEffect : Effect
         DrawCardsGA drawCardsGA = new(drawAmount,multiplyAmount, DynamicAmount);
         drawCardsGA.Actionner = Actionner;
         drawCardsGA.CardActionner = CardActionner;
+        drawCardsGA.SourceEffect = this;
         if (AudioManager.Instance.IsValid(SFX)){ drawCardsGA.SFX = SFX; }
         return drawCardsGA;
     }
     public DrawCardsEffect(){}
 
-    public DrawCardsEffect(int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
+    public DrawCardsEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice ,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         drawAmount = Amount;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
@@ -56,6 +58,7 @@ public class DrawCardsEffect : Effect
         MultiHit = multiHit;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         Events = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
@@ -72,6 +75,9 @@ public class DrawCardsEffect : Effect
         TargetForLinked_Enemy = targetForLinked_Enemy;
         DynamicAmount = dynamicAmount;
         SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override Effect Clone()
@@ -87,6 +93,7 @@ public class DrawCardsEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new DrawCardsEffect(
+            EffectID,
             drawAmount,
             multiplyAmount,
             PayXEffect,
@@ -94,6 +101,7 @@ public class DrawCardsEffect : Effect
             MultiHit,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             DynamicConditionInfos,
             actionnerType,
             Events,
@@ -109,7 +117,10 @@ public class DrawCardsEffect : Effect
             clonedPlayerTargets,
             clonedEnemyTargets,
             DynamicAmount,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 

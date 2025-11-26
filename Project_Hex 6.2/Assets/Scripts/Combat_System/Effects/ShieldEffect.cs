@@ -15,7 +15,7 @@ public class ShieldEffect : Effect
     [SerializeField] private bool TargetUpTo = true;
     public override bool EffectTargetUpTo => TargetUpTo;
 
-    [SerializeField] private int targetNumber;
+    [SerializeField] private int targetNumber = 1;
     public override int EffectTargetNumber => targetNumber;
 
     [field: SerializeReference, SR] private List<TargetLimitationInfo> targetLimitations;
@@ -23,10 +23,12 @@ public class ShieldEffect : Effect
 
     public ShieldEffect() { }
 
-    public ShieldEffect(int activateNumber, int activateLeft,TargetModeInfo TargetModeInfo, List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx)
+    public ShieldEffect(string effectID, int activateNumber, int activateLeft, bool orChoice,TargetModeInfo TargetModeInfo, List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         targetModeInfo = TargetModeInfo;
         targetNumber = TargetNumber;
         TargetUpTo = targetUpTo;
@@ -46,6 +48,9 @@ public class ShieldEffect : Effect
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
         SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override GameAction GetGameAction()
@@ -76,13 +81,18 @@ public class ShieldEffect : Effect
             if (targetModeInfo.targetMode == TargetMode.Manual)
             {
                 ShieldGA shieldGA = new(null, null);
+                shieldGA.CardActionner = CardActionner;
+                shieldGA.SourceEffect = this;
+                shieldGA.ActivateToolTip = false;
                 if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
-                StartManualTargetingGA startManualTargetingGA = new(shieldGA, targetNumber,TargetUpTo, this,targetLimitations);
+                StartManualTargetingGA startManualTargetingGA = new(shieldGA, targetNumber, TargetUpTo, this, targetLimitations);
+                startManualTargetingGA.SourceEffect = this;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 ShieldGA shieldGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                shieldGA.SourceEffect = this;
                 if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
                 return shieldGA;
             }
@@ -93,6 +103,7 @@ public class ShieldEffect : Effect
                 TargetForLinked_Enemy = enemyTargets;
 
                 ShieldGA shieldGA = new(playerTargets, enemyTargets);
+                shieldGA.SourceEffect = this;
                 if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
                 return shieldGA;
             }
@@ -107,8 +118,11 @@ public class ShieldEffect : Effect
                 {
                     ShieldEnemyGA shieldEnemyGA = new(null, null);
                     shieldEnemyGA.Actionner = Actionner;
+                    shieldEnemyGA.SourceEffect = this;
+                    shieldEnemyGA.ActivateToolTip = false;
                     if (AudioManager.Instance.IsValid(SFX)) { shieldEnemyGA.SFX = SFX; }
-                    StartManualTargetingGA startManualTargetingGA = new(shieldEnemyGA, targetNumber,TargetUpTo, this,targetLimitations);
+                    StartManualTargetingGA startManualTargetingGA = new(shieldEnemyGA, targetNumber, TargetUpTo, this, targetLimitations);
+                    startManualTargetingGA.SourceEffect = this;
                     return startManualTargetingGA;
                 }
                 else
@@ -130,6 +144,7 @@ public class ShieldEffect : Effect
 
                     ShieldEnemyGA shieldEnemyGA = new(playerTargets, enemyTargets);
                     shieldEnemyGA.Actionner = Actionner;
+                    shieldEnemyGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { shieldEnemyGA.SFX = SFX; }
                     return shieldEnemyGA;
                 }
@@ -141,8 +156,11 @@ public class ShieldEffect : Effect
                 {
                     ShieldPlayerGA shieldPlayerGA = new(null, null);
                     shieldPlayerGA.Actionner = Actionner;
+                    shieldPlayerGA.SourceEffect = this;
+                    shieldPlayerGA.ActivateToolTip = false;
                     if (AudioManager.Instance.IsValid(SFX)) { shieldPlayerGA.SFX = SFX; }
-                    StartManualTargetingGA startManualTargetingGA = new(shieldPlayerGA, targetNumber,TargetUpTo, this,targetLimitations);
+                    StartManualTargetingGA startManualTargetingGA = new(shieldPlayerGA, targetNumber, TargetUpTo, this, targetLimitations);
+                    startManualTargetingGA.SourceEffect = this;
                     return startManualTargetingGA;
                 }
                 else
@@ -164,6 +182,7 @@ public class ShieldEffect : Effect
 
                     ShieldPlayerGA shieldPlayerGA = new(playerTargets, enemyTargets);
                     shieldPlayerGA.Actionner = Actionner;
+                    shieldPlayerGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { shieldPlayerGA.SFX = SFX; }
                     return shieldPlayerGA;
                 }
@@ -190,8 +209,10 @@ public class ShieldEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new ShieldEffect(
+            EffectID,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             targetModeInfo,
             DynamicConditionInfos,
             targetLimitations,
@@ -210,7 +231,10 @@ public class ShieldEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 

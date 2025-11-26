@@ -73,13 +73,28 @@ public class ActionSystem : Singleton<ActionSystem>
         PerformSubscribers(action, preSubs);
         yield return PerformReactions();
 
+        //Son d'effet
         if (AudioManager.Instance.IsValid(action.SFX))
         {
             RuntimeManager.PlayOneShot(action.SFX);
         }
 
         reactions = action.PerformReactions;
+
+        //Affichage ToolTip
+        if (action.SourceEffect != null && action.ActivateToolTip)
+        {
+            yield return GameEventSystem.Instance.ShowEffectToolTip(action.SourceEffect);
+        }
+
         yield return PerformPerformer(action);
+
+        //Masquer ToolTip
+        if (action.SourceEffect != null)
+        {
+            yield return GameEventSystem.Instance.HideEffectToolTip();
+        }
+
         yield return PerformReactions();
 
         reactions = action.PostReactions;

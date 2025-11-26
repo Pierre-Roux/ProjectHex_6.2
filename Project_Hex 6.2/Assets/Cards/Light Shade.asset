@@ -31,8 +31,7 @@ MonoBehaviour:
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642561335328800
-  - rid: 3469642561335328801
-  - rid: 3469642561335328802
+  - rid: 7119591967415337057
   PlayCardSound:
     Guid:
       Data1: 0
@@ -189,7 +188,10 @@ MonoBehaviour:
       type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -201,6 +203,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 0
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -225,11 +228,14 @@ MonoBehaviour:
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
-    - rid: 3469642561335328801
-      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+    - rid: 7119591967415337057
+      type: {class: EffectGroup, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 13
+        Events: 09000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -241,6 +247,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -256,15 +263,18 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 581603c6-75ca-4697-b58b-a9540dd5cf8d
-        drawAmount: 1
-        multiplyAmount: 1
-        DynamicAmount: 0
-    - rid: 3469642561335328802
+        EffectID: af07a96c-1d74-4407-9728-50fed301e558
+        EffectGroups:
+        - rid: 7119591967415337059
+        - rid: 7119591967415337058
+    - rid: 7119591967415337058
       type: {class: DiscardEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 13
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -276,6 +286,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -291,10 +302,49 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 2c497639-4610-4e7f-85c8-90af2f3c96d3
+        EffectID: ab06a6b2-22e0-4e74-877a-cc87b60d491a
         DiscardAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
         DiscardAll: 0
         TargetUpTo: 0
         targetLimitations: []
+    - rid: 7119591967415337059
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 89694a99-fd33-4f80-9e0b-35cdd4c7f9f0
+        drawAmount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0

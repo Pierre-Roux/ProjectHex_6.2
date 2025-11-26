@@ -12,8 +12,9 @@ public class ManaGainEffect : Effect
 
     public ManaGainEffect(){}
 
-    public ManaGainEffect(int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
+    public ManaGainEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         GainAmount = Amount;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
@@ -21,6 +22,7 @@ public class ManaGainEffect : Effect
         MultiHit = multiHit;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         Events = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
@@ -37,6 +39,9 @@ public class ManaGainEffect : Effect
         TargetForLinked_Enemy = targetForLinked_Enemy;
         DynamicAmount = dynamicAmount;
         SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override GameAction GetGameAction()
@@ -71,6 +76,7 @@ public class ManaGainEffect : Effect
         GainManaGA gainManaGA = new(GainAmount,multiplyAmount, DynamicAmount);
         gainManaGA.CardActionner = CardActionner;
         gainManaGA.Actionner = Actionner;
+        gainManaGA.SourceEffect = this;
         if (AudioManager.Instance.IsValid(SFX)){ gainManaGA.SFX = SFX; }
         return gainManaGA;
     }
@@ -88,6 +94,7 @@ public class ManaGainEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new ManaGainEffect(
+            EffectID,
             GainAmount,
             multiplyAmount,
             PayXEffect,
@@ -95,6 +102,7 @@ public class ManaGainEffect : Effect
             MultiHit,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             DynamicConditionInfos,
             actionnerType,
             Events,
@@ -110,7 +118,10 @@ public class ManaGainEffect : Effect
             clonedPlayerTargets,
             clonedEnemyTargets,
             DynamicAmount,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

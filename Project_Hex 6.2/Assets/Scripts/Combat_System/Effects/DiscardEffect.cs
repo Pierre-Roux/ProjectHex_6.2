@@ -22,8 +22,9 @@ public class DiscardEffect : Effect
 
     public DiscardEffect(){}
 
-    public DiscardEffect(int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, bool discardAll, EventReference sfx, bool conditionTested)
+    public DiscardEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, bool discardAll, EventReference sfx, bool conditionTested,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         DiscardAmount = Amount;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
@@ -31,6 +32,7 @@ public class DiscardEffect : Effect
         MultiHit = multiHit;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         Events = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
@@ -51,6 +53,9 @@ public class DiscardEffect : Effect
         DiscardAll = discardAll;
         SFX = sfx;
         ConditionTested = conditionTested;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override GameAction GetGameAction()
@@ -138,8 +143,11 @@ public class DiscardEffect : Effect
                 DiscardAmount = DiscardAmount * multiplyAmount;
 
                 DiscardCardGA discardCardGA = new(new List<CardView>());
+                discardCardGA.SourceEffect = this;
+                discardCardGA.ActivateToolTip = false;
                 if (AudioManager.Instance.IsValid(SFX)) { discardCardGA.SFX = SFX; }
-                StartCardTargetingGA startCardTargetingGA = new(discardCardGA, DiscardAmount,TargetUpTo,this,targetLimitations);
+                StartCardTargetingGA startCardTargetingGA = new(discardCardGA, DiscardAmount, TargetUpTo, this, targetLimitations);
+                startCardTargetingGA.SourceEffect = this;
                 return startCardTargetingGA;
             }
         }
@@ -158,6 +166,7 @@ public class DiscardEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new DiscardEffect(
+            EffectID,
             DiscardAmount,
             multiplyAmount,
             PayXEffect,
@@ -165,6 +174,7 @@ public class DiscardEffect : Effect
             MultiHit,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             DynamicConditionInfos,
             targetLimitations,
             TargetUpTo,
@@ -184,7 +194,10 @@ public class DiscardEffect : Effect
             DynamicAmount,
             DiscardAll,
             SFX,
-            ConditionTested
+            ConditionTested,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

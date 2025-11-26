@@ -187,7 +187,10 @@ MonoBehaviour:
       type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -198,22 +201,22 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: e53de432-a6ea-48d4-9dac-1321411eae9f
         amount: 1

@@ -23,8 +23,9 @@ public class PermanentSystem : Singleton<PermanentSystem>
 
     private IEnumerator SummonPermanentPerformer(SummonGA summonGA)
     {
-        Card cardToSummon = summonGA.cardToInvoke;
+        TriggerEventGA triggerEventGA = null;
 
+        Card cardToSummon = summonGA.cardToInvoke;
         cardSystem.hand.Remove(cardToSummon);
         CardView cardView = handView.RemoveCard(cardToSummon);
 
@@ -41,11 +42,17 @@ public class PermanentSystem : Singleton<PermanentSystem>
 
         yield return cardSystem.DestroyCard(cardView);
 
-        SpendManaGA spendManaGA = new(summonGA.cardToInvoke.cost);
-        ActionSystem.Instance.AddReaction(spendManaGA);
+        if (cardSystem.hand.Count == 0)
+        {
+            triggerEventGA = new(Events.EmptyHanded,null,null,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);            
+        }
 
-        // Si on joue une carte toute les event OnPlay ce joue (il faudrait faire des OnPlaySpell, OnPlayPermanent ect...)
-        TriggerEventGA triggerEventGA = new(Events.OnPlayCard);
+        SpendManaGA spendManaGA = new(summonGA.cardToInvoke.cost + summonGA.cardToInvoke.BonusCost);
+        ActionSystem.Instance.AddReaction(spendManaGA);
+        triggerEventGA = new(Events.WhenPlayCard);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.WhenPlayPerma);
         ActionSystem.Instance.AddReaction(triggerEventGA);
     }
 

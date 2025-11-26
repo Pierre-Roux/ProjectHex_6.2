@@ -7,16 +7,20 @@ public class PlayerAlterStaminaGA : GameAction
     public int Amount;
     public int multiplyAmount { get; set; }
     public DynamicAmount DynamicAmount;
+    public bool passive;
+    public bool aditive;
+    public TargetModeInfo targetModeInfo;
     public List<PermanentView> playerTargets { get; set; }
     public List<EnemySlotView> enemyTargets { get; set; }
-    public PermaTypes permaTypes;
-    public PlayerAlterStaminaGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, PermaTypes PermaTypes, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
+    public PlayerAlterStaminaGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, bool Passive, bool Aditive, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets, TargetModeInfo TargetModeInfo = null)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
         DynamicAmount = dynamicAmount;
+        passive = Passive;
+        aditive = Aditive;
+        targetModeInfo = TargetModeInfo;
         playerTargets = PlayerTargets;
         enemyTargets = EnemyTargets;
-        permaTypes = PermaTypes;
     }
 }

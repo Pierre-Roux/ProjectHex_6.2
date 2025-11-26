@@ -187,7 +187,10 @@ MonoBehaviour:
       type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -198,6 +201,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -211,6 +216,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: ff3c267e-dee9-4c1c-8761-37e597261c78
         targetModeInfo:

@@ -17,6 +17,7 @@ public class DeckViewSystem : Singleton<DeckViewSystem>
         foreach (var card in randomized)
         {
             CardView cardView = CardViewCreator.Instance.CreateCardView(card, Vector3.zero, Quaternion.identity, UIDeckViewPanelContent.transform);
+            cardView.IsVisualDeckCard = true;
             cardView.gameObject.GetComponent<SortingGroup>().sortingOrder = 2;
             cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
             cardView.transform.DOScale(50, 0.5f);

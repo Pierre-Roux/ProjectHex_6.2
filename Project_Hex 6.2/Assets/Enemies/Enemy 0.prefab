@@ -93,8 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tier: 0
-  EnemyPreset:
-  - {fileID: 11400000, guid: 11605dfad6fec314d8729f0c08b05c02, type: 2}
+  EnemyPreset: []
   WeaponZone: {fileID: 3491431722004416334}
   ShieldZone: {fileID: 938283172723516546}
   SupportZone: {fileID: 351204710267823827}
@@ -115,13 +114,12 @@ MonoBehaviour:
       data:
         number: A
         EnemyData:
-        - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
+        - {fileID: 11400000, guid: 5e46e0d667ac1d94f9d252681c33bbdb, type: 2}
     - rid: 2382742974966530049
       type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
       data:
         number: B
-        EnemyData:
-        - {fileID: 11400000, guid: 9aa1d3f8e959cf949a8cad43206ecf1b, type: 2}
+        EnemyData: []
 --- !u!1 &6470439035658852412
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +293,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -316,6 +319,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1

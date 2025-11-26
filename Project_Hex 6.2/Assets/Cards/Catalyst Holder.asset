@@ -187,7 +187,10 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 13
+        Events: 09000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -199,6 +202,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -225,4 +229,5 @@ MonoBehaviour:
           PermaType: 0
         TargetUpTo: 1
         targetNumber: 1
+        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []

@@ -9,7 +9,10 @@ public abstract class Effect
 {
     [Header("Mandatory")]
     [SerializeField] public ActionnerType actionnerType;
-    [SerializeField] public Events Events;
+    [SerializeField] public List<Events> Events;
+    [SerializeField] public CounterType TypeOfCounter;
+    [SerializeField] public int CounterValue;
+    [SerializeField] public bool ModuloValue;
     [SerializeField] public bool HollowEffect;
     [SerializeField] public bool PayXEffect;
     [SerializeField] public int MultiHit;
@@ -17,6 +20,7 @@ public abstract class Effect
 
     [Header("For Select Event")]
     [SerializeField] public int ActivateNumber = 1;
+    [SerializeField] public bool ORChoice = false;
 
     [Header("Enemy_Only")]
     [SerializeField] public String Intent_Title;
@@ -35,6 +39,7 @@ public abstract class Effect
     [Header("Linked Effect")]
     [field: SerializeReference, SR] public Effect LinkedEffect;
 
+    [HideInInspector] public virtual string EffectDescription => "";
     [HideInInspector] public virtual List<TargetLimitationInfo> EffectTargetLimitations => null;
     [HideInInspector] public virtual TargetModeInfo EffectTargetModeInfo => null;
     [HideInInspector] public virtual int EffectTargetNumber => 0;
@@ -54,10 +59,30 @@ public abstract class Effect
     protected Effect()
     {
         // Génère un identifiant unique
-        if (string.IsNullOrEmpty(EffectID))
-            EffectID = System.Guid.NewGuid().ToString();
+        //if (string.IsNullOrEmpty(EffectID))
+        //    EffectID = System.Guid.NewGuid().ToString();
     }
     public abstract GameAction GetGameAction();
+
+    public virtual string GetParsedDescription()
+    {
+        string desc = EffectDescription;
+
+        if (string.IsNullOrEmpty(desc))
+            return "";
+
+        // Dictionnaire de base pour les marqueurs communs
+        Dictionary<string, string> replacements = new()
+        {
+            { "@Duration", Duration.ToString() },
+            { "@Event", Events.ToString() }
+        };
+
+        foreach (var kvp in replacements)
+            desc = desc.Replace(kvp.Key, kvp.Value);
+
+        return desc;
+    }
 
     public virtual Effect Clone()
     {

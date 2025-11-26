@@ -11,7 +11,7 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public EnemyPermanentData PermanentData;
     [SerializeField] public TMP_Text LifeText;
     [SerializeField] public TMP_Text IntentText;
-    [SerializeField] TMP_Text NameText;
+    [SerializeField] public TMP_Text NameText;
     [SerializeField] public SpriteRenderer spriteRenderer;
     [SerializeField] SpriteRenderer AuraSpriteRenderer;
     [SerializeField] public GameObject ShieldVisual;
@@ -40,10 +40,9 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public Vector3 InitialPosition { get; set; }
     [HideInInspector] public int DecayCounter { get; set; }
     [HideInInspector] public int BonusPower { get; set; }
+    [HideInInspector] public int BonusLife { get; set; }
     [HideInInspector] public int CurrentHPBonus { get; set; }
     [HideInInspector] public PermanentArea permanentArea;
-
-    [HideInInspector] public List<PermaTypes> permaTypes = new List<PermaTypes>();
 
     [HideInInspector] public List<PermanentView> PlayerShielder = new();
     [HideInInspector] public List<EnemySlotView> EnemyShielder = new();
@@ -56,14 +55,20 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public bool RDMSequence;
     [HideInInspector] public List<string> IntentSequence = new List<string>();
     [HideInInspector] public bool LoopingSequence;
-    public int sequenceIndex = 0;
+    [HideInInspector] public int sequenceIndex = 0;
+
+    [HideInInspector] public List<PermaTypes> permaTypes = new List<PermaTypes>();
+    [HideInInspector] public List<GameAction> AffectedGA = new List<GameAction>();
+    [HideInInspector] public CounterManager InternCounters = new();
     public void setup()
     {
+        InternCounters.ClearAll();
         PossibleIntent = PermanentData.PossibleIntent;
         spriteRenderer.sprite = PermanentData.PermanentImage;
         baseLife = PermanentData.PermanentLife;
-        MaxLife = CalculateBonusLife(baseLife);
-        currentLife = MaxLife; 
+        MaxLife = baseLife;
+        currentLife = MaxLife;
+        UpdateLife();
         IsCore = PermanentData.IsCore;
         UnShieldable = PermanentData.UnShieldable;
         ShieldVisual.SetActive(false);
@@ -74,7 +79,6 @@ public class EnemySlotView : MonoBehaviour
         DecayCounter = PermanentData.DecayCounter;
         UpdateNameText(PermanentData.Title);
         deactivateAuraVisual();
-
 
         if (PermanentData.IsInvoc) permaTypes.Add(PermaTypes.Invoc);
         if (PermanentData.DecayCounter > 0) permaTypes.Add(PermaTypes.Decay);
@@ -104,7 +108,6 @@ public class EnemySlotView : MonoBehaviour
         if (AudioManager.Instance.IsValid(PermanentData.UnSelectedSound)) UnSelectedSound = PermanentData.UnSelectedSound;
 
         UpdateIntent();
-        UpdateLifeText();
     }
 
     public void SetPosition(Vector3 pos)
@@ -128,7 +131,7 @@ public class EnemySlotView : MonoBehaviour
 
         if (RDMSequence)
         {
-            List<Effect> valid = PossibleIntent.FindAll(e => e.Events == Events.EnemyTurn);
+            List<Effect> valid = PossibleIntent.FindAll(e =>  e.Events.Contains(Events.EnemyTurn));
 
             if (valid.Count > 0)
             {
@@ -153,7 +156,7 @@ public class EnemySlotView : MonoBehaviour
             string currentKey = IntentSequence[sequenceIndex];
             if (currentKey != "")
             {
-                selectedEffect = PossibleIntent.Find(e => e.Events == Events.EnemyTurn && e.number == currentKey);
+                selectedEffect = PossibleIntent.Find(e => e.Events.Contains(Events.EnemyTurn) && e.number == currentKey);
 
                 if (selectedEffect == null)
                 {
@@ -197,7 +200,7 @@ public class EnemySlotView : MonoBehaviour
         switch (selectedEffect)
         {
             case DealDamageEffect dmg:
-                int damagetext = CalculateBonusPower(dmg.damageAmount);
+                int damagetext = CalculateBonusPowerForText(dmg.damageAmount);
 
                 intentText = $"Deal {damagetext} damage to {dmg.targetModeInfo.targetMode}";
                 break;
@@ -222,61 +225,69 @@ public class EnemySlotView : MonoBehaviour
         IntentText.text = intentText;
     }
 
-    public int CalculateBonusPower(int BaseAmount)
+    public int CalculateBonusPowerForText(int BaseAmount)
     {
         int passiveBonus = 0;
+
         foreach (var type in permaTypes)
         {
-            switch (type)
+            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(type, out var powerGroup))
             {
-                case PermaTypes.Invoc:
-                    passiveBonus += CombatSystem.Instance.Invoc_EnemyGeneralPower + CombatSystem.Instance.Invoc_GeneralPower;
-                    break;
-                case PermaTypes.Decay:
-                    passiveBonus += CombatSystem.Instance.Decay_EnemyGeneralPower + CombatSystem.Instance.Decay_GeneralPower;
-                    break;
-                case PermaTypes.Hollow:
-                    passiveBonus += CombatSystem.Instance.Hollow_EnemyGeneralPower + CombatSystem.Instance.Hollow_GeneralPower;
-                    break;
-                case PermaTypes.Artillery:
-                    passiveBonus += CombatSystem.Instance.Artillery_EnemyGeneralPower + CombatSystem.Instance.Artillery_GeneralPower;
-                    break;
+                passiveBonus += powerGroup.Enemy + powerGroup.Global;
             }
         }
 
-        int finalDMG = BaseAmount + BonusPower + passiveBonus + CombatSystem.Instance.EnemyGeneralPower + CombatSystem.Instance.GeneralPower;
-        return Mathf.Max(0, finalDMG);
+        int finalDMG = BaseAmount
+                    + BonusPower
+                    + passiveBonus
+                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.Enemy)
+                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+
+        return Mathf.Max(finalDMG, 0);
     }
 
-    public int CalculateBonusLife(int BaseAmount)
+    public int CalculateBonusPower()
     {
         int passiveBonus = 0;
+
         foreach (var type in permaTypes)
         {
-            switch (type)
+            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(type, out var powerGroup))
             {
-                case PermaTypes.Invoc:
-                    passiveBonus += CombatSystem.Instance.Invoc_EnemyGeneralHPGain + CombatSystem.Instance.Invoc_GeneralHPGain;
-                    break;
-                case PermaTypes.Decay:
-                    passiveBonus += CombatSystem.Instance.Decay_EnemyGeneralHPGain + CombatSystem.Instance.Decay_GeneralHPGain;
-                    break;
-                case PermaTypes.Hollow:
-                    passiveBonus += CombatSystem.Instance.Hollow_EnemyGeneralHPGain + CombatSystem.Instance.Hollow_GeneralHPGain;
-                    break;
-                case PermaTypes.Artillery:
-                    passiveBonus += CombatSystem.Instance.Artillery_EnemyGeneralHPGain + CombatSystem.Instance.Artillery_GeneralHPGain;
-                    break;
+                passiveBonus += powerGroup.Enemy + powerGroup.Global;
             }
         }
 
-        int finalHP = BaseAmount + BonusPower + passiveBonus + CombatSystem.Instance.EnemyGeneralHPGain + CombatSystem.Instance.GeneralHPGain;
-        return Mathf.Max(0, finalHP);
+        int finalDMG = BonusPower 
+                    + passiveBonus 
+                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.Enemy)
+                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+
+        return finalDMG;
+    }
+
+    public int CalculateBonusLife()
+    {
+        int passiveBonus = 0;
+
+        foreach (var type in permaTypes)
+        {
+            passiveBonus += CombatSystem.Instance.GetHP(type, Enemy_Player_ENUM.Enemy);
+            passiveBonus += CombatSystem.Instance.GetHP(type, Enemy_Player_ENUM.NULL);
+        }
+
+        int finalHP = BonusLife
+                    + BonusPower
+                    + passiveBonus
+                    + CombatSystem.Instance.GetHP(PermaTypes.NULL, Enemy_Player_ENUM.Enemy)
+                    + CombatSystem.Instance.GetHP(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+
+        return finalHP;
     }
 
     public void UpdateLife()
     {
-        int passiveBonus = CalculateBonusLife(0);
+        int passiveBonus = CalculateBonusLife();
         MaxLife = baseLife + passiveBonus;
 
         if (currentLife > MaxLife)
@@ -293,6 +304,27 @@ public class EnemySlotView : MonoBehaviour
             {
                 currentLife = currentLife + passiveBonus;
             }
+        }
+
+        if (MaxLife <= 0)
+        {
+            MaxLife = 1;
+        }
+
+        if (currentLife < 0)
+        {
+            currentLife = 0;
+        }
+        else if (currentLife > MaxLife)
+        {
+            currentLife = MaxLife;
+        }
+
+        if (currentLife <= 0)
+        {
+            DieEnemySlotGA dieEnemySlotGA = new(this);
+            ActionSystem.Instance.AddReaction(dieEnemySlotGA);
+            IsDead = true;
         }
 
         UpdateLifeText();
@@ -337,6 +369,7 @@ public class EnemySlotView : MonoBehaviour
         {
             if (!IsDead)
             {
+                RuntimeManager.PlayOneShot(BeingDamageSound);
                 DieEnemySlotGA dieEnemySlotGA = new(this);
                 ActionSystem.Instance.AddReaction(dieEnemySlotGA);
                 OnKillTrigger(CardActionner, Actionner);
@@ -454,26 +487,58 @@ public class EnemySlotView : MonoBehaviour
         }
     }
 
-    public void TakeAlterPower(int Amount)
+    public void TakeAlterPower(AlterPowerGA Ga)
     {
         if (IsDead) return;
-        
-        if (Amount > 0)
+
+        if (Ga.Amount > 0)
         {
             RuntimeManager.PlayOneShot(GainPowerSound);
         }
-        else if (Amount < 0)
+        else if (Ga.Amount < 0)
         {
             RuntimeManager.PlayOneShot(LosePowerSound);
         }
         else { return; }
-        
-        BonusPower += Amount;
+
+        if (Ga.aditive)
+        {
+            // Cas additif : on ajoute toujours
+            AffectedGA.Add(Ga);
+        }
+        else
+        {
+            // Cas normal : ajouter ou remplacer selon l'ID
+            int index = AffectedGA.FindIndex(x => x.SourceEffect.EffectID == Ga.SourceEffect.EffectID);
+            if (index == -1)
+            {
+                AffectedGA.Add(Ga);
+            }
+            else
+            {
+                AffectedGA[index] = Ga;
+            }
+        }
+
+        UpdateBonusPowerAmount();
         if (transform != null)
         {
             transform.DOShakePosition(0f, 0.1f);
         }
         UpdateIntentText(IntentAction);
+    }
+
+    public void UpdateBonusPowerAmount()
+    {
+        BonusPower = 0;
+        foreach (GameAction Ga in AffectedGA)
+        {
+            if (Ga is AlterPowerGA)
+            {
+                AlterPowerGA alterPowerGa = (AlterPowerGA) Ga;
+                BonusPower += alterPowerGa.Amount;
+            }
+        }
     }
 
     public void TakeLifeLoss(int Amount)
@@ -501,38 +566,61 @@ public class EnemySlotView : MonoBehaviour
         UpdateLifeText();
     }
 
-    public void GainLife(int Amount)
+    public void TakeAlterLife(GainLifeGA Ga)
     {
         if (IsDead) return;
 
-        if (Amount > 0)
+        if (Ga.Amount > 0)
         {
             RuntimeManager.PlayOneShot(BuffLifeSound);
         }
-        else if (Amount < 0)
+        else if (Ga.Amount < 0)
         {
             RuntimeManager.PlayOneShot(DebuffLifeSound);
         }
         else { return; }
 
-        currentLife += Amount;
-        MaxLife += Amount;
-
-        if (currentLife <= 0)
+        if (Ga.aditive)
         {
-            DieEnemySlotGA dieEnemySlotGA = new(this);
-            ActionSystem.Instance.AddReaction(dieEnemySlotGA);
-            IsDead = true;
+            // Cas additif : on ajoute toujours
+            AffectedGA.Add(Ga);
+        }
+        else
+        {
+            // Cas normal : ajouter ou remplacer selon l'ID
+            int index = AffectedGA.FindIndex(x => x.SourceEffect.EffectID == Ga.SourceEffect.EffectID);
+            if (index == -1)
+            {
+                AffectedGA.Add(Ga);
+            }
+            else
+            {
+                AffectedGA[index] = Ga;
+            }
         }
 
-        UpdateLifeText();
+        UpdateBonusLifeAmount();
+        UpdateLife();
     }
     
+    public void UpdateBonusLifeAmount()
+    {
+        BonusLife = 0;
+        foreach (GameAction Ga in AffectedGA)
+        {
+            if (Ga is GainLifeGA)
+            {
+                GainLifeGA alterLifeGa = (GainLifeGA)Ga;
+                BonusLife += alterLifeGa.Amount;
+            }
+        }
+    }
+
     public void Refresh()
     {
         foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,null,this))
         {
-            if (effect.Events == Events.OnSelect)
+            if (effect.Events.Contains(Events.OnSelect))
             {
                 effect.ActivateLeft = effect.ActivateNumber;
             }

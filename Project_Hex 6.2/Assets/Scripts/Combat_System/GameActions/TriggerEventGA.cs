@@ -9,11 +9,14 @@ public class TriggerEventGA : GameAction
     public PermanentView permanentView;
     public EnemySlotView enemySlotView;
 
-    public TriggerEventGA(Events events, Card card = null, PermanentView PermanentView = null, EnemySlotView EnemySlotView = null)
+    public CounterType counterTypeConcerned;
+
+    public TriggerEventGA(Events events, Card card = null, PermanentView PermanentView = null, EnemySlotView EnemySlotView = null,CounterType CounterTypeConcerned = CounterType.NULL)
     {
         gameEvent = events;
         Card = card;
         permanentView = PermanentView;
         enemySlotView = EnemySlotView;
+        counterTypeConcerned = CounterTypeConcerned;
     }
 }

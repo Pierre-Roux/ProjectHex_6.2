@@ -32,6 +32,7 @@ MonoBehaviour:
   <Effects>k__BackingField:
   - rid: 3469642677219492040
   - rid: 3469642677219492041
+  - rid: 7119591967415337250
   PlayCardSound:
     Guid:
       Data1: 0
@@ -188,7 +189,10 @@ MonoBehaviour:
       type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -199,6 +203,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -212,6 +218,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 3b429a82-417b-40e2-adcf-acdb5d61cb4e
         targetModeInfo:
@@ -226,7 +233,10 @@ MonoBehaviour:
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -237,6 +247,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -245,30 +257,35 @@ MonoBehaviour:
         CancelOnDeath: 0
         DynamicConditionInfos: []
         LinkedEffect:
-          rid: 7119591880825503847
+          rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 1a45e0a2-632f-4525-9604-2d97768e85b7
         alterAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
+        aditive: 1
+        passive: 1
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 1
           permanentArea: 1
           PermaType: 0
-        passive: 1
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
-    - rid: 7119591880825503847
+    - rid: 7119591967415337250
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 11
+        Events: 07000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -279,6 +296,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -292,17 +311,19 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 4f6dd6e5-a073-45ed-88e0-c92ceea90789
+        EffectID: 15fdd2b6-8b11-4521-a505-fd9ccedbf276
         alterAmount: -1
         multiplyAmount: 1
         DynamicAmount: 0
+        aditive: 1
+        passive: 1
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 1
           permanentArea: 1
           PermaType: 0
-        passive: 1
         TargetUpTo: 1
-        targetNumber: 0
+        targetNumber: 1
         targetLimitations: []

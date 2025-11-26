@@ -134,7 +134,10 @@ MonoBehaviour:
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 1
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -145,6 +148,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -158,17 +163,19 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: fc21386a-dbe3-4e7d-aa06-15570737e399
         alterAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
+        aditive: 1
+        passive: 1
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 2
           permanentArea: 0
           PermaType: 0
-        passive: 1
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
@@ -176,7 +183,10 @@ MonoBehaviour:
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 1
-        Events: 11
+        Events: 07000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -187,6 +197,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -200,17 +212,19 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 93bc1322-94c7-40ea-baa6-25c1d3edfd64
         alterAmount: -1
         multiplyAmount: 1
         DynamicAmount: 0
+        aditive: 1
+        passive: 1
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 2
           permanentArea: 0
           PermaType: 0
-        passive: 1
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []

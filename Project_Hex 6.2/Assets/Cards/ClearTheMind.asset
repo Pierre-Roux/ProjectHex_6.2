@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Clear The Mind
   <Description>k__BackingField: Discard Hand, Draw 5, Gain 1 favor
   <cost>k__BackingField: 1
+  <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 0
@@ -24,6 +25,7 @@ MonoBehaviour:
   <PermanentImage>k__BackingField: {fileID: 0}
   <permanentArea>k__BackingField: 0
   UnShieldable: 0
+  UnTargetable: 0
   isInvoc: 0
   isArtillery: 0
   <IsSpell>k__BackingField: 1
@@ -157,6 +159,13 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  ActivateSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   SelectedSound:
     Guid:
       Data1: 0
@@ -180,8 +189,12 @@ MonoBehaviour:
       type: {class: DiscardEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -190,24 +203,26 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: c2fa5d4f-a92d-46b2-ad0b-e7e0e95f1a91
         DiscardAmount: 0
+        multiplyAmount: 1
         DynamicAmount: 0
         DiscardAll: 1
         TargetUpTo: 0
@@ -216,8 +231,12 @@ MonoBehaviour:
       type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -226,31 +245,37 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 183dd64f-60f1-46a8-bfa4-381bfa75f199
         GainAmount: 1
+        multiplyAmount: 1
         DynamicAmount: 0
     - rid: 3469642561335328816
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -259,22 +284,24 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 74c942b2-e936-4160-b9fb-345a8e6ad5ea
         drawAmount: 5
+        multiplyAmount: 1
         DynamicAmount: 0

@@ -16,6 +16,37 @@ public class ChoiceEffect : Effect
     [field: SerializeReference, SR] public Effect EffectOnTrue;
     [field: SerializeReference, SR] public Effect EffectOnFalse;
 
+    public ChoiceEffect() { }
+
+    public ChoiceEffect(string effectID, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx, Effect effectOnTrue, Effect effectOnFalse, bool playerChoice, bool mayChoice, bool orChoice, List<Effect> effectsForPlayerChoice,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    {
+        EffectID = effectID;
+        Events = Event;
+        DynamicConditionInfos = dynamicConditionInfos;
+        CancelOnDeath = cancelOnDeath;
+        actionnerType = ActionnerType;
+        Actionner = actionner;
+        CardActionner = cardActionner;
+        Intent_Title = intent_Title;
+        number = Number;
+        Duration = duration;
+        DurationType = durationType;
+        TriggerOnDurationEnd = triggerOnDurationEnd;
+        LinkedEffect = linkedEffect;
+        TargetForLinked_Player = targetForLinked_Player;
+        TargetForLinked_Enemy = targetForLinked_Enemy;
+        EffectOnTrue = effectOnTrue;
+        EffectOnFalse = effectOnFalse;
+        PlayerChoice = playerChoice;
+        MayChoice = mayChoice;
+        ORChoice = orChoice;
+        EffectsForPlayerChoice = effectsForPlayerChoice;
+        SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
+    }
+    
     public override GameAction GetGameAction()
     {
         if (PlayerChoice)
@@ -50,32 +81,6 @@ public class ChoiceEffect : Effect
         }        
     }
 
-    public ChoiceEffect() { }
-
-    public ChoiceEffect(List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx, Effect effectOnTrue, Effect effectOnFalse, bool playerChoice,bool mayChoice, List<Effect> effectsForPlayerChoice)
-    {
-        Events = Event;
-        DynamicConditionInfos = dynamicConditionInfos;
-        CancelOnDeath = cancelOnDeath;
-        actionnerType = ActionnerType;
-        Actionner = actionner;
-        CardActionner = cardActionner;
-        Intent_Title = intent_Title;
-        number = Number;
-        Duration = duration;
-        DurationType = durationType;
-        TriggerOnDurationEnd = triggerOnDurationEnd;
-        LinkedEffect = linkedEffect;
-        TargetForLinked_Player = targetForLinked_Player;
-        TargetForLinked_Enemy = targetForLinked_Enemy;
-        EffectOnTrue = effectOnTrue;
-        EffectOnFalse = effectOnFalse;
-        PlayerChoice = playerChoice;
-        MayChoice = mayChoice;
-        EffectsForPlayerChoice = effectsForPlayerChoice;
-        SFX = sfx;
-    }
-
     public override Effect Clone()
     {
         var clonedPlayerTargets = TargetForLinked_Player != null
@@ -95,6 +100,7 @@ public class ChoiceEffect : Effect
         }
 
         return new ChoiceEffect(
+            EffectID,
             DynamicConditionInfos,
             actionnerType,
             Events,
@@ -114,7 +120,11 @@ public class ChoiceEffect : Effect
             EffectOnFalse,
             PlayerChoice,
             MayChoice,
-            ClonedChoiceEffects
+            ORChoice,
+            ClonedChoiceEffects,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

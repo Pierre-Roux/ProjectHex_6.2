@@ -273,6 +273,71 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         }
                         break;
 
+                    case DynamicCondition.ifEventPermanentIsVessel:
+                        if (TestpermanentView != null)
+                        {
+                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Invoc))
+                            {
+                                ConditionResult = false;
+                            }
+                            else
+                            {
+                                ConditionResult = true;
+                            }
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Invoc))
+                            {
+                                ConditionResult = false;
+                            }
+                            else
+                            {
+                                ConditionResult = true;
+                            }                            
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifEventCardTriggerIsVessel:
+                        if (TestCard != null)
+                        {
+                            if (!TestCard.IsSpell)
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifEventCardTriggerIsSpell:
+                        if (TestenemySlotView != null)
+                        {
+                            if (TestCard.IsSpell)
+                            {
+                                ConditionResult = true;
+                            }
+                            else
+                            {
+                                ConditionResult = false;
+                            }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
                     case DynamicCondition.DynamicAmountSupOrEqualsToValue:
                         Amount = TargetSystem.Instance.GetDynamicAmount(Condition.TestDynamicAmount);
                         if (Amount >= Condition.TestValue)

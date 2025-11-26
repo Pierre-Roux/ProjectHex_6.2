@@ -19,7 +19,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
                 if (_instance == null)
                 {
-                    Debug.LogError($"❌ Singleton of type {typeof(T)} not found in scene.");
+                    Debug.LogWarning($"❌ Singleton of type {typeof(T)} not found in scene.");
                 }
             }
 

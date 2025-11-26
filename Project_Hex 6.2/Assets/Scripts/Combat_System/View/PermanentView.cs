@@ -3,14 +3,15 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
 using FMODUnity;
+using System.Linq;
 
 public class PermanentView : MonoBehaviour
 {
-    [SerializeField] SpriteRenderer PermanentSpriteRenderer;
+    [SerializeField] public SpriteRenderer PermanentSpriteRenderer;
     [SerializeField] SpriteRenderer AuraSpriteRenderer;
     [SerializeField] TMP_Text HealthText;
     [SerializeField] TMP_Text StaminaText;
-    [SerializeField] TMP_Text NameText;
+    [SerializeField] public TMP_Text NameText;
     [SerializeField] public GameObject ShieldVisual;
     [SerializeField] public bool UnShieldable;
 
@@ -34,9 +35,12 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public int currentLife { get; set; }
     [HideInInspector] public int baseLife { get; set; }
     [HideInInspector] public int MaxDurability { get; set; }
-    [HideInInspector] public int Durability { get; set; }
+    [HideInInspector] public int Durability { get; set; } 
+    [HideInInspector] public int BaseMaxDurability { get; set; }
     [HideInInspector] public int DecayCounter { get; set; }
     [HideInInspector] public int BonusPower { get; set; }
+    [HideInInspector] public int BonusStam { get; set; }
+    [HideInInspector] public int BonusLife { get; set; }
     [HideInInspector] public int CurrentHPBonus { get; set; }
     [HideInInspector] public Card CardReferenceArchive;
     [HideInInspector] public bool IsDead = false;
@@ -51,39 +55,53 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public bool Shielded;
 
     [HideInInspector] public List<PermaTypes> permaTypes = new List<PermaTypes>();
+    [HideInInspector] public List<GameAction> AffectedGA = new List<GameAction>();
+    [HideInInspector] public CounterManager InternCounters = new();
 
     public void Setup(Card cardReference)
     {
+        InternCounters.ClearAll();
         UnTargetable = cardReference.UnTargetable;
         IsCore = false;
         CardReferenceArchive = cardReference;
         PermanentSpriteRenderer.sprite = cardReference.data.PermanentImage;
         baseLife = cardReference.data.life;
-        MaxLife = CalculateBonusLife(baseLife);
+        MaxLife = baseLife;
         currentLife = MaxLife;
+        UpdateLife();
+        BaseMaxDurability = cardReference.MaxDurability;
         MaxDurability = cardReference.MaxDurability;
         Durability = cardReference.Durability;
+        UpdateStam();
         permanentArea = cardReference.data.permanentArea;
         UnShieldable = cardReference.UnShieldable;
         DecayCounter = cardReference.DecayCounter;
-        UpdateNameText(cardReference.Title);
         deactivateAuraVisual();
+        UpdateNameText(cardReference.Title);
 
-        // Gère les types
-        permaTypes.Clear();
-        if (cardReference.data.isInvoc) permaTypes.Add(PermaTypes.Invoc);
-        if (DecayCounter > 0) permaTypes.Add(PermaTypes.Decay);
-        if (cardReference.MaxDurability > 0 && cardReference.Durability == 0) permaTypes.Add(PermaTypes.Hollow);
-        if (cardReference.data.isArtillery) permaTypes.Add(PermaTypes.Artillery);
+        // Gère les types // Hollow géré par UpdateStam
+        TriggerEventGA triggerEventGA = null;
+        if (cardReference.data.isInvoc)
+        {
+            permaTypes.Add(PermaTypes.Invoc);
+            triggerEventGA = new(Events.InvocCountChanged, null, null, null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        } 
+        if (DecayCounter > 0)
+        {
+            permaTypes.Add(PermaTypes.Decay);
+            triggerEventGA = new(Events.DecayCountChanged,null,null,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        } 
+        if (cardReference.data.isArtillery)
+        {
+            permaTypes.Add(PermaTypes.Artillery);
+            triggerEventGA = new(Events.ArtilleryCountChanged,null,null,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        } 
 
         ShieldVisual.SetActive(false);
-        UpdateLifeText();
-
-        // affichage graphique du hollow
-        if (permaTypes.Contains(PermaTypes.Hollow))
-        {
-            UpdateHollowVisual();
-        }
 
         //Audio
         if (AudioManager.Instance.IsValid(cardReference.DieSound)) DieSound = cardReference.DieSound;
@@ -114,11 +132,11 @@ public class PermanentView : MonoBehaviour
         PermanentSpriteRenderer.sprite = CoreData.CoreImage;
         permanentArea = PermanentArea.NONE;
         baseLife = CoreData.CoreHealth;
-        MaxLife = CalculateBonusLife(baseLife);
-        currentLife = MaxLife; 
+        MaxLife = baseLife;
+        currentLife = MaxLife;
+        UpdateLife();
         UnShieldable = false;
         ShieldVisual.SetActive(false);
-        UpdateLifeText();
         deactivateAuraVisual();
 
         if (AudioManager.Instance.IsValid(CoreData.DieSound)) DieSound = CoreData.DieSound;
@@ -174,26 +192,135 @@ public class PermanentView : MonoBehaviour
         AuraSpriteRenderer.gameObject.SetActive(false);
     }
 
-    public int CalculateBonusLife(int baseAmount)
+    public void ChangeHollowState(bool IsHollow)
+    {
+        TriggerEventGA triggerEventGA = null;
+        if (IsHollow)
+        {
+            permaTypes.Add(PermaTypes.Hollow);
+            UpdateHollowVisual();
+
+            triggerEventGA = new(Events.WhenPermaBecomeType,null,this,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+            triggerEventGA = new(Events.HollowCountChanged,null,this,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+        else
+        {
+            permaTypes.Remove(PermaTypes.Hollow);
+            UpdateHollowVisual();
+
+            triggerEventGA = new(Events.HollowCountChanged,null,this,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+
+    }
+
+    public int CalculateBonusPower()
     {
         int passiveBonus = 0;
 
-        if (permaTypes.Contains(PermaTypes.Invoc))
-            passiveBonus += CombatSystem.Instance.Invoc_PlayerGeneralHPGain + CombatSystem.Instance.Invoc_GeneralHPGain;
-        if (permaTypes.Contains(PermaTypes.Decay))
-            passiveBonus += CombatSystem.Instance.Decay_PlayerGeneralHPGain + CombatSystem.Instance.Decay_GeneralHPGain;
-        if (permaTypes.Contains(PermaTypes.Hollow))
-            passiveBonus += CombatSystem.Instance.Hollow_PlayerGeneralHPGain + CombatSystem.Instance.Hollow_GeneralHPGain;
-        if (permaTypes.Contains(PermaTypes.Artillery))
-            passiveBonus += CombatSystem.Instance.Artillery_PlayerGeneralHPGain + CombatSystem.Instance.Artillery_GeneralHPGain;
+        foreach (var type in permaTypes)
+        {
+            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(type, out var powerGroup))
+            {
+                passiveBonus += powerGroup.Player + powerGroup.Global;
+            }
+        }
 
-        int finalHP = baseAmount + passiveBonus + CombatSystem.Instance.PlayerGeneralHPGain + CombatSystem.Instance.GeneralHPGain;
-        return Mathf.Max(0, finalHP);
+        int finalDMG = BonusPower 
+                    + passiveBonus 
+                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.Player)
+                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+
+        return finalDMG;
+    }
+
+    public int CalculateBonusLife()
+    {
+        int passiveBonus = 0;
+
+        foreach (var type in permaTypes)
+        {
+            passiveBonus += CombatSystem.Instance.GetHP(type, Enemy_Player_ENUM.Player);
+            passiveBonus += CombatSystem.Instance.GetHP(type, Enemy_Player_ENUM.NULL);
+        }
+
+        int finalHP = BonusLife
+                    + passiveBonus
+                    + CombatSystem.Instance.GetHP(PermaTypes.NULL, Enemy_Player_ENUM.Player)
+                    + CombatSystem.Instance.GetHP(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+
+        return finalHP;
+    }
+
+    public int CalculateBonusStam()
+    {
+        int passiveBonus = 0;
+
+        foreach (var type in permaTypes)
+        {
+            passiveBonus += CombatSystem.Instance.GetStam(type, Enemy_Player_ENUM.Player);
+        }
+
+        int finalStamina = BonusStam
+                        + passiveBonus
+                        + CombatSystem.Instance.GetStam(PermaTypes.NULL, Enemy_Player_ENUM.Player);
+
+        return finalStamina;
+    }
+
+    public void UpdateStam()
+    {
+        if (IsCore) return;
+
+        int passiveBonus = CalculateBonusStam();
+        MaxDurability = BaseMaxDurability + passiveBonus;
+
+        if (Durability > MaxDurability)
+        {
+            Durability = MaxDurability;
+        }
+        else
+        {
+            if (Durability + passiveBonus > MaxDurability)
+            {
+                Durability = MaxDurability;
+            }
+            else
+            {
+                Durability = Durability + passiveBonus;
+            }
+        }
+
+        if (MaxDurability <= 0)
+        {
+            MaxDurability = 1;
+        }
+
+        if (Durability < 0)
+        {
+            Durability = 0;
+        }
+        else if (Durability > MaxDurability)
+        {
+            Durability = MaxDurability;
+        }
+
+        if (!permaTypes.Contains(PermaTypes.Hollow) && Durability == 0)
+        {
+            ChangeHollowState(true);
+        }
+        else if (permaTypes.Contains(PermaTypes.Hollow) && Durability != 0)
+        {
+            ChangeHollowState(false);
+        }
+
     }
 
     public void UpdateLife()
     {
-        int passiveBonus = CalculateBonusLife(0);
+        int passiveBonus = CalculateBonusLife();
         MaxLife = baseLife + passiveBonus;
 
         if (currentLife > MaxLife)
@@ -212,6 +339,26 @@ public class PermanentView : MonoBehaviour
             }
         }
 
+        if (MaxLife <= 0)
+        {
+            MaxLife = 1;
+        }
+
+        if (currentLife < 0)
+        {
+            currentLife = 0;
+        }
+        else if (currentLife > MaxLife)
+        {
+            currentLife = MaxLife;
+        }
+
+        if (currentLife <= 0)
+        {
+            DiePermanentGA diePermanentGA = new(IsCore, Durability, CardReferenceArchive, this);
+            ActionSystem.Instance.AddReaction(diePermanentGA);
+            IsDead = true;
+        }
 
         UpdateLifeText();
     }
@@ -241,6 +388,7 @@ public class PermanentView : MonoBehaviour
         {
             if (!IsDead)
             {
+                RuntimeManager.PlayOneShot(BeingDamageSound);
                 DiePermanentGA diePermanentGA = new(IsCore, Durability, CardReferenceArchive, this);
                 ActionSystem.Instance.AddReaction(diePermanentGA);
                 OnKillTrigger(CardActionner, Actionner);
@@ -356,75 +504,151 @@ public class PermanentView : MonoBehaviour
         }
     }
 
-    public void TakeAlterPower(int Amount)
+    public void TakeAlterPower(AlterPowerGA Ga)
     {
         if (IsDead) return;
 
-        if (Amount > 0)
+        if (Ga.Amount > 0)
         {
             RuntimeManager.PlayOneShot(GainPowerSound);
         }
-        else if (Amount < 0)
+        else if (Ga.Amount < 0)
         {
             RuntimeManager.PlayOneShot(LosePowerSound);
         }
         else { return; }
 
-        BonusPower += Amount;
-        if (transform != null)
+        Debug.Log("Take Alter with aditive at " + Ga.aditive);
+        if (Ga.aditive)
         {
-            transform.DOShakePosition(0f, 0.1f);
+            // Cas additif : on ajoute toujours
+            AffectedGA.Add(Ga);
+        }
+        else
+        {
+            // Cas normal : ajouter ou remplacer selon l'ID
+            Debug.Log("AlterPowerEffectID ->>>>> " + Ga.SourceEffect.EffectID);
+            int index = AffectedGA.FindIndex(x => x.SourceEffect.EffectID == Ga.SourceEffect.EffectID);
+            if (index == -1)
+            {
+                AffectedGA.Add(Ga);
+                Debug.Log("ADD");
+            }
+            else
+            {
+                AffectedGA[index] = Ga;
+                Debug.Log("Replace");
+            }
+        }
+
+        UpdateBonusPowerAmount();
+    }
+
+    public void UpdateBonusPowerAmount()
+    {
+        BonusPower = 0;
+        foreach (GameAction Ga in AffectedGA)
+        {
+            if (Ga is AlterPowerGA)
+            {
+                AlterPowerGA alterPowerGa = (AlterPowerGA) Ga;
+                BonusPower += alterPowerGa.Amount;
+            }
         }
     }
-    
-    public void TakeAlterStamina(int Amount)
+
+    public void TakeAlterStamina(AlterStaminaGA Ga)
     {
         if (IsDead) return;
 
-        /*if (Amount > 0)
+        if (Ga.Amount < 0)
         {
-            RuntimeManager.PlayOneShot(GainPowerSound);
-        }
-        else if (Amount < 0)
-        {
-            RuntimeManager.PlayOneShot(LosePowerSound);
-        }
-        else { return; }*/
-
-        if(Amount > 0)
-        {
-            TriggerEventGA triggerEventGA = new(Events.WhenPermaLossDurability,null,this,null);
+            TriggerEventGA triggerEventGA = new(Events.WhenPermaLossDurability, null, this, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
-        Durability += Amount;
-        if (Durability < 0)
+        if (Ga.aditive)
         {
-            Durability = 0;
+            // Cas additif : on ajoute toujours
+            AffectedGA.Add(Ga);
         }
-        else if (Durability > MaxDurability)
+        else
         {
-            Durability = MaxDurability;
+            // Cas normal : ajouter ou remplacer selon l'ID
+            int index = AffectedGA.FindIndex(x => x.SourceEffect.EffectID == Ga.SourceEffect.EffectID);
+            if (index == -1)
+            {
+                AffectedGA.Add(Ga);
+            }
+            else
+            {
+                AffectedGA[index] = Ga;
+            }
+        }
+        UpdateBonusStamAmount();
+        UpdateStam();
+    }
+
+    public void UpdateBonusStamAmount()
+    {
+        BonusStam = 0;
+        foreach (GameAction Ga in AffectedGA)
+        {
+            if (Ga is AlterStaminaGA)
+            {
+                AlterStaminaGA alterStamGa = (AlterStaminaGA)Ga;
+                BonusStam += alterStamGa.Amount;
+            }
+        }
+    }
+
+    public void TakeAlterLife(GainLifeGA Ga)
+    {
+        if (IsDead) return;
+
+        if (Ga.Amount > 0)
+        {
+            RuntimeManager.PlayOneShot(BuffLifeSound);
+        }
+        else if (Ga.Amount < 0)
+        {
+            RuntimeManager.PlayOneShot(DebuffLifeSound);
+        }
+        else { return; }
+
+        if (Ga.aditive)
+        {
+            // Cas additif : on ajoute toujours
+            AffectedGA.Add(Ga);
+        }
+        else
+        {
+            // Cas normal : ajouter ou remplacer selon l'ID
+            int index = AffectedGA.FindIndex(x => x.SourceEffect.EffectID == Ga.SourceEffect.EffectID);
+            if (index == -1)
+            {
+                AffectedGA.Add(Ga);
+            }
+            else
+            {
+                AffectedGA[index] = Ga;
+            }
         }
 
-        if (!permaTypes.Contains(PermaTypes.Hollow) && Durability == 0)
+        UpdateBonusLifeAmount();
+        UpdateLife();
+    }
+    
+    public void UpdateBonusLifeAmount()
+    {
+        BonusLife = 0;
+        foreach (GameAction Ga in AffectedGA)
         {
-            permaTypes.Add(PermaTypes.Hollow);
-            UpdateHollowVisual();
-
-            TriggerEventGA triggerEventGA = new(Events.WhenPermaBecomeType,null,this,null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);
-        }
-        else if (permaTypes.Contains(PermaTypes.Hollow) && Durability != 0)
-        {
-            
-            permaTypes.Remove(PermaTypes.Hollow);
-            UpdateHollowVisual();
-        }
-
-        if (transform != null)
-        {
-            transform.DOShakePosition(0f, 0.1f);
+            if (Ga is GainLifeGA)
+            {
+                GainLifeGA alterLifeGa = (GainLifeGA)Ga;
+                BonusLife += alterLifeGa.Amount;
+            }
         }
     }
 
@@ -434,9 +658,9 @@ public class PermanentView : MonoBehaviour
         if (Amount <= 0) return;
 
         transform.DOShakePosition(0.2f, 0.5f);
-        TriggerEventGA triggerEventGA = new(Events.OnDamaged,null,this,null);
+        TriggerEventGA triggerEventGA = new(Events.OnDamaged, null, this, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
-        
+
 
         currentLife -= Amount;
         if (currentLife <= 0)
@@ -452,39 +676,12 @@ public class PermanentView : MonoBehaviour
 
         UpdateLifeText();
     }
-
-    public void GainLife(int Amount)
-    {
-        if (IsDead) return;
-
-        if (Amount > 0)
-        {
-            RuntimeManager.PlayOneShot(BuffLifeSound);
-        }
-        else if (Amount < 0)
-        {
-            RuntimeManager.PlayOneShot(DebuffLifeSound);
-        }
-        else { return; }
-
-        currentLife += Amount;
-        MaxLife += Amount;
-
-        if (currentLife <= 0)
-        {
-            DiePermanentGA diePermanentGA = new(IsCore, Durability, CardReferenceArchive, this);
-            ActionSystem.Instance.AddReaction(diePermanentGA);
-            IsDead = true;
-        }
-
-        UpdateLifeText();
-    }
     
     public void Refresh()
     {
         foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,this,null))
         {
-            if (effect.Events == Events.OnSelect)
+            if (effect.Events.Contains(Events.OnSelect))
             {
                 effect.ActivateLeft = effect.ActivateNumber;
             }
@@ -500,6 +697,20 @@ public class PermanentView : MonoBehaviour
     public void RemoveSelectEffect(bool SoundUp = true)
     {
         PermanentSpriteRenderer.color = Color.white;
+
+        if (permaTypes.Contains(PermaTypes.Hollow))
+        {
+            Color c = PermanentSpriteRenderer.color;
+            c.a = 0.3f;
+            PermanentSpriteRenderer.color = c;
+        }
+        else
+        {
+            Color c = PermanentSpriteRenderer.color;
+            c.a = 1f;
+            PermanentSpriteRenderer.color = c;
+        }
+        
         if(SoundUp)
         {
             RuntimeManager.PlayOneShot(UnSelectedSound);

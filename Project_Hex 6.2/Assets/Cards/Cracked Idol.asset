@@ -189,7 +189,10 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -200,6 +203,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -213,6 +218,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: b1077e81-b250-47ac-95ea-20d8626663ac
         damageAmount: 2
@@ -225,12 +231,16 @@ MonoBehaviour:
           PermaType: 0
         TargetUpTo: 1
         targetNumber: 1
+        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3469642677219492021
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -241,6 +251,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -254,6 +266,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 60cf39ce-f227-4983-b9d1-9c6321ba38cb
         drawAmount: 1
@@ -263,7 +276,10 @@ MonoBehaviour:
       type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -274,6 +290,8 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -287,6 +305,7 @@ MonoBehaviour:
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 43d3ae3f-d882-4b08-a7cd-36e161dc680c
         LifeLossAmount: 1

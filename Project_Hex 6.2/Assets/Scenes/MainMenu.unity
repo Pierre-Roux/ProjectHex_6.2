@@ -562,7 +562,7 @@ Transform:
   m_GameObject: {fileID: 113847326}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.734038, y: 26.455887, z: -3.028874}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -586,9 +586,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 216c93c68bce1ca4cbd47ba638619139, type: 2}
   - {fileID: 11400000, guid: ddab836bd96f6444f9ac498106d3cce7, type: 2}
   - {fileID: 11400000, guid: 70eab18f3b4ad2840bc680d01a4ce0f0, type: 2}
+  - {fileID: 11400000, guid: 98bc30b6bfedd1843bf1ca5b74439055, type: 2}
   - {fileID: 11400000, guid: e7e250a99e3aed943a9f8533591c6ef7, type: 2}
   - {fileID: 11400000, guid: e760c429147d38144b6601a0d6e58281, type: 2}
   - {fileID: 11400000, guid: 6538e3cb3ff2dc148bf979c4c14194b7, type: 2}
+  - {fileID: 11400000, guid: 5b0f8cf69dc834342999fd6f4fff1f44, type: 2}
   - {fileID: 11400000, guid: 7f53412ae563866408aaf010335edd61, type: 2}
   - {fileID: 11400000, guid: 5fb300f07bf9f294e8750106cb1a136f, type: 2}
   - {fileID: 11400000, guid: 506202706f6fd51429f7917c2119a78d, type: 2}
@@ -604,24 +606,42 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e9ca8f1cb4350ad4faaee28be66ed3b8, type: 2}
   - {fileID: 11400000, guid: 20210b01ffece3845a0550a31ebc8206, type: 2}
   - {fileID: 11400000, guid: ce13c93ab9f65544c82497e84cb2d64b, type: 2}
+  - {fileID: 11400000, guid: d5f5098091c20544db1591724e4280ed, type: 2}
+  - {fileID: 11400000, guid: 5e2c47848d011f449a63694302b63f3c, type: 2}
+  - {fileID: 11400000, guid: 51489260746f8264f8e9815e514f20f7, type: 2}
+  - {fileID: 11400000, guid: f92c082b342d1414694b0351d18032b5, type: 2}
   - {fileID: 11400000, guid: cb4eeb4cd115905439894ca20152437d, type: 2}
   - {fileID: 11400000, guid: e310505889dfe0d47938e83956f84440, type: 2}
+  - {fileID: 11400000, guid: f4c92f69e4c9b6844aecdae9e1f08046, type: 2}
   - {fileID: 11400000, guid: a9b1e36c4687fd0419cb1236ee01d1a1, type: 2}
+  - {fileID: 11400000, guid: 37b0f9cf40a322a409829cdf6eaf0428, type: 2}
   - {fileID: 11400000, guid: a3acb0eaa36acd04bbe868ce51a902de, type: 2}
   - {fileID: 11400000, guid: d70950d3e9a60a34aa4a7893bb49c62e, type: 2}
+  - {fileID: 11400000, guid: 51a28ed98e10e644f8314662c5bfae60, type: 2}
   - {fileID: 11400000, guid: 4496555ddeab9ef4488a65b57f1dfbdc, type: 2}
-  - {fileID: 11400000, guid: a70d0c7edc7f7cb4c84fa0634b4f4168, type: 2}
   - {fileID: 11400000, guid: 96b35e119ee309743a50506b9c1c2d95, type: 2}
   - {fileID: 11400000, guid: 594ce443f4aeccd46af83ff2e2c8c404, type: 2}
   - {fileID: 11400000, guid: 0b898ced8dbbb4c40abf37dc8ab2b575, type: 2}
   - {fileID: 11400000, guid: 3aa35b2f89926564e90ab7367805385d, type: 2}
+  - {fileID: 11400000, guid: 36018536295420e4b9ef1c0bffe0e36f, type: 2}
+  - {fileID: 11400000, guid: 1190469541461f24db398fd3cc40b62a, type: 2}
+  - {fileID: 11400000, guid: 46d5a6b7491f9b94f90f389f79cb19b8, type: 2}
+  - {fileID: 11400000, guid: f5e6bb8fe7ddbd94c9ad4be5c87042b8, type: 2}
+  - {fileID: 11400000, guid: 1a9fa10267cd94148b51616b2ca8bf3e, type: 2}
+  - {fileID: 11400000, guid: 8da3e3ea31d3bef449b6b6843858c1ec, type: 2}
+  - {fileID: 11400000, guid: 17d4b1f1f6e523947973a600692ad2b9, type: 2}
   - {fileID: 11400000, guid: 3f4c9ccdc49ee274493a7f82e8e13671, type: 2}
+  - {fileID: 11400000, guid: b5ff08c72542fec45bfb0e9d807c08e2, type: 2}
+  - {fileID: 11400000, guid: 7d18d1fb90e3aff48bf573174194e7ef, type: 2}
   - {fileID: 11400000, guid: 76e74500f7a185b4eb6c4f8644074715, type: 2}
+  - {fileID: 11400000, guid: 70a553733b5730349b3137598e037049, type: 2}
   - {fileID: 11400000, guid: dae39e8b5b4882042b0cbd161910439a, type: 2}
   - {fileID: 11400000, guid: f0b2bd7601ec6594180f984a4d68a567, type: 2}
+  - {fileID: 11400000, guid: e2c1fadee7b7bbd4a99c463bff531c06, type: 2}
   Money: 0
-  MaxMana: 3
-  StartingPlayer: {fileID: 11400000, guid: 235f1968b92f4364481730e3bb26565e, type: 2}
+  MaxMana: 5
+  MaxHandCount: 8
+  StartingPlayer: {fileID: 11400000, guid: bac732186f717ac4eb74e640dab6b529, type: 2}
   EnemiesDataBase:
   - {fileID: 5728494894741626448, guid: e6f15e3a11f8f7b4389748c6e39fa172, type: 3}
   INITIALDeckList: []
@@ -3426,7 +3446,7 @@ Transform:
   m_GameObject: {fileID: 907376271}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.734038, y: 26.455887, z: -3.028874}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5148,7 +5168,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Titre du jeux
+  m_text: Titre du jeu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

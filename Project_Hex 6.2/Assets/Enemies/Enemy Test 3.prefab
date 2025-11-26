@@ -98,7 +98,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9aa1d3f8e959cf949a8cad43206ecf1b, type: 2}
   - {fileID: 11400000, guid: 5e46e0d667ac1d94f9d252681c33bbdb, type: 2}
   - {fileID: 11400000, guid: 5e46e0d667ac1d94f9d252681c33bbdb, type: 2}
-  - {fileID: 11400000, guid: dedff5f33b3ad504d83fa21b2f057e48, type: 2}
   WeaponZone: {fileID: 3491431722004416334}
   ShieldZone: {fileID: 938283172723516546}
   SupportZone: {fileID: 351204710267823827}
@@ -129,7 +128,6 @@ MonoBehaviour:
         number: B
         EnemyData:
         - {fileID: 11400000, guid: 4a1a9161772ab2c479526cad11346694, type: 2}
-        - {fileID: 11400000, guid: dedff5f33b3ad504d83fa21b2f057e48, type: 2}
     - rid: 3469642240805568521
       type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
       data:
@@ -310,6 +308,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -331,6 +334,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1

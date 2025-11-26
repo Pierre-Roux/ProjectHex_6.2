@@ -31,40 +31,12 @@ public class CombatSystem : Singleton<CombatSystem>
     [HideInInspector] public int MaxPermPlayer;
     [HideInInspector] public int MaxPermEnemy;
 
-    [HideInInspector] public int PlayerGeneralPower;
-    [HideInInspector] public int EnemyGeneralPower;
-    [HideInInspector] public int GeneralPower;
-    [HideInInspector] public int Invoc_GeneralPower;
-    [HideInInspector] public int Invoc_PlayerGeneralPower;
-    [HideInInspector] public int Invoc_EnemyGeneralPower;
-    [HideInInspector] public int Hollow_GeneralPower;
-    [HideInInspector] public int Hollow_PlayerGeneralPower;
-    [HideInInspector] public int Hollow_EnemyGeneralPower;
-    [HideInInspector] public int Decay_GeneralPower;
-    [HideInInspector] public int Decay_PlayerGeneralPower;
-    [HideInInspector] public int Decay_EnemyGeneralPower;
-    [HideInInspector] public int Artillery_GeneralPower;
-    [HideInInspector] public int Artillery_PlayerGeneralPower;
-    [HideInInspector] public int Artillery_EnemyGeneralPower;
+    [HideInInspector] public Dictionary<PermaTypes, PowerVarGroup> PowerByTypeGeneral = new();
+    [HideInInspector] public Dictionary<PermaTypes, HPVarGroup> HPByTypeGeneral = new();
+    [HideInInspector] public Dictionary<PermaTypes, StamVarGroup> StamByTypeGeneral = new();
+    [HideInInspector] public Dictionary<PermaTypes, CostVarGroup> CostByTypeGeneral = new();
 
-    [HideInInspector] public int PlayerGeneralHPGain;
-    [HideInInspector] public int EnemyGeneralHPGain;
-    [HideInInspector] public int GeneralHPGain;
-    [HideInInspector] public int Invoc_GeneralHPGain;
-    [HideInInspector] public int Invoc_PlayerGeneralHPGain;
-    [HideInInspector] public int Invoc_EnemyGeneralHPGain;
-    [HideInInspector] public int Hollow_GeneralHPGain;
-    [HideInInspector] public int Hollow_PlayerGeneralHPGain;
-    [HideInInspector] public int Hollow_EnemyGeneralHPGain;
-    [HideInInspector] public int Decay_GeneralHPGain;
-    [HideInInspector] public int Decay_PlayerGeneralHPGain;
-    [HideInInspector] public int Decay_EnemyGeneralHPGain;
-    [HideInInspector] public int Artillery_GeneralHPGain;
-    [HideInInspector] public int Artillery_PlayerGeneralHPGain;
-    [HideInInspector] public int Artillery_EnemyGeneralHPGain;
-
-    [HideInInspector] public int SpellCast_This_Turn;
-    [HideInInspector] public int PermanentCast_This_Turn;
+    [HideInInspector] public CounterManager GlobalCounters = new();
 
     public EnemyView currentEnemy;
 
@@ -115,6 +87,23 @@ public class CombatSystem : Singleton<CombatSystem>
 
     private void Start()
     {
+        // Init Dictoniary
+        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        {
+            PowerByTypeGeneral[type] = new PowerVarGroup();
+        }
+        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        {
+            HPByTypeGeneral[type] = new HPVarGroup();
+        }
+        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        {
+            StamByTypeGeneral[type] = new StamVarGroup();
+        }
+        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        {
+            CostByTypeGeneral[type] = new CostVarGroup();
+        }
         ClassicStartUp();
     }
 
@@ -138,6 +127,7 @@ public class CombatSystem : Singleton<CombatSystem>
         int targetTier = 0;
         MaxPermPlayer = 9;
         MaxPermEnemy = 9;
+        CardSystem.Instance.MaxHandCount = DataBase.Instance.MaxHandCount;
 
         if (DataBase.Instance.CurrentStage <= 0)
         {
@@ -214,6 +204,103 @@ public class CombatSystem : Singleton<CombatSystem>
         Interactable = true;
     }
 
+    // GESTION DES DICTIONNAIRES DE PASSIF
+    public int GetPower(PermaTypes type, Enemy_Player_ENUM side)
+    {
+        var power = PowerByTypeGeneral[type];
+        return side switch
+        {
+            Enemy_Player_ENUM.Player => power.Player,
+            Enemy_Player_ENUM.Enemy => power.Enemy,
+            _ => power.Global
+        };
+    }
+
+    public void AddPower(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    {
+        var power = PowerByTypeGeneral[type];
+        switch (side)
+        {
+            case Enemy_Player_ENUM.Player:
+                power.Player += amount;
+                break;
+            case Enemy_Player_ENUM.Enemy:
+                power.Enemy += amount;
+                break;
+            default:
+                power.Global += amount;
+                break;
+        }
+    }
+
+    public int GetHP(PermaTypes type, Enemy_Player_ENUM side)
+    {
+        var HP = HPByTypeGeneral[type];
+        return side switch
+        {
+            Enemy_Player_ENUM.Player => HP.Player,
+            Enemy_Player_ENUM.Enemy => HP.Enemy,
+            _ => HP.Global
+        };
+    }
+
+    public void AddHP(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    {
+        var HP = HPByTypeGeneral[type];
+        switch (side)
+        {
+            case Enemy_Player_ENUM.Player:
+                HP.Player += amount;
+                break;
+            case Enemy_Player_ENUM.Enemy:
+                HP.Enemy += amount;
+                break;
+            default:
+                HP.Global += amount;
+                break;
+        }
+    }
+
+    public int GetStam(PermaTypes type, Enemy_Player_ENUM side)
+    {
+        var Stam = StamByTypeGeneral[type];
+        return side switch
+        {
+            _ => Stam.Player
+        };
+    }
+
+    public void AddStam(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    {
+        var Stam = StamByTypeGeneral[type];
+        switch (side)
+        {
+            case Enemy_Player_ENUM.Player:
+                Stam.Player += amount;
+                break;
+        }
+    }
+
+    public int GetCost(PermaTypes type, Enemy_Player_ENUM side)
+    {
+        var Cost = CostByTypeGeneral[type];
+        return side switch
+        {
+            _ => Cost.Card
+        };
+    }
+
+    public void AddCost(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    {
+        var Cost = CostByTypeGeneral[type];
+        switch (side)
+        {
+            case Enemy_Player_ENUM.NULL:
+                Cost.Card += amount;
+                break;
+        }
+    }
+
     // PERFORMER
     public IEnumerator DiePermanentPerformer(DiePermanentGA diePermanentGA)
     {
@@ -226,19 +313,28 @@ public class CombatSystem : Singleton<CombatSystem>
                     LoseShieldGA loseShieldGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(loseShieldGA);
 
-                    TriggerEventGA triggerEventGA = new(Events.WhenPermaDie,null,diePermanentGA.PermanentView, null);
+                    TriggerEventGA triggerEventGA = new(Events.WhenPermaDie, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
-                    triggerEventGA = new(Events.WhenPermaExaust,null,diePermanentGA.PermanentView,null);
+                    triggerEventGA = new(Events.WhenPermaExaust, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
-                    TriggerEventGA triggerPermanentEventGA = new(Events.OnDestroy,null,diePermanentGA.PermanentView,null);
+                    TriggerEventGA triggerPermanentEventGA = new(Events.OnDestroy, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerPermanentEventGA);
 
-                    CombatSystem.Instance.Player_Permanents.Remove(diePermanentGA.PermanentView);
+                    Player_Permanents.Remove(diePermanentGA.PermanentView);
 
                     DestroyPermanentGA destroyPermanentGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(destroyPermanentGA);
+
+                    triggerEventGA = new(Events.HollowCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                    triggerEventGA = new(Events.DecayCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                    triggerEventGA = new(Events.ArtilleryCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                    triggerEventGA = new(Events.InvocCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
 
                     if (!AudioManager.Instance.IsValid(destroyPermanentGA.PermanentView.CardReferenceArchive.HollowDieSound))
                     {
@@ -260,14 +356,23 @@ public class CombatSystem : Singleton<CombatSystem>
                     diePermanentGA.CardReferenceArchive.Durability -= 1;
                     CardView newCardView = CardViewCreator.Instance.CreateCardView(diePermanentGA.CardReferenceArchive, diePermanentGA.PermanentView.transform.position, diePermanentGA.PermanentView.transform.rotation);
 
-                    TriggerEventGA triggerEventGA = new(Events.WhenPermaDie,null,diePermanentGA.PermanentView,null);
+                    TriggerEventGA triggerEventGA = new(Events.WhenPermaDie, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
-                    
-                    TriggerEventGA triggerPermanentEventGA = new(Events.OnDeath,null,diePermanentGA.PermanentView,null);
+
+                    TriggerEventGA triggerPermanentEventGA = new(Events.OnDeath, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerPermanentEventGA);
 
                     DestroyPermanentGA destroyPermanentGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(destroyPermanentGA);
+
+                    triggerEventGA = new(Events.HollowCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                    triggerEventGA = new(Events.DecayCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                    triggerEventGA = new(Events.ArtilleryCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                    triggerEventGA = new(Events.InvocCountChanged,null,null,null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
 
                     if (!AudioManager.Instance.IsValid(destroyPermanentGA.PermanentView.CardReferenceArchive.DieSound))
                     {
@@ -305,9 +410,14 @@ public class CombatSystem : Singleton<CombatSystem>
         TriggerEventGA triggerEnemyEventGA = new(Events.OnDeath,null,null,dieEnemySlotGA.EnemySlotView);
         ActionSystem.Instance.AddReaction(triggerEnemyEventGA);
 
-        CombatSystem.Instance.Enemy_Permanents.Remove(dieEnemySlotGA.EnemySlotView);
+        Enemy_Permanents.Remove(dieEnemySlotGA.EnemySlotView);
 
         DestroyPermanentGA destroyPermanentGA = new(null, dieEnemySlotGA.EnemySlotView);
+
+        triggerEventGA = new(Events.DecayCountChanged,null,null,null);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.InvocCountChanged,null,null,null);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
 
         ActionSystem.Instance.AddReaction(destroyPermanentGA);
         if (dieEnemySlotGA.EnemySlotView.IsCore)
@@ -365,9 +475,9 @@ public class CombatSystem : Singleton<CombatSystem>
         {
             foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,item,null))
             {
-                if (effect.Events == Events.OnSelect)
+                if (effect.Events.Contains(Events.OnSelect))
                 {
-                    effect.ActivateNumber = effect.ActivateLeft;
+                    effect.ActivateLeft = effect.ActivateNumber;
                 }
             }
         }
@@ -375,9 +485,9 @@ public class CombatSystem : Singleton<CombatSystem>
         {
             foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,null,item))
             {
-                if (effect.Events == Events.OnSelect)
+                if (effect.Events.Contains(Events.OnSelect))
                 {
-                    effect.ActivateNumber = effect.ActivateLeft;
+                    effect.ActivateLeft = effect.ActivateNumber;
                 }
             }
         }
@@ -409,9 +519,9 @@ public class CombatSystem : Singleton<CombatSystem>
     }
     private void PlayerTurnPreReaction(PlayerTurnGA playerTurnGA)
     {
-        // Reset DynamicVariable
-        SpellCast_This_Turn = 0;
-        PermanentCast_This_Turn = 0;
+        // Reset NewTurnCounters
+        CounterSystem.Instance.Reset(CounterType.SpellCast_This_Turn);
+        CounterSystem.Instance.Reset(CounterType.PermanentCast_This_Turn);
 
         ReffilManaGA reffilManaGA = new();
         ActionSystem.Instance.AddReaction(reffilManaGA);

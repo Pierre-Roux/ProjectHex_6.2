@@ -34,6 +34,7 @@ public class CardSystem : Singleton<CardSystem>
     [HideInInspector] public CardView PayXCardView;
     [HideInInspector] public bool IsPayXValidate;
     [HideInInspector] public int PayXValue;
+    [HideInInspector] public int MaxHandCount;
     
     public List<Card> drawPile = new();
     public List<Card> discardPile = new();
@@ -129,24 +130,44 @@ public class CardSystem : Singleton<CardSystem>
 
     private IEnumerator DrawCard()
     {
-        Card card = drawPile.Draw();
-        UpdatePiles();
-        hand.Add(card);
-        CardView cardView = CardViewCreator.Instance.CreateCardView(card, drawPilePoint.position, drawPilePoint.rotation);
-        TriggerEventGA triggerEventGA = new(Events.OnDraw, cardView.Card);
-        ActionSystem.Instance.AddReaction(triggerEventGA);
+        if (hand.Count < MaxHandCount)
+        {
+            TriggerEventGA triggerEventGA = null;
+            Card card = drawPile.Draw();
+            UpdatePiles();
+
+            if (hand.Count == 0)
+            {
+                triggerEventGA = new(Events.HandNoLongerEmpty,null,null,null);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+            }
+
+            hand.Add(card);
+
+            if (hand.Count == MaxHandCount)
+            {
+                triggerEventGA = new(Events.HandFull,null,null,null);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+            }
+
+            CardView cardView = CardViewCreator.Instance.CreateCardView(card, drawPilePoint.position, drawPilePoint.rotation);
+            triggerEventGA = new(Events.WhenDraw, cardView.Card);
+            ActionSystem.Instance.AddReaction(triggerEventGA);     
+            triggerEventGA = new(Events.OnDraw, cardView.Card);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
 
 
-        if (!AudioManager.Instance.IsValid(card.DrawCardSound))
-        {
-            RuntimeManager.PlayOneShot(AudioManager.Instance.DrawCardSound);
+            if (!AudioManager.Instance.IsValid(card.DrawCardSound))
+            {
+                RuntimeManager.PlayOneShot(AudioManager.Instance.DrawCardSound);
+            }
+            else
+            {
+                RuntimeManager.PlayOneShot(card.DrawCardSound);
+            }
+            
+            yield return handView.AddCard(cardView);            
         }
-        else
-        {
-            RuntimeManager.PlayOneShot(card.DrawCardSound);
-        }
-        
-        yield return handView.AddCard(cardView);
     }
 
     private void RefillDeck()
@@ -170,7 +191,9 @@ public class CardSystem : Singleton<CardSystem>
     {
         if (countAsDiscard_INGAME)
         {
-            TriggerEventGA triggerEventGA = new(Events.OnDiscard, cardView.Card);
+            TriggerEventGA triggerEventGA = new(Events.WhenDiscard, cardView.Card);
+            ActionSystem.Instance.AddReaction(triggerEventGA);      
+            triggerEventGA = new(Events.OnDiscard, cardView.Card);
             ActionSystem.Instance.AddReaction(triggerEventGA);      
         }
 
@@ -187,13 +210,20 @@ public class CardSystem : Singleton<CardSystem>
                     RuntimeManager.PlayOneShot(cardView.Card.DiscardCardSound);
                 }
 
+                cardView.Card.RefCardView = null;
                 cardView.transform.DOScale(Vector3.zero, 0.15f);
                 Tween tween = cardView.transform.DOMove(discardPilePoint.position, 0.15f);
                 yield return tween.WaitForCompletion();
                 discardPile.Add(cardView.Card);
                 UpdatePiles();
                 Destroy(cardView.gameObject);
-            }            
+            }
+        }
+        
+        if (hand.Count == 0)
+        {
+            TriggerEventGA triggerEventGA = new(Events.EmptyHanded,null,null,null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);            
         }
     }
 
@@ -208,10 +238,20 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator PlayCardPerformer(PlayCardGA playCardGA)
     {
         // Si on joue une carte toute les event OnPlay ce joue (il faudrait faire des OnPlaySpell, OnPlayPermanent ect...)
-        TriggerEventGA triggerEventGA = new(Events.OnPlayCard);
+        TriggerEventGA triggerEventGA = new(Events.WhenPlayCard);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
-        triggerEventGA = new(Events.OnPlaySpell);
+        triggerEventGA = new(Events.WhenPlaySpell);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        //Gestion des events de counter interne et globaux
+        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.SpellCast_This_Turn);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.SpellCast_This_Turn);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.SpellCast_Since_Load);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.SpellCast_Since_Load);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
         if (!AudioManager.Instance.IsValid(playCardGA.Card.PlayCardSound))
@@ -236,7 +276,7 @@ public class CardSystem : Singleton<CardSystem>
         CardView cardView = handView.RemoveCard(playCardGA.Card);
         yield return DiscardCard(cardView, false);
 
-        SpendManaGA spendManaGA = new(playCardGA.Card.cost);
+        SpendManaGA spendManaGA = new(playCardGA.Card.cost + playCardGA.Card.BonusCost);
         ActionSystem.Instance.AddReaction(spendManaGA);
 
         GameEventSystem.Instance.ManageEffects(playCardGA.Card,null,null);
@@ -366,7 +406,7 @@ public class CardSystem : Singleton<CardSystem>
     {
         if (PayXCardView != null)
         {
-            if (ManaSystem.Instance.currentMana - PayXCardView.Card.cost - 1 >= 0)
+            if (ManaSystem.Instance.currentMana - PayXCardView.Card.cost + PayXCardView.Card.BonusCost - 1 >= 0)
             {
                 int value = int.Parse(PayXCounter.text);
                 value++;

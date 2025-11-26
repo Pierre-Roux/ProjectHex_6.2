@@ -20,6 +20,10 @@ public enum DynamicCondition
     ifEventPermanentIsTypeOfTestType,
     ifEventPermanentIsPlayer,
     ifEventPermanentIsEnemy,
+    ifEventPermanentIsVessel,
+
+    ifEventCardTriggerIsVessel,
+    ifEventCardTriggerIsSpell,
 
     NoCardsInHands,
 }

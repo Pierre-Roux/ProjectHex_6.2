@@ -11,15 +11,17 @@ public class GainHPEffect : Effect
     [SerializeField] public int GainAmount;
     [SerializeField] public int multiplyAmount = 1;
     [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public bool aditive = true;
+    [SerializeField] public bool passive;
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
-    [SerializeField] public bool passive;
+
 
     [Header("For Manual Target only")]
     [SerializeField] private bool TargetUpTo = true;
     public override bool EffectTargetUpTo => TargetUpTo;
 
-    [SerializeField] private int targetNumber;
+    [SerializeField] private int targetNumber = 1;
     public override int EffectTargetNumber => targetNumber;
 
     [field: SerializeReference, SR] private List<TargetLimitationInfo> targetLimitations;
@@ -27,8 +29,9 @@ public class GainHPEffect : Effect
 
     public GainHPEffect() { }
 
-    public GainHPEffect(int gainAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
+    public GainHPEffect(string effectID, int gainAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         GainAmount = gainAmount;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
@@ -36,6 +39,7 @@ public class GainHPEffect : Effect
         MultiHit = multiHit;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         targetModeInfo = TargetModeInfo;
         DynamicConditionInfos = dynamicConditionInfos;
         targetNumber = TargetNumber;
@@ -51,12 +55,16 @@ public class GainHPEffect : Effect
         Duration = duration;
         DurationType = durationType;
         passive = Passive;
+        aditive = Aditive;
         TriggerOnDurationEnd = triggerOnDurationEnd;
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
         DynamicAmount = dynamicAmount;
         SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override GameAction GetGameAction()
@@ -92,8 +100,9 @@ public class GainHPEffect : Effect
         {
             if (passive)
             {
-                GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, null, null, targetModeInfo);
+                GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
                 gainLifeGA.CardActionner = CardActionner;
+                gainLifeGA.SourceEffect = this;
                 if (AudioManager.Instance.IsValid(SFX)) { gainLifeGA.SFX = SFX; }
                 return gainLifeGA;
             }
@@ -101,16 +110,20 @@ public class GainHPEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, null);
+                    GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, null);
                     gainLifeGA.CardActionner = CardActionner;
+                    gainLifeGA.SourceEffect = this;
+                    gainLifeGA.ActivateToolTip = false;
                     if (AudioManager.Instance.IsValid(SFX)) { gainLifeGA.SFX = SFX; }
-                    StartManualTargetingGA startManualTargetingGA = new(gainLifeGA, targetNumber,TargetUpTo, this,targetLimitations);
+                    StartManualTargetingGA startManualTargetingGA = new(gainLifeGA, targetNumber, TargetUpTo, this, targetLimitations);
+                    startManualTargetingGA.SourceEffect = this;
                     return startManualTargetingGA;
                 }
                 else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                 {
-                    GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                    GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                     gainLifeGA.CardActionner = CardActionner;
+                    gainLifeGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { gainLifeGA.SFX = SFX; }
                     return gainLifeGA;
                 }
@@ -121,8 +134,9 @@ public class GainHPEffect : Effect
                     TargetForLinked_Player = playerTargets;
                     TargetForLinked_Enemy = enemyTargets;
 
-                    GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, playerTargets, enemyTargets);
+                    GainLifeGA gainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets);
                     gainLifeGA.CardActionner = CardActionner;
+                    gainLifeGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { gainLifeGA.SFX = SFX; }
                     return gainLifeGA;
                 }
@@ -135,8 +149,9 @@ public class GainHPEffect : Effect
             {
                 if (passive)
                 {
-                    EnemyGainLifeGA enemyGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, null, null, targetModeInfo);
+                    EnemyGainLifeGA enemyGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
                     enemyGainLifeGA.Actionner = Actionner;
+                    enemyGainLifeGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { enemyGainLifeGA.SFX = SFX; }
                     return enemyGainLifeGA;
                 }
@@ -144,10 +159,13 @@ public class GainHPEffect : Effect
                 {
                     if (targetModeInfo.targetMode == TargetMode.Manual)
                     {
-                        EnemyGainLifeGA enemyGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, null, null);
+                        EnemyGainLifeGA enemyGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, null, null);
                         enemyGainLifeGA.Actionner = Actionner;
+                        enemyGainLifeGA.SourceEffect = this;
+                        enemyGainLifeGA.ActivateToolTip = false;
                         if (AudioManager.Instance.IsValid(SFX)) { enemyGainLifeGA.SFX = SFX; }
-                        StartManualTargetingGA startManualTargetingGA = new(enemyGainLifeGA, targetNumber,TargetUpTo, this,targetLimitations);
+                        StartManualTargetingGA startManualTargetingGA = new(enemyGainLifeGA, targetNumber, TargetUpTo, this, targetLimitations);
+                        startManualTargetingGA.SourceEffect = this;
                         return startManualTargetingGA;
                     }
                     else
@@ -168,8 +186,9 @@ public class GainHPEffect : Effect
                             TargetForLinked_Enemy = enemyTargets;
                         }
 
-                        EnemyGainLifeGA enemyGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, playerTargets, enemyTargets);
+                        EnemyGainLifeGA enemyGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets);
                         enemyGainLifeGA.Actionner = Actionner;
+                        enemyGainLifeGA.SourceEffect = this;
                         if (AudioManager.Instance.IsValid(SFX)) { enemyGainLifeGA.SFX = SFX; }
                         return enemyGainLifeGA;
                     }
@@ -180,8 +199,9 @@ public class GainHPEffect : Effect
             {
                 if (passive)
                 {
-                    PlayerGainLifeGA playerGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, null, null, targetModeInfo);
+                    PlayerGainLifeGA playerGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
                     playerGainLifeGA.Actionner = Actionner;
+                    playerGainLifeGA.SourceEffect = this;
                     if (AudioManager.Instance.IsValid(SFX)) { playerGainLifeGA.SFX = SFX; }
                     return playerGainLifeGA;
                 }
@@ -189,10 +209,13 @@ public class GainHPEffect : Effect
                 {
                     if (targetModeInfo.targetMode == TargetMode.Manual)
                     {
-                        PlayerGainLifeGA playerGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, null, null);
+                        PlayerGainLifeGA playerGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, null, null);
                         playerGainLifeGA.Actionner = Actionner;
+                        playerGainLifeGA.SourceEffect = this;
+                        playerGainLifeGA.ActivateToolTip = false;
                         if (AudioManager.Instance.IsValid(SFX)) { playerGainLifeGA.SFX = SFX; }
-                        StartManualTargetingGA startManualTargetingGA = new(playerGainLifeGA, targetNumber,TargetUpTo, this,targetLimitations);
+                        StartManualTargetingGA startManualTargetingGA = new(playerGainLifeGA, targetNumber, TargetUpTo, this, targetLimitations);
+                        startManualTargetingGA.SourceEffect = this;
                         return startManualTargetingGA;
                     }
                     else
@@ -213,8 +236,9 @@ public class GainHPEffect : Effect
                             TargetForLinked_Enemy = enemyTargets;
                         }
 
-                        PlayerGainLifeGA playerGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, playerTargets, enemyTargets);
+                        PlayerGainLifeGA playerGainLifeGA = new(GainAmount,multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets);
                         playerGainLifeGA.Actionner = Actionner;
+                        playerGainLifeGA.SourceEffect = this;
                         if (AudioManager.Instance.IsValid(SFX)) { playerGainLifeGA.SFX = SFX; }
                         return playerGainLifeGA;
                     }
@@ -241,6 +265,7 @@ public class GainHPEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new GainHPEffect(
+            EffectID,
             GainAmount,
             multiplyAmount,
             PayXEffect,
@@ -248,6 +273,7 @@ public class GainHPEffect : Effect
             MultiHit,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             DynamicConditionInfos,
             targetModeInfo,
             targetLimitations,
@@ -263,12 +289,16 @@ public class GainHPEffect : Effect
             Duration,
             DurationType,
             passive,
+            aditive,
             TriggerOnDurationEnd,
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
             DynamicAmount,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

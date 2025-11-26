@@ -7,10 +7,6 @@ public enum Events
     EndEnemyTurn,
     StartTurn,
     EndTurn,
-    OnPlayCard,
-    OnPlaySpell,
-    OnPlayPerma,
-    OnInvoc,
     OnDiscard,
     OnDraw,
 
@@ -23,6 +19,9 @@ public enum Events
     OnKill,
 
     //Whenever Events
+    WhenPlayCard,
+    WhenPlaySpell,
+    WhenPlayPerma,
     WhenPermaDie,
     WhenPermaSac,
     WhenPermaExaust,
@@ -34,6 +33,20 @@ public enum Events
     WhenPCoreDamaged,
     WhenECoreDamaged,
 
-    //Card Event (ON DrawThis, onDiscardThis ...)
+    WhenDiscard,
+    WhenDraw,
+
+    WhenGlobalCounter,
+    WhenInternCounter,
+
+    // FlagEvents
+    EmptyHanded,
+    HandNoLongerEmpty,
+    HandFull,
+    HollowCountChanged,
+    DecayCountChanged,
+    InvocCountChanged,
+    ArtilleryCountChanged,
+
     NULL,
 }

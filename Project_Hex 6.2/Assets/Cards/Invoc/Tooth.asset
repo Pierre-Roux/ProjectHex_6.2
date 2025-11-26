@@ -20,8 +20,8 @@ MonoBehaviour:
   <Money_Cost>k__BackingField: 0
   <life>k__BackingField: 3
   <DecayCounter>k__BackingField: 0
-  <Durability>k__BackingField: 0
-  <MaxDurability>k__BackingField: 0
+  <Durability>k__BackingField: 1
+  <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <permanentArea>k__BackingField: 1
   UnShieldable: 0
@@ -188,7 +188,10 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 13
+        Events: 09000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -200,6 +203,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -226,12 +230,16 @@ MonoBehaviour:
           PermaType: 0
         TargetUpTo: 1
         targetNumber: 1
+        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 7119591967054102600
       type: {class: EffectGroup, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 13
+        Events: 09000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -243,6 +251,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 999
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -266,7 +275,10 @@ MonoBehaviour:
       type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -278,6 +290,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
@@ -309,7 +322,10 @@ MonoBehaviour:
       type: {class: RefreshEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -321,6 +337,7 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0

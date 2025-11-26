@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class CardView : MonoBehaviour
 {
     [Header("Params")]
+    [SerializeField] public bool IsHoverCard;
     [SerializeField] public TMP_Text cost;
     [SerializeField] public TMP_Text Title;
     [SerializeField] public TMP_Text Description;
@@ -19,7 +20,7 @@ public class CardView : MonoBehaviour
     [SerializeField] private LayerMask DropAreaLayer;
     [SerializeField] private LayerMask DropDeckLayer;
     [SerializeField] private LayerMask DropDiscardLayer;
-    [SerializeField] SpriteRenderer PermanentSpriteRenderer;
+    [SerializeField] public SpriteRenderer PermanentSpriteRenderer;
 
     [SerializeField] public EventReference SelectedSound;
     [SerializeField] public EventReference UnSelectedSound;
@@ -36,6 +37,7 @@ public class CardView : MonoBehaviour
     [HideInInspector] public Card Card { get; private set; }
 
     [HideInInspector] public bool IsScryCard;
+    [HideInInspector] public bool IsVisualDeckCard;
     [HideInInspector] public bool IsChoiceCard;
     [HideInInspector] public bool IsInvalidChoice;
     [HideInInspector] public bool IsPayXValidate;
@@ -46,17 +48,14 @@ public class CardView : MonoBehaviour
     public void Setup(Card card)
     {
         Card = card;
+        if (!IsHoverCard && !IsVisualDeckCard && !IsChoiceCard && !IsScryCard && !IsReward)
+        {
+            card.RefCardView = this;
+        }
         Title.text = card.Title;
         name = Title.text;
-        if (card.DecayCounter <= 0)
-        {
-            Description.text = card.Description;
-        }
-        else
-        {
-            Description.text = card.Description + "\n" + "Decay " + card.DecayCounter.ToString();
-        }
-        cost.text = card.cost.ToString();
+        Description.text = card.Description;
+        UpdateCostText();
         Image.sprite = card.Image;
 
         if (!card.IsSpell)
@@ -72,6 +71,44 @@ public class CardView : MonoBehaviour
             Life.gameObject.SetActive(false);
             Durability.gameObject.SetActive(false);
         }
+
+        //UpdateDescription();
+    }
+
+    public void UpdateDescription()
+    {
+        List<string> effectDescriptions = new();
+
+        foreach (Effect effect in Card.Effects)
+        {
+            if (effect is EffectGroup group)
+            {
+                foreach (Effect subEffect in group.EffectGroups)
+                {
+                    effectDescriptions.Add(" And ");
+                    effectDescriptions.Add(subEffect.GetParsedDescription());
+                }
+            }
+            else if (effect is ChoiceEffect choice)
+            {
+                foreach (Effect subEffect in choice.EffectsForPlayerChoice)
+                {
+                    effectDescriptions.Add(" Or ");
+                    effectDescriptions.Add(subEffect.GetParsedDescription());
+                }
+            }
+            else
+            {
+                effectDescriptions.Add(effect.GetParsedDescription());
+            }
+        }
+
+        Description.text = string.Join("\n", effectDescriptions);
+    }
+    
+    public void UpdateCostText()
+    {
+        cost.text = Mathf.Max(0, Card.cost + Card.BonusCost).ToString();
     }
 
     void OnMouseEnter()
@@ -126,15 +163,18 @@ public class CardView : MonoBehaviour
             }
             else
             {
-                if (!IsScryCard)
+                if (!IsVisualDeckCard)
                 {
-                    if (ActionSystem.Instance.IsPerforming) return;
-                    if (!CombatSystem.Instance.Interactable) return;
-                }
-                isDragging = true;
-                transform.rotation = Quaternion.identity;
-                CardViewHover.Instance.Hide();
-                Wrapper.SetActive(true);                
+                    if (!IsScryCard)
+                    {
+                        if (ActionSystem.Instance.IsPerforming) return;
+                        if (!CombatSystem.Instance.Interactable) return;
+                    }
+                    isDragging = true;
+                    transform.rotation = Quaternion.identity;
+                    CardViewHover.Instance.Hide();
+                    Wrapper.SetActive(true);                     
+                }               
             }
         }
     }
@@ -189,7 +229,7 @@ public class CardView : MonoBehaviour
         }
         else
         {
-            if (ManaSystem.Instance.HasEnoughMana(Card.cost))
+            if (ManaSystem.Instance.HasEnoughMana(Mathf.Max(0, Card.cost + Card.BonusCost)))
             {
                 if (Card.IsSpell)
                 {
@@ -208,11 +248,12 @@ public class CardView : MonoBehaviour
                             }
                         }
 
-                        isDragging = false;
+                        isDragging = false;   
                         PlayCardGA playCardGA = new(Card);
                         playCardGA.CardActionner = Card;
                         ActionSystem.Instance.Perform(playCardGA);
-                        CombatSystem.Instance.SpellCast_This_Turn++;
+                        CounterSystem.Instance.Add(CounterType.SpellCast_This_Turn);
+                        CounterSystem.Instance.Add(CounterType.SpellCast_Since_Load);
                     }
                     else
                     {
@@ -264,7 +305,12 @@ public class CardView : MonoBehaviour
                                 isDragging = false;
                                 SummonGA summonGA = new(Card);
                                 ActionSystem.Instance.Perform(summonGA);
-                                CombatSystem.Instance.PermanentCast_This_Turn++;
+                                CounterSystem.Instance.Add(CounterType.PermanentCast_This_Turn);
+                                CounterSystem.Instance.Add(CounterType.PermanentCast_Since_Load);
+                                TriggerEventGA triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.PermanentCast_This_Turn);
+                                ActionSystem.Instance.AddReaction(triggerEventGA);
+                                triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.PermanentCast_This_Turn);
+                                ActionSystem.Instance.AddReaction(triggerEventGA);
                             }
                         }
                     }
@@ -328,9 +374,9 @@ public class CardView : MonoBehaviour
 
     public void RemoveSelectEffect(bool SoundUp)
     {
+        PermanentSpriteRenderer.color = Color.white;
         if (SoundUp)
         {
-            PermanentSpriteRenderer.color = Color.white;
             RuntimeManager.PlayOneShot(UnSelectedSound);
         }
     }

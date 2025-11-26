@@ -19,7 +19,7 @@ public enum DynamicAmount
     SpellCast_This_Turn,
     PermanentCast_This_Turn,
 
-    Artiley_Count,
+    Artilery_Count,
     Decay_Count,
     Hollow_Count,
     Invoc_Count,

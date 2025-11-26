@@ -24,6 +24,8 @@ public enum TargetLimitations
 
     Only_Activated,
 
+    PermanentIsNotType,
+
 }
 
 [System.Serializable]

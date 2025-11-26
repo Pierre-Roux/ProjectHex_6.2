@@ -10,6 +10,8 @@ public enum TargetMode
     HighHP,
     LowHP,
 
+    HighCost,
+    LowCost,
 
     EffectParent_Targets,
     NULL,

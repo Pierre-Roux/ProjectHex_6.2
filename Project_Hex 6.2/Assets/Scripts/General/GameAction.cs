@@ -13,4 +13,7 @@ public abstract class GameAction
     public List<GameAction> PostReactions { get; private set; } = new();
 
     public EventReference SFX;
+
+    public Effect SourceEffect;
+    public bool ActivateToolTip = true;
 }

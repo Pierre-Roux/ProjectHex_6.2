@@ -30,7 +30,7 @@ MonoBehaviour:
   isArtillery: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642677219491996
+  - rid: 7119592267123523990
   PlayCardSound:
     Guid:
       Data1: 0
@@ -183,11 +183,14 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3469642677219491996
+    - rid: 7119592267123523990
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 0
-        Events: 13
+        Events: 09000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -199,12 +202,13 @@ MonoBehaviour:
             Data4: 0
           Path: 
         ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -214,8 +218,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 09cd4f7b-3b81-41b6-a898-55dc4c67216e
-        damageAmount: 2
+        EffectID: 
+        damageAmount: 0
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:
@@ -225,4 +229,5 @@ MonoBehaviour:
           PermaType: 0
         TargetUpTo: 1
         targetNumber: 1
+        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []

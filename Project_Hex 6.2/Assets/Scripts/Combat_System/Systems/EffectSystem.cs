@@ -19,6 +19,7 @@ public class EffectSystem : Singleton<EffectSystem>
         ActionSystem.AttachPerformer<DecountEnemyDecayGA>(DecountDecayEnemyPerformer);
         ActionSystem.AttachPerformer<AlterPowerGA>(AlterPowerPerformer);
         ActionSystem.AttachPerformer<AlterStaminaGA>(AlterStamPerformer);
+        ActionSystem.AttachPerformer<AlterCardCostGA>(AlterCardCostPerformer);
         ActionSystem.AttachPerformer<LifeLossGA>(LifeLossPerformer);
         ActionSystem.AttachPerformer<DiscardCardGA>(DiscardCardPerformer);
         ActionSystem.AttachPerformer<GainLifeGA>(GainLifePerformer);
@@ -41,6 +42,7 @@ public class EffectSystem : Singleton<EffectSystem>
         ActionSystem.DetachPerformer<DecountEnemyDecayGA>();
         ActionSystem.DetachPerformer<AlterPowerGA>();
         ActionSystem.DetachPerformer<AlterStaminaGA>();
+        ActionSystem.DetachPerformer<AlterCardCostGA>();
         ActionSystem.DetachPerformer<LifeLossGA>();
         ActionSystem.DetachPerformer<DiscardCardGA>();
         ActionSystem.DetachPerformer<GainLifeGA>();
@@ -435,77 +437,14 @@ public class EffectSystem : Singleton<EffectSystem>
 
         if (alterPowerGA.passive)
         {
-            switch (alterPowerGA.targetModeInfo.PlayerOrEnemy)
-            {
-                case Enemy_Player_ENUM.NULL:
-                    switch (alterPowerGA.targetModeInfo.PermaType)
-                    {
-                        case PermaTypes.Artillery:
-                            CombatSystem.Instance.Artillery_GeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Decay:
-                            CombatSystem.Instance.Decay_GeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Hollow:
-                            CombatSystem.Instance.Hollow_GeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Invoc:
-                            CombatSystem.Instance.Invoc_GeneralPower += alterPowerGA.Amount;
-                            break;
-                        default:
-                            CombatSystem.Instance.GeneralPower += alterPowerGA.Amount;
-                            break;
-                    }
-                    break;
+            var type = alterPowerGA.targetModeInfo.PermaType;
+            var side = alterPowerGA.targetModeInfo.PlayerOrEnemy;
 
-                case Enemy_Player_ENUM.Player:
-                    switch (alterPowerGA.targetModeInfo.PermaType)
-                    {
-                        case PermaTypes.Artillery:
-                            CombatSystem.Instance.Artillery_PlayerGeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Decay:
-                            CombatSystem.Instance.Decay_PlayerGeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Hollow:
-                            CombatSystem.Instance.Hollow_PlayerGeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Invoc:
-                            CombatSystem.Instance.Invoc_PlayerGeneralPower += alterPowerGA.Amount;
-                            break;
-                        default:
-                            CombatSystem.Instance.PlayerGeneralPower += alterPowerGA.Amount;
-                            break;
-                    }
-                    break;
-
-                case Enemy_Player_ENUM.Enemy:
-                    switch (alterPowerGA.targetModeInfo.PermaType)
-                    {
-                        case PermaTypes.Artillery:
-                            CombatSystem.Instance.Artillery_EnemyGeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Decay:
-                            CombatSystem.Instance.Decay_EnemyGeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Hollow:
-                            CombatSystem.Instance.Hollow_EnemyGeneralPower += alterPowerGA.Amount;
-                            break;
-                        case PermaTypes.Invoc:
-                            CombatSystem.Instance.Invoc_EnemyGeneralPower += alterPowerGA.Amount;
-                            break;
-                        default:
-                            CombatSystem.Instance.EnemyGeneralPower += alterPowerGA.Amount;
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
+            CombatSystem.Instance.AddPower(type, side, alterPowerGA.Amount);
 
             foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
             {
-                // Update l'afichage pour les cartes
+                // Update l'afichage pour les permanents
             }
 
             foreach (EnemySlotView item in CombatSystem.Instance.Enemy_Permanents)
@@ -519,7 +458,7 @@ public class EffectSystem : Singleton<EffectSystem>
             {
                 foreach (var target in alterPowerGA.playerTargets)
                 {
-                    target.TakeAlterPower(alterPowerGA.Amount);
+                    target.TakeAlterPower(alterPowerGA);
                     yield return new WaitForSeconds(AnimDelay);
                 }
             }
@@ -528,7 +467,7 @@ public class EffectSystem : Singleton<EffectSystem>
             {
                 foreach (var target in alterPowerGA.enemyTargets)
                 {
-                    target.TakeAlterPower(alterPowerGA.Amount);
+                    target.TakeAlterPower(alterPowerGA);
                     yield return new WaitForSeconds(AnimDelay);
                 }
             }
@@ -543,11 +482,11 @@ public class EffectSystem : Singleton<EffectSystem>
             {
                 if (alterStaminaGA.CardActionner != null)
                 {
-                    alterStaminaGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterStaminaGA.DynamicAmount, null, null,alterStaminaGA.CardActionner);
+                    alterStaminaGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterStaminaGA.DynamicAmount, null, null, alterStaminaGA.CardActionner);
                 }
                 else
                 {
-                    alterStaminaGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterStaminaGA.DynamicAmount, null, null);                 
+                    alterStaminaGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterStaminaGA.DynamicAmount, null, null);
                 }
             }
             else if (alterStaminaGA.Actionner.GetComponent<PermanentView>() != null)
@@ -562,15 +501,89 @@ public class EffectSystem : Singleton<EffectSystem>
 
         alterStaminaGA.Amount = alterStaminaGA.Amount * alterStaminaGA.multiplyAmount;
 
-        if (alterStaminaGA.playerTargets != null)
+        if (alterStaminaGA.passive)
         {
-            foreach (var target in alterStaminaGA.playerTargets)
+            var type = alterStaminaGA.targetModeInfo.PermaType;
+            var side = alterStaminaGA.targetModeInfo.PlayerOrEnemy;
+
+            CombatSystem.Instance.AddStam(type, side, alterStaminaGA.Amount);
+
+            foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
             {
-                target.TakeAlterStamina(alterStaminaGA.Amount);
-                yield return new WaitForSeconds(AnimDelay);
+                item.UpdateStam();
             }
         }
-        
+        else
+        {
+            if (alterStaminaGA.playerTargets != null)
+            {
+                foreach (var target in alterStaminaGA.playerTargets)
+                {
+                    target.TakeAlterStamina(alterStaminaGA);
+                    yield return new WaitForSeconds(AnimDelay);
+                }
+            }            
+        }
+    }
+    
+    private IEnumerator AlterCardCostPerformer(AlterCardCostGA alterCardCostGA)
+    {
+        if (alterCardCostGA.DynamicAmount != DynamicAmount.NULL)
+        {
+            if (alterCardCostGA.Actionner == null)
+            {
+                if (alterCardCostGA.CardActionner != null)
+                {
+                    alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, null, null,alterCardCostGA.CardActionner);
+                }
+                else
+                {
+                    alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, null, null);                 
+                }
+            }
+            else if (alterCardCostGA.Actionner.GetComponent<PermanentView>() != null)
+            {
+                alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, alterCardCostGA.Actionner.GetComponent<PermanentView>(), null);
+            }
+            else
+            {
+                alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, null, alterCardCostGA.Actionner.GetComponent<EnemySlotView>());
+            }
+        }
+
+        alterCardCostGA.Amount = alterCardCostGA.Amount * alterCardCostGA.multiplyAmount;
+
+        if (alterCardCostGA.passive)
+        {
+            var type = alterCardCostGA.targetModeInfo.PermaType;
+            var side = alterCardCostGA.targetModeInfo.PlayerOrEnemy;
+
+            CombatSystem.Instance.AddCost(type, side, alterCardCostGA.Amount);
+
+            foreach (Card item in CardSystem.Instance.hand)
+            {
+                item.UpdateCost();
+            }
+            foreach (Card item in CardSystem.Instance.discardPile)
+            {
+                item.UpdateCost();
+            }
+            foreach (Card item in CardSystem.Instance.drawPile)
+            {
+                item.UpdateCost();
+            }
+        }
+        else
+        {
+            if (alterCardCostGA.cardTargets != null)
+            {
+                foreach (var target in alterCardCostGA.cardTargets)
+                {
+                    target.TakeAlterCardCost(alterCardCostGA.Amount);
+                    yield return new WaitForSeconds(AnimDelay);
+                }
+            }            
+        }
     }
 
     private IEnumerator LifeLossPerformer(LifeLossGA lifeLossGA)
@@ -699,74 +712,10 @@ public class EffectSystem : Singleton<EffectSystem>
 
         if (gainLifeGA.passive)
         {
-            //UnityEngine.Debug.Log("Passive on " + gainLifeGA.permaTypes + " of " + gainLifeGA.targetMode);
-            switch (gainLifeGA.targetModeInfo.PlayerOrEnemy)
-            {
-                case Enemy_Player_ENUM.NULL:
-                    switch (gainLifeGA.targetModeInfo.PermaType)
-                    {
-                        case PermaTypes.Artillery:
-                            CombatSystem.Instance.Artillery_GeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Decay:
-                            CombatSystem.Instance.Decay_GeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Hollow:
-                            CombatSystem.Instance.Hollow_GeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Invoc:
-                            CombatSystem.Instance.Invoc_GeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        default:
-                            CombatSystem.Instance.GeneralHPGain += gainLifeGA.Amount;
-                            break;
-                    }
-                    break;
+            var type = gainLifeGA.targetModeInfo.PermaType;
+            var side = gainLifeGA.targetModeInfo.PlayerOrEnemy;
 
-                case Enemy_Player_ENUM.Player:
-                    switch (gainLifeGA.targetModeInfo.PermaType)
-                    {
-                        case PermaTypes.Artillery:
-                            CombatSystem.Instance.Artillery_PlayerGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Decay:
-                            CombatSystem.Instance.Decay_PlayerGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Hollow:
-                            CombatSystem.Instance.Hollow_PlayerGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Invoc:
-                            CombatSystem.Instance.Invoc_PlayerGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        default:
-                            CombatSystem.Instance.PlayerGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                    }
-                    break;
-
-                case Enemy_Player_ENUM.Enemy:
-                    switch (gainLifeGA.targetModeInfo.PermaType)
-                    {
-                        case PermaTypes.Artillery:
-                            CombatSystem.Instance.Artillery_EnemyGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Decay:
-                            CombatSystem.Instance.Decay_EnemyGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Hollow:
-                            CombatSystem.Instance.Hollow_EnemyGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        case PermaTypes.Invoc:
-                            CombatSystem.Instance.Invoc_EnemyGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                        default:
-                            CombatSystem.Instance.EnemyGeneralHPGain += gainLifeGA.Amount;
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
+            CombatSystem.Instance.AddHP(type, side, gainLifeGA.Amount);
 
             foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
             {
@@ -784,7 +733,7 @@ public class EffectSystem : Singleton<EffectSystem>
             {
                 foreach (var target in gainLifeGA.playerTargets)
                 {
-                    target.GainLife(gainLifeGA.Amount);
+                    target.TakeAlterLife(gainLifeGA);
                     yield return new WaitForSeconds(AnimDelay);
                 }
             }
@@ -793,7 +742,7 @@ public class EffectSystem : Singleton<EffectSystem>
             {
                 foreach (var target in gainLifeGA.enemyTargets)
                 {
-                    target.GainLife(gainLifeGA.Amount);
+                    target.TakeAlterLife(gainLifeGA);
                     yield return new WaitForSeconds(AnimDelay);
                 }
             }
@@ -917,6 +866,17 @@ public class EffectSystem : Singleton<EffectSystem>
 
         Effect EffectToManage = CardSystem.Instance.EffectChoosed;
 
+        if (EffectToManage.ORChoice)
+        {
+            foreach (Effect effect in letChoiceGA.ChoicesEffects)
+            {
+                if (effect.ORChoice)
+                {
+                    effect.ActivateLeft = 0;
+                }
+            }
+        }
+
         PermanentView permanentView = null;
         EnemySlotView enemySlotView = null;
         if (EffectToManage.Actionner != null)
@@ -954,7 +914,6 @@ public class EffectSystem : Singleton<EffectSystem>
             {
                 if (permanentView != null)
                 {
-                    // Vérifie Hollow
                     bool canApply = (permanentView.permaTypes.Contains(PermaTypes.Hollow) && clonedEffect.HollowEffect)
                                 || (!permanentView.permaTypes.Contains(PermaTypes.Hollow) && !clonedEffect.HollowEffect);
                     if (!canApply) continue;
@@ -966,12 +925,15 @@ public class EffectSystem : Singleton<EffectSystem>
                 if (letChoiceGA.OnSelectMode)
                 {
                     // Fonctionnement pour group effect dans le OnSelectMode
-                    if (clonedEffect is EffectGroup)
+                    if (clonedEffect is EffectGroup choiceEffect)
                     {
-                        EffectGroup choiceEffect = (EffectGroup)clonedEffect;
                         foreach (Effect effect1 in choiceEffect.EffectGroups)
                         {
                             Effect clonedEffect1 = effect1.Clone();
+
+                            clonedEffect1.Actionner = choiceEffect.Actionner;
+                            clonedEffect1.CardActionner = choiceEffect.CardActionner;
+
                             // Verification pour hollow Effect
                             if (clonedEffect1.Actionner != null)
                             {
@@ -986,19 +948,17 @@ public class EffectSystem : Singleton<EffectSystem>
 
                             while (clonedEffect1 != null)
                             {
-                                if (clonedEffect1.Events == Events.Instant)
+                                foreach (var ev in clonedEffect1.Events)
                                 {
-                                    //Debug.Log("Register " + effect + " CardActionner : " + clonedEffect.CardActionner);
-                                    ActionSystem.Instance.AddReaction(clonedEffect1.GetGameAction());
-                                    Debug.Log(clonedEffect1 + " Register ");
-                                }
-                                else
-                                {
-                                    // Ajout aux Events (sauf cas spéciaux)
-                                    if (clonedEffect1.Events != Events.EnemyTurn)
+                                    Debug.Log("for " + ev);
+                                    if (ev == Events.Instant || ev == Events.OnSelect && clonedEffect.Events.Count == 1)
                                     {
-                                        GameEventSystem.Instance.AddEffectToEvent(clonedEffect1);
-                                        Debug.Log(clonedEffect1 + " Register ");
+                                        ActionSystem.Instance.AddReaction(clonedEffect1.GetGameAction());
+                                        Debug.Log("Register ; " + clonedEffect1);
+                                    }
+                                    else if (ev != Events.EnemyTurn)
+                                    {
+                                        GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect1);
                                     }
                                 }
 
@@ -1022,8 +982,17 @@ public class EffectSystem : Singleton<EffectSystem>
                     // Fonctionnement pour effect basic dans le OnSelectMode
                     else
                     {
-                        ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
-                        Debug.Log(clonedEffect + " Register ");
+                        foreach (var ev in clonedEffect.Events)
+                        {
+                            if (ev == Events.Instant || ev == Events.OnSelect && clonedEffect.Events.Count == 1)
+                            {
+                                ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
+                            }  
+                            else if (ev != Events.EnemyTurn)
+                            {
+                                GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect);
+                            }
+                        }
 
                         if (clonedEffect.LinkedEffect != null)
                         {
@@ -1057,19 +1026,15 @@ public class EffectSystem : Singleton<EffectSystem>
 
                             while (clonedEffect1 != null)
                             {
-                                if (clonedEffect1.Events == Events.Instant)
+                                foreach (var ev in clonedEffect1.Events)
                                 {
-                                    //Debug.Log("Register " + effect + " CardActionner : " + clonedEffect.CardActionner);
-                                    ActionSystem.Instance.AddReaction(clonedEffect1.GetGameAction());
-                                    Debug.Log(clonedEffect1 + " Register ");
-                                }
-                                else
-                                {
-                                    // Ajout aux Events (sauf cas spéciaux)
-                                    if (clonedEffect1.Events != Events.EnemyTurn)
+                                    if (ev == Events.Instant)
                                     {
-                                        GameEventSystem.Instance.AddEffectToEvent(clonedEffect1);
-                                        Debug.Log(clonedEffect1 + " Register ");
+                                        ActionSystem.Instance.AddReaction(clonedEffect1.GetGameAction());
+                                    }
+                                    else if (ev != Events.EnemyTurn)
+                                    {
+                                        GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect1);
                                     }
                                 }
 
@@ -1092,20 +1057,12 @@ public class EffectSystem : Singleton<EffectSystem>
                     // Fonctionnement pour effect basic 
                     else
                     {
-                        if (clonedEffect.Events == Events.Instant)
+                        foreach (var ev in clonedEffect.Events)
                         {
-                            //Debug.Log("Register " + effect + " CardActionner : " + clonedEffect.CardActionner);
-                            ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
-                            Debug.Log(clonedEffect + " Register ");
-                        }
-                        else
-                        {
-                            // Ajout aux Events (sauf cas spéciaux)
-                            if (clonedEffect.Events != Events.EnemyTurn)
-                            {
-                                GameEventSystem.Instance.AddEffectToEvent(clonedEffect);
-                                Debug.Log(clonedEffect + " Register ");
-                            }
+                            if (ev == Events.Instant)
+                                ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
+                            else if (ev != Events.EnemyTurn)
+                                GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect);
                         }
 
                         if (clonedEffect.LinkedEffect != null)

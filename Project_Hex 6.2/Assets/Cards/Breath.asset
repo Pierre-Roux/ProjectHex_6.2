@@ -188,8 +188,12 @@ MonoBehaviour:
       type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -198,24 +202,26 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: e27eb02a-349d-4016-b333-aa361daa243c
         amount: 0
+        multiplyAmount: 1
         DynamicAmount: 0
         CardsToInvoc:
         - {fileID: 11400000, guid: 885ad610813930844b4ff44c86e303f9, type: 2}
@@ -224,8 +230,12 @@ MonoBehaviour:
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
         actionnerType: 2
-        Events: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
         HollowEffect: 0
+        PayXEffect: 0
         MultiHit: 0
         SFX:
           Guid:
@@ -234,22 +244,24 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
+        ActivateNumber: 1
+        ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 0
-        DynamicCondition: 0
-        TestValue: 0
-        TestDynamicAmount: 0
-        TestType: 0
+        DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: 43f727c9-7b15-435f-b385-af205d84d484
         drawAmount: 1
+        multiplyAmount: 1
         DynamicAmount: 0

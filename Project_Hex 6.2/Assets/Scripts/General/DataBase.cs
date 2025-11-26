@@ -10,7 +10,7 @@ public class DataBase : Singleton<DataBase>
     
     public int Money;
     public int MaxMana;
-    
+    public int MaxHandCount;
 
     public PlayerData StartingPlayer;
     public List<GameObject> EnemiesDataBase;

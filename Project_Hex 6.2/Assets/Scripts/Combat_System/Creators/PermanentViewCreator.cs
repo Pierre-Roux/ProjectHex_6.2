@@ -49,8 +49,8 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
         PermanentView PermanentView = Instantiate(PermanentViewPrefab, Vector3.zero, Quaternion.identity, Parent.transform);
         PermanentView.transform.localScale = Vector3.zero;
         PermanentView.transform.DOScale(PermanentViewPrefab.transform.localScale, 0.15f);
-        PermanentView.Setup(cardReference);
         PermanentView.gameObject.name = cardReference.Title + " " + CombatSystem.Instance.Player_Permanents.Count;
+        PermanentView.Setup(cardReference);
 
         CombatSystem.Instance.Player_Permanents.Add(PermanentView);
 

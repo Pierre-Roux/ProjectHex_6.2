@@ -15,8 +15,9 @@ public class InvocEffect : Effect
 
     public InvocEffect() { }
 
-    public InvocEffect(int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, Events Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx)
+    public InvocEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        EffectID = effectID;
         amount = Amount;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
@@ -24,6 +25,7 @@ public class InvocEffect : Effect
         MultiHit = multiHit;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
+        ORChoice = orChoice;
         CardsToInvoc = cardsToInvoc;
         EnemyToInvoc = enemyToInvoc;
         DynamicConditionInfos = dynamicConditionInfos;
@@ -42,6 +44,9 @@ public class InvocEffect : Effect
         TargetForLinked_Enemy = targetForLinked_Enemy;
         DynamicAmount = dynamicAmount;
         SFX = sfx;
+        TypeOfCounter = typeOfCounter;
+        CounterValue = counterValue;
+        ModuloValue = moduloValue;
     }
 
     public override GameAction GetGameAction()
@@ -78,6 +83,7 @@ public class InvocEffect : Effect
         {
             InvocGA invocGA = new(amount,multiplyAmount, DynamicAmount, CardsToInvoc, EnemyToInvoc);
             invocGA.CardActionner = CardActionner;
+            invocGA.SourceEffect = this;
             if (AudioManager.Instance.IsValid(SFX)) { invocGA.SFX = SFX; }
             return invocGA;
         }
@@ -89,6 +95,7 @@ public class InvocEffect : Effect
             {
                 InvocEGA invocEGA = new(amount,multiplyAmount, DynamicAmount, EnemyToInvoc);
                 invocEGA.Actionner = Actionner;
+                invocEGA.SourceEffect = this;
                 if (AudioManager.Instance.IsValid(SFX)) { invocEGA.SFX = SFX; }
                 return invocEGA;
             }
@@ -97,6 +104,7 @@ public class InvocEffect : Effect
             {
                 InvocPGA invocPGA = new(amount,multiplyAmount, DynamicAmount, CardsToInvoc);
                 invocPGA.Actionner = Actionner;
+                invocPGA.SourceEffect = this;
                 if (AudioManager.Instance.IsValid(SFX)) { invocPGA.SFX = SFX; }
                 return invocPGA;
             }
@@ -122,6 +130,7 @@ public class InvocEffect : Effect
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new InvocEffect(
+            EffectID,
             amount,
             multiplyAmount,
             PayXEffect,
@@ -129,6 +138,7 @@ public class InvocEffect : Effect
             MultiHit,
             ActivateNumber,
             ActivateLeft,
+            ORChoice,
             CardsToInvoc,
             EnemyToInvoc,
             DynamicConditionInfos,
@@ -146,7 +156,10 @@ public class InvocEffect : Effect
             clonedPlayerTargets,
             clonedEnemyTargets,
             DynamicAmount,
-            SFX
+            SFX,
+            TypeOfCounter,
+            CounterValue,
+            ModuloValue
         );
     }
 }

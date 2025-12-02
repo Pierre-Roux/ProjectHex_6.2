@@ -12,6 +12,7 @@ public class CombatSystem : Singleton<CombatSystem>
     [HideInInspector] private List<GameObject> EnemiesDataBase;
 
     [HideInInspector] public bool Interactable;
+    [HideInInspector] public bool EndTurnBtnActivable;
     [HideInInspector] public bool Win;
 
     [SerializeField] public int CurrentTurn;
@@ -128,6 +129,7 @@ public class CombatSystem : Singleton<CombatSystem>
         MaxPermPlayer = 9;
         MaxPermEnemy = 9;
         CardSystem.Instance.MaxHandCount = DataBase.Instance.MaxHandCount;
+        CardSystem.Instance.NBCardDrawAtStartTurn = DataBase.Instance.NBCardDrawAtStartTurn;
 
         if (DataBase.Instance.CurrentStage <= 0)
         {
@@ -319,8 +321,11 @@ public class CombatSystem : Singleton<CombatSystem>
                     triggerEventGA = new(Events.WhenPermaExaust, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
-                    TriggerEventGA triggerPermanentEventGA = new(Events.OnDestroy, null, diePermanentGA.PermanentView, null);
-                    ActionSystem.Instance.AddReaction(triggerPermanentEventGA);
+                    triggerEventGA = new(Events.OnDeath, null, diePermanentGA.PermanentView, null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+
+                    triggerEventGA = new(Events.OnDestroy, null, diePermanentGA.PermanentView, null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
 
                     Player_Permanents.Remove(diePermanentGA.PermanentView);
 
@@ -343,6 +348,11 @@ public class CombatSystem : Singleton<CombatSystem>
                     else
                     {
                         RuntimeManager.PlayOneShot(destroyPermanentGA.PermanentView.CardReferenceArchive.HollowDieSound);
+                    }
+
+                    if (!diePermanentGA.PermanentView.permaTypes.Contains(PermaTypes.Invoc))
+                    {
+                        CardSystem.Instance.ExhaustPile.Add(diePermanentGA.PermanentView.CardReferenceArchive);
                     }
                 }
             }
@@ -475,7 +485,7 @@ public class CombatSystem : Singleton<CombatSystem>
         {
             foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,item,null))
             {
-                if (effect.Events.Contains(Events.OnSelect))
+                //if (effect.Events.Contains(Events.OnSelect))
                 {
                     effect.ActivateLeft = effect.ActivateNumber;
                 }
@@ -508,9 +518,10 @@ public class CombatSystem : Singleton<CombatSystem>
     private void StartFightPreReaction(StartFightGA startFightGA)
     {
         CurrentTurn = 0;
-        foreach (GameAction action in startFightGA.enemyView.SetupActions)
+        List<Effect> effectList = startFightGA.enemyView.SetupEffects.OrderBy(e => e.Priority).ToList();
+        foreach (Effect effect in effectList)
         {
-            ActionSystem.Instance.AddReaction(action);
+            GameEventSystem.Instance.DoAction(effect);
         }
         DeckShuffleGA deckShuffleGA = new();
         ActionSystem.Instance.AddReaction(deckShuffleGA);
@@ -522,10 +533,12 @@ public class CombatSystem : Singleton<CombatSystem>
         // Reset NewTurnCounters
         CounterSystem.Instance.Reset(CounterType.SpellCast_This_Turn);
         CounterSystem.Instance.Reset(CounterType.PermanentCast_This_Turn);
+        CounterSystem.Instance.Reset(CounterType.CardsDraw_This_Turn);
+        CounterSystem.Instance.Reset(CounterType.CardsDiscard_This_Turn);
 
         ReffilManaGA reffilManaGA = new();
         ActionSystem.Instance.AddReaction(reffilManaGA);
-        DrawCardsGA drawCardsGA = new(5,1,DynamicAmount.NULL);
+        DrawCardsGA drawCardsGA = new(CardSystem.Instance.NBCardDrawAtStartTurn,1,DynamicAmount.NULL,false);
         ActionSystem.Instance.AddReaction(drawCardsGA);
         DecountPlayerDecayGA decountPlayerDecayGA = new();
         ActionSystem.Instance.AddReaction(decountPlayerDecayGA);

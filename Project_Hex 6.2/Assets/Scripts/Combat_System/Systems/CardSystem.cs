@@ -35,15 +35,19 @@ public class CardSystem : Singleton<CardSystem>
     [HideInInspector] public bool IsPayXValidate;
     [HideInInspector] public int PayXValue;
     [HideInInspector] public int MaxHandCount;
+    [HideInInspector] public int NBCardDrawAtStartTurn;
     
     public List<Card> drawPile = new();
     public List<Card> discardPile = new();
     public List<Card> hand = new();
+    public List<Card> ExhaustPile = new();
 
     void OnEnable()
     {
         ActionSystem.AttachPerformer<DrawCardsGA>(DrawCardsPerformer);
         ActionSystem.AttachPerformer<DiscardAllCardsGA>(DiscardAllCardsPerformer);
+        ActionSystem.AttachPerformer<DrawOnceGA>(DrawOncePerformer);
+        ActionSystem.AttachPerformer<DiscardOnceGA>(DiscardOncePerformer);
         ActionSystem.AttachPerformer<PlayCardGA>(PlayCardPerformer);
         ActionSystem.AttachPerformer<DeckShuffleGA>(DeckShuffleGA);
         ActionSystem.SubscribeReaction<EndPlayerTurnGA>(EndPlayerTurnPreReaction, ReactionTiming.PRE);
@@ -55,10 +59,20 @@ public class CardSystem : Singleton<CardSystem>
     {
         ActionSystem.DetachPerformer<DrawCardsGA>();
         ActionSystem.DetachPerformer<DiscardAllCardsGA>();
+        ActionSystem.DetachPerformer<DrawOnceGA>();
+        ActionSystem.DetachPerformer<DiscardOnceGA>();
         ActionSystem.DetachPerformer<PlayCardGA>();
         ActionSystem.DetachPerformer<DeckShuffleGA>();
         ActionSystem.UnsubscribeReaction<EndPlayerTurnGA>(EndPlayerTurnPreReaction, ReactionTiming.PRE);
 
+    }
+
+    void Start()
+    {
+        DOTween.Init();
+        DOTween.SetTweensCapacity(200, 10);
+        var dummy = CardViewCreator.Instance.CreateCardView(new Card(new CardData ()), new Vector3(-1000,-1000,0), Quaternion.identity);
+        Destroy(dummy.gameObject);
     }
 
     // DECK Setup
@@ -80,7 +94,28 @@ public class CardSystem : Singleton<CardSystem>
         drawPile.Shuffle();
         yield return null;
     }
+    private IEnumerator DrawOncePerformer(DrawOnceGA drawOnceGA)
+    {
+        if (drawOnceGA.CardToDrawCount == 0)
+            yield break;
 
+        if (drawPile.Count == 0)
+        {
+            RefillDeck();
+            drawPile.Shuffle();
+            if (drawPile.Count == 0)
+                yield break;
+        }
+
+        yield return DrawCard(drawOnceGA.CountAsDiscard);
+
+        drawOnceGA.CardToDrawCount -= 1;
+
+        if (drawOnceGA.CardToDrawCount > 0)
+        {
+            ActionSystem.Instance.AddReaction(new DrawOnceGA(drawOnceGA.CardToDrawCount, drawOnceGA.CountAsDiscard));
+        }
+    }
     private IEnumerator DrawCardsPerformer(DrawCardsGA drawCardsGA)
     {
         if (drawCardsGA.DynamicAmount != DynamicAmount.NULL)
@@ -106,39 +141,24 @@ public class CardSystem : Singleton<CardSystem>
             }
         }
 
-
-        int actualAmount = Mathf.Min(drawCardsGA.Amount, drawPile.Count);
-        int notDrawAmount = drawCardsGA.Amount - actualAmount;
-        for (int i = 0; i < actualAmount; i++)
-        {
-            yield return DrawCard();
-        }
-        if (notDrawAmount > 0)
-        {
-            RefillDeck();
-            drawPile.Shuffle();
-            if (drawPile.Count < notDrawAmount)
-            {
-                notDrawAmount = drawPile.Count;
-            }
-            for (int i = 0; i < notDrawAmount; i++)
-            {
-                yield return DrawCard();
-            }
-        }
+        ActionSystem.Instance.AddReaction(new DrawOnceGA(drawCardsGA.Amount, drawCardsGA.countAsDraw_INGAME));
+        yield return null;
     }
 
-    private IEnumerator DrawCard()
+    private IEnumerator DrawCard(bool countAsDraw_INGAME)
     {
+        float FinalTime = 0;
+        FinalTime = Time.time;
         if (hand.Count < MaxHandCount)
         {
             TriggerEventGA triggerEventGA = null;
+
             Card card = drawPile.Draw();
             UpdatePiles();
 
             if (hand.Count == 0)
             {
-                triggerEventGA = new(Events.HandNoLongerEmpty,null,null,null);
+                triggerEventGA = new(Events.HandNoLongerEmpty, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
             }
 
@@ -146,13 +166,27 @@ public class CardSystem : Singleton<CardSystem>
 
             if (hand.Count == MaxHandCount)
             {
-                triggerEventGA = new(Events.HandFull,null,null,null);
+                triggerEventGA = new(Events.HandFull, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
             }
 
             CardView cardView = CardViewCreator.Instance.CreateCardView(card, drawPilePoint.position, drawPilePoint.rotation);
+
+            if (countAsDraw_INGAME)
+            {
+                CounterSystem.Instance.Add(CounterType.CardsDraw_This_Turn);
+                CounterSystem.Instance.Add(CounterType.CardsDraw_Since_Load);
+                triggerEventGA = new(Events.WhenGlobalCounter, null, null, null, CounterType.CardsDraw_This_Turn);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+                triggerEventGA = new(Events.WhenInternCounter, null, null, null, CounterType.CardsDraw_This_Turn);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+                triggerEventGA = new(Events.WhenGlobalCounter, null, null, null, CounterType.CardsDraw_Since_Load);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+                triggerEventGA = new(Events.WhenInternCounter, null, null, null, CounterType.CardsDraw_Since_Load);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+            }
             triggerEventGA = new(Events.WhenDraw, cardView.Card);
-            ActionSystem.Instance.AddReaction(triggerEventGA);     
+            ActionSystem.Instance.AddReaction(triggerEventGA);
             triggerEventGA = new(Events.OnDraw, cardView.Card);
             ActionSystem.Instance.AddReaction(triggerEventGA);
 
@@ -165,9 +199,13 @@ public class CardSystem : Singleton<CardSystem>
             {
                 RuntimeManager.PlayOneShot(card.DrawCardSound);
             }
-            
-            yield return handView.AddCard(cardView);            
+
+            yield return handView.AddCard(cardView);
+
+            FinalTime -= Time.time;
+            Debug.Log("Time to draw " + cardView.Card + " : " + FinalTime);
         }
+
     }
 
     private void RefillDeck()
@@ -177,24 +215,59 @@ public class CardSystem : Singleton<CardSystem>
         UpdatePiles();
     }
 
+    private IEnumerator DiscardOncePerformer(DiscardOnceGA discardOnceGA)
+    {
+        if (discardOnceGA.RestCardView == null || discardOnceGA.RestCardView.Count == 0)
+            yield break;
+
+        CardView cv = discardOnceGA.RestCardView[0];
+        yield return DiscardCard(cv, discardOnceGA.CountAsDiscard);
+
+        handView.RemoveCard(cv.Card);
+        hand.Remove(cv.Card);
+        discardOnceGA.RestCardView.RemoveAt(0);
+
+        if (discardOnceGA.RestCardView.Count > 0)
+        {
+            ActionSystem.Instance.AddReaction(
+                new DiscardOnceGA(discardOnceGA.RestCardView, discardOnceGA.CountAsDiscard)
+            );
+        }
+        yield return null;
+    }
+    
     private IEnumerator DiscardAllCardsPerformer(DiscardAllCardsGA discardAllCardsGA)
     {
-        foreach (var card in hand)
+        List<CardView> cardViewsToDiscard = new();
+        foreach (Card card in hand)
         {
-            CardView cardView = handView.RemoveCard(card);
-            yield return DiscardCard(cardView, discardAllCardsGA.CountAsDiscard);
+            cardViewsToDiscard.Add(handView.GetCardView(card));
         }
-        hand.Clear();
+
+        DiscardOnceGA discardOnceGA = new(cardViewsToDiscard,discardAllCardsGA.CountAsDiscard);
+        ActionSystem.Instance.AddReaction(discardOnceGA);
+
+        yield return null;
     }
 
     public IEnumerator DiscardCard(CardView cardView, bool countAsDiscard_INGAME)
     {
         if (countAsDiscard_INGAME)
         {
+            CounterSystem.Instance.Add(CounterType.CardsDiscard_This_Turn);
+            CounterSystem.Instance.Add(CounterType.CardsDiscard_Since_Load);
             TriggerEventGA triggerEventGA = new(Events.WhenDiscard, cardView.Card);
-            ActionSystem.Instance.AddReaction(triggerEventGA);      
+            ActionSystem.Instance.AddReaction(triggerEventGA);
             triggerEventGA = new(Events.OnDiscard, cardView.Card);
             ActionSystem.Instance.AddReaction(triggerEventGA);      
+            triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.CardsDiscard_This_Turn);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+            triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.CardsDiscard_This_Turn);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+            triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.CardsDiscard_Since_Load);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+            triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.CardsDiscard_Since_Load);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
         if (cardView != null)
@@ -356,7 +429,7 @@ public class CardSystem : Singleton<CardSystem>
                 }
                 else if (effect.Actionner.GetComponent<EnemySlotView>() != null)
                 {
-                    //Pas de visuel pour les enemy :/
+                    //Pas de card pour les enemy :/
                     //cardVisual = effect.Actionner.GetComponent<EnemySlotView>().;
                 }
             }

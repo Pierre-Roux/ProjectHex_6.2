@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using SerializeReferenceEditor;
 using UnityEngine;
@@ -22,8 +23,10 @@ public class DiscardEffect : Effect
 
     public DiscardEffect(){}
 
-    public DiscardEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, bool discardAll, EventReference sfx, bool conditionTested,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DiscardEffect(string effectID, bool activateToolTip, int priority, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, bool discardAll, EventReference sfx, bool conditionTested,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         DiscardAmount = Amount;
         multiplyAmount = MultiplyAmount;
@@ -84,7 +87,7 @@ public class DiscardEffect : Effect
         if (DiscardAll)
         {
             DiscardAllCardsGA discardAllCardsGA = new(true);
-            if (AudioManager.Instance.IsValid(SFX)) { discardAllCardsGA.SFX = SFX; }
+            discardAllCardsGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DiscardSound : SFX;
             return discardAllCardsGA;
         }
         else
@@ -120,13 +123,13 @@ public class DiscardEffect : Effect
 
             if (!ConditionTested)
             {
-                DiscardEffect DiscardallEffect = (DiscardEffect)this.Clone();
+                DiscardEffect DiscardallEffect = (DiscardEffect)Clone();
                 DiscardallEffect.DiscardAll = true;
 
-                DiscardEffect DiscardManuEffect = (DiscardEffect)this.Clone();
+                DiscardEffect DiscardManuEffect = (DiscardEffect)Clone();
                 DiscardManuEffect.ConditionTested = true;
 
-                DynamicConditionInfo Condition = new(DiscardAmount * multiplyAmount, DynamicCondition.DynamicAmountInfOrEqualsToValue, DynamicAmount.CardsInHand_Count, PermaTypes.NULL);
+                DynamicConditionInfo Condition = new(DiscardAmount * multiplyAmount, DynamicCondition.DynamicAmountInfOrEqualsToValue, DynamicAmount.CardsInHand_Count, PermaTypes.NULL, CounterType.NULL);
                 List<DynamicConditionInfo> Conditions = new List<DynamicConditionInfo> {Condition};
 
                 if (ConditionSystem.Instance.TestCondition(Conditions, null, null, null))
@@ -145,9 +148,10 @@ public class DiscardEffect : Effect
                 DiscardCardGA discardCardGA = new(new List<CardView>());
                 discardCardGA.SourceEffect = this;
                 discardCardGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { discardCardGA.SFX = SFX; }
+                discardCardGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DiscardSound : SFX;
                 StartCardTargetingGA startCardTargetingGA = new(discardCardGA, DiscardAmount, TargetUpTo, this, targetLimitations);
                 startCardTargetingGA.SourceEffect = this;
+                startCardTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startCardTargetingGA;
             }
         }
@@ -167,6 +171,8 @@ public class DiscardEffect : Effect
 
         return new DiscardEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             DiscardAmount,
             multiplyAmount,
             PayXEffect,

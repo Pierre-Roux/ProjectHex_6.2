@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using SerializeReferenceEditor;
 using UnityEngine;
@@ -27,8 +28,10 @@ public class LifeLossEffect : Effect
 
     public LifeLossEffect() { }
 
-    public LifeLossEffect(string effectID, int lifeLossAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public LifeLossEffect(string effectID, bool activateToolTip, int priority, int lifeLossAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         LifeLossAmount = lifeLossAmount;
         multiplyAmount = MultiplyAmount;
@@ -100,9 +103,10 @@ public class LifeLossEffect : Effect
                 lifeLossGA.CardActionner = CardActionner;
                 lifeLossGA.SourceEffect = this;
                 lifeLossGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { lifeLossGA.SFX = SFX; }
+                lifeLossGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_LifeLossSound : SFX;
                 StartManualTargetingGA startManualTargetingGA = new(lifeLossGA, targetNumber, TargetUpTo, this, targetLimitations);
                 startManualTargetingGA.SourceEffect = this;
+                startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
@@ -110,19 +114,21 @@ public class LifeLossEffect : Effect
                 LifeLossGA lifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 lifeLossGA.CardActionner = CardActionner;
                 lifeLossGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { lifeLossGA.SFX = SFX; }
+                lifeLossGA.ActivateToolTip = ActivateToolTip;
+                lifeLossGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_LifeLossSound : SFX;
                 return lifeLossGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
                 LifeLossGA lifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                 lifeLossGA.CardActionner = CardActionner;
                 lifeLossGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { lifeLossGA.SFX = SFX; }
+                lifeLossGA.ActivateToolTip = ActivateToolTip;
+                lifeLossGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_LifeLossSound : SFX;
                 return lifeLossGA;
             }
         }
@@ -136,9 +142,10 @@ public class LifeLossEffect : Effect
                     enemyLifeLossGA.Actionner = Actionner;
                     enemyLifeLossGA.SourceEffect = this;
                     enemyLifeLossGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyLifeLossGA.SFX = SFX; }
+                    enemyLifeLossGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_LifeLossSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(enemyLifeLossGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -153,7 +160,7 @@ public class LifeLossEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -162,7 +169,8 @@ public class LifeLossEffect : Effect
                     EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     enemyLifeLossGA.Actionner = Actionner;
                     enemyLifeLossGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyLifeLossGA.SFX = SFX; }
+                    enemyLifeLossGA.ActivateToolTip = ActivateToolTip;
+                    enemyLifeLossGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_LifeLossSound : SFX;
                     return enemyLifeLossGA;
                 }
             }
@@ -174,9 +182,10 @@ public class LifeLossEffect : Effect
                     playerLifeLossGA.Actionner = Actionner;
                     playerLifeLossGA.SourceEffect = this;
                     playerLifeLossGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerLifeLossGA.SFX = SFX; }
+                    playerLifeLossGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_LifeLossSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(playerLifeLossGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -191,7 +200,7 @@ public class LifeLossEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -200,7 +209,8 @@ public class LifeLossEffect : Effect
                     PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     playerLifeLossGA.Actionner = Actionner;
                     playerLifeLossGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerLifeLossGA.SFX = SFX; }
+                    playerLifeLossGA.ActivateToolTip = ActivateToolTip;
+                    playerLifeLossGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_LifeLossSound : SFX;
                     return playerLifeLossGA;
                 }
             }
@@ -226,6 +236,8 @@ public class LifeLossEffect : Effect
 
         return new LifeLossEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             LifeLossAmount,
             multiplyAmount,
             PayXEffect,

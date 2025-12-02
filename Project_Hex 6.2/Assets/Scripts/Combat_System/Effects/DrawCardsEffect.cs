@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using FMODUnity;
+using System.Linq;
 
 public class DrawCardsEffect : Effect
 {
@@ -10,46 +11,12 @@ public class DrawCardsEffect : Effect
     [SerializeField] public int multiplyAmount = 1;
     [SerializeField] public DynamicAmount DynamicAmount;
 
-    public override GameAction GetGameAction()
-    {
-        if (!BypassEntryCondition)
-        {
-            if (DynamicConditionInfos.Count != 0)
-            {
-                if (Actionner == null)
-                {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, null, null))
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
-                    {
-                        return null;
-                    }
-                }
-            }
-        }
-
-        if (PayXValue != 0)
-        {
-            DynamicAmount = DynamicAmount.NULL;
-            drawAmount = PayXValue;
-        }
-        
-        DrawCardsGA drawCardsGA = new(drawAmount,multiplyAmount, DynamicAmount);
-        drawCardsGA.Actionner = Actionner;
-        drawCardsGA.CardActionner = CardActionner;
-        drawCardsGA.SourceEffect = this;
-        if (AudioManager.Instance.IsValid(SFX)){ drawCardsGA.SFX = SFX; }
-        return drawCardsGA;
-    }
     public DrawCardsEffect(){}
 
-    public DrawCardsEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice ,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DrawCardsEffect(string effectID, bool activateToolTip, int priority, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx, CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         drawAmount = Amount;
         multiplyAmount = MultiplyAmount;
@@ -79,6 +46,44 @@ public class DrawCardsEffect : Effect
         CounterValue = counterValue;
         ModuloValue = moduloValue;
     }
+    
+    public override GameAction GetGameAction()
+    {
+        if (!BypassEntryCondition)
+        {
+            if (DynamicConditionInfos.Count != 0)
+            {
+                if (Actionner == null)
+                {
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, null, null))
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    if (!ConditionSystem.Instance.TestCondition(DynamicConditionInfos, CardActionner, Actionner.GetComponent<PermanentView>(), Actionner.GetComponent<EnemySlotView>()))
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        if (PayXValue != 0)
+        {
+            DynamicAmount = DynamicAmount.NULL;
+            drawAmount = PayXValue;
+        }
+        
+        DrawCardsGA drawCardsGA = new(drawAmount,multiplyAmount, DynamicAmount,true);
+        drawCardsGA.Actionner = Actionner;
+        drawCardsGA.CardActionner = CardActionner;
+        drawCardsGA.SourceEffect = this;
+        drawCardsGA.ActivateToolTip = ActivateToolTip;
+        drawCardsGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DrawSound : SFX;
+        return drawCardsGA;
+    }
 
     public override Effect Clone()
     {
@@ -94,6 +99,8 @@ public class DrawCardsEffect : Effect
 
         return new DrawCardsEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             drawAmount,
             multiplyAmount,
             PayXEffect,

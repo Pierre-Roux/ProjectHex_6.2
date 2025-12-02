@@ -20,6 +20,8 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.AttachPerformer<InvocPGA>(InvocPPerformer);
         ActionSystem.AttachPerformer<SacPGA>(SacPPerformer);
         ActionSystem.AttachPerformer<PlayerRefreshGA>(RefreshPlayerPerformer);
+        ActionSystem.AttachPerformer<PlayerExhaustGA>(ExhaustPlayerPerformer);
+        ActionSystem.AttachPerformer<PlayerRetrieveExhaustedGA>(PlayerRetrieveExhaustedPerformer);
 
         ActionSystem.SubscribeReaction<AttackEnemyGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<HealPlayerGA>(BeforeHealPreReaction, ReactionTiming.PRE);
@@ -33,6 +35,8 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.SubscribeReaction<InvocPGA>(BeforeInvocPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<SacPGA>(BeforeSacPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<PlayerRefreshGA>(BeforeRefreshPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<PlayerExhaustGA>(BeforeExhaustedPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<PlayerRetrieveExhaustedGA>(BeforeRetrieveExhaustedPPerformerPreReaction, ReactionTiming.PRE);
 
     }
 
@@ -50,6 +54,8 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.DetachPerformer<InvocPGA>();
         ActionSystem.DetachPerformer<SacPGA>();
         ActionSystem.DetachPerformer<PlayerRefreshGA>();
+        ActionSystem.DetachPerformer<PlayerExhaustGA>();
+        ActionSystem.DetachPerformer<PlayerRetrieveExhaustedGA>();
 
         ActionSystem.UnsubscribeReaction<AttackEnemyGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<HealPlayerGA>(BeforeHealPreReaction, ReactionTiming.PRE);
@@ -63,6 +69,8 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.UnsubscribeReaction<InvocPGA>(BeforeInvocPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<SacPGA>(BeforeSacPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<PlayerRefreshGA>(BeforeRefreshPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<PlayerExhaustGA>(BeforeExhaustedPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<PlayerRetrieveExhaustedGA>(BeforeRetrieveExhaustedPPerformerPreReaction, ReactionTiming.PRE);
     }
 
     private IEnumerator AttackEnemyPerformer(AttackEnemyGA attackEnemyGA)
@@ -114,7 +122,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
             HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmount, healPlayerGA.playerTargets, null);
             healGA.SourceEffect = healPlayerGA.SourceEffect;
             healGA.ActivateToolTip = false;
-            ActionSystem.Instance.AddReaction(healGA);            
+            ActionSystem.Instance.AddReaction(healGA);
         }
 
         if (healPlayerGA.enemyTargets != null && healPlayerGA.enemyTargets.Count > 0)
@@ -122,10 +130,58 @@ public class PlayerSystem : Singleton<PlayerSystem>
             HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmount, null, healPlayerGA.enemyTargets);
             healGA.SourceEffect = healPlayerGA.SourceEffect;
             healGA.ActivateToolTip = false;
-            ActionSystem.Instance.AddReaction(healGA);            
+            ActionSystem.Instance.AddReaction(healGA);
         }
 
-        
+
+    }
+
+    private IEnumerator PlayerRetrieveExhaustedPerformer(PlayerRetrieveExhaustedGA playerRetrieveExhaustedGA)
+    {
+        if (playerRetrieveExhaustedGA.Actionner != null)
+        {
+            PermanentView Attacker = playerRetrieveExhaustedGA.Actionner.GetComponent<PermanentView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+        }
+
+        if (playerRetrieveExhaustedGA.cardTargets != null && playerRetrieveExhaustedGA.cardTargets.Count > 0)
+        {
+            RetrieveExhaustedGA retrieveExhaustedGA = new RetrieveExhaustedGA(playerRetrieveExhaustedGA.cardTargets);
+            retrieveExhaustedGA.SourceEffect = playerRetrieveExhaustedGA.SourceEffect;
+            retrieveExhaustedGA.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(retrieveExhaustedGA);
+        }
+    }
+    
+    private IEnumerator ExhaustPlayerPerformer(PlayerExhaustGA playerExhaustGA)
+    {
+        if (playerExhaustGA.Actionner != null)
+        {
+            PermanentView Attacker = playerExhaustGA.Actionner.GetComponent<PermanentView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            if (playerExhaustGA.playerTargets != null && playerExhaustGA.playerTargets.Count > 0)
+            {
+                ExhaustGA exhaustGA = new ExhaustGA(playerExhaustGA.playerTargets, null, null, playerExhaustGA.targetModeInfo);
+                exhaustGA.SourceEffect = playerExhaustGA.SourceEffect;
+                exhaustGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(exhaustGA);
+            }
+
+            if (playerExhaustGA.cardTargets != null && playerExhaustGA.cardTargets.Count > 0)
+            {
+                ExhaustGA exhaustGA = new ExhaustGA(null, null, playerExhaustGA.cardTargets, playerExhaustGA.targetModeInfo);
+                exhaustGA.SourceEffect = playerExhaustGA.SourceEffect;
+                exhaustGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(exhaustGA);
+            }
+        }
     }
 
     private IEnumerator ShieldPlayerPerformer(ShieldPlayerGA shieldPlayerGA)
@@ -265,7 +321,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
             if (playerAlterStaminaGA.passive)
             {
-                AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, null, playerAlterStaminaGA.targetModeInfo);
+                AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, null, null, playerAlterStaminaGA.targetModeInfo);
                 alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
                 alterStaminaGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(alterStaminaGA);
@@ -274,7 +330,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 if (playerAlterStaminaGA.playerTargets != null && playerAlterStaminaGA.playerTargets.Count > 0)
                 {
-                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, playerAlterStaminaGA.playerTargets, null, playerAlterStaminaGA.targetModeInfo);
+                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, playerAlterStaminaGA.playerTargets, null, null, playerAlterStaminaGA.targetModeInfo);
                     alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
                     alterStaminaGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterStaminaGA);
@@ -282,7 +338,15 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
                 if (playerAlterStaminaGA.enemyTargets != null && playerAlterStaminaGA.enemyTargets.Count > 0)
                 {
-                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, playerAlterStaminaGA.enemyTargets, playerAlterStaminaGA.targetModeInfo);
+                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, playerAlterStaminaGA.enemyTargets, null, playerAlterStaminaGA.targetModeInfo);
+                    alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
+                    alterStaminaGA.ActivateToolTip = false;
+                    ActionSystem.Instance.AddReaction(alterStaminaGA);
+                }
+
+                if (playerAlterStaminaGA.cardTargets != null && playerAlterStaminaGA.cardTargets.Count > 0)
+                {
+                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, null, playerAlterStaminaGA.cardTargets, playerAlterStaminaGA.targetModeInfo);
                     alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
                     alterStaminaGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterStaminaGA);
@@ -524,6 +588,24 @@ public class PlayerSystem : Singleton<PlayerSystem>
         if (playerRefreshGA.Actionner != null)
         {
             PermanentView Attacker = playerRefreshGA.Actionner.GetComponent<PermanentView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeRetrieveExhaustedPPerformerPreReaction(PlayerRetrieveExhaustedGA playerRetrieveExhaustedGA)
+    {
+        if (playerRetrieveExhaustedGA.Actionner != null)
+        {
+            PermanentView Attacker = playerRetrieveExhaustedGA.Actionner.GetComponent<PermanentView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+    
+    private void BeforeExhaustedPPerformerPreReaction(PlayerExhaustGA playerExhaustGA)
+    {
+        if (playerExhaustGA.Actionner != null)
+        {
+            PermanentView Attacker = playerExhaustGA.Actionner.GetComponent<PermanentView>();
             Attacker.SetPosition(Attacker.transform.position);
         }
     }

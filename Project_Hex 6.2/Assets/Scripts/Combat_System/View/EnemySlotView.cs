@@ -354,8 +354,19 @@ public class EnemySlotView : MonoBehaviour
             TriggerEventGA triggerEventGA;
             if (IsCore)
             {
-                triggerEventGA = new(Events.WhenECoreDamaged,null,null,this);
-                ActionSystem.Instance.AddReaction(triggerEventGA);
+                if (Actionner != null)
+                {
+                    if (Actionner.GetComponent<PermanentView>() != null)
+                    {
+                        triggerEventGA = new(Events.WhenECoreDamaged,null,Actionner.GetComponent<PermanentView>(),null);
+                        ActionSystem.Instance.AddReaction(triggerEventGA);
+                    }
+                    else if (Actionner.GetComponent<EnemySlotView>() != null)
+                    {
+                        triggerEventGA = new(Events.WhenECoreDamaged,null,null,Actionner.GetComponent<EnemySlotView>());
+                        ActionSystem.Instance.AddReaction(triggerEventGA);                    
+                    }                    
+                }
             }
             transform.DOShakePosition(0.2f, 0.5f);
             triggerEventGA = new(Events.WhenPermaDamaged,null,null,this);

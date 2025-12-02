@@ -10,13 +10,16 @@ public class TargetSystem : Singleton<TargetSystem>
 {
     [SerializeField] private LayerMask TargetingLayerMask;
     [SerializeField] private LayerMask CardviewTargetingLayerMask;
+    [SerializeField] private LayerMask CardviewExhaustTargetingLayerMask;
     [SerializeField] private TMP_Text TopPrompt;
-
+    [SerializeField] public List<Card> DeckData;
+    [SerializeField] public GameObject DisplayDeckZone;
     [SerializeField] private GameObject CursorGameobject;
     private bool TargetingActive;
     public bool CardTargetingActive;
     private int InitTargetingNumber;
     private bool TargetingUpTo;
+    private bool TargetExhaust;
     private int TargetingNumber;
     private List<TargetLimitationInfo> CurrentLimitations;
     private List<EnemySlotView> ETargets_ForAura = new();
@@ -92,6 +95,7 @@ public class TargetSystem : Singleton<TargetSystem>
 
     public IEnumerator GetCardTargetsPerformer(StartCardTargetingGA startCardTargetingGA)
     {
+        TargetExhaust = false;
         List<CardView> cardViewTargets = new();
         TargetingNumber = InitTargetingNumber = startCardTargetingGA.TargetNumber;
         TargetingUpTo = startCardTargetingGA.TargetUpTo;
@@ -104,6 +108,21 @@ public class TargetSystem : Singleton<TargetSystem>
         else
         {
             CurrentLimitations = null;
+        }
+
+        // Pour les cas ou on Target l'Exhaust
+        if (startCardTargetingGA.TargetExhaust)
+        {
+            TargetExhaust = true;
+            DeckData = CardSystem.Instance.ExhaustPile;
+            if (DisplayDeckZone.activeSelf)
+            {
+                DisplayDeckZone.SetActive(false);
+                DeckViewSystem.Instance.CleanDisplay();
+            }
+
+            DisplayDeckZone.SetActive(true);
+            DeckViewSystem.Instance.DisplayCards(DeckData, true);
         }
 
         StartCardTargeting();
@@ -165,7 +184,7 @@ public class TargetSystem : Singleton<TargetSystem>
         TopPrompt.text = "";
     }
 
-    public static (List<PermanentView> playerTargets, List<EnemySlotView> enemyTargets) GetTargets(TargetModeInfo TargetModeInfo, GameObject actionner)
+    public static (List<PermanentView> playerTargets, List<EnemySlotView> enemyTargets) GetTargets(TargetModeInfo TargetModeInfo, GameObject actionner, Effect effect)
     {
         List<PermanentView> ValidatePlayerTargets = new();
         List<PermanentView> playerTargets = new();
@@ -185,8 +204,8 @@ public class TargetSystem : Singleton<TargetSystem>
             EnemySlotView TestIfPermaIsEnemy = actionner.GetComponent<EnemySlotView>();
             if (TestIfPermaIsEnemy != null)
             {
-                // On ne veut pas de redirection si l'effet qui va être lancé est positif pour le player
-                if (!(TestIfPermaIsEnemy.IntentAction is ShieldEffect) && !(TestIfPermaIsEnemy.IntentAction is HealEffect))
+                // On veut une redirection si l'effet qui va être lancé est une attaque enemie
+                if ((effect is DealDamageEffect) || (effect is LifeLossEffect))
                 {
                     RedirectionActive = true;
                 }
@@ -225,7 +244,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             playerTargets.Add(perm);
                         }
                         break;
@@ -235,7 +254,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             enemyTargets.Add(perm);
                         }
                         break;
@@ -245,14 +264,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             playerTargets.Add(perm);
                         }
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             enemyTargets.Add(perm);
                         }
                         break;
@@ -279,13 +298,30 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             targetablePlayers.Add(perm);
                         }
                         if (targetablePlayers.Count > 0)
                         {
-                            var rnd = Random.Range(0, targetablePlayers.Count);
-                            playerTargets.Add(targetablePlayers[rnd]);
+                            if (effect is HealEffect)
+                            {
+                                List<PermanentView> DamagedPermanents = targetablePlayers.Where(p => p.currentLife != p.MaxLife).ToList();
+                                if (DamagedPermanents.Count != 0)
+                                {
+                                    var rnd = Random.Range(0, DamagedPermanents.Count);
+                                    playerTargets.Add(DamagedPermanents[rnd]);
+                                }
+                                else
+                                {
+                                    var rnd = Random.Range(0, targetablePlayers.Count);
+                                    playerTargets.Add(targetablePlayers[rnd]);
+                                }
+                            }
+                            else
+                            {
+                                var rnd = Random.Range(0, targetablePlayers.Count);
+                                playerTargets.Add(targetablePlayers[rnd]);
+                            }                            
                         }
                         break;
 
@@ -294,13 +330,30 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             targetableEnemies.Add(perm);
                         }
-                        if (playerPermanents.Count > 0 && targetableEnemies.Count > 0)
+                        if (targetableEnemies.Count > 0)
                         {
-                            var rnd = Random.Range(0, targetableEnemies.Count);
-                            enemyTargets.Add(targetableEnemies[rnd]);
+                            if (effect is HealEffect)
+                            {
+                                List<EnemySlotView> DamagedPermanents = targetableEnemies.Where(p => p.currentLife != p.MaxLife).ToList();
+                                if (DamagedPermanents.Count != 0)
+                                {
+                                    var rnd = Random.Range(0, DamagedPermanents.Count);
+                                    enemyTargets.Add(DamagedPermanents[rnd]);
+                                }
+                                else
+                                {
+                                    var rnd = Random.Range(0, targetableEnemies.Count);
+                                    enemyTargets.Add(targetableEnemies[rnd]);
+                                }
+                            }
+                            else
+                            {
+                                var rnd = Random.Range(0, targetableEnemies.Count);
+                                enemyTargets.Add(targetableEnemies[rnd]);
+                            }    
                         }
                         break;
 
@@ -309,14 +362,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             targetablePlayers.Add(perm);
                         }
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             targetableEnemies.Add(perm);
                         }
 
@@ -325,13 +378,47 @@ public class TargetSystem : Singleton<TargetSystem>
 
                         if (targetablePlayers.Count > 0)
                         {
-                            var rnd = Random.Range(0, targetablePlayers.Count);
-                            permanentViewSelected = targetablePlayers[rnd];
+                            if (effect is HealEffect)
+                            {
+                                List<PermanentView> DamagedPermanents = targetablePlayers.Where(p => p.currentLife != p.MaxLife).ToList();
+                                if (DamagedPermanents.Count != 0)
+                                {
+                                    var rnd = Random.Range(0, DamagedPermanents.Count);
+                                    permanentViewSelected = DamagedPermanents[rnd];
+                                }
+                                else
+                                {
+                                    var rnd = Random.Range(0, targetablePlayers.Count);
+                                    permanentViewSelected = targetablePlayers[rnd];
+                                }
+                            }
+                            else
+                            {
+                                var rnd = Random.Range(0, targetablePlayers.Count);
+                                permanentViewSelected = targetablePlayers[rnd];
+                            }   
                         }
-                        if (playerPermanents.Count > 0 && targetableEnemies.Count > 0)
+                        if (targetableEnemies.Count > 0)
                         {
-                            var rnd = Random.Range(0, targetableEnemies.Count);
-                            enemySlotViewSelected = targetableEnemies[rnd];
+                            if (effect is HealEffect)
+                            {
+                                List<EnemySlotView> DamagedPermanents = targetableEnemies.Where(p => p.currentLife != p.MaxLife).ToList();
+                                if (DamagedPermanents.Count != 0)
+                                {
+                                    var rnd = Random.Range(0, DamagedPermanents.Count);
+                                    enemySlotViewSelected = DamagedPermanents[rnd];
+                                }
+                                else
+                                {
+                                    var rnd = Random.Range(0, targetableEnemies.Count);
+                                    enemySlotViewSelected = targetableEnemies[rnd];
+                                }
+                            }
+                            else
+                            {
+                                var rnd = Random.Range(0, targetableEnemies.Count);
+                                enemySlotViewSelected = targetableEnemies[rnd];
+                            } 
                         }
 
                         if (permanentViewSelected != null && enemySlotViewSelected == null)
@@ -395,7 +482,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers.Add(perm);
                         }
                         maxTotal = highestTargetsP.Max(p => p.currentLife);
@@ -412,7 +499,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidEnemies.Add(perm);
                         }
                         maxTotal = highestTargetsE.Max(p => p.currentLife);
@@ -433,7 +520,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers.Add(perm);
                         }
                         maxTotal = highestTargetsP.Max(p => p.currentLife);
@@ -448,7 +535,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidEnemies.Add(perm);
                         }
                         maxTotal = highestTargetsE.Max(p => p.currentLife);
@@ -505,7 +592,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers2.Add(perm);
                         }
                         minTotal = LowestTargetsP.Min(p => p.currentLife);
@@ -522,7 +609,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidEnemies2.Add(perm);
                         }
                         minTotal = LowestTargetsE.Min(p => p.currentLife);
@@ -543,7 +630,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers2.Add(perm);
                         }
                         minTotal = LowestTargetsP.Min(p => p.currentLife);
@@ -558,7 +645,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidEnemies2.Add(perm);
                         }
                         minTotal = LowestTargetsE.Min(p => p.currentLife);
@@ -612,7 +699,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers3.Add(perm);
                         }
                         maxCostTotal = highestcostTargetsP.Max(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -629,7 +716,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers3.Add(perm);
                         }
                         maxCostTotal = highestcostTargetsP.Max(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -662,7 +749,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers4.Add(perm);
                         }
                         minCostTotal = lowestcostTargetsP.Min(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -679,7 +766,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
                             ValidPlayers4.Add(perm);
                         }
                         minCostTotal = lowestcostTargetsP.Min(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -705,35 +792,45 @@ public class TargetSystem : Singleton<TargetSystem>
         return (playerTargets, enemyTargets);
     }
     
-    public static List<Card> GetCardsTargets(TargetModeInfo TargetModeInfo, Card CardActionner, bool IncludeCardsInDeck = false)
+    public static List<Card> GetCardsTargets(TargetModeInfo TargetModeInfo, Card CardActionner, bool IncludeCardsInDeck = false, bool ExhaustCardList = false)
     {
         List<Card> cardsTargets = new();
         List<Card> cardsList = new();
         List<Card> ValidcardsList = new();
         int Amount = 0;
-        if (IncludeCardsInDeck)
+
+        if (ExhaustCardList)
         {
-            
-            foreach (Card card in CardSystem.Instance.hand)
-            {
-                cardsList.Add(card);
-            }
-            foreach (Card card in CardSystem.Instance.discardPile)
-            {
-                cardsList.Add(card);
-            }
-            foreach (Card card in CardSystem.Instance.drawPile)
+            foreach (Card card in CardSystem.Instance.ExhaustPile)
             {
                 cardsList.Add(card);
             }
         }
         else
         {
-            foreach (Card card in CardSystem.Instance.hand)
+            if (IncludeCardsInDeck)
             {
-                cardsList.Add(card);
+                foreach (Card card in CardSystem.Instance.hand)
+                {
+                    cardsList.Add(card);
+                }
+                foreach (Card card in CardSystem.Instance.discardPile)
+                {
+                    cardsList.Add(card);
+                }
+                foreach (Card card in CardSystem.Instance.drawPile)
+                {
+                    cardsList.Add(card);
+                }
             }
-        }        
+            else
+            {
+                foreach (Card card in CardSystem.Instance.hand)
+                {
+                    cardsList.Add(card);
+                }
+            }                
+        }
 
         switch (TargetModeInfo.targetMode)
         {
@@ -1067,6 +1164,11 @@ public class TargetSystem : Singleton<TargetSystem>
     public List<CardView> EndCardTargeting()
     {
         CardTargetingActive = false;
+        if (TargetExhaust)
+        {
+            DisplayDeckZone.SetActive(false);
+            DeckViewSystem.Instance.CleanDisplay();
+        }
         return CardTargets;
     }
 
@@ -1198,38 +1300,74 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             cardview.RemoveSelectEffect(false);
                         }
-                    }                    
+                    }
                 }
             }
-            if (Input.GetMouseButtonDown(0)) // 0 = clic gauche 1 = clic droit
+            if (TargetExhaust)
             {
-                Debug.DrawRay(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward * 10f, Color.red, 1f);
-                if (Physics.Raycast(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit raycastHit, 10f, CardviewTargetingLayerMask) && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out CardView cardView))
+                if (Input.GetMouseButtonDown(0)) // 0 = clic gauche 1 = clic droit
                 {
-                    if (PassesAllLimitations(CurrentLimitations, cardView.Card, null, null))
+                    Debug.DrawRay(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward * 10f, Color.red, 1f);
+                    if (Physics.Raycast(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit raycastHit, 10f, CardviewExhaustTargetingLayerMask) && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out CardView cardView))
                     {
-                        if (!CardTargets.Contains(cardView))
+                        if (PassesAllLimitations(CurrentLimitations, cardView.Card, null, null))
                         {
-                            if (TargetingNumber > 0)
+                            if (!CardTargets.Contains(cardView))
                             {
-                                CardTargets.Add(cardView);
-                                cardView.ActiveSelectEffect();
-                                TargetingNumber -= 1;
-                                SetPrompt(TargetingNumber, TargetingUpTo, "Card");
+                                if (TargetingNumber > 0)
+                                {
+                                    CardTargets.Add(cardView);
+                                    cardView.ActiveSelectEffect();
+                                    TargetingNumber -= 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Card");
+                                }
                             }
-                        }
-                        else
-                        {
-                            if (TargetingNumber < InitTargetingNumber)
+                            else
                             {
-                                CardTargets.Remove(cardView);
-                                cardView.RemoveSelectEffect(true);
-                                TargetingNumber += 1;
-                                SetPrompt(TargetingNumber, TargetingUpTo, "Card");
+                                if (TargetingNumber < InitTargetingNumber)
+                                {
+                                    CardTargets.Remove(cardView);
+                                    cardView.RemoveSelectEffect(true);
+                                    TargetingNumber += 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Card");
+                                }
                             }
                         }
                     }
                 }
+            }
+            else
+            {
+                if (Input.GetMouseButtonDown(0)) // 0 = clic gauche 1 = clic droit
+                {
+                    Debug.DrawRay(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward * 10f, Color.red, 1f);
+                    if (Physics.Raycast(CursorGameobject.transform.position + new Vector3(0, 0, -1), Vector3.forward, out RaycastHit raycastHit, 10f, CardviewTargetingLayerMask) && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out CardView cardView))
+                    {
+                        if (PassesAllLimitations(CurrentLimitations, cardView.Card, null, null))
+                        {
+                            if (!CardTargets.Contains(cardView))
+                            {
+                                if (TargetingNumber > 0)
+                                {
+                                    CardTargets.Add(cardView);
+                                    cardView.ActiveSelectEffect();
+                                    TargetingNumber -= 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Card");
+                                }
+                            }
+                            else
+                            {
+                                if (TargetingNumber < InitTargetingNumber)
+                                {
+                                    CardTargets.Remove(cardView);
+                                    cardView.RemoveSelectEffect(true);
+                                    TargetingNumber += 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Card");
+                                }
+                            }
+                        }
+                    }
+                }                
             }
         }
         else

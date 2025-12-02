@@ -20,7 +20,7 @@ public class HandView : MonoBehaviour
         return cardView;
     }
 
-    private CardView GetCardView(Card card)
+    public CardView GetCardView(Card card)
     {
         return cards.Where(CardView => CardView.Card == card).FirstOrDefault();
     }
@@ -28,7 +28,9 @@ public class HandView : MonoBehaviour
     public IEnumerator AddCard(CardView cardView)
     {
         cards.Add(cardView);
-        yield return UpdateCardPosition(0.15f);
+        StartCoroutine(UpdateCardPosition(0.15f));
+        //yield return UpdateCardPosition(0.15f);
+        yield return null;
     }
 
     private IEnumerator UpdateCardPosition(float duration)

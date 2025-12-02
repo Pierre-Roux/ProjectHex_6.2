@@ -188,6 +188,8 @@ MonoBehaviour:
     - rid: 3469642561335328814
       type: {class: DiscardEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: -1
         actionnerType: 2
         Events: 00000000
         TypeOfCounter: 0
@@ -230,6 +232,8 @@ MonoBehaviour:
     - rid: 3469642561335328815
       type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 2
         Events: 00000000
         TypeOfCounter: 0
@@ -269,6 +273,8 @@ MonoBehaviour:
     - rid: 3469642561335328816
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 2
         Events: 00000000
         TypeOfCounter: 0

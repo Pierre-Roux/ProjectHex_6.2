@@ -240,7 +240,7 @@ MonoBehaviour:
     - rid: 3469642677219492026
       type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
       data:
-        actionnerType: 0
+        actionnerType: 2
         Events: 00000000
         TypeOfCounter: 0
         CounterValue: 0

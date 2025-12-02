@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using FMODUnity;
-using Unity.VisualScripting;
+using SerializeReferenceEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameEventSystem : Singleton<GameEventSystem>
 {
+    [SerializeReference, SR] public List<Effect> PriorityList = new();
     [SerializeField] public EffectToolTip EffectToolTip;
     public Dictionary<Events, List<Effect>> effectsByEvent = new();
 
@@ -53,6 +52,9 @@ public class GameEventSystem : Singleton<GameEventSystem>
 
         if (!effectsByEvent.TryGetValue(triggerEventGA.gameEvent, out var effectList))
             yield break;
+
+        // Triage par ordre de priorité
+        effectList = effectList.OrderBy(e => e.Priority).ToList();
 
         // Gestion des effets qui concerne les Counters globaux ou interne
         if (triggerEventGA.gameEvent == Events.WhenInternCounter || triggerEventGA.gameEvent == Events.WhenGlobalCounter)
@@ -105,16 +107,29 @@ public class GameEventSystem : Singleton<GameEventSystem>
                         // On déclenche quand Modulo(globalCounter, effect.CounterValue) == 0
                         if (Modulo(CounterValue, effect.CounterValue) == 0)
                         {
-                            effect.Events = new List<Events> { Events.Instant };
-                            RegisterEffect(effect);
+                            if (effect.Events.Count == 1)
+                            {
+                                effect.Events = new List<Events> { Events.Instant };
+                                RegisterEffect(effect);
+                            }
+                            else
+                            {
+                                effect.Events.Remove(triggerEventGA.gameEvent);
+                                RegisterEffect(effect);                                
+                            }
                         }
                     }
                     else
                     {
-                        if (CounterValue >= effect.CounterValue)
+                        if (effect.Events.Count == 1)
                         {
                             effect.Events = new List<Events> { Events.Instant };
                             RegisterEffect(effect);
+                        }
+                        else
+                        {
+                            effect.Events.Remove(triggerEventGA.gameEvent);
+                            RegisterEffect(effect);                                
                         }
                     }
                 }
@@ -122,8 +137,6 @@ public class GameEventSystem : Singleton<GameEventSystem>
             }
             yield break;
         }
-
-        //Debug.Log("Event déclenché " + triggerEventGA.gameEvent);
 
         //Son et animation si OnSelect
         if (triggerEventGA.gameEvent == Events.OnSelect)
@@ -199,17 +212,12 @@ public class GameEventSystem : Singleton<GameEventSystem>
                     {
                         if (effect.Duration == 1)
                         {
-                            GameAction ga = effect.GetGameAction();
-                            if (ga != null)
-                                ActionSystem.Instance.AddReaction(ga);
+                            DoAction(effect);
                         }
                     }
                     else
                     {
-                        //Debug.Log("effect déclanché : " + effect);
-                        GameAction ga = effect.GetGameAction();
-                        if (ga != null)
-                            ActionSystem.Instance.AddReaction(ga);
+                        DoAction(effect);
                     }
                 }
             }
@@ -238,21 +246,36 @@ public class GameEventSystem : Singleton<GameEventSystem>
                 || triggerEventGA.gameEvent == Events.ArtilleryCountChanged && !isActionnerMatch
                 )
                 {
+                    PermanentView OriginPermanentView = null;
+                    EnemySlotView OriginEnemySlotView = null;
+                    Card OriginCard = null;
                     if (effect.DynamicConditionInfos.Count != 0)
                     {
-                        if (ConditionSystem.Instance.TestCondition(effect.DynamicConditionInfos, triggerEventGA.Card, triggerEventGA.permanentView, triggerEventGA.enemySlotView))
+                        if (effect.Actionner != null)
+                        {
+                            if (effect.Actionner.GetComponent<PermanentView>() != null)
+                            {
+                                OriginPermanentView = effect.Actionner.GetComponent<PermanentView>();
+                            }
+                            else if (effect.Actionner.GetComponent<EnemySlotView>() != null)
+                            {
+                                OriginEnemySlotView = effect.Actionner.GetComponent<EnemySlotView>();
+                            }
+                        }
+                        else if (effect.CardActionner != null)
+                        {
+                            OriginCard = effect.CardActionner;
+                        }
+                        
+                        if (ConditionSystem.Instance.TestCondition(effect.DynamicConditionInfos, OriginCard, OriginPermanentView, OriginEnemySlotView, triggerEventGA.Card, triggerEventGA.permanentView, triggerEventGA.enemySlotView))
                         {
                             effect.BypassEntryCondition = true;
-                            GameAction ga = effect.GetGameAction();
-                            if (ga != null)
-                                ActionSystem.Instance.AddReaction(ga);
+                            DoAction(effect);
                         }
                     }
                     else
                     {
-                        GameAction ga = effect.GetGameAction();
-                        if (ga != null)
-                            ActionSystem.Instance.AddReaction(ga);
+                        DoAction(effect);
                     }
                 }
             }
@@ -263,57 +286,19 @@ public class GameEventSystem : Singleton<GameEventSystem>
         {
             if (OnSelectEffects.Count == 1)
             {
-                var effect = OnSelectEffects[0];
-
-                effect.ActivateLeft--;
-
-                if (effect is EffectGroup group)
+                Effect effectToManage = OnSelectEffects[0];
+                effectToManage.ActivateLeft--;
+                if (effectToManage.Events.Count == 1)
                 {
-                    foreach (Effect subEffect in group.EffectGroups)
-                    {
-                        subEffect.Actionner = group.Actionner;
-                        subEffect.CardActionner = group.CardActionner;
-
-                        int multiHit = group.MultiHit;
-                        if (multiHit < 1) multiHit = 1;
-
-                        for (int i = 0; i < multiHit; i++)
-                        {
-                            ActionSystem.Instance.AddReaction(subEffect.GetGameAction());
-
-                            if (subEffect.LinkedEffect != null)
-                            {
-                                Effect linked = subEffect.LinkedEffect.Clone();
-                                linked.ParentEffect = subEffect;
-                                linked.Actionner = subEffect.Actionner;
-
-                                // Enregistrer linked effect dans TOUS ses events
-                                foreach (var ev in linked.Events)
-                                    AddEffectToEvent(ev, linked);
-                            }
-                        }
-                    }
+                    Effect effectToExecute = effectToManage.Clone();
+                    effectToExecute.Events = new List<Events> { Events.Instant };
+                    RegisterEffect(effectToExecute);
                 }
                 else
                 {
-                    int multiHit = effect.MultiHit;
-                    if (multiHit < 1) multiHit = 1;
-
-                    for (int i = 0; i < multiHit; i++)
-                    {
-                        ActionSystem.Instance.AddReaction(effect.GetGameAction());
-
-                        if (effect.LinkedEffect != null)
-                        {
-                            Effect linked = effect.LinkedEffect.Clone();
-                            linked.ParentEffect = effect;
-                            linked.Actionner = effect.Actionner;
-
-                            // Enregistrer linked effect dans TOUS ses events
-                            foreach (var ev in linked.Events)
-                                AddEffectToEvent(ev, linked);
-                        }
-                    }
+                    Effect effectToExecute = effectToManage.Clone();
+                    effectToExecute.Events.Remove(Events.OnSelect);
+                    RegisterEffect(effectToExecute);                                
                 }
             }
             else if (OnSelectEffects.Count > 1)
@@ -332,7 +317,7 @@ public class GameEventSystem : Singleton<GameEventSystem>
 
         yield return null;
     }
-    
+
     public IEnumerator ShowEffectToolTip(Effect effect)
     {
         PermanentView permanentView_Origin;
@@ -343,7 +328,7 @@ public class GameEventSystem : Singleton<GameEventSystem>
         string Description = null;
         Sprite image = null;
 
-        Debug.Log("Effect ->>> " + effect + " Actionner ->> " + effect.Actionner + " CardActionner -> " + effect.CardActionner);
+        //Debug.Log("ToolTipEffect ->>> " + effect + " Actionner ->> " + effect.Actionner + " CardActionner -> " + effect.CardActionner);
 
         if (effect.Actionner != null)
         {
@@ -471,15 +456,30 @@ public class GameEventSystem : Singleton<GameEventSystem>
     {
         if (card != null)
         {
+            List<Effect> effectListCloned = new();
             foreach (var effect in card.Effects)
             {
+                effectListCloned.Add(effect.Clone());
+            }
+            SetPriority(effectListCloned);
+
+            List<Effect> effectList = effectListCloned.OrderBy(e => e.Priority).ToList();
+            foreach (var effect in effectList)
+            {
                 effect.CardActionner = card;
-                Debug.Log("Registering Card effect : " + effect);
+                Debug.Log("Registering Card effect : " + effect + " With Priority of " + effect.Priority);
                 RegisterEffect(effect);
             }
         }
         else if (permanentView != null)
         {
+            List<Effect> effectListCloned = new();
+            foreach (var effect in permanentView.CardReferenceArchive.Effects)
+            {
+                effectListCloned.Add(effect.Clone());
+            }
+            SetPriority(effectListCloned);
+
             //Pour le moment pas de setup pour le player
             if (SetupMode)
             {
@@ -487,22 +487,24 @@ public class GameEventSystem : Singleton<GameEventSystem>
             }
             else
             {
-                foreach (var effect in permanentView.CardReferenceArchive.Effects)
+                List<Effect> effectList = permanentView.CardReferenceArchive.Effects.OrderBy(e => e.Priority).ToList();
+                foreach (var effect in effectList)
                 {
-                    // Vérifie Hollow
-                    bool canApply = (permanentView.permaTypes.Contains(PermaTypes.Hollow) && effect.HollowEffect)
-                                || (!permanentView.permaTypes.Contains(PermaTypes.Hollow) && !effect.HollowEffect);
-                    if (!canApply) continue;
-
                     effect.Actionner = permanentView.gameObject;
-
-                    Debug.Log("Registering Perma effect : " + effect);
+                    Debug.Log("Registering Perma effect : " + effect + " With Priority of " + effect.Priority);
                     RegisterEffect(effect);
                 }
             }
         }
         else if (enemySlotView != null)
         {
+            List<Effect> effectListCloned = new();
+            foreach (var effect in enemySlotView.PossibleIntent)
+            {
+                effectListCloned.Add(effect.Clone());
+            }
+            SetPriority(effectListCloned);
+
             // Si Setup on Manage en deux fois de façon que l'init dans CombatSystem passe avant l'ajout d'effet instant
             if (SetupMode)
             {
@@ -510,24 +512,24 @@ public class GameEventSystem : Singleton<GameEventSystem>
                 foreach (Effect effect in enemySlotView.PossibleIntent)
                 {
                     effect.Actionner = enemySlotView.gameObject;
-                    Debug.Log("Adding in SetupAction Enemy instant effect on Setup : " + effect);
                     RegisterEffect(effect, false, true);
                 }
                 // En Revanche on peut enregistrer les effets non instant
-                foreach (Effect effect in enemySlotView.PossibleIntent)
+                List<Effect> effectList = enemySlotView.PossibleIntent.OrderBy(e => e.Priority).ToList();
+                foreach (Effect effect in effectList)
                 {
                     effect.Actionner = enemySlotView.gameObject;
-                    Debug.Log("Registering Enemy non instant effect on Setup : " + effect);
-                    RegisterEffect(effect, true);
+                    RegisterEffect(effect, true, false);
                 }
             }
             // Si pas en SetupMode On fait tout d'un coup
             else
             {
-                foreach (Effect effect in enemySlotView.PossibleIntent)
+                List<Effect> effectList = enemySlotView.PossibleIntent.OrderBy(e => e.Priority).ToList();
+                foreach (Effect effect in effectList)
                 {
                     effect.Actionner = enemySlotView.gameObject;
-                    Debug.Log("Registering Enemy effect : " + effect);
+                    Debug.Log("Registering Enemy effect : " + effect + " With Priority of " + effect.Priority);
                     RegisterEffect(effect);
                 }
             }
@@ -539,7 +541,43 @@ public class GameEventSystem : Singleton<GameEventSystem>
         if (moduloBase <= 0) return value;
         return ((value % moduloBase) + moduloBase) % moduloBase;
     }
+
+    public void SetPriority(List<Effect> EffectsToManage)
+    {
+        foreach (Effect effect in EffectsToManage)
+        {
+            Effect EffectToManage = effect;
+            if (EffectToManage is EffectGroup effectGroup)
+            {
+                SetPriority(effectGroup.EffectGroups);
+            }
+            else
+            {
+                while (EffectToManage != null)
+                {
+                    if (EffectToManage.Priority == 0)
+                    {
+                        effect.Priority = GetPriorityByType(EffectToManage.GetType());
+                    }
+                    EffectToManage = EffectToManage.LinkedEffect; 
+                }
+            }
+        }
+    }
     
+    public int GetPriorityByType(System.Type type)
+    {
+        Effect effectType = PriorityList.FirstOrDefault(e => e.GetType() == type);
+        if (effectType != null)
+        {
+            return PriorityList.IndexOf(effectType) * 2;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     public void RegisterEffect(Effect effect, bool excludeInstant = false, bool useSetupActions = false)
     {
         if (effect == null) return;
@@ -577,12 +615,12 @@ public class GameEventSystem : Singleton<GameEventSystem>
                         {
                             if (useSetupActions)
                             {
-                                CombatSystem.Instance.currentEnemy.SetupActions
-                                    .Add(clonedEffect.GetGameAction());
+                                CombatSystem.Instance.currentEnemy.SetupEffects
+                                    .Add(clonedEffect);
                             }
                             else
                             {
-                                ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
+                                DoAction(clonedEffect);
                             }
                         }
                         else
@@ -622,9 +660,33 @@ public class GameEventSystem : Singleton<GameEventSystem>
                 if (!effect.Events.Contains(Events.OnSelect))
                 {
                     foreach (var grouped in effectGroup.EffectGroups)
+                    {
+                        grouped.Actionner = effectGroup.Actionner;
+                        grouped.CardActionner = effectGroup.CardActionner;
                         RegisterEffect(grouped, excludeInstant, useSetupActions);
+                    }
                 }
             }
+        }
+    }
+
+    public void DoAction(Effect effect)
+    {
+        if (effect.Actionner != null)
+        {
+            PermanentView permanentView = effect.Actionner.GetComponent<PermanentView>();
+            if (permanentView != null)
+            {
+                bool canApply = (permanentView.permaTypes.Contains(PermaTypes.Hollow) && effect.HollowEffect)
+                            || (!permanentView.permaTypes.Contains(PermaTypes.Hollow) && !effect.HollowEffect);
+                if (!canApply) return;
+            }
+        }
+
+        GameAction ga = effect.GetGameAction();
+        if (ga != null)
+        {
+             ActionSystem.Instance.AddReaction(ga);
         }
     }
 
@@ -656,6 +718,11 @@ public class GameEventSystem : Singleton<GameEventSystem>
         foreach (var effect in effectsToRemove)
         {
             RemoveEffect(effect);
+        }
+
+        if (triggerEventGA.gameEvent == Events.StartTurn)
+        {
+            CombatSystem.Instance.EndTurnBtnActivable = true;
         }
     }
 }

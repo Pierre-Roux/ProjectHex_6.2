@@ -186,7 +186,7 @@ MonoBehaviour:
     - rid: 7119592267123523781
       type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
       data:
-        actionnerType: 0
+        actionnerType: 2
         Events: 00000000
         TypeOfCounter: 0
         CounterValue: 0

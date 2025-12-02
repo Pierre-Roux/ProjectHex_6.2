@@ -54,6 +54,15 @@ public class PermanentSystem : Singleton<PermanentSystem>
         ActionSystem.Instance.AddReaction(triggerEventGA);
         triggerEventGA = new(Events.WhenPlayPerma);
         ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.PermanentCast_This_Turn);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.PermanentCast_This_Turn);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.PermanentCast_Since_Load);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.PermanentCast_Since_Load);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
     }
 
     // REACTIONS

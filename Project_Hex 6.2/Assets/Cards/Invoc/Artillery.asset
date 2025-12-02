@@ -218,8 +218,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 
-        damageAmount: 0
+        EffectID: fe1d7d5f-1e8e-477d-b3e5-2e8013fc5b84
+        damageAmount: 2
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:

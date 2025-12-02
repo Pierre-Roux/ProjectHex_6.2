@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using SerializeReferenceEditor;
 using UnityEngine;
@@ -25,8 +26,10 @@ public class UnShieldEffect : Effect
 
     public UnShieldEffect() { }
 
-    public UnShieldEffect(string effectID, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public UnShieldEffect(string effectID, bool activateToolTip, int priority, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
@@ -86,9 +89,10 @@ public class UnShieldEffect : Effect
                 unShieldGA.CardActionner = CardActionner;
                 unShieldGA.SourceEffect = this;
                 unShieldGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { unShieldGA.SFX = SFX; }
+                unShieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_UnShieldSound : SFX;
                 StartManualTargetingGA startManualTargetingGA = new(unShieldGA, targetNumber, TargetUpTo, this, targetLimitations);
                 startManualTargetingGA.SourceEffect = this;
+                startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
@@ -96,19 +100,21 @@ public class UnShieldEffect : Effect
                 UnShieldGA unShieldGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 unShieldGA.CardActionner = CardActionner;
                 unShieldGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { unShieldGA.SFX = SFX; }
+                unShieldGA.ActivateToolTip = ActivateToolTip;
+                unShieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_UnShieldSound : SFX;
                 return unShieldGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
                 UnShieldGA unShieldGA = new(playerTargets, enemyTargets);
                 unShieldGA.CardActionner = CardActionner;
                 unShieldGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { unShieldGA.SFX = SFX; }
+                unShieldGA.ActivateToolTip = ActivateToolTip;
+                unShieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_UnShieldSound : SFX;
                 return unShieldGA;
             }
         }
@@ -122,9 +128,10 @@ public class UnShieldEffect : Effect
                     enemyUnShieldGA.Actionner = Actionner;
                     enemyUnShieldGA.SourceEffect = this;
                     enemyUnShieldGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyUnShieldGA.SFX = SFX; }
+                    enemyUnShieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_UnShieldSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(enemyUnShieldGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -139,7 +146,7 @@ public class UnShieldEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -148,7 +155,8 @@ public class UnShieldEffect : Effect
                     EnemyUnShieldGA enemyUnShieldGA = new(playerTargets, enemyTargets);
                     enemyUnShieldGA.Actionner = Actionner;
                     enemyUnShieldGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyUnShieldGA.SFX = SFX; }
+                    enemyUnShieldGA.ActivateToolTip = ActivateToolTip;
+                    enemyUnShieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_UnShieldSound : SFX;
                     return enemyUnShieldGA;
                 }
             }
@@ -160,9 +168,10 @@ public class UnShieldEffect : Effect
                     playerUnShieldGA.Actionner = Actionner;
                     playerUnShieldGA.SourceEffect = this;
                     playerUnShieldGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerUnShieldGA.SFX = SFX; }
+                    playerUnShieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_UnShieldSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(playerUnShieldGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -179,7 +188,7 @@ public class UnShieldEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -188,7 +197,8 @@ public class UnShieldEffect : Effect
                     PlayerUnShieldGA playerUnShieldGA = new(playerTargets, enemyTargets);
                     playerUnShieldGA.Actionner = Actionner;
                     playerUnShieldGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerUnShieldGA.SFX = SFX; }
+                    playerUnShieldGA.ActivateToolTip = ActivateToolTip;
+                    playerUnShieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_UnShieldSound : SFX;
                     return playerUnShieldGA;
                 }
             }
@@ -214,6 +224,8 @@ public class UnShieldEffect : Effect
 
         return new UnShieldEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             ActivateNumber,
             ActivateLeft,
             ORChoice,

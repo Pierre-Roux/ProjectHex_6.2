@@ -133,14 +133,14 @@ public class Card
             // Bonus globaux (NULL)
             passiveBonus += CombatSystem.Instance.GetCost(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
 
-            return passiveBonus;            
+            return passiveBonus;
         }
         else
         {
             return 0;
         }
     }
-    
+
     public void UpdateCost()
     {
         int passiveCost = CalculatePassiveCost();
@@ -149,6 +149,27 @@ public class Card
         if (RefCardView != null)
         {
             RefCardView.UpdateCostText();
+        }
+    }
+    
+    public void TakeAlterStamina(int Amount)
+    {
+        if (IsSpell) return;
+        Durability += Amount;
+
+        if (Durability >= MaxDurability)
+        {
+            Durability = MaxDurability;
+        }
+
+        if (Durability < 0)
+        {
+            Durability = 0;
+        }
+
+        if (RefCardView != null)
+        {
+            RefCardView.UpdateDurabilityText();
         }
     }
 }

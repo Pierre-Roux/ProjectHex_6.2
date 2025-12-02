@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using FMODUnity;
 using SerializeReferenceEditor;
@@ -12,6 +11,7 @@ public class AlterStaminaEffect : Effect
     [SerializeField] public int alterAmount;
     [SerializeField] public int multiplyAmount = 1;
     [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public bool IncludeCardsInDeck;
     [SerializeField] public bool aditive = true;
     [SerializeField] public bool passive;
     [SerializeField] public TargetModeInfo targetModeInfo;
@@ -29,9 +29,12 @@ public class AlterStaminaEffect : Effect
 
     public AlterStaminaEffect() { }
 
-    public AlterStaminaEffect(string effectID, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterStaminaEffect(string effectID, bool activateToolTip, int priority, bool includeCardsInDeck, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
+        IncludeCardsInDeck = includeCardsInDeck;
         alterAmount = AlterAmount;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
@@ -100,35 +103,65 @@ public class AlterStaminaEffect : Effect
         {
             if (targetModeInfo.targetMode == TargetMode.Manual)
             {
-                AlterStaminaGA alterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, null, null, targetModeInfo);
+                AlterStaminaGA alterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, null, null, null, targetModeInfo);
                 alterStaminaGA.CardActionner = CardActionner;
                 alterStaminaGA.SourceEffect = this;
                 alterStaminaGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { alterStaminaGA.SFX = SFX; }
-                StartManualTargetingGA startManualTargetingGA = new(alterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
-                startManualTargetingGA.SourceEffect = this;
-                return startManualTargetingGA;
+                alterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
+
+                if (targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
+                {
+                    StartCardTargetingGA startCardTargetingGA = new(alterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
+                    startCardTargetingGA.SourceEffect = this;
+                    startCardTargetingGA.ActivateToolTip = ActivateToolTip;
+                    return startCardTargetingGA;                    
+                }
+                else
+                {
+                    StartManualTargetingGA startManualTargetingGA = new(alterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
+                    startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
+                    return startManualTargetingGA;                   
+                }
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                AlterStaminaGA alterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, targetModeInfo);
+                AlterStaminaGA alterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, ParentEffect.TargetForLinked_Card, targetModeInfo);
                 alterStaminaGA.CardActionner = CardActionner;
                 alterStaminaGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { alterStaminaGA.SFX = SFX; }
+                alterStaminaGA.ActivateToolTip = ActivateToolTip;
+                alterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
                 return alterStaminaGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
+                if (targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
+                {
+                    var cardTargets = TargetSystem.GetCardsTargets(targetModeInfo, null,IncludeCardsInDeck);
 
-                TargetForLinked_Player = playerTargets;
-                TargetForLinked_Enemy = enemyTargets;
+                    TargetForLinked_Card = cardTargets;
 
-                AlterStaminaGA alterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, playerTargets, enemyTargets, targetModeInfo);
-                alterStaminaGA.CardActionner = CardActionner;
-                alterStaminaGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { alterStaminaGA.SFX = SFX; }
-                return alterStaminaGA;
+                    AlterStaminaGA alterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, null, null, cardTargets, targetModeInfo);
+                    alterStaminaGA.CardActionner = CardActionner;
+                    alterStaminaGA.SourceEffect = this;
+                    alterStaminaGA.ActivateToolTip = ActivateToolTip;
+                    alterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
+                    return alterStaminaGA;  
+                }
+                else
+                {
+                    var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
+
+                    TargetForLinked_Player = playerTargets;
+                    TargetForLinked_Enemy = enemyTargets;
+
+                    AlterStaminaGA alterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, playerTargets, enemyTargets, null, targetModeInfo);
+                    alterStaminaGA.CardActionner = CardActionner;
+                    alterStaminaGA.SourceEffect = this;
+                    alterStaminaGA.ActivateToolTip = ActivateToolTip;
+                    alterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
+                    return alterStaminaGA;                    
+                }
             }
         }
         else
@@ -137,37 +170,60 @@ public class AlterStaminaEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, null, null, targetModeInfo);
+                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, null, null, null, targetModeInfo);
                     enemyAlterStaminaGA.Actionner = Actionner;
                     enemyAlterStaminaGA.SourceEffect = this;
                     enemyAlterStaminaGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyAlterStaminaGA.SFX = SFX; }
-                    StartManualTargetingGA startManualTargetingGA = new(enemyAlterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
-                    startManualTargetingGA.SourceEffect = this;
-                    return startManualTargetingGA;
+                    enemyAlterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
+                    if (targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
+                    {
+                        StartCardTargetingGA startCardTargetingGA = new(enemyAlterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
+                        startCardTargetingGA.SourceEffect = this;
+                        startCardTargetingGA.ActivateToolTip = ActivateToolTip;
+                        return startCardTargetingGA;                        
+                    }
+                    else
+                    {
+                        StartManualTargetingGA startManualTargetingGA = new(enemyAlterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
+                        startManualTargetingGA.SourceEffect = this;
+                        startManualTargetingGA.ActivateToolTip = ActivateToolTip;
+                        return startManualTargetingGA;                   
+                    }
                 }
                 else
                 {
-                    List<PermanentView> playerTargets;
-                    List<EnemySlotView> enemyTargets;
+                    List<PermanentView> playerTargets = new();
+                    List<EnemySlotView> enemyTargets = new();
+                    List<Card> cardTargets = new();
 
                     if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
+                        cardTargets = ParentEffect.TargetForLinked_Card;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        if (targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
+                        {
+                            cardTargets = TargetSystem.GetCardsTargets(targetModeInfo, null, IncludeCardsInDeck);
+                            
+                            TargetForLinked_Card = cardTargets;
+                        }
+                        else
+                        {
+                            (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
-                        TargetForLinked_Player = playerTargets;
-                        TargetForLinked_Enemy = enemyTargets;
+                            TargetForLinked_Player = playerTargets;
+                            TargetForLinked_Enemy = enemyTargets;                            
+                        }
                     }
 
-                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, playerTargets, enemyTargets, targetModeInfo);
+                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, playerTargets, enemyTargets, cardTargets, targetModeInfo);
                     enemyAlterStaminaGA.Actionner = Actionner;
                     enemyAlterStaminaGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyAlterStaminaGA.SFX = SFX; }
+                    enemyAlterStaminaGA.ActivateToolTip = ActivateToolTip;
+                    enemyAlterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
                     return enemyAlterStaminaGA;
                 }
             }
@@ -175,37 +231,60 @@ public class AlterStaminaEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, null, null, targetModeInfo);
+                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, null, null, null, targetModeInfo);
                     playerAlterStaminaGA.Actionner = Actionner;
                     playerAlterStaminaGA.SourceEffect = this;
                     playerAlterStaminaGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerAlterStaminaGA.SFX = SFX; }
-                    StartManualTargetingGA startManualTargetingGA = new(playerAlterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
-                    startManualTargetingGA.SourceEffect = this;
-                    return startManualTargetingGA;
+                    playerAlterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
+                    if (targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
+                    {
+                        StartCardTargetingGA startCardTargetingGA = new(playerAlterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
+                        startCardTargetingGA.SourceEffect = this;
+                        startCardTargetingGA.ActivateToolTip = ActivateToolTip;
+                        return startCardTargetingGA;                        
+                    }
+                    else
+                    {
+                        StartManualTargetingGA startManualTargetingGA = new(playerAlterStaminaGA, targetNumber, TargetUpTo, this, targetLimitations);
+                        startManualTargetingGA.SourceEffect = this;
+                        startManualTargetingGA.ActivateToolTip = ActivateToolTip;
+                        return startManualTargetingGA;                   
+                    }
                 }
                 else
                 {
-                    List<PermanentView> playerTargets;
-                    List<EnemySlotView> enemyTargets;
+                    List<PermanentView> playerTargets = new();
+                    List<EnemySlotView> enemyTargets = new();
+                    List<Card> cardTargets = new();
 
                     if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
+                        cardTargets = ParentEffect.TargetForLinked_Card;
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        if (targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
+                        {
+                            cardTargets = TargetSystem.GetCardsTargets(targetModeInfo, null, IncludeCardsInDeck);
 
-                        TargetForLinked_Player = playerTargets;
-                        TargetForLinked_Enemy = enemyTargets;
+                            TargetForLinked_Card = cardTargets;
+                        }
+                        else
+                        {
+                            (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
+
+                            TargetForLinked_Player = playerTargets;
+                            TargetForLinked_Enemy = enemyTargets;                            
+                        }
                     }
 
-                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, playerTargets, enemyTargets, targetModeInfo);
+                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, aditive, playerTargets, enemyTargets, cardTargets, targetModeInfo);
                     playerAlterStaminaGA.Actionner = Actionner;
                     playerAlterStaminaGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerAlterStaminaGA.SFX = SFX; }
+                    playerAlterStaminaGA.ActivateToolTip = ActivateToolTip;
+                    playerAlterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
                     return playerAlterStaminaGA;
                 }
             }
@@ -231,6 +310,9 @@ public class AlterStaminaEffect : Effect
 
         return new AlterStaminaEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
+            IncludeCardsInDeck,
             alterAmount,
             multiplyAmount,
             PayXEffect,

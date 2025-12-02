@@ -50,21 +50,21 @@ public class CardView : MonoBehaviour
         Card = card;
         if (!IsHoverCard && !IsVisualDeckCard && !IsChoiceCard && !IsScryCard && !IsReward)
         {
-            card.RefCardView = this;
+            Card.RefCardView = this;
         }
-        Title.text = card.Title;
+        Title.text = Card.Title;
         name = Title.text;
-        Description.text = card.Description;
+        Description.text = Card.Description;
         UpdateCostText();
-        Image.sprite = card.Image;
+        Image.sprite = Card.Image;
 
-        if (!card.IsSpell)
+        if (!Card.IsSpell)
         {
             Life.gameObject.SetActive(true);
             Durability.gameObject.SetActive(true);
 
-            Life.text = card.life.ToString();
-            Durability.text = card.Durability.ToString() + "/" + card.MaxDurability.ToString();
+            Life.text = Card.life.ToString();
+            UpdateDurabilityText();
         }
         else
         {
@@ -105,10 +105,15 @@ public class CardView : MonoBehaviour
 
         Description.text = string.Join("\n", effectDescriptions);
     }
-    
+
     public void UpdateCostText()
     {
         cost.text = Mathf.Max(0, Card.cost + Card.BonusCost).ToString();
+    }
+    
+    public void UpdateDurabilityText()
+    {
+        Durability.text = Card.Durability.ToString() + "/" + Card.MaxDurability.ToString();        
     }
 
     void OnMouseEnter()
@@ -307,10 +312,6 @@ public class CardView : MonoBehaviour
                                 ActionSystem.Instance.Perform(summonGA);
                                 CounterSystem.Instance.Add(CounterType.PermanentCast_This_Turn);
                                 CounterSystem.Instance.Add(CounterType.PermanentCast_Since_Load);
-                                TriggerEventGA triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.PermanentCast_This_Turn);
-                                ActionSystem.Instance.AddReaction(triggerEventGA);
-                                triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.PermanentCast_This_Turn);
-                                ActionSystem.Instance.AddReaction(triggerEventGA);
                             }
                         }
                     }

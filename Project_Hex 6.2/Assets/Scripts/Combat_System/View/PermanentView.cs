@@ -31,7 +31,7 @@ public class PermanentView : MonoBehaviour
     [SerializeField] public EventReference UnSelectedSound;
 
     [HideInInspector] public bool IsCore { get; set; }
-    [HideInInspector] private int MaxLife { get; set; }
+    [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public int currentLife { get; set; }
     [HideInInspector] public int baseLife { get; set; }
     [HideInInspector] public int MaxDurability { get; set; }
@@ -225,13 +225,21 @@ public class PermanentView : MonoBehaviour
             if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(type, out var powerGroup))
             {
                 passiveBonus += powerGroup.Player + powerGroup.Global;
+                Debug.Log("passiveBonus augment by powerGroupPlayer " + powerGroup.Player + " & GeneralGroup " + powerGroup.Global + " For " + type);
             }
+
         }
 
         int finalDMG = BonusPower 
                     + passiveBonus 
                     + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.Player)
                     + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+
+        /*Debug.Log("FinalDamage : " + finalDMG + " =  BonusPower " 
+        + BonusPower + " passiveBonus " +
+        + passiveBonus + " passivePlayerGeneral " +
+        + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.Player) + " passiveGeneral " +
+        + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.NULL));*/
 
         return finalDMG;
     }
@@ -375,8 +383,19 @@ public class PermanentView : MonoBehaviour
             TriggerEventGA triggerEventGA;
             if (IsCore)
             {
-                triggerEventGA = new(Events.WhenPCoreDamaged,null,this,null);
-                ActionSystem.Instance.AddReaction(triggerEventGA);
+                if (Actionner != null)
+                {
+                    if (Actionner.GetComponent<PermanentView>() != null)
+                    {
+                        triggerEventGA = new(Events.WhenPCoreDamaged, null, Actionner.GetComponent<PermanentView>(), null);
+                        ActionSystem.Instance.AddReaction(triggerEventGA);
+                    }
+                    else if (Actionner.GetComponent<EnemySlotView>() != null)
+                    {
+                        triggerEventGA = new(Events.WhenPCoreDamaged, null, null, Actionner.GetComponent<EnemySlotView>());
+                        ActionSystem.Instance.AddReaction(triggerEventGA);
+                    }
+                }
             }
             triggerEventGA = new(Events.WhenPermaDamaged,null,this,null);
             ActionSystem.Instance.AddReaction(triggerEventGA);

@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class EnemyAlterStaminaGA : GameAction
 {
@@ -12,7 +10,8 @@ public class EnemyAlterStaminaGA : GameAction
     public TargetModeInfo targetModeInfo;
     public List<PermanentView> playerTargets { get; set; }
     public List<EnemySlotView> enemyTargets { get; set; }
-    public EnemyAlterStaminaGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, bool Passive, bool Aditive, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets, TargetModeInfo TargetModeInfo = null)
+    public List<Card> cardTargets { get; set; }
+    public EnemyAlterStaminaGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, bool Passive, bool Aditive, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets, List<Card> CardTargets = null, TargetModeInfo TargetModeInfo = null)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
@@ -22,5 +21,6 @@ public class EnemyAlterStaminaGA : GameAction
         targetModeInfo = TargetModeInfo;
         playerTargets = PlayerTargets;
         enemyTargets = EnemyTargets;
+        cardTargets = CardTargets;
     }
 }

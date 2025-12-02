@@ -220,7 +220,7 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         EffectID: e27eb02a-349d-4016-b333-aa361daa243c
-        amount: 0
+        amount: 1
         multiplyAmount: 1
         DynamicAmount: 0
         CardsToInvoc:

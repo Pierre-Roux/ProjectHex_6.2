@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class ConditionSystem : Singleton<ConditionSystem>
 {
-    public bool TestCondition(List<DynamicConditionInfo> DynamicConditionInfos, Card TestCard = null, PermanentView TestpermanentView = null, EnemySlotView TestenemySlotView = null)
+    public bool TestCondition(List<DynamicConditionInfo> DynamicConditionInfos, Card TestCard = null, PermanentView TestpermanentView = null, EnemySlotView TestenemySlotView = null,  Card TriggerCard = null, PermanentView TriggerpermanentView = null, EnemySlotView TriggerenemySlotView = null)
     {
         foreach (DynamicConditionInfo Condition in DynamicConditionInfos)
         {
-            int Amount;
+            int Amount = 0;
             bool ConditionResult;
+            CounterManager counterManager = new();
+
             if (Condition.DynamicCondition != DynamicCondition.NULL)
             {
                 switch (Condition.DynamicCondition)
@@ -223,9 +225,9 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         break;
 
                     case DynamicCondition.ifEventPermanentIsTypeOfTestType:
-                        if (TestpermanentView != null)
+                        if (TriggerpermanentView != null)
                         {
-                            if (TestpermanentView.permaTypes.Contains(Condition.TestType))
+                            if (TriggerpermanentView.permaTypes.Contains(Condition.TestType))
                             {
                                 ConditionResult = true;
                             }
@@ -234,9 +236,9 @@ public class ConditionSystem : Singleton<ConditionSystem>
                                 ConditionResult = false;
                             }
                         }
-                        else if (TestenemySlotView != null)
+                        else if (TriggerenemySlotView != null)
                         {
-                            if (TestenemySlotView.permaTypes.Contains(Condition.TestType))
+                            if (TriggerenemySlotView.permaTypes.Contains(Condition.TestType))
                             {
                                 ConditionResult = true;
                             }
@@ -252,7 +254,7 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         break;
 
                     case DynamicCondition.ifEventPermanentIsPlayer:
-                        if (TestpermanentView != null)
+                        if (TriggerpermanentView != null)
                         {
                             ConditionResult = true;
                         }
@@ -263,7 +265,7 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         break;
 
                     case DynamicCondition.ifEventPermanentIsEnemy:
-                        if (TestenemySlotView != null)
+                        if (TriggerenemySlotView != null)
                         {
                             ConditionResult = true;
                         }
@@ -274,9 +276,9 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         break;
 
                     case DynamicCondition.ifEventPermanentIsVessel:
-                        if (TestpermanentView != null)
+                        if (TriggerpermanentView != null)
                         {
-                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Invoc))
+                            if (TriggerpermanentView.permaTypes.Contains(PermaTypes.Invoc))
                             {
                                 ConditionResult = false;
                             }
@@ -285,16 +287,16 @@ public class ConditionSystem : Singleton<ConditionSystem>
                                 ConditionResult = true;
                             }
                         }
-                        else if (TestenemySlotView != null)
+                        else if (TriggerenemySlotView != null)
                         {
-                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Invoc))
+                            if (TriggerenemySlotView.permaTypes.Contains(PermaTypes.Invoc))
                             {
                                 ConditionResult = false;
                             }
                             else
                             {
                                 ConditionResult = true;
-                            }                            
+                            }
                         }
                         else
                         {
@@ -303,9 +305,9 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         break;
 
                     case DynamicCondition.ifEventCardTriggerIsVessel:
-                        if (TestCard != null)
+                        if (TriggerCard != null)
                         {
-                            if (!TestCard.IsSpell)
+                            if (!TriggerCard.IsSpell)
                             {
                                 ConditionResult = true;
                             }
@@ -321,9 +323,9 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         break;
 
                     case DynamicCondition.ifEventCardTriggerIsSpell:
-                        if (TestenemySlotView != null)
+                        if (TriggerenemySlotView != null)
                         {
-                            if (TestCard.IsSpell)
+                            if (TriggerCard.IsSpell)
                             {
                                 ConditionResult = true;
                             }
@@ -331,6 +333,94 @@ public class ConditionSystem : Singleton<ConditionSystem>
                             {
                                 ConditionResult = false;
                             }
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifGlobalCounterOfTypeSupToValue:
+                        Amount = CombatSystem.Instance.GlobalCounters.Get(Condition.CounterType);
+                        if (Amount > Condition.TestValue)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifGlobalCounterOfTypeInfToValue:
+                        Amount = CombatSystem.Instance.GlobalCounters.Get(Condition.CounterType);
+                        if (Amount < Condition.TestValue)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifInternCounterOfTypeSupToValue:
+                        if (TestpermanentView != null)
+                        {
+                            counterManager = TestpermanentView.InternCounters;
+                            Amount = counterManager.Get(Condition.CounterType);
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            counterManager = TestenemySlotView.InternCounters;
+                            Amount = counterManager.Get(Condition.CounterType);
+                        }
+                        else if (TestCard != null)
+                        {
+                            counterManager = TestCard.InternCounters;
+                            Amount = counterManager.Get(Condition.CounterType);
+                        }
+                        else
+                        {
+                            Amount = -1000;
+                        }
+
+                        if (Amount > Condition.TestValue)
+                        {
+                            ConditionResult = true;
+                        }
+                        else
+                        {
+                            ConditionResult = false;
+                        }
+                        break;
+
+                    case DynamicCondition.ifInternCounterOfTypeInfToValue:
+                        if (TestpermanentView != null)
+                        {
+                            counterManager = TestpermanentView.InternCounters;
+                            Amount = counterManager.Get(Condition.CounterType);
+                        }
+                        else if (TestenemySlotView != null)
+                        {
+                            counterManager = TestenemySlotView.InternCounters;
+                            Amount = counterManager.Get(Condition.CounterType);
+                        }
+                        else if (TestCard != null)
+                        {
+                            counterManager = TestCard.InternCounters;
+                            Amount = counterManager.Get(Condition.CounterType);
+                        }
+                        else
+                        {
+                            Amount = 1000;
+                        }
+
+                        Debug.Log("Test : " + Amount + " < " + Condition.TestValue);
+
+                        if (Amount < Condition.TestValue)
+                        {
+                            ConditionResult = true;
                         }
                         else
                         {

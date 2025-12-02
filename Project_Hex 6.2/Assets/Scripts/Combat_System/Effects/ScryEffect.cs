@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using UnityEngine;
 
@@ -12,8 +13,10 @@ public class ScryEffect : Effect
 
     public ScryEffect(){}
 
-    public ScryEffect(string effectID, int Amount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public ScryEffect(string effectID, bool activateToolTip, int priority, int Amount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         ScryAmount = Amount;
         PayXEffect = payXEffect;
@@ -76,7 +79,8 @@ public class ScryEffect : Effect
         scryGA.CardActionner = CardActionner;
         scryGA.Actionner = Actionner;
         scryGA.SourceEffect = this;
-        if (AudioManager.Instance.IsValid(SFX)){ scryGA.SFX = SFX; }
+        scryGA.ActivateToolTip = ActivateToolTip;
+        scryGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_PredictSound : SFX;
         return scryGA;
     }
 
@@ -94,6 +98,8 @@ public class ScryEffect : Effect
 
         return new ScryEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             ScryAmount,
             PayXEffect,
             PayXValue,

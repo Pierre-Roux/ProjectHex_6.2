@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - HandView
   - MainAudioSource
@@ -21,7 +21,7 @@ TagManager:
   - DropArea
   - 
   - 
-  - 
+  - ExhaustedCardView
   - CardView
   - CardReward
   - 
@@ -49,3 +49,5 @@ TagManager:
   - name: Cursor
     uniqueID: 193844685
     locked: 0
+  m_RenderingLayers:
+  - Default

@@ -9,7 +9,6 @@ public class EffectSystem : Singleton<EffectSystem>
 
     void OnEnable()
     {
-        ActionSystem.AttachPerformer<DoEffectGA>(PerformEffectPerformer);
         ActionSystem.AttachPerformer<DealDamageGA>(DealDamagePerformer);
         ActionSystem.AttachPerformer<HealGA>(DealHealPerformer);
         ActionSystem.AttachPerformer<ShieldGA>(DealShieldPerformer);
@@ -27,12 +26,13 @@ public class EffectSystem : Singleton<EffectSystem>
         ActionSystem.AttachPerformer<InvocGA>(InvocPerformer);
         ActionSystem.AttachPerformer<SacGA>(SacPerformer);
         ActionSystem.AttachPerformer<RefreshGA>(RefreshPerformer);
+        ActionSystem.AttachPerformer<ExhaustGA>(ExhaustedPerformer);
+        ActionSystem.AttachPerformer<RetrieveExhaustedGA>(RetrieveExhaustedPerformer);
         ActionSystem.AttachPerformer<LetChoiceGA>(PlayerChoicePerformer);
     }
 
     void OnDisable()
     {
-        ActionSystem.DetachPerformer<DoEffectGA>();
         ActionSystem.DetachPerformer<DealDamageGA>();
         ActionSystem.DetachPerformer<HealGA>();
         ActionSystem.DetachPerformer<ShieldGA>();
@@ -50,20 +50,9 @@ public class EffectSystem : Singleton<EffectSystem>
         ActionSystem.DetachPerformer<InvocGA>();
         ActionSystem.DetachPerformer<SacGA>();
         ActionSystem.DetachPerformer<RefreshGA>();
+        ActionSystem.DetachPerformer<ExhaustGA>();
+        ActionSystem.DetachPerformer<RetrieveExhaustedGA>();
         ActionSystem.DetachPerformer<LetChoiceGA>();
-    }
-
-
-    // Performers
-    private IEnumerator PerformEffectPerformer(DoEffectGA doEffectGA)
-    {
-        if (doEffectGA.Effect.EffectTargetModeInfo != null)
-        {
-            if(doEffectGA.Effect.EffectTargetModeInfo.targetMode == TargetMode.Manual) TargetSystem.Instance.ActivateAuraForTargets(doEffectGA.Effect.EffectTargetLimitations);            
-        }
-        GameAction effectAction = doEffectGA.Effect.GetGameAction();
-        ActionSystem.Instance.AddReaction(effectAction);
-        yield return null;
     }
 
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
@@ -523,6 +512,14 @@ public class EffectSystem : Singleton<EffectSystem>
                     yield return new WaitForSeconds(AnimDelay);
                 }
             }            
+            if (alterStaminaGA.cardTargets != null)
+            {
+                foreach (var target in alterStaminaGA.cardTargets)
+                {
+                    target.TakeAlterStamina(alterStaminaGA.Amount);
+                    yield return new WaitForSeconds(AnimDelay);
+                }                
+            }
         }
     }
     
@@ -610,7 +607,7 @@ public class EffectSystem : Singleton<EffectSystem>
                 lifeLossGA.Amount = TargetSystem.Instance.GetDynamicAmount(lifeLossGA.DynamicAmount, null, lifeLossGA.Actionner.GetComponent<EnemySlotView>());
             }
         }
-        
+
         lifeLossGA.Amount = lifeLossGA.Amount * lifeLossGA.multiplyAmount;
 
         if (lifeLossGA.playerTargets != null)
@@ -634,13 +631,16 @@ public class EffectSystem : Singleton<EffectSystem>
 
     private IEnumerator DiscardCardPerformer(DiscardCardGA discardCardGA)
     {
-        foreach (CardView item in discardCardGA.CardViews)
+        List<CardView> cardViewsToDiscard = new();
+        foreach (CardView cardView in discardCardGA.CardViews)
         {
-            CardSystem.Instance.handView.RemoveCard(item.Card);
-            CardSystem.Instance.hand.Remove(item.Card);
-            StartCoroutine(CardSystem.Instance.DiscardCard(item, true));
-            yield return null;
+            cardViewsToDiscard.Add(cardView);
         }
+
+        DiscardOnceGA discardOnceGA = new(cardViewsToDiscard,true);
+        ActionSystem.Instance.AddReaction(discardOnceGA);
+
+        yield return null;
     }
 
     private IEnumerator ScryPerformer(ScryGA scryGA)
@@ -772,7 +772,7 @@ public class EffectSystem : Singleton<EffectSystem>
                 invocGA.Amount = TargetSystem.Instance.GetDynamicAmount(invocGA.DynamicAmount, null, invocGA.Actionner.GetComponent<EnemySlotView>());
             }
         }
-        
+
         invocGA.Amount = invocGA.Amount * invocGA.multiplyAmount;
 
         if (invocGA.CardsToInvoc != null)
@@ -785,7 +785,7 @@ public class EffectSystem : Singleton<EffectSystem>
                     {
                         Card card = new(item);
                         PermanentView newPerm = PermanentViewCreator.Instance.CreatePermanentViewCreator(card, card.permanentArea);
-                        if (newPerm != null)
+                        if (newPerm != null && !newPerm.permaTypes.Contains(PermaTypes.Invoc))
                             newPerm.permaTypes.Add(PermaTypes.Invoc);
                     }
                 }
@@ -848,7 +848,61 @@ public class EffectSystem : Singleton<EffectSystem>
         }
 
         yield return null;
-    } 
+    }
+
+    private IEnumerator ExhaustedPerformer(ExhaustGA exhaustGA)
+    {
+        if (exhaustGA.playerTargets != null)
+        {
+            foreach (var perm in exhaustGA.playerTargets)
+            {
+                DiePermanentGA diePermanentGA = new(perm.IsCore, 0, perm.CardReferenceArchive, perm);
+                ActionSystem.Instance.AddReaction(diePermanentGA);                
+            }            
+        }
+
+        if (exhaustGA.cardTargets != null)
+        {
+            CardSystem cardsystem = CardSystem.Instance;
+            foreach (var card in exhaustGA.cardTargets)
+            {
+                if (!card.IsSpell)
+                {
+                    card.Durability = 0;
+                }
+                cardsystem.hand.Remove(card);
+                CardView cardView = CardSystem.Instance.handView.RemoveCard(card);
+                cardsystem.ExhaustPile.Add(card);
+
+                StartCoroutine(cardsystem.DestroyCard(cardView));
+
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+    }
+
+    private IEnumerator RetrieveExhaustedPerformer(RetrieveExhaustedGA retrieveExhaustedGA)
+    {
+        if (retrieveExhaustedGA.cardTargets != null)
+        {
+            foreach (var card in retrieveExhaustedGA.cardTargets)
+            {
+                CardSystem.Instance.ExhaustPile.Remove(card);
+                int randomIndex = Random.Range(0, CardSystem.Instance.drawPile.Count + 1);
+                CardSystem.Instance.drawPile.Insert(randomIndex, card);
+
+                if (!card.IsSpell)
+                {
+                    card.Durability = card.MaxDurability;
+                }
+
+                TriggerEventGA triggerEventGA = new(Events.WhenCardExitExhaust, card);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+    }
 
     private IEnumerator PlayerChoicePerformer(LetChoiceGA letChoiceGA)
     {
@@ -891,190 +945,53 @@ public class EffectSystem : Singleton<EffectSystem>
             }
         }
 
-        if (letChoiceGA.OnSelectMode && EffectToManage.ActivateLeft != 999) 
+        if (letChoiceGA.OnSelectMode && EffectToManage.ActivateLeft != 999)
         {
             EffectToManage.ActivateLeft--;
         }
 
-        int MultiHit = EffectToManage.MultiHit;
-        if (MultiHit < 1) MultiHit = 1;
-        for (int i = 0; i < MultiHit; i++)
+        if (letChoiceGA.OnSelectMode)
         {
-            // On clone l’effet de base pour éviter les références partagées
-            Effect clonedEffect = EffectToManage.Clone();
-            
-            if (!letChoiceGA.OnSelectMode)
+            if (EffectToManage is EffectGroup choiceEffect)
             {
-                clonedEffect.Actionner = letChoiceGA.Actionner;
-                clonedEffect.CardActionner = letChoiceGA.CardActionner;
-            }
-            
-            // Verification pour hollow Effect
-            if (clonedEffect.Actionner != null)
-            {
-                if (permanentView != null)
+                foreach (Effect SubEffect in choiceEffect.EffectGroups)
                 {
-                    bool canApply = (permanentView.permaTypes.Contains(PermaTypes.Hollow) && clonedEffect.HollowEffect)
-                                || (!permanentView.permaTypes.Contains(PermaTypes.Hollow) && !clonedEffect.HollowEffect);
-                    if (!canApply) continue;
+                    SubEffect.Actionner = EffectToManage.Actionner;
+                    SubEffect.CardActionner = EffectToManage.CardActionner;
+                    GameEventSystem.Instance.RegisterEffect(SubEffect);                                
                 }
             }
-
-            while (clonedEffect != null)
+            else
             {
-                if (letChoiceGA.OnSelectMode)
+                if (EffectToManage.Events.Count == 1)
                 {
-                    // Fonctionnement pour group effect dans le OnSelectMode
-                    if (clonedEffect is EffectGroup choiceEffect)
-                    {
-                        foreach (Effect effect1 in choiceEffect.EffectGroups)
-                        {
-                            Effect clonedEffect1 = effect1.Clone();
-
-                            clonedEffect1.Actionner = choiceEffect.Actionner;
-                            clonedEffect1.CardActionner = choiceEffect.CardActionner;
-
-                            // Verification pour hollow Effect
-                            if (clonedEffect1.Actionner != null)
-                            {
-                                if (permanentView != null)
-                                {
-                                    // Vérifie Hollow
-                                    bool canApply = (permanentView.permaTypes.Contains(PermaTypes.Hollow) && clonedEffect1.HollowEffect)
-                                                || (!permanentView.permaTypes.Contains(PermaTypes.Hollow) && !clonedEffect1.HollowEffect);
-                                    if (!canApply) continue;
-                                }
-                            }
-
-                            while (clonedEffect1 != null)
-                            {
-                                foreach (var ev in clonedEffect1.Events)
-                                {
-                                    Debug.Log("for " + ev);
-                                    if (ev == Events.Instant || ev == Events.OnSelect && clonedEffect.Events.Count == 1)
-                                    {
-                                        ActionSystem.Instance.AddReaction(clonedEffect1.GetGameAction());
-                                        Debug.Log("Register ; " + clonedEffect1);
-                                    }
-                                    else if (ev != Events.EnemyTurn)
-                                    {
-                                        GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect1);
-                                    }
-                                }
-
-                                if (clonedEffect1.LinkedEffect != null)
-                                {
-                                    clonedEffect1.LinkedEffect.ParentEffect = clonedEffect1;
-                                }
-                                clonedEffect1.Actionner = effect1.Actionner;
-                                clonedEffect1.CardActionner = effect1.CardActionner;
-                                // Avancer dans la chaîne de linked
-                                clonedEffect1 = clonedEffect1.LinkedEffect;
-                            }
-                        }
-
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-                        clonedEffect = clonedEffect.LinkedEffect;
-                    }
-                    // Fonctionnement pour effect basic dans le OnSelectMode
-                    else
-                    {
-                        foreach (var ev in clonedEffect.Events)
-                        {
-                            if (ev == Events.Instant || ev == Events.OnSelect && clonedEffect.Events.Count == 1)
-                            {
-                                ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
-                            }  
-                            else if (ev != Events.EnemyTurn)
-                            {
-                                GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect);
-                            }
-                        }
-
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-
-                        // Avancer dans la chaîne de linked
-                        clonedEffect = clonedEffect.LinkedEffect;
-                    }
+                    Effect effectToExecute = EffectToManage.Clone();
+                    effectToExecute.Events = new List<Events> { Events.Instant };
+                    GameEventSystem.Instance.RegisterEffect(effectToExecute);
                 }
                 else
                 {
-                    // Fonctionnement pour group effect
-                    if (clonedEffect is EffectGroup)
-                    {
-                        EffectGroup choiceEffect = (EffectGroup)clonedEffect;
-                        foreach (Effect effect1 in choiceEffect.EffectGroups)
-                        {
-                            Effect clonedEffect1 = effect1.Clone();
-                            // Verification pour hollow Effect
-                            if (clonedEffect1.Actionner != null)
-                            {
-                                if (permanentView != null)
-                                {
-                                    // Vérifie Hollow
-                                    bool canApply = (permanentView.permaTypes.Contains(PermaTypes.Hollow) && clonedEffect1.HollowEffect)
-                                                || (!permanentView.permaTypes.Contains(PermaTypes.Hollow) && !clonedEffect1.HollowEffect);
-                                    if (!canApply) continue;
-                                }
-                            }
-
-                            while (clonedEffect1 != null)
-                            {
-                                foreach (var ev in clonedEffect1.Events)
-                                {
-                                    if (ev == Events.Instant)
-                                    {
-                                        ActionSystem.Instance.AddReaction(clonedEffect1.GetGameAction());
-                                    }
-                                    else if (ev != Events.EnemyTurn)
-                                    {
-                                        GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect1);
-                                    }
-                                }
-
-                                if (clonedEffect1.LinkedEffect != null)
-                                {
-                                    clonedEffect1.LinkedEffect.ParentEffect = clonedEffect1;
-                                }
-                                clonedEffect1.Actionner = effect1.Actionner;
-                                clonedEffect1.CardActionner = effect1.CardActionner;
-                                // Avancer dans la chaîne de linked
-                                clonedEffect1 = clonedEffect1.LinkedEffect;
-                            }
-                        }
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-                        clonedEffect = clonedEffect.LinkedEffect;
-                    }
-                    // Fonctionnement pour effect basic 
-                    else
-                    {
-                        foreach (var ev in clonedEffect.Events)
-                        {
-                            if (ev == Events.Instant)
-                                ActionSystem.Instance.AddReaction(clonedEffect.GetGameAction());
-                            else if (ev != Events.EnemyTurn)
-                                GameEventSystem.Instance.AddEffectToEvent(ev, clonedEffect);
-                        }
-
-                        if (clonedEffect.LinkedEffect != null)
-                        {
-                            clonedEffect.LinkedEffect.ParentEffect = clonedEffect;
-                        }
-
-                        // Avancer dans la chaîne de linked
-                        clonedEffect = clonedEffect.LinkedEffect;
-                    }              
+                    Effect effectToExecute = EffectToManage.Clone();
+                    effectToExecute.Events.Remove(Events.OnSelect);
+                    GameEventSystem.Instance.RegisterEffect(effectToExecute);                                
                 }
             }
+        }
+        else
+        {
+            if (EffectToManage is EffectGroup choiceEffect)
+            {
+                foreach (Effect SubEffect in choiceEffect.EffectGroups)
+                {
+                    SubEffect.Actionner = EffectToManage.Actionner;
+                    SubEffect.CardActionner = EffectToManage.CardActionner;
+                    GameEventSystem.Instance.RegisterEffect(SubEffect);
+                }
+            }
+            else
+            {
+                GameEventSystem.Instance.RegisterEffect(EffectToManage);
+            }            
         }
     } 
 }

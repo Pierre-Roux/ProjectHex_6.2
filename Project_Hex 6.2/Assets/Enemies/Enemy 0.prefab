@@ -114,12 +114,13 @@ MonoBehaviour:
       data:
         number: A
         EnemyData:
-        - {fileID: 11400000, guid: 5e46e0d667ac1d94f9d252681c33bbdb, type: 2}
+        - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
     - rid: 2382742974966530049
       type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
       data:
         number: B
-        EnemyData: []
+        EnemyData:
+        - {fileID: 11400000, guid: 75a7d2efdc5b0d84e8a6b99e0d95be58, type: 2}
 --- !u!1 &6470439035658852412
 GameObject:
   m_ObjectHideFlags: 0

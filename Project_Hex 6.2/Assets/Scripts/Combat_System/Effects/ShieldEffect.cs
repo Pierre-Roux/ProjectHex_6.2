@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using FMODUnity;
 using SerializeReferenceEditor;
+using System.Linq;
 
 public class ShieldEffect : Effect
 {
@@ -23,8 +24,10 @@ public class ShieldEffect : Effect
 
     public ShieldEffect() { }
 
-    public ShieldEffect(string effectID, int activateNumber, int activateLeft, bool orChoice,TargetModeInfo TargetModeInfo, List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public ShieldEffect(string effectID, bool activateToolTip, int priority, int activateNumber, int activateLeft, bool orChoice,TargetModeInfo TargetModeInfo, List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
@@ -84,27 +87,30 @@ public class ShieldEffect : Effect
                 shieldGA.CardActionner = CardActionner;
                 shieldGA.SourceEffect = this;
                 shieldGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
+                shieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_ShieldSound : SFX;
                 StartManualTargetingGA startManualTargetingGA = new(shieldGA, targetNumber, TargetUpTo, this, targetLimitations);
                 startManualTargetingGA.SourceEffect = this;
+                startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 ShieldGA shieldGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 shieldGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
+                shieldGA.ActivateToolTip = ActivateToolTip;
+                shieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_ShieldSound : SFX;
                 return shieldGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
                 ShieldGA shieldGA = new(playerTargets, enemyTargets);
                 shieldGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { shieldGA.SFX = SFX; }
+                shieldGA.ActivateToolTip = ActivateToolTip;
+                shieldGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_ShieldSound : SFX;
                 return shieldGA;
             }
         }
@@ -120,9 +126,10 @@ public class ShieldEffect : Effect
                     shieldEnemyGA.Actionner = Actionner;
                     shieldEnemyGA.SourceEffect = this;
                     shieldEnemyGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { shieldEnemyGA.SFX = SFX; }
+                    shieldEnemyGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_ShieldSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(shieldEnemyGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -137,7 +144,7 @@ public class ShieldEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
@@ -145,7 +152,8 @@ public class ShieldEffect : Effect
                     ShieldEnemyGA shieldEnemyGA = new(playerTargets, enemyTargets);
                     shieldEnemyGA.Actionner = Actionner;
                     shieldEnemyGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { shieldEnemyGA.SFX = SFX; }
+                    shieldEnemyGA.ActivateToolTip = ActivateToolTip;
+                    shieldEnemyGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_ShieldSound : SFX;
                     return shieldEnemyGA;
                 }
             }
@@ -158,9 +166,10 @@ public class ShieldEffect : Effect
                     shieldPlayerGA.Actionner = Actionner;
                     shieldPlayerGA.SourceEffect = this;
                     shieldPlayerGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { shieldPlayerGA.SFX = SFX; }
+                    shieldPlayerGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_ShieldSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(shieldPlayerGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -175,7 +184,7 @@ public class ShieldEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
@@ -183,7 +192,8 @@ public class ShieldEffect : Effect
                     ShieldPlayerGA shieldPlayerGA = new(playerTargets, enemyTargets);
                     shieldPlayerGA.Actionner = Actionner;
                     shieldPlayerGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { shieldPlayerGA.SFX = SFX; }
+                    shieldPlayerGA.ActivateToolTip = ActivateToolTip;
+                    shieldPlayerGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_ShieldSound : SFX;
                     return shieldPlayerGA;
                 }
             }
@@ -210,6 +220,8 @@ public class ShieldEffect : Effect
 
         return new ShieldEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             ActivateNumber,
             ActivateLeft,
             ORChoice,

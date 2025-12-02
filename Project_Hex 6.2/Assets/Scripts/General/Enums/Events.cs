@@ -48,5 +48,7 @@ public enum Events
     InvocCountChanged,
     ArtilleryCountChanged,
 
+    WhenCardExitExhaust,
+
     NULL,
 }

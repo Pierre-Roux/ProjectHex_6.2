@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using UnityEngine;
 
@@ -15,8 +16,10 @@ public class InvocEffect : Effect
 
     public InvocEffect() { }
 
-    public InvocEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public InvocEffect(string effectID, bool activateToolTip, int priority, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         amount = Amount;
         multiplyAmount = MultiplyAmount;
@@ -84,7 +87,8 @@ public class InvocEffect : Effect
             InvocGA invocGA = new(amount,multiplyAmount, DynamicAmount, CardsToInvoc, EnemyToInvoc);
             invocGA.CardActionner = CardActionner;
             invocGA.SourceEffect = this;
-            if (AudioManager.Instance.IsValid(SFX)) { invocGA.SFX = SFX; }
+            invocGA.ActivateToolTip = ActivateToolTip;
+            invocGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_InvocSound : SFX;
             return invocGA;
         }
         // SI PERMANENT
@@ -96,7 +100,8 @@ public class InvocEffect : Effect
                 InvocEGA invocEGA = new(amount,multiplyAmount, DynamicAmount, EnemyToInvoc);
                 invocEGA.Actionner = Actionner;
                 invocEGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { invocEGA.SFX = SFX; }
+                invocEGA.ActivateToolTip = ActivateToolTip;
+                invocEGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_InvocSound : SFX;
                 return invocEGA;
             }
             // SI PLAYER
@@ -105,7 +110,8 @@ public class InvocEffect : Effect
                 InvocPGA invocPGA = new(amount,multiplyAmount, DynamicAmount, CardsToInvoc);
                 invocPGA.Actionner = Actionner;
                 invocPGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { invocPGA.SFX = SFX; }
+                invocPGA.ActivateToolTip = ActivateToolTip;
+                invocPGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_InvocSound : SFX;
                 return invocPGA;
             }
             // NEVER
@@ -131,6 +137,8 @@ public class InvocEffect : Effect
 
         return new InvocEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             amount,
             multiplyAmount,
             PayXEffect,

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using FMODUnity;
 using SerializeReferenceEditor;
@@ -31,8 +32,10 @@ public class DealDamageEffect : Effect
 
     public DealDamageEffect() { }
 
-    public DealDamageEffect(string effectID, string description, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DealDamageEffect(string effectID, bool activateToolTip, int priority, string description, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         Description = description;
         damageAmount = DamageAmount;
@@ -216,9 +219,10 @@ public class DealDamageEffect : Effect
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
                 dealDamageGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { dealDamageGA.SFX = SFX; }
+                dealDamageGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
                 StartManualTargetingGA startManualTargetingGA = new(dealDamageGA, targetNumber, TargetUpTo, this, targetLimitations);
                 startManualTargetingGA.SourceEffect = this;
+                startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
@@ -226,19 +230,21 @@ public class DealDamageEffect : Effect
                 DealDamageGA dealDamageGA = new(damageAmount, 0, multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { dealDamageGA.SFX = SFX; }
+                dealDamageGA.ActivateToolTip = ActivateToolTip;
+                dealDamageGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
                 return dealDamageGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
                 DealDamageGA dealDamageGA = new(damageAmount, 0, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { dealDamageGA.SFX = SFX; }
+                dealDamageGA.ActivateToolTip = ActivateToolTip;
+                dealDamageGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
                 return dealDamageGA;
             }
         }
@@ -252,9 +258,10 @@ public class DealDamageEffect : Effect
                     attackPlayerGA.Actionner = Actionner;
                     attackPlayerGA.SourceEffect = this;
                     attackPlayerGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { attackPlayerGA.SFX = SFX; }
+                    attackPlayerGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(attackPlayerGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -269,7 +276,7 @@ public class DealDamageEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -278,7 +285,8 @@ public class DealDamageEffect : Effect
                     AttackPlayerGA attackPlayerGA = new(damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     attackPlayerGA.Actionner = Actionner;
                     attackPlayerGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { attackPlayerGA.SFX = SFX; }
+                    attackPlayerGA.ActivateToolTip = ActivateToolTip;
+                    attackPlayerGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
                     return attackPlayerGA;
                 }
             }
@@ -290,9 +298,10 @@ public class DealDamageEffect : Effect
                     attackEnemyGA.Actionner = Actionner;
                     attackEnemyGA.SourceEffect = this;
                     attackEnemyGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { attackEnemyGA.SFX = SFX; }
+                    attackEnemyGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(attackEnemyGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -307,7 +316,7 @@ public class DealDamageEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -316,7 +325,8 @@ public class DealDamageEffect : Effect
                     AttackEnemyGA attackEnemyGA = new(damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     attackEnemyGA.Actionner = Actionner;
                     attackEnemyGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { attackEnemyGA.SFX = SFX; }
+                    attackEnemyGA.ActivateToolTip = ActivateToolTip;
+                    attackEnemyGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
                     return attackEnemyGA;
                 }
             }
@@ -342,6 +352,8 @@ public class DealDamageEffect : Effect
 
         return new DealDamageEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             Description,
             damageAmount,
             multiplyAmount,

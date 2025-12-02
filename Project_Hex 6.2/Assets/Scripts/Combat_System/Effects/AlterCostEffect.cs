@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using SerializeReferenceEditor;
 using UnityEngine;
@@ -28,8 +29,11 @@ public class AlterCostEffect : Effect
 
     public AlterCostEffect() { }
 
-    public AlterCostEffect(string effectID, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, bool includeCardsInDeck, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool triggerOnDurationEnd, Effect linkedEffect, List<Card> targetForLinked_Card, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterCostEffect(string effectID, bool activateToolTip, int priority, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, bool includeCardsInDeck, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool triggerOnDurationEnd, Effect linkedEffect, List<Card> targetForLinked_Card, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
+        Priority = priority;
         EffectID = effectID;
         alterAmount = AlterAmount;
         multiplyAmount = MultiplyAmount;
@@ -96,15 +100,16 @@ public class AlterCostEffect : Effect
 
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-            if (targetModeInfo.targetMode == TargetMode.Manual)
+            if (targetModeInfo.targetMode == TargetMode.Manual && targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
             {
                 AlterCardCostGA alterCardCostGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, null, targetModeInfo);
                 alterCardCostGA.CardActionner = CardActionner;
                 alterCardCostGA.SourceEffect = this;
                 alterCardCostGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { alterCardCostGA.SFX = SFX; }
+                alterCardCostGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterCostSound : SFX;
                 StartCardTargetingGA startCardTargetingGA = new(alterCardCostGA, targetNumber, TargetUpTo, this, targetLimitations);
                 startCardTargetingGA.SourceEffect = this;
+                startCardTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startCardTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
@@ -112,7 +117,8 @@ public class AlterCostEffect : Effect
                 AlterCardCostGA alterCardCostGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, ParentEffect.TargetForLinked_Card, targetModeInfo);
                 alterCardCostGA.CardActionner = CardActionner;
                 alterCardCostGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { alterCardCostGA.SFX = SFX; }
+                alterCardCostGA.ActivateToolTip = ActivateToolTip;
+                alterCardCostGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterCostSound : SFX;
                 return alterCardCostGA;
             }
             else
@@ -124,7 +130,8 @@ public class AlterCostEffect : Effect
                 AlterCardCostGA alterCardCostGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, cardsTargets, targetModeInfo);
                 alterCardCostGA.CardActionner = CardActionner;
                 alterCardCostGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { alterCardCostGA.SFX = SFX; }
+                alterCardCostGA.ActivateToolTip = ActivateToolTip;
+                alterCardCostGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterCostSound : SFX;
                 return alterCardCostGA;
             }
         }
@@ -132,15 +139,16 @@ public class AlterCostEffect : Effect
         {
             if (actionnerType == ActionnerType.ENEMY)
             {
-                if (targetModeInfo.targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual && targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
                 {
                     EnemyAlterCardCostGA enemyAlterCardCostGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, null, targetModeInfo);
                     enemyAlterCardCostGA.Actionner = Actionner;
                     enemyAlterCardCostGA.SourceEffect = this;
                     enemyAlterCardCostGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyAlterCardCostGA.SFX = SFX; }
+                    enemyAlterCardCostGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterCostSound : SFX;
                     StartCardTargetingGA startCardTargetingGA = new(enemyAlterCardCostGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startCardTargetingGA.SourceEffect = this;
+                    startCardTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startCardTargetingGA;
                 }
                 else
@@ -161,21 +169,23 @@ public class AlterCostEffect : Effect
                     EnemyAlterCardCostGA enemyAlterCardCostGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, CardsTargets, targetModeInfo);
                     enemyAlterCardCostGA.Actionner = Actionner;
                     enemyAlterCardCostGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyAlterCardCostGA.SFX = SFX; }
+                    enemyAlterCardCostGA.ActivateToolTip = ActivateToolTip;
+                    enemyAlterCardCostGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterCostSound : SFX;
                     return enemyAlterCardCostGA;
                 }
             }
             else if (actionnerType == ActionnerType.PLAYER)
             {
-                if (targetModeInfo.targetMode == TargetMode.Manual)
+                if (targetModeInfo.targetMode == TargetMode.Manual && targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
                 {
                     PlayerAlterCardCostGA playerAlterCardCostGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, null, targetModeInfo);
                     playerAlterCardCostGA.Actionner = Actionner;
                     playerAlterCardCostGA.SourceEffect = this;
                     playerAlterCardCostGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerAlterCardCostGA.SFX = SFX; }
+                    playerAlterCardCostGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterCostSound : SFX;
                     StartCardTargetingGA startCardTargetingGA = new(playerAlterCardCostGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startCardTargetingGA.SourceEffect = this;
+                    startCardTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startCardTargetingGA;
                 }
                 else
@@ -196,7 +206,8 @@ public class AlterCostEffect : Effect
                     PlayerAlterCardCostGA playerAlterCardCostGA = new(alterAmount,multiplyAmount, DynamicAmount,passive, cardsTargets, targetModeInfo);
                     playerAlterCardCostGA.Actionner = Actionner;
                     playerAlterCardCostGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerAlterCardCostGA.SFX = SFX; }
+                    playerAlterCardCostGA.ActivateToolTip = ActivateToolTip;
+                    playerAlterCardCostGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterCostSound : SFX;
                     return playerAlterCardCostGA;
                 }
             }
@@ -218,6 +229,8 @@ public class AlterCostEffect : Effect
 
         return new AlterCostEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             alterAmount,
             multiplyAmount,
             PayXEffect,

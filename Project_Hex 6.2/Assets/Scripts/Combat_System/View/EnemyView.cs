@@ -11,7 +11,7 @@ public class EnemyView : MonoBehaviour
     [SerializeField] public EnemyZoneView ShieldZone;
     [SerializeField] public EnemyZoneView SupportZone;
     [SerializeField] public EnemySlotView CoreSlot;
-    [HideInInspector] public List<GameAction> SetupActions = new();
+    [HideInInspector] public List<Effect> SetupEffects = new();
 
     [field : SerializeReference, SR] public List<IntentConstruct> IntentConstructs { get; private set; }
     [SerializeField] public List<string> ConstructSequence = new();

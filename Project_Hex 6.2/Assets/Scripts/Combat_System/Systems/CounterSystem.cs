@@ -23,6 +23,7 @@ public class CounterSystem : Singleton<CounterSystem>
             if (!perm.InternCounters.counters.ContainsKey(type))
                 perm.InternCounters.counters[type] = 0;
             perm.InternCounters.counters[type] += amount;
+            //Debug.Log(perm + " Add " + amount + " in " +type + " Counter, Now it's -> " + perm.InternCounters.counters[type]);
         }
         foreach (EnemySlotView enemy in enemyList)
         {

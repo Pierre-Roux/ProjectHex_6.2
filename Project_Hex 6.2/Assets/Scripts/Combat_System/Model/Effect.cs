@@ -8,6 +8,8 @@ using FMODUnity;
 public abstract class Effect
 {
     [Header("Mandatory")]
+    [SerializeField] public bool ActivateToolTip = true;
+    [SerializeField] public int Priority = 0;
     [SerializeField] public ActionnerType actionnerType;
     [SerializeField] public List<Events> Events;
     [SerializeField] public CounterType TypeOfCounter;

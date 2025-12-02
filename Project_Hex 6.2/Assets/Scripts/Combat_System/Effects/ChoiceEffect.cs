@@ -20,6 +20,7 @@ public class ChoiceEffect : Effect
 
     public ChoiceEffect(string effectID, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx, Effect effectOnTrue, Effect effectOnFalse, bool playerChoice, bool mayChoice, bool orChoice, List<Effect> effectsForPlayerChoice,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+
         EffectID = effectID;
         Events = Event;
         DynamicConditionInfos = dynamicConditionInfos;
@@ -51,6 +52,12 @@ public class ChoiceEffect : Effect
     {
         if (PlayerChoice)
         {
+            foreach (Effect effect in EffectsForPlayerChoice)
+            {
+                effect.Actionner = Actionner;
+                effect.CardActionner = CardActionner;
+            }
+            
             LetChoiceGA letChoiceGA = new(EffectsForPlayerChoice,false,MayChoice);
             return letChoiceGA; 
         }

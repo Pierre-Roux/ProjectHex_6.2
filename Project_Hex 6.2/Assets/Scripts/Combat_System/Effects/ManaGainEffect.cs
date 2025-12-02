@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using UnityEngine;
 
@@ -12,8 +13,10 @@ public class ManaGainEffect : Effect
 
     public ManaGainEffect(){}
 
-    public ManaGainEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public ManaGainEffect(string effectID, bool activateToolTip, int priority, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         GainAmount = Amount;
         multiplyAmount = MultiplyAmount;
@@ -77,7 +80,8 @@ public class ManaGainEffect : Effect
         gainManaGA.CardActionner = CardActionner;
         gainManaGA.Actionner = Actionner;
         gainManaGA.SourceEffect = this;
-        if (AudioManager.Instance.IsValid(SFX)){ gainManaGA.SFX = SFX; }
+        gainManaGA.ActivateToolTip = ActivateToolTip;
+        gainManaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_GainManaSound : SFX;
         return gainManaGA;
     }
 
@@ -95,6 +99,8 @@ public class ManaGainEffect : Effect
 
         return new ManaGainEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             GainAmount,
             multiplyAmount,
             PayXEffect,

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -26,8 +25,10 @@ public class HealEffect : Effect
 
     public HealEffect() { }
 
-    public HealEffect(string effectID, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public HealEffect(string effectID, bool activateToolTip, int priority, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         amount = Amount;
         multiplyAmount = MultiplyAmount;
@@ -100,9 +101,10 @@ public class HealEffect : Effect
                 healGA.CardActionner = CardActionner;
                 healGA.SourceEffect = this;
                 healGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { healGA.SFX = SFX; }
+                healGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
                 StartManualTargetingGA startManualTargetingGA = new(healGA, targetNumber, TargetUpTo, this, targetLimitations);
                 startManualTargetingGA.SourceEffect = this;
+                startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
@@ -110,19 +112,21 @@ public class HealEffect : Effect
                 HealGA healGA = new(amount,multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 healGA.CardActionner = CardActionner;
                 healGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { healGA.SFX = SFX; }
+                healGA.ActivateToolTip = ActivateToolTip;
+                healGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
                 return healGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
                 HealGA healGA = new(amount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                 healGA.CardActionner = CardActionner;
                 healGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { healGA.SFX = SFX; }
+                healGA.ActivateToolTip = ActivateToolTip;
+                healGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
                 return healGA;
             }
         }
@@ -138,9 +142,10 @@ public class HealEffect : Effect
                     healEnemyGA.Actionner = Actionner;
                     healEnemyGA.SourceEffect = this;
                     healEnemyGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { healEnemyGA.SFX = SFX; }
+                    healEnemyGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(healEnemyGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -155,7 +160,7 @@ public class HealEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -164,7 +169,8 @@ public class HealEffect : Effect
                     HealEnemyGA healEnemyGA = new(amount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     healEnemyGA.Actionner = Actionner;
                     healEnemyGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { healEnemyGA.SFX = SFX; }
+                    healEnemyGA.ActivateToolTip = ActivateToolTip;
+                    healEnemyGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
                     return healEnemyGA;
                 }
             }
@@ -177,9 +183,10 @@ public class HealEffect : Effect
                     healPlayerGA.Actionner = Actionner;
                     healPlayerGA.SourceEffect = this;
                     healPlayerGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { healPlayerGA.SFX = SFX; }
+                    healPlayerGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(healPlayerGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -194,7 +201,7 @@ public class HealEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -203,7 +210,8 @@ public class HealEffect : Effect
                     HealPlayerGA healPlayerGA = new(amount,multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     healPlayerGA.Actionner = Actionner;
                     healPlayerGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { healPlayerGA.SFX = SFX; }
+                    healPlayerGA.ActivateToolTip = ActivateToolTip;
+                    healPlayerGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
                     return healPlayerGA;
                 }
             }
@@ -230,6 +238,8 @@ public class HealEffect : Effect
 
         return new HealEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             amount,
             multiplyAmount,
             PayXEffect,

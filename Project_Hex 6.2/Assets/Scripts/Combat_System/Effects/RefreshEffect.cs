@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using FMODUnity;
 using SerializeReferenceEditor;
 using UnityEngine;
@@ -25,8 +26,10 @@ public class RefreshEffect : Effect
 
     public RefreshEffect() { }
 
-    public RefreshEffect(string effectID, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy,EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public RefreshEffect(string effectID, bool activateToolTip, int priority, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy,EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
+        Priority = priority;
+        ActivateToolTip = activateToolTip;
         EffectID = effectID;
         MultiHit = multiHit;
         ActivateNumber = activateNumber;
@@ -87,9 +90,10 @@ public class RefreshEffect : Effect
                 refreshGA.CardActionner = CardActionner;
                 refreshGA.SourceEffect = this;
                 refreshGA.ActivateToolTip = false;
-                if (AudioManager.Instance.IsValid(SFX)) { refreshGA.SFX = SFX; }
+                refreshGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_RefreshSound : SFX;
                 StartManualTargetingGA startManualTargetingGA = new(refreshGA, targetNumber, TargetUpTo, this, targetLimitations);
                 startManualTargetingGA.SourceEffect = this;
+                startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
@@ -97,19 +101,21 @@ public class RefreshEffect : Effect
                 RefreshGA refreshGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 refreshGA.CardActionner = CardActionner;
                 refreshGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { refreshGA.SFX = SFX; }
+                refreshGA.ActivateToolTip = ActivateToolTip;
+                refreshGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_RefreshSound : SFX;
                 return refreshGA;
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
                 RefreshGA refreshGA = new(playerTargets, enemyTargets);
                 refreshGA.CardActionner = CardActionner;
                 refreshGA.SourceEffect = this;
-                if (AudioManager.Instance.IsValid(SFX)) { refreshGA.SFX = SFX; }
+                refreshGA.ActivateToolTip = ActivateToolTip;
+                refreshGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_RefreshSound : SFX;
                 return refreshGA;
             }
         }
@@ -123,9 +129,10 @@ public class RefreshEffect : Effect
                     enemyRefreshGA.Actionner = Actionner;
                     enemyRefreshGA.SourceEffect = this;
                     enemyRefreshGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyRefreshGA.SFX = SFX; }
+                    enemyRefreshGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_RefreshSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(enemyRefreshGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -140,7 +147,7 @@ public class RefreshEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -149,7 +156,8 @@ public class RefreshEffect : Effect
                     EnemyRefreshGA enemyRefreshGA = new(playerTargets, enemyTargets);
                     enemyRefreshGA.Actionner = Actionner;
                     enemyRefreshGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { enemyRefreshGA.SFX = SFX; }
+                    enemyRefreshGA.ActivateToolTip = ActivateToolTip;
+                    enemyRefreshGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_RefreshSound : SFX;
                     return enemyRefreshGA;
                 }
             }
@@ -161,9 +169,10 @@ public class RefreshEffect : Effect
                     playerRefreshGA.Actionner = Actionner;
                     playerRefreshGA.SourceEffect = this;
                     playerRefreshGA.ActivateToolTip = false;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerRefreshGA.SFX = SFX; }
+                    playerRefreshGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_RefreshSound : SFX;
                     StartManualTargetingGA startManualTargetingGA = new(playerRefreshGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
+                    startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
                 else
@@ -178,7 +187,7 @@ public class RefreshEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner);
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
 
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
@@ -187,7 +196,8 @@ public class RefreshEffect : Effect
                     PlayerRefreshGA playerRefreshGA = new(playerTargets, enemyTargets);
                     playerRefreshGA.Actionner = Actionner;
                     playerRefreshGA.SourceEffect = this;
-                    if (AudioManager.Instance.IsValid(SFX)) { playerRefreshGA.SFX = SFX; }
+                    playerRefreshGA.ActivateToolTip = ActivateToolTip;
+                    playerRefreshGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_RefreshSound : SFX;
                     return playerRefreshGA;
                 }
             }
@@ -213,6 +223,8 @@ public class RefreshEffect : Effect
 
         return new RefreshEffect(
             EffectID,
+            ActivateToolTip,
+            Priority,
             MultiHit,
             ActivateNumber,
             ActivateLeft,

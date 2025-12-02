@@ -176,7 +176,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d8616bcd7a593524eb526580cef00311, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.79607844}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -586,7 +586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -751,7 +751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -789,6 +789,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e80b3bcf05860de4aa37308caee6492a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &163253914
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 163253915}
+  m_Layer: 0
+  m_Name: --- URP ---
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &163253915
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163253914}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1308486347}
+  - {fileID: 1104368438}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &173081970
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,7 +930,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -1229,7 +1262,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -1304,7 +1337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 0.7372549}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -1437,7 +1470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -1913,7 +1946,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: d8616bcd7a593524eb526580cef00311, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -2033,7 +2066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -2747,7 +2780,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3295,7 +3328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: d8616bcd7a593524eb526580cef00311, type: 2}
   m_Color: {r: 0.7735849, g: 0.30286577, b: 0.37261423, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -4423,7 +4456,7 @@ Transform:
   m_GameObject: {fileID: 831696164}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.02513675, y: 4.534836, z: -5.280211}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4572,7 +4605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -4843,7 +4876,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -5085,7 +5118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 0.7372549}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -5123,6 +5156,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194229}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -5226,6 +5260,50 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
+--- !u!114 &963194231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 2
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 1
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &987870174
 GameObject:
   m_ObjectHideFlags: 0
@@ -5379,6 +5457,90 @@ MonoBehaviour:
   m_Spacing: {x: 50, y: 50}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!1 &1104368437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1104368438}
+  - component: {fileID: 1104368439}
+  m_Layer: 0
+  m_Name: Global Light 2D
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1104368438
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104368437}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 163253915}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1104368439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104368437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.Light2D
+  m_ComponentVersion: 2
+  m_LightType: 4
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.5
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 1
+  m_LightVolumeIntensity: 1
+  m_LightVolumeEnabled: 0
+  m_ApplyToSortingLayers: 0000000049995b1fcdd58d0b
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 0
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowsEnabled: 1
+  m_ShadowIntensity: 0.75
+  m_ShadowSoftness: 0.3
+  m_ShadowSoftnessFalloffIntensity: 0.5
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 1
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}
 --- !u!1 &1112525319
 GameObject:
   m_ObjectHideFlags: 0
@@ -5575,7 +5737,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d8616bcd7a593524eb526580cef00311, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5692,7 +5854,11 @@ MonoBehaviour:
   CardviewTargetingLayerMask:
     serializedVersion: 2
     m_Bits: 32768
+  CardviewExhaustTargetingLayerMask:
+    serializedVersion: 2
+    m_Bits: 16384
   TopPrompt: {fileID: 636738758}
+  DisplayDeckZone: {fileID: 46689598}
   CursorGameobject: {fileID: 3260153}
   CardTargetingActive: 0
 --- !u!1 &1153776335
@@ -5742,6 +5908,7 @@ MonoBehaviour:
   Player: {fileID: 11400000, guid: 235f1968b92f4364481730e3bb26565e, type: 2}
   PlayerCore: {fileID: 1803367976}
   Interactable: 0
+  EndTurnBtnActivable: 0
   Win: 0
   CurrentTurn: 0
   EnemySpawn: {fileID: 2013951735}
@@ -5999,7 +6166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -6037,6 +6204,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1e69f457be25443ae49940858a1a35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1308486346
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1308486347}
+  - component: {fileID: 1308486348}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1308486347
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308486346}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 163253915}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1308486348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308486346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 9a11861d8f0d5254b80ea45ac217ef6b, type: 2}
 --- !u!1 &1315128008
 GameObject:
   m_ObjectHideFlags: 0
@@ -6108,7 +6324,7 @@ Transform:
   m_GameObject: {fileID: 1318395327}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.00029262528, y: 0.3498551, z: 1.1838677}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6201,13 +6417,6 @@ MonoBehaviour:
       Data3: 1335451572
       Data4: -1918472180
     Path: event:/Place Holder/Place Holder Silence
-  clickSound:
-    Guid:
-      Data1: -288112526
-      Data2: 1264354478
-      Data3: -1598118774
-      Data4: -459648317
-    Path: event:/Audio Manager/Click Sound
   VictoryMusic:
     Guid:
       Data1: 1179687985
@@ -6222,6 +6431,13 @@ MonoBehaviour:
       Data3: 1335451572
       Data4: -1918472180
     Path: event:/Place Holder/Place Holder Silence
+  clickSound:
+    Guid:
+      Data1: -288112526
+      Data2: 1264354478
+      Data3: -1598118774
+      Data4: -459648317
+    Path: event:/Audio Manager/Click Sound
   PlayCardSound:
     Guid:
       Data1: -1386080999
@@ -6236,20 +6452,6 @@ MonoBehaviour:
       Data3: 1335451572
       Data4: -1918472180
     Path: event:/Place Holder/Place Holder Silence
-  DiscardCardSound:
-    Guid:
-      Data1: 1179687985
-      Data2: 1325015437
-      Data3: 1335451572
-      Data4: -1918472180
-    Path: event:/Place Holder/Place Holder Silence
-  DrawCardSound:
-    Guid:
-      Data1: -1600803259
-      Data2: 1270165136
-      Data3: 440442783
-      Data4: -150944410
-    Path: event:/Audio Manager/Draw Card Sound
   HoverCardSound:
     Guid:
       Data1: -1600803259
@@ -6292,6 +6494,20 @@ MonoBehaviour:
       Data3: 1335451572
       Data4: -1918472180
     Path: event:/Place Holder/Place Holder Silence
+  DiscardCardSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  DrawCardSound:
+    Guid:
+      Data1: -1600803259
+      Data2: 1270165136
+      Data3: 440442783
+      Data4: -150944410
+    Path: event:/Audio Manager/Draw Card Sound
   TakeCardRewardSound:
     Guid:
       Data1: 1179687985
@@ -6313,6 +6529,118 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  Effect_GainManaSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_DrawSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_DiscardSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_HealSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_DealDamageSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_LifeLossSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_InvocSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_RefreshSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_SacSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_PredictSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_ShieldSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_UnShieldSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_AlterCostSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_AlterPowerSound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_AlterDurabilitySound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
+  Effect_AlterIntegritySound:
+    Guid:
+      Data1: 1179687985
+      Data2: 1325015437
+      Data3: 1335451572
+      Data4: -1918472180
+    Path: event:/Place Holder/Place Holder Silence
 --- !u!1 &1358563565
 GameObject:
   m_ObjectHideFlags: 0
@@ -6420,7 +6748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -7058,7 +7386,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7135,7 +7463,872 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b95bdda0715b25419c9a97b8c046ad3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PriorityList:
+  - rid: 7119592470548578304
+  - rid: 655360643711369374
+  - rid: 7119592402115363243
+  - rid: 7119592402115363248
+  - rid: 7119592402115363242
+  - rid: 7119592402115363246
+  - rid: 7119592402115363238
+  - rid: 7119592402115363239
+  - rid: 7119592402115363240
+  - rid: 7119592402115363244
+  - rid: 7119592402115363249
+  - rid: 7119592402115363250
+  - rid: 7119592402115363252
+  - rid: 7119592402115363253
+  - rid: 7119592402115363251
+  - rid: 7119592402115363245
+  - rid: 7119592402115363241
+  - rid: 7119592402115363247
   EffectToolTip: {fileID: 1438403741}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 655360643711369374
+      type: {class: RetrieveExhaustedEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        amount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363238
+      type: {class: AlterCostEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        alterAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        IncludeCardsInDeck: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        passive: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363239
+      type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        alterAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        aditive: 1
+        passive: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363240
+      type: {class: AlterStaminaEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        alterAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        IncludeCardsInDeck: 0
+        aditive: 1
+        passive: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363241
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        damageAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
+        targetLimitations: []
+    - rid: 7119592402115363242
+      type: {class: DiscardEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        DiscardAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        DiscardAll: 0
+        TargetUpTo: 1
+        targetLimitations: []
+    - rid: 7119592402115363243
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        drawAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+    - rid: 7119592402115363244
+      type: {class: GainHPEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        GainAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        aditive: 1
+        passive: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363245
+      type: {class: HealEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        amount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363246
+      type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        amount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0
+        CardsToInvoc: []
+        EnemyToInvoc: []
+    - rid: 7119592402115363247
+      type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        LifeLossAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363248
+      type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        GainAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+    - rid: 7119592402115363249
+      type: {class: RefreshEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363250
+      type: {class: SacEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363251
+      type: {class: ScryEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        ScryAmount: 0
+        multiplyAmount: 1
+        DynamicAmount: 0
+    - rid: 7119592402115363252
+      type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592402115363253
+      type: {class: UnShieldEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          PermaType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 7119592470548578304
+      type: {class: ChoiceEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        EffectID: 
+        PlayerChoice: 0
+        MayChoice: 0
+        EffectsForPlayerChoice: []
+        EffectOnTrue:
+          rid: -2
+        EffectOnFalse:
+          rid: -2
 --- !u!1 &1535907943
 GameObject:
   m_ObjectHideFlags: 0
@@ -7185,7 +8378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.79607844}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -7337,7 +8530,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7738,7 +8931,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d8616bcd7a593524eb526580cef00311, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7960,7 +9153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.79607844}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -8555,7 +9748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 0.7372549}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -8975,7 +10168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -9197,6 +10390,8 @@ MonoBehaviour:
   PayXCardView: {fileID: 0}
   IsPayXValidate: 0
   PayXValue: 0
+  MaxHandCount: 0
+  NBCardDrawAtStartTurn: 0
 --- !u!1 &2109100550
 GameObject:
   m_ObjectHideFlags: 0
@@ -9337,7 +10532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 830c93859006aa14081556b92dfdc37c, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -9671,6 +10866,7 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 163253915}
   - {fileID: 872316398}
   - {fileID: 1461848484}
   - {fileID: 1562934933}

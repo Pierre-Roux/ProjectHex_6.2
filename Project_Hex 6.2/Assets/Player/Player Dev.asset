@@ -14,18 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Player
   deckData:
-  - {fileID: 11400000, guid: f4c92f69e4c9b6844aecdae9e1f08046, type: 2}
-  - {fileID: 11400000, guid: f4c92f69e4c9b6844aecdae9e1f08046, type: 2}
-  - {fileID: 11400000, guid: 19c18430f3810244eab2e337bc26ce53, type: 2}
-  - {fileID: 11400000, guid: 872664cead466a64d9a5535103e83499, type: 2}
-  - {fileID: 11400000, guid: e2c1fadee7b7bbd4a99c463bff531c06, type: 2}
-  - {fileID: 11400000, guid: 5e2c47848d011f449a63694302b63f3c, type: 2}
-  - {fileID: 11400000, guid: d5f5098091c20544db1591724e4280ed, type: 2}
+  - {fileID: 11400000, guid: a3175cba6b490c44fafeba7b92f4093c, type: 2}
+  - {fileID: 11400000, guid: a3175cba6b490c44fafeba7b92f4093c, type: 2}
+  - {fileID: 11400000, guid: e1c131d48693f214c9fe79b79fa1c442, type: 2}
+  - {fileID: 11400000, guid: 09604b91e81f3af40a4ead81a0cebf58, type: 2}
+  - {fileID: 11400000, guid: 09604b91e81f3af40a4ead81a0cebf58, type: 2}
+  - {fileID: 11400000, guid: 09604b91e81f3af40a4ead81a0cebf58, type: 2}
+  - {fileID: 11400000, guid: d70950d3e9a60a34aa4a7893bb49c62e, type: 2}
+  - {fileID: 11400000, guid: d70950d3e9a60a34aa4a7893bb49c62e, type: 2}
   - {fileID: 11400000, guid: 506202706f6fd51429f7917c2119a78d, type: 2}
   - {fileID: 11400000, guid: 506202706f6fd51429f7917c2119a78d, type: 2}
-  - {fileID: 11400000, guid: 98bc30b6bfedd1843bf1ca5b74439055, type: 2}
-  - {fileID: 11400000, guid: 7adbd0fa7180fc44b8762103f26dd009, type: 2}
-  CoreHealth: 30
+  - {fileID: 11400000, guid: 4928be9315b7cb04fb7890147ce23369, type: 2}
+  - {fileID: 11400000, guid: 4928be9315b7cb04fb7890147ce23369, type: 2}
+  - {fileID: 11400000, guid: 37c1965532b90754b9be749484a05144, type: 2}
+  - {fileID: 11400000, guid: bcdc0f2dcae08624f9671dfab6034b09, type: 2}
+  CoreHealth: 1000
   CoreImage: {fileID: 21300000, guid: 7fb252da1857bb44696d06ffe588632e, type: 3}
   DieSound:
     Guid:

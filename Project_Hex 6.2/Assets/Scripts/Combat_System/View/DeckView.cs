@@ -18,7 +18,7 @@ public class DeckView : MonoBehaviour
             if (!CombatSystem.Instance.Interactable) return;
             if (ActionSystem.Instance.IsPerforming) return;
             DisplayDeckZone.SetActive(true);
-            DeckViewSystem.Instance.DisplayCards(DeckData);            
+            DeckViewSystem.Instance.DisplayCards(DeckData, false);            
         }
     }
 

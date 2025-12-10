@@ -15,9 +15,11 @@ MonoBehaviour:
   <Title>k__BackingField: Snap
   <Description>k__BackingField: Deal 2 DMG, Draw 1, Discard 1
   <cost>k__BackingField: 1
+  <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 9a421ff38153bed428f2e29ee36a4e8c, type: 3}
   <Money_Cost>k__BackingField: 20
+  KeyWords: []
   <life>k__BackingField: 0
   <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 0
@@ -103,6 +105,13 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CollateralSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   BeingHealSound:
     Guid:
       Data1: 0
@@ -180,6 +189,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
@@ -188,6 +211,8 @@ MonoBehaviour:
     - rid: 7119592267123523766
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0
@@ -198,11 +223,11 @@ MonoBehaviour:
         MultiHit: 0
         SFX:
           Guid:
-            Data1: 0
-            Data2: 0
-            Data3: 0
-            Data4: 0
-          Path: 
+            Data1: 2082713232
+            Data2: 1276791099
+            Data3: 50575253
+            Data4: -206638373
+          Path: event:/Cards/Bolt Sound
         ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
@@ -217,6 +242,8 @@ MonoBehaviour:
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PresetTarget_Player: []
+        PresetTarget_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
@@ -236,6 +263,8 @@ MonoBehaviour:
     - rid: 7119592267123523767
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0
@@ -265,6 +294,8 @@ MonoBehaviour:
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PresetTarget_Player: []
+        PresetTarget_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
@@ -275,6 +306,8 @@ MonoBehaviour:
     - rid: 7119592267123523768
       type: {class: DiscardEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0
@@ -304,6 +337,8 @@ MonoBehaviour:
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
+        PresetTarget_Player: []
+        PresetTarget_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0

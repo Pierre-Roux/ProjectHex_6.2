@@ -23,9 +23,10 @@ public class DiscardEffect : Effect
 
     public DiscardEffect(){}
 
-    public DiscardEffect(string effectID, bool activateToolTip, int priority, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, bool discardAll, EventReference sfx, bool conditionTested,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DiscardEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, bool discardAll, EventReference sfx, bool conditionTested,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
         DiscardAmount = Amount;
@@ -129,7 +130,7 @@ public class DiscardEffect : Effect
                 DiscardEffect DiscardManuEffect = (DiscardEffect)Clone();
                 DiscardManuEffect.ConditionTested = true;
 
-                DynamicConditionInfo Condition = new(DiscardAmount * multiplyAmount, DynamicCondition.DynamicAmountInfOrEqualsToValue, DynamicAmount.CardsInHand_Count, PermaTypes.NULL, CounterType.NULL);
+                DynamicConditionInfo Condition = new(DiscardAmount * multiplyAmount, DynamicCondition.DynamicAmountInfOrEqualsToValue, DynamicAmount.CardsInHand_Count, KeyWordType.NULL, CounterType.NULL);
                 List<DynamicConditionInfo> Conditions = new List<DynamicConditionInfo> {Condition};
 
                 if (ConditionSystem.Instance.TestCondition(Conditions, null, null, null))
@@ -173,6 +174,7 @@ public class DiscardEffect : Effect
             EffectID,
             ActivateToolTip,
             Priority,
+            HollowEffect,
             DiscardAmount,
             multiplyAmount,
             PayXEffect,

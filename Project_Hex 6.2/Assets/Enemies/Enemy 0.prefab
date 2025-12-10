@@ -93,7 +93,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tier: 0
-  EnemyPreset: []
+  isElite: 0
+  EnemyRewardCardPool: {fileID: 0}
+  EnemyPreset:
+  - {fileID: 11400000, guid: ef1adf0c83444c9409eee8f1f0e0918d, type: 2}
   WeaponZone: {fileID: 3491431722004416334}
   ShieldZone: {fileID: 938283172723516546}
   SupportZone: {fileID: 351204710267823827}
@@ -115,12 +118,14 @@ MonoBehaviour:
         number: A
         EnemyData:
         - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
+        - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
     - rid: 2382742974966530049
       type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
       data:
         number: B
         EnemyData:
         - {fileID: 11400000, guid: 75a7d2efdc5b0d84e8a6b99e0d95be58, type: 2}
+        - {fileID: 11400000, guid: ef1adf0c83444c9409eee8f1f0e0918d, type: 2}
 --- !u!1 &6470439035658852412
 GameObject:
   m_ObjectHideFlags: 0
@@ -400,6 +405,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 89f054356598fe94e984e8d6b8d98a1c, type: 2}
     - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: ActivateSound.Path
+      value: event:/UI/Click Sound
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: BuffLifeSound.Path
       value: event:/Place Holder/Place Holder Silence
       objectReference: {fileID: 0}
@@ -442,6 +451,38 @@ PrefabInstance:
     - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: TakeLifeLossSound.Path
       value: event:/Place Holder/Place Holder Silence
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data4
+      value: -1918472180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data4
+      value: -1918472180
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

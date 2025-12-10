@@ -15,20 +15,18 @@ MonoBehaviour:
   <Title>k__BackingField: Fires
   <Description>k__BackingField: OnSpellCast Deal 1 | Wenever you destroy an enemy
     draw 1
+  <Rarity>k__BackingField: 2
   <cost>k__BackingField: 2
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <Money_Cost>k__BackingField: 0
+  KeyWords: []
   <life>k__BackingField: 4
-  <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 3
   <MaxDurability>k__BackingField: 3
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <permanentArea>k__BackingField: 3
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642561335328812
@@ -97,6 +95,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -180,6 +185,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
@@ -188,6 +207,8 @@ MonoBehaviour:
     - rid: 3469642561335328812
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 0e000000
         TypeOfCounter: 0
@@ -198,11 +219,11 @@ MonoBehaviour:
         MultiHit: 0
         SFX:
           Guid:
-            Data1: 0
-            Data2: 0
-            Data3: 0
-            Data4: 0
-          Path: 
+            Data1: 2082713232
+            Data2: 1276791099
+            Data3: 50575253
+            Data4: -206638373
+          Path: event:/Cards/Bolt Sound
         ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
@@ -228,7 +249,7 @@ MonoBehaviour:
           targetMode: 0
           PlayerOrEnemy: 0
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
@@ -236,6 +257,8 @@ MonoBehaviour:
     - rid: 3469642561335328813
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 10000000
         TypeOfCounter: 0
@@ -277,6 +300,7 @@ MonoBehaviour:
       type: {class: DynamicConditionInfo, ns: , asm: Assembly-CSharp}
       data:
         DynamicCondition: 15
+        CounterType: 0
+        TestType: 0
         TestValue: 0
         TestDynamicAmount: 0
-        TestType: 0

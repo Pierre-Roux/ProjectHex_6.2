@@ -38,13 +38,13 @@ public class DynamicConditionInfo
 {
     public DynamicCondition DynamicCondition;
     public CounterType CounterType;
-    public PermaTypes TestType;
+    public KeyWordType TestType;
     public int TestValue;
     public DynamicAmount TestDynamicAmount;
 
     public DynamicConditionInfo(){}
 
-    public DynamicConditionInfo(int testValue, DynamicCondition dynamicCondition, DynamicAmount testDynamicAmount, PermaTypes testType, CounterType counterType)
+    public DynamicConditionInfo(int testValue, DynamicCondition dynamicCondition, DynamicAmount testDynamicAmount, KeyWordType testType, CounterType counterType)
     {
         TestValue = testValue;
         DynamicCondition = dynamicCondition;

@@ -15,20 +15,18 @@ MonoBehaviour:
   <Title>k__BackingField: Hollow Stone
   <Description>k__BackingField: 'A: Gain * | Decay 2 | If Holllow Stone is Hollow,
     it gains: A: Gain **'
+  <Rarity>k__BackingField: 2
   <cost>k__BackingField: 1
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <Money_Cost>k__BackingField: 20
+  KeyWords: []
   <life>k__BackingField: 2
-  <DecayCounter>k__BackingField: 2
   <Durability>k__BackingField: 2
   <MaxDurability>k__BackingField: 2
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <permanentArea>k__BackingField: 3
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 7119592267123523744
@@ -97,6 +95,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -180,6 +185,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
@@ -188,6 +207,8 @@ MonoBehaviour:
     - rid: 7119592267123523744
       type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0
@@ -227,6 +248,8 @@ MonoBehaviour:
     - rid: 7119592267123523745
       type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0

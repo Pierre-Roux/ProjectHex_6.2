@@ -11,6 +11,7 @@ public class BrowseReward : MonoBehaviour
     [SerializeField] public GameObject RewardPanelContent;
 
     private List<Card> CardChoice = new List<Card>();
+    
     public void OnClick()
     {
         if (RewardPanelContent.transform.childCount == 0)
@@ -19,7 +20,7 @@ public class BrowseReward : MonoBehaviour
             var selected = new HashSet<CardData>();
             for (int i = 0; i < 3; i++)
             {
-                var data = DataBase.Instance.GlobalCardList[Random.Range(0, DataBase.Instance.GlobalCardList.Count)];
+                var data = RewardSystem.Instance.PickWeightedRandomCard();
                 if (selected.Add(data))
                 {
                     CardChoice.Add(new Card(data));

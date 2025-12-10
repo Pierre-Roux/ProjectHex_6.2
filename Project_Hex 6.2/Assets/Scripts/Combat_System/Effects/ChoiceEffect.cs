@@ -18,10 +18,10 @@ public class ChoiceEffect : Effect
 
     public ChoiceEffect() { }
 
-    public ChoiceEffect(string effectID, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx, Effect effectOnTrue, Effect effectOnFalse, bool playerChoice, bool mayChoice, bool orChoice, List<Effect> effectsForPlayerChoice,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public ChoiceEffect(string effectID, bool hollowEffect, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx, Effect effectOnTrue, Effect effectOnFalse, bool playerChoice, bool mayChoice, bool orChoice, List<Effect> effectsForPlayerChoice,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
-
         EffectID = effectID;
+        HollowEffect = hollowEffect;
         Events = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
@@ -108,6 +108,7 @@ public class ChoiceEffect : Effect
 
         return new ChoiceEffect(
             EffectID,
+            HollowEffect,
             DynamicConditionInfos,
             actionnerType,
             Events,

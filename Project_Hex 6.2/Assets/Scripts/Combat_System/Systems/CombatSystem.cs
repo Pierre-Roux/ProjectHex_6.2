@@ -22,6 +22,8 @@ public class CombatSystem : Singleton<CombatSystem>
     [SerializeField] public GameObject EndGameDefeatPanel;
     [SerializeField] public GameObject EndGameVictoryPanel;
 
+    [SerializeField] public PowerGridUI PowerGridUI;
+
     [SerializeField] public ZoneView PlayerWeaponZone;
     [SerializeField] public ZoneView PlayerShieldZone;
     [SerializeField] public ZoneView PlayerSupportZone;
@@ -31,15 +33,21 @@ public class CombatSystem : Singleton<CombatSystem>
 
     [HideInInspector] public int MaxPermPlayer;
     [HideInInspector] public int MaxPermEnemy;
+    [HideInInspector] public int MaxPowerGrid;
+    [HideInInspector] public int CurrentPowerGrid;
 
-    [HideInInspector] public Dictionary<PermaTypes, PowerVarGroup> PowerByTypeGeneral = new();
-    [HideInInspector] public Dictionary<PermaTypes, HPVarGroup> HPByTypeGeneral = new();
-    [HideInInspector] public Dictionary<PermaTypes, StamVarGroup> StamByTypeGeneral = new();
-    [HideInInspector] public Dictionary<PermaTypes, CostVarGroup> CostByTypeGeneral = new();
+    [HideInInspector] public Dictionary<KeyWordType, PowerVarGroup> PowerByTypeGeneral = new();
+    [HideInInspector] public Dictionary<KeyWordType, HPVarGroup> HPByTypeGeneral = new();
+    [HideInInspector] public Dictionary<KeyWordType, StamVarGroup> StamByTypeGeneral = new();
+    [HideInInspector] public Dictionary<KeyWordType, CostVarGroup> CostByTypeGeneral = new();
+    [HideInInspector] public Dictionary<CopyTokenType, List<CopyVarGroup>> playerCopyTokens = new Dictionary<CopyTokenType, List<CopyVarGroup>>();
+    [HideInInspector] public Dictionary<CopyTokenType, List<CopyVarGroup>> enemyCopyTokens = new Dictionary<CopyTokenType, List<CopyVarGroup>>();
 
     [HideInInspector] public CounterManager GlobalCounters = new();
 
     public EnemyView currentEnemy;
+    public int CurrentStage;
+    public int MoneyReward;
 
     public List<EnemySlotView> Enemy_Permanents;
     public List<PermanentView> Player_Permanents;
@@ -89,21 +97,27 @@ public class CombatSystem : Singleton<CombatSystem>
     private void Start()
     {
         // Init Dictoniary
-        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
         {
-            PowerByTypeGeneral[type] = new PowerVarGroup();
+            PowerByTypeGeneral[keyWordType] = new PowerVarGroup();
         }
-        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
         {
-            HPByTypeGeneral[type] = new HPVarGroup();
+            HPByTypeGeneral[keyWordType] = new HPVarGroup();
         }
-        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
         {
-            StamByTypeGeneral[type] = new StamVarGroup();
+            StamByTypeGeneral[keyWordType] = new StamVarGroup();
         }
-        foreach (PermaTypes type in System.Enum.GetValues(typeof(PermaTypes)))
+        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
         {
-            CostByTypeGeneral[type] = new CostVarGroup();
+            CostByTypeGeneral[keyWordType] = new CostVarGroup();
+        }
+        foreach (CopyTokenType type in System.Enum.GetValues(typeof(CopyTokenType)))
+        {
+            playerCopyTokens[type] = new List<CopyVarGroup>();
+
+            enemyCopyTokens[type] = new List<CopyVarGroup>();
         }
         ClassicStartUp();
     }
@@ -113,62 +127,67 @@ public class CombatSystem : Singleton<CombatSystem>
     {
         Win = false;
 
-        Player = DataBase.Instance.StartingPlayer;
-        if (DataBase.Instance.DeckList.Count == 0)
+        DataBase dataBase = DataBase.Instance;
+
+        Player = dataBase.StartingPlayer;
+        if (dataBase.DeckList.Count == 0)
         {
-            DataBase.Instance.DeckList = new List<CardData>(Player.deckData);
-            DataBase.Instance.INITIALDeckList = new List<CardData>(Player.deckData);
+            dataBase.DeckList = new List<CardData>(Player.deckData);
+            dataBase.INITIALDeckList = new List<CardData>(Player.deckData);
         }
-        CardSystem.Instance.Setup(DataBase.Instance.DeckList);
+        CardSystem.Instance.Setup(dataBase.DeckList);
         PlayerCore.SetupCore(Player);
 
-        EnemiesDataBase = DataBase.Instance.EnemiesDataBase;
+        EnemiesDataBase = dataBase.EnemiesDataBase;
 
-        int stage = 0;
         int targetTier = 0;
         MaxPermPlayer = 9;
         MaxPermEnemy = 9;
-        CardSystem.Instance.MaxHandCount = DataBase.Instance.MaxHandCount;
-        CardSystem.Instance.NBCardDrawAtStartTurn = DataBase.Instance.NBCardDrawAtStartTurn;
+        CardSystem.Instance.MaxHandCount = dataBase.MaxHandCount;
+        CardSystem.Instance.NBCardDrawAtStartTurn = dataBase.NBCardDrawAtStartTurn;
+        MaxPowerGrid = dataBase.MaxPowerGrid;
+        CurrentPowerGrid = 0;
 
-        if (DataBase.Instance.CurrentStage <= 0)
+        UpdatePowerGridText();
+
+        if (dataBase.CurrentStage <= 1)
         {
-            stage = 0;
+            CurrentStage = 1;
         }
         else
         {
-            stage = DataBase.Instance.CurrentStage;
+            CurrentStage = dataBase.CurrentStage;
         }
 
-        if (DataBase.Instance.CurrentStage == 0)
+        if (CurrentStage == 1)
         {
-            PlayerCore.currentLife = DataBase.Instance.BaseCoreLife = Player.CoreHealth;
+            PlayerCore.currentLife = dataBase.BaseCoreLife = Player.CoreHealth;
             PlayerCore.UpdateLifeText();
         }
         else
         {
-            PlayerCore.currentLife = DataBase.Instance.CoreLife;
+            PlayerCore.currentLife = dataBase.CoreLife;
             PlayerCore.UpdateLifeText();
         }
 
 
         // Détermine le Tier selon le Stage
-        if (stage < 2)
+        if (CurrentStage <= 2)
             targetTier = 0;
-        else if (stage == 2)
+        else if (CurrentStage <= 4)
             targetTier = 1;
-        else if (stage < 5)
+        else if (CurrentStage <= 6)
             targetTier = 2;
-        else if (stage == 5)
+        else if (CurrentStage <= 8)
             targetTier = 3;
-        else if (stage < 8)
+        else if (CurrentStage <= 10)
             targetTier = 4;
-        else if (stage == 8)
+        else if (CurrentStage <= 12)
             targetTier = 5;
         else
             targetTier = 0;
 
-        //if (DataBase.Instance.IsElite)
+        //
         //targetTier++;
 
         // Filtrage
@@ -176,11 +195,25 @@ public class CombatSystem : Singleton<CombatSystem>
         .Where(e => e.GetComponent<EnemyView>().Tier == targetTier)
         .ToList();
 
+        if (DataBase.Instance.IsElite)
+        {
+            validEnemies = validEnemies.Where(e => e.GetComponent<EnemyView>().isElite == true).ToList();
+        }
+
         // Si aucun ennemi trouvé pour ce Tier
         if (validEnemies.Count == 0)
         {
-            Debug.LogWarning($"⚠ Aucun ennemi trouvé pour le Tier {targetTier}, sélection aléatoire globale.");
+            Debug.LogWarning($"⚠ Aucun ennemi trouvé pour le Tier {targetTier} & IsElite = {DataBase.Instance.IsElite}. Selection Aléatoire d'Elite");
             validEnemies = EnemiesDataBase;
+            if (DataBase.Instance.IsElite)
+            {
+                validEnemies = validEnemies.Where(e => e.GetComponent<EnemyView>().isElite == true).ToList();
+            }
+            if (validEnemies.Count == 0)
+            {
+                Debug.LogWarning($"⚠ Aucun ennemi d'Elite trouvé, sélection aléatoire globale.");
+                validEnemies = EnemiesDataBase;
+            }
         }
 
         GameEventSystem.Instance.ClearAllEvents();
@@ -200,6 +233,51 @@ public class CombatSystem : Singleton<CombatSystem>
 
         ManaSystem.Instance.SetManaMax(DataBase.Instance.MaxMana);
 
+        //DefinePotentialRewards
+        foreach (CardData cardData in dataBase.ColorLessCardPool.CardDataList)
+        {
+            RewardSystem.Instance.PotentialRewards.Add(cardData);
+        }
+        foreach (CardData cardData in dataBase.ChoosedCardPool.CardDataList)
+        {
+            RewardSystem.Instance.PotentialRewards.Add(cardData);
+        }
+        if (currentEnemy.EnemyRewardCardPool != null)
+        {
+            if (currentEnemy.EnemyRewardCardPool.CardDataList.Count != 0)
+            {
+                foreach (CardData cardData in currentEnemy.EnemyRewardCardPool.CardDataList)
+                {
+                    RewardSystem.Instance.PotentialRewards.Add(cardData);
+                }
+            }
+        }
+
+        //Define Money Reward
+        MoneyReward = CurrentStage * 10;
+        if (currentEnemy.isElite)
+        {
+            MoneyReward = MoneyReward * 2;
+        }
+        RewardSystem.Instance.UpdateEndFightMoneyText(MoneyReward);
+
+        //Set Cost of Card in inspector by priority
+        /*foreach (CardData item in RewardSystem.Instance.PotentialRewards)
+        {
+            if (item.Rarity == 0)
+            {
+                item.Money_Cost = 20;
+            }
+            if (item.Rarity == 1)
+            {
+                item.Money_Cost = 50;
+            }
+            if (item.Rarity == 2)
+            {
+                item.Money_Cost = 100;
+            }
+        }*/
+
         StartFightGA startFight = new(enemyView);
         ActionSystem.Instance.Perform(startFight);
 
@@ -207,9 +285,9 @@ public class CombatSystem : Singleton<CombatSystem>
     }
 
     // GESTION DES DICTIONNAIRES DE PASSIF
-    public int GetPower(PermaTypes type, Enemy_Player_ENUM side)
+    public int GetPower(KeyWordType keyWordType, Enemy_Player_ENUM side)
     {
-        var power = PowerByTypeGeneral[type];
+        var power = PowerByTypeGeneral[keyWordType];
         return side switch
         {
             Enemy_Player_ENUM.Player => power.Player,
@@ -218,9 +296,9 @@ public class CombatSystem : Singleton<CombatSystem>
         };
     }
 
-    public void AddPower(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    public void AddPower(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
     {
-        var power = PowerByTypeGeneral[type];
+        var power = PowerByTypeGeneral[keyWordType];
         switch (side)
         {
             case Enemy_Player_ENUM.Player:
@@ -235,9 +313,9 @@ public class CombatSystem : Singleton<CombatSystem>
         }
     }
 
-    public int GetHP(PermaTypes type, Enemy_Player_ENUM side)
+    public int GetHP(KeyWordType keyWordType, Enemy_Player_ENUM side)
     {
-        var HP = HPByTypeGeneral[type];
+        var HP = HPByTypeGeneral[keyWordType];
         return side switch
         {
             Enemy_Player_ENUM.Player => HP.Player,
@@ -246,9 +324,9 @@ public class CombatSystem : Singleton<CombatSystem>
         };
     }
 
-    public void AddHP(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    public void AddHP(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
     {
-        var HP = HPByTypeGeneral[type];
+        var HP = HPByTypeGeneral[keyWordType];
         switch (side)
         {
             case Enemy_Player_ENUM.Player:
@@ -263,18 +341,18 @@ public class CombatSystem : Singleton<CombatSystem>
         }
     }
 
-    public int GetStam(PermaTypes type, Enemy_Player_ENUM side)
+    public int GetStam(KeyWordType keyWordType, Enemy_Player_ENUM side)
     {
-        var Stam = StamByTypeGeneral[type];
+        var Stam = StamByTypeGeneral[keyWordType];
         return side switch
         {
             _ => Stam.Player
         };
     }
 
-    public void AddStam(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    public void AddStam(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
     {
-        var Stam = StamByTypeGeneral[type];
+        var Stam = StamByTypeGeneral[keyWordType];
         switch (side)
         {
             case Enemy_Player_ENUM.Player:
@@ -283,18 +361,18 @@ public class CombatSystem : Singleton<CombatSystem>
         }
     }
 
-    public int GetCost(PermaTypes type, Enemy_Player_ENUM side)
+    public int GetCost(KeyWordType keyWordType, Enemy_Player_ENUM side)
     {
-        var Cost = CostByTypeGeneral[type];
+        var Cost = CostByTypeGeneral[keyWordType];
         return side switch
         {
             _ => Cost.Card
         };
     }
 
-    public void AddCost(PermaTypes type, Enemy_Player_ENUM side, int amount)
+    public void AddCost(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
     {
-        var Cost = CostByTypeGeneral[type];
+        var Cost = CostByTypeGeneral[keyWordType];
         switch (side)
         {
             case Enemy_Player_ENUM.NULL:
@@ -303,15 +381,60 @@ public class CombatSystem : Singleton<CombatSystem>
         }
     }
 
+    public List<CopyVarGroup> GetCopyValues(CopyTokenType type, Enemy_Player_ENUM side)
+    {
+        var dict = side == Enemy_Player_ENUM.Player ? playerCopyTokens : enemyCopyTokens;
+
+        if (!dict.ContainsKey(type))
+            return new List<CopyVarGroup>();
+
+        return dict[type];
+    }
+
+    public void AddCopyValue(CopyTokenType type, Enemy_Player_ENUM side, int amount, List<DynamicConditionInfo> conditions)
+    {
+        var dict = side == Enemy_Player_ENUM.Player ? playerCopyTokens : enemyCopyTokens;
+
+        if (!dict.ContainsKey(type))
+            dict[type] = new List<CopyVarGroup>();
+
+        dict[type].Add(new CopyVarGroup
+        {
+            value = amount,
+            Conditions = new List<DynamicConditionInfo>(conditions)
+        });
+    }
+
+    public void RemoveCopyGroup(CopyTokenType type, Enemy_Player_ENUM side, CopyVarGroup group)
+    {
+        var dict = side == Enemy_Player_ENUM.Player ? playerCopyTokens : enemyCopyTokens;
+
+        if (dict.ContainsKey(type))
+        {
+            dict[type].Remove(group);
+        }
+    }
+
+    //Utils
+
+    public void UpdatePowerGridText()
+    {
+        PowerGridUI.UpdatePowerGridText(CurrentPowerGrid, MaxPowerGrid);
+    }
+
     // PERFORMER
     public IEnumerator DiePermanentPerformer(DiePermanentGA diePermanentGA)
     {
         if (!diePermanentGA.IsCore)
         {
-            if (diePermanentGA.Durability == 0 || diePermanentGA.PermanentView.permaTypes.Contains(PermaTypes.Invoc))
+            var InvocKeyword = diePermanentGA.PermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+            if (diePermanentGA.Durability == 0 || InvocKeyword != null)
             {
                 if (diePermanentGA.PermanentView != null)
                 {
+                    CurrentPowerGrid -= diePermanentGA.PermanentView.CardReferenceArchive.GridCost;
+                    UpdatePowerGridText();
+
                     LoseShieldGA loseShieldGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(loseShieldGA);
 
@@ -350,7 +473,7 @@ public class CombatSystem : Singleton<CombatSystem>
                         RuntimeManager.PlayOneShot(destroyPermanentGA.PermanentView.CardReferenceArchive.HollowDieSound);
                     }
 
-                    if (!diePermanentGA.PermanentView.permaTypes.Contains(PermaTypes.Invoc))
+                    if (InvocKeyword == null)
                     {
                         CardSystem.Instance.ExhaustPile.Add(diePermanentGA.PermanentView.CardReferenceArchive);
                     }
@@ -360,6 +483,8 @@ public class CombatSystem : Singleton<CombatSystem>
             {
                 if (diePermanentGA.PermanentView != null)
                 {
+                    CurrentPowerGrid -= diePermanentGA.PermanentView.CardReferenceArchive.GridCost;
+                    UpdatePowerGridText();
                     LoseShieldGA loseShieldGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(loseShieldGA);
 

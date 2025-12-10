@@ -6,19 +6,27 @@ using UnityEngine;
 
 public class DataBase : Singleton<DataBase>
 {
-    public List<CardData> GlobalCardList;
-    
+    public CardPool ColorLessCardPool;
+    public CardPool ChoosedCardPool;
+    public CardPool BossCardPool;
+    public CardPool StarterPool;
+
     public int Money;
     public int MaxMana;
     public int MaxHandCount;
+    public int MaxPowerGrid;
     public int NBCardDrawAtStartTurn;
+
+    public int Common_Weigh;
+    public int Uncommon_Weigh;
+    public int Rare_Weigh;
 
     public PlayerData StartingPlayer;
     public List<GameObject> EnemiesDataBase;
 
     [HideInInspector] public List<CardData> INITIALDeckList;
     [HideInInspector] public List<CardData> DeckList;
-    [HideInInspector] public int CurrentStage;
+    [HideInInspector] public int CurrentStage = 1;
 
     //AudioSource
     [HideInInspector] public StudioEventEmitter AudioSource;

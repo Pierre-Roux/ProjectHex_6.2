@@ -12,9 +12,10 @@ public class EffectGroup : Effect
 
     public EffectGroup() { }
 
-    public EffectGroup(string effectID, int activateNumber, int activateLeft, bool orChoice,List<Effect> effectGroup,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public EffectGroup(string effectID, bool hollowEffect, int activateNumber, int activateLeft, bool orChoice,List<Effect> effectGroup,List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         EffectID = effectID;
+        HollowEffect = hollowEffect;
         EffectGroups = effectGroup;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
@@ -64,6 +65,7 @@ public class EffectGroup : Effect
 
         return new EffectGroup(
             EffectID,
+            HollowEffect,
             ActivateNumber,
             ActivateLeft,
             ORChoice,

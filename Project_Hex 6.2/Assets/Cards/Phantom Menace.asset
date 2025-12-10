@@ -15,19 +15,16 @@ MonoBehaviour:
   <Title>k__BackingField: Phantom Menace
   <Description>k__BackingField: Invoke 2 Phantom Image
   <cost>k__BackingField: 3
+  <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 9a421ff38153bed428f2e29ee36a4e8c, type: 3}
   <Money_Cost>k__BackingField: 0
+  KeyWords: []
   <life>k__BackingField: 0
-  <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 0
   <MaxDurability>k__BackingField: 0
   <PermanentImage>k__BackingField: {fileID: 0}
   <permanentArea>k__BackingField: 0
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
   - rid: 3469642561335328791
@@ -95,6 +92,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -178,6 +182,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
@@ -186,6 +204,8 @@ MonoBehaviour:
     - rid: 3469642561335328791
       type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 2
         Events: 00000000
         TypeOfCounter: 0

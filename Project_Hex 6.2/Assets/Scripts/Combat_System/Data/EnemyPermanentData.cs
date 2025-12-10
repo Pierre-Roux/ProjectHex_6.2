@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FMODUnity;
 using SerializeReferenceEditor;
@@ -8,15 +7,12 @@ using UnityEngine;
 public class EnemyPermanentData : ScriptableObject
 {
     [field: Header("Mandatory")]
-    [field: SerializeField] public String Title;
+    [field: SerializeField] public string Title;
     [field: SerializeField] public Sprite PermanentImage;
     [field: SerializeField] public int PermanentLife;
     [field: SerializeField] public bool IsCore;
-    [field: SerializeField] public bool IsInvoc;
-    [field: SerializeField] public bool UnShieldable;
-    [field: SerializeField] public bool UnTargetable;
     [field: SerializeField] public PermanentArea permanentArea;
-    [field: SerializeField] public int DecayCounter;
+    [field: SerializeReference, SR] public List<KeyWord> KeyWords = new();
 
     [field: Header("Effects")]
     [field: SerializeReference, SR] public List<Effect> PossibleIntent { get; private set; }
@@ -30,6 +26,7 @@ public class EnemyPermanentData : ScriptableObject
     [field: SerializeField] public EventReference SummonEPermanentSound;
     [field: SerializeField] public EventReference DieSound;
     [field: SerializeField] public EventReference BeingDamageSound;
+    [field: SerializeField] public EventReference CollateralSound;
     [field: SerializeField] public EventReference BeingHealSound;
     [field: SerializeField] public EventReference BeingShieldSound;
     [field: SerializeField] public EventReference LoseShieldSound;

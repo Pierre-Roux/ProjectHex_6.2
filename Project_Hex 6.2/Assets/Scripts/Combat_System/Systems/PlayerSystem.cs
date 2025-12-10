@@ -22,6 +22,10 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.AttachPerformer<PlayerRefreshGA>(RefreshPlayerPerformer);
         ActionSystem.AttachPerformer<PlayerExhaustGA>(ExhaustPlayerPerformer);
         ActionSystem.AttachPerformer<PlayerRetrieveExhaustedGA>(PlayerRetrieveExhaustedPerformer);
+        ActionSystem.AttachPerformer<PlayerAlterPowerGridGA>(AlterPowerGridPlayerPerformer);
+        ActionSystem.AttachPerformer<PlayerAddACopyGa>(PlayerAddACopyPlayerPerformer);
+        ActionSystem.AttachPerformer<PlayerDisableGA>(DisablePlayerPerformer);
+        ActionSystem.AttachPerformer<PlayerEnableGA>(EnablePlayerPerformer);
 
         ActionSystem.SubscribeReaction<AttackEnemyGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<HealPlayerGA>(BeforeHealPreReaction, ReactionTiming.PRE);
@@ -37,6 +41,10 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.SubscribeReaction<PlayerRefreshGA>(BeforeRefreshPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<PlayerExhaustGA>(BeforeExhaustedPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<PlayerRetrieveExhaustedGA>(BeforeRetrieveExhaustedPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<PlayerAlterPowerGridGA>(BeforeAlterPowerGridPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<PlayerAddACopyGa>(BeforeAddACopyPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<PlayerDisableGA>(BeforeDisablePPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<PlayerEnableGA>(BeforeEnablePPerformerPreReaction, ReactionTiming.PRE);
 
     }
 
@@ -56,6 +64,10 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.DetachPerformer<PlayerRefreshGA>();
         ActionSystem.DetachPerformer<PlayerExhaustGA>();
         ActionSystem.DetachPerformer<PlayerRetrieveExhaustedGA>();
+        ActionSystem.DetachPerformer<PlayerAlterPowerGridGA>();
+        ActionSystem.DetachPerformer<PlayerAddACopyGa>();
+        ActionSystem.DetachPerformer<PlayerDisableGA>();
+        ActionSystem.DetachPerformer<PlayerEnableGA>();
 
         ActionSystem.UnsubscribeReaction<AttackEnemyGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<HealPlayerGA>(BeforeHealPreReaction, ReactionTiming.PRE);
@@ -71,6 +83,10 @@ public class PlayerSystem : Singleton<PlayerSystem>
         ActionSystem.UnsubscribeReaction<PlayerRefreshGA>(BeforeRefreshPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<PlayerExhaustGA>(BeforeExhaustedPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<PlayerRetrieveExhaustedGA>(BeforeRetrieveExhaustedPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<PlayerAlterPowerGridGA>(BeforeAlterPowerGridPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<PlayerAddACopyGa>(BeforeAddACopyPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<PlayerDisableGA>(BeforeDisablePPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<PlayerEnableGA>(BeforeEnablePPerformerPreReaction, ReactionTiming.PRE);
     }
 
     private IEnumerator AttackEnemyPerformer(AttackEnemyGA attackEnemyGA)
@@ -385,6 +401,40 @@ public class PlayerSystem : Singleton<PlayerSystem>
         }
     }
 
+    private IEnumerator AlterPowerGridPlayerPerformer(PlayerAlterPowerGridGA playerAlterPowerGridGA)
+    {
+        if (playerAlterPowerGridGA.Actionner != null)
+        {
+            PermanentView Attacker = playerAlterPowerGridGA.Actionner.GetComponent<PermanentView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            AlterPowerGridGA alterPowerGridGA = new AlterPowerGridGA(playerAlterPowerGridGA.Amount, playerAlterPowerGridGA.multiplyAmount, playerAlterPowerGridGA.DynamicAmount);
+            alterPowerGridGA.SourceEffect = playerAlterPowerGridGA.SourceEffect;
+            alterPowerGridGA.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(alterPowerGridGA);
+        }
+    }
+
+    private IEnumerator PlayerAddACopyPlayerPerformer(PlayerAddACopyGa playerAddACopyGa)
+    {
+        if (playerAddACopyGa.Actionner != null)
+        {
+            PermanentView Attacker = playerAddACopyGa.Actionner.GetComponent<PermanentView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            AddACopyGa addACopyGa = new AddACopyGa(playerAddACopyGa.Amount, playerAddACopyGa.multiplyAmount, playerAddACopyGa.DynamicAmount, playerAddACopyGa.AffectedSide, playerAddACopyGa.TypeOfCopy, playerAddACopyGa.ConditionToCopy);
+            addACopyGa.SourceEffect = playerAddACopyGa.SourceEffect;
+            addACopyGa.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(addACopyGa);
+        }
+    }
+
     private IEnumerator LifeLossPlayerPerformer(PlayerLifeLossGA playerLifeLossGA)
     {
         if (playerLifeLossGA.Actionner != null)
@@ -408,6 +458,60 @@ public class PlayerSystem : Singleton<PlayerSystem>
                 lifeLossGA.SourceEffect = playerLifeLossGA.SourceEffect;
                 lifeLossGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(lifeLossGA);
+            }
+        }
+    }
+
+    private IEnumerator DisablePlayerPerformer(PlayerDisableGA playerDisableGA)
+    {
+        if (playerDisableGA.Actionner != null)
+        {
+            PermanentView Attacker = playerDisableGA.Actionner.GetComponent<PermanentView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            if (playerDisableGA.playerTargets != null && playerDisableGA.playerTargets.Count > 0)
+            {
+                DisableGA disableGA = new DisableGA(playerDisableGA.playerTargets, null);
+                disableGA.SourceEffect = playerDisableGA.SourceEffect;
+                disableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(disableGA);
+            }
+            if (playerDisableGA.enemyTargets != null && playerDisableGA.enemyTargets.Count > 0)
+            {
+                DisableGA disableGA = new DisableGA(null, playerDisableGA.enemyTargets);
+                disableGA.SourceEffect = playerDisableGA.SourceEffect;
+                disableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(disableGA);
+            }
+        }
+    }
+
+    private IEnumerator EnablePlayerPerformer(PlayerEnableGA playerEnableGA)
+    {
+        if (playerEnableGA.Actionner != null)
+        {
+            PermanentView Attacker = playerEnableGA.Actionner.GetComponent<PermanentView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            if (playerEnableGA.playerTargets != null && playerEnableGA.playerTargets.Count > 0)
+            {
+                EnableGA enableGA = new EnableGA(playerEnableGA.playerTargets, null);
+                enableGA.SourceEffect = playerEnableGA.SourceEffect;
+                enableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(enableGA);
+            }
+            if (playerEnableGA.enemyTargets != null && playerEnableGA.enemyTargets.Count > 0)
+            {
+                EnableGA enableGA = new EnableGA(null, playerEnableGA.enemyTargets);
+                enableGA.SourceEffect = playerEnableGA.SourceEffect;
+                enableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(enableGA);
             }
         }
     }
@@ -600,12 +704,48 @@ public class PlayerSystem : Singleton<PlayerSystem>
             Attacker.SetPosition(Attacker.transform.position);
         }
     }
-    
+
     private void BeforeExhaustedPPerformerPreReaction(PlayerExhaustGA playerExhaustGA)
     {
         if (playerExhaustGA.Actionner != null)
         {
             PermanentView Attacker = playerExhaustGA.Actionner.GetComponent<PermanentView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+    
+    private void BeforeAlterPowerGridPPerformerPreReaction(PlayerAlterPowerGridGA playerAlterPowerGridGA)
+    {
+        if (playerAlterPowerGridGA.Actionner != null)
+        {
+            PermanentView Attacker = playerAlterPowerGridGA.Actionner.GetComponent<PermanentView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+    
+    private void BeforeAddACopyPPerformerPreReaction(PlayerAddACopyGa playerAddACopyGa)
+    {
+        if (playerAddACopyGa.Actionner != null)
+        {
+            PermanentView Attacker = playerAddACopyGa.Actionner.GetComponent<PermanentView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeDisablePPerformerPreReaction(PlayerDisableGA playerDisableGA)
+    {
+        if (playerDisableGA.Actionner != null)
+        {
+            PermanentView Attacker = playerDisableGA.Actionner.GetComponent<PermanentView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+    
+    private void BeforeEnablePPerformerPreReaction(PlayerEnableGA playerEnableGA)
+    {
+        if (playerEnableGA.Actionner != null)
+        {
+            PermanentView Attacker = playerEnableGA.Actionner.GetComponent<PermanentView>();
             Attacker.SetPosition(Attacker.transform.position);
         }
     }

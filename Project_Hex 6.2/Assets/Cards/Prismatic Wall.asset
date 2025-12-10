@@ -16,19 +16,17 @@ MonoBehaviour:
   <Description>k__BackingField: 'Shield Core | Whenever Prismatic Wall is Destroyed:
     Invoke 1 [Prism]2'
   <cost>k__BackingField: 3
+  <GridCost>k__BackingField: 2
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 409d24fc0898ed64497bb3ef366576e0, type: 3}
   <Money_Cost>k__BackingField: 0
+  KeyWords:
+  - rid: 655360801452064876
   <life>k__BackingField: 10
-  <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 3
   <MaxDurability>k__BackingField: 3
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 409d24fc0898ed64497bb3ef366576e0, type: 3}
   <permanentArea>k__BackingField: 2
-  UnShieldable: 1
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642561335328795
@@ -97,6 +95,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -180,14 +185,35 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 655360801452064876
+      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+      data:
+        keyWordType: 6
+        keyWordValue: 0
     - rid: 3469642561335328795
       type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0
@@ -225,13 +251,15 @@ MonoBehaviour:
           targetMode: 2
           PlayerOrEnemy: 1
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
     - rid: 3469642561335328796
       type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 07000000
         TypeOfCounter: 0

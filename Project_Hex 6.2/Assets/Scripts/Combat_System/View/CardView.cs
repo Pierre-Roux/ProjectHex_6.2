@@ -22,8 +22,8 @@ public class CardView : MonoBehaviour
     [SerializeField] private LayerMask DropDiscardLayer;
     [SerializeField] public SpriteRenderer PermanentSpriteRenderer;
 
-    [SerializeField] public EventReference SelectedSound;
-    [SerializeField] public EventReference UnSelectedSound;
+    [SerializeField] public EventReference CardSelectedSound;
+    [SerializeField] public EventReference CardUnSelectedSound;
 
 
     [HideInInspector] public bool IsReward;
@@ -71,6 +71,9 @@ public class CardView : MonoBehaviour
             Life.gameObject.SetActive(false);
             Durability.gameObject.SetActive(false);
         }
+
+        if (AudioManager.Instance.IsValid(card.CardSelectedSound)) CardSelectedSound = card.CardSelectedSound;
+        if (AudioManager.Instance.IsValid(card.CardUnSelectedSound)) CardUnSelectedSound = card.CardUnSelectedSound;
 
         //UpdateDescription();
     }
@@ -128,7 +131,14 @@ public class CardView : MonoBehaviour
             if (isDragging) return;
             Wrapper.SetActive(false);
             Vector3 pos = new(transform.position.x, transform.position.y + 1, 0);
-            CardViewHover.Instance.Show(this, pos);
+            if (IsVisualDeckCard)
+            {
+                CardViewHover.Instance.Show(this, pos, true);
+            }
+            else
+            {
+                CardViewHover.Instance.Show(this, pos);
+            }
             if (!AudioManager.Instance.IsValid(Card.HoverCardSound))
             {
                 RuntimeManager.PlayOneShot(AudioManager.Instance.HoverCardSound);
@@ -354,23 +364,35 @@ public class CardView : MonoBehaviour
         {
             if (IsScryCard)
             {
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePos.z = -1;
+                Vector3 mousePos = GetMouseWorldPositionOnZ(-1);
                 transform.DOMove(mousePos, 0.25f).SetEase(Ease.OutCubic);
             }
             else
             {
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePos.z = 0;
+                Vector3 mousePos = GetMouseWorldPositionOnZ(0);
                 transform.DOMove(mousePos, 0.25f).SetEase(Ease.OutCubic);
-            }                
+            }           
         }
+    }
+
+    public static Vector3 GetMouseWorldPositionOnZ(float z)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Plane plane = new Plane(Vector3.forward, new Vector3(0, 0, z));
+
+        if (plane.Raycast(ray, out float distance))
+        {
+            return ray.GetPoint(distance);
+        }
+
+        return Vector3.zero;
     }
 
     public void ActiveSelectEffect()
     {
         PermanentSpriteRenderer.color = Color.red;
-        RuntimeManager.PlayOneShot(SelectedSound);
+        RuntimeManager.PlayOneShot(CardSelectedSound);
     }
 
     public void RemoveSelectEffect(bool SoundUp)
@@ -378,7 +400,7 @@ public class CardView : MonoBehaviour
         PermanentSpriteRenderer.color = Color.white;
         if (SoundUp)
         {
-            RuntimeManager.PlayOneShot(UnSelectedSound);
+            RuntimeManager.PlayOneShot(CardUnSelectedSound);
         }
     }
 

@@ -35,13 +35,16 @@ public class EnemySlotViewCreator : Singleton<EnemySlotViewCreator>
             return null;
         }
 
-        if (!AudioManager.Instance.IsValid(data.SummonEPermanentSound))
+        if (!setup)
         {
-            RuntimeManager.PlayOneShot(AudioManager.Instance.SummonEPermanentSound);
-        }
-        else
-        {
-            RuntimeManager.PlayOneShot(data.SummonEPermanentSound);
+            if (!AudioManager.Instance.IsValid(data.SummonEPermanentSound))
+            {
+                RuntimeManager.PlayOneShot(AudioManager.Instance.SummonEPermanentSound);
+            }
+            else
+            {
+                RuntimeManager.PlayOneShot(data.SummonEPermanentSound);
+            }
         }
 
         EnemySlotView enemySlotView = Instantiate(SlotPrefab, Vector3.zero, Quaternion.identity, Parent.transform);

@@ -15,20 +15,18 @@ MonoBehaviour:
   <Title>k__BackingField: Blood Horn
   <Description>k__BackingField: 'A: Deal 2 DMG | At SoT : Target Vessel you control
     gain +1 PWR'
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 1
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
-  <Money_Cost>k__BackingField: 0
+  <Money_Cost>k__BackingField: 20
+  KeyWords: []
   <life>k__BackingField: 3
-  <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 3
   <MaxDurability>k__BackingField: 3
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <permanentArea>k__BackingField: 1
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642677219492012
@@ -97,6 +95,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -180,14 +185,37 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 655360801452064869
+      type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
+      data:
+        targetLimitations: 5
+        keyWordType: 0
+        IntValue: -1
+        MandatoryLimitation: 1
     - rid: 3469642677219492012
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0
@@ -228,7 +256,7 @@ MonoBehaviour:
           targetMode: 0
           PlayerOrEnemy: 0
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
@@ -236,6 +264,8 @@ MonoBehaviour:
     - rid: 3469642677219492013
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 03000000
         TypeOfCounter: 0
@@ -278,15 +308,16 @@ MonoBehaviour:
           targetMode: 0
           PlayerOrEnemy: 0
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations:
         - rid: 7119591880825503843
+        - rid: 655360801452064869
     - rid: 7119591880825503843
       type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
       data:
         targetLimitations: 1
-        PermaType: 0
+        keyWordType: 0
         IntValue: -1
         MandatoryLimitation: 0

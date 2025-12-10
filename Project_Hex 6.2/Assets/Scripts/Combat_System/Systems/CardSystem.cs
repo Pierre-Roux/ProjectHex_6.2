@@ -22,6 +22,7 @@ public class CardSystem : Singleton<CardSystem>
 
     [SerializeField] public GameObject ChoicePanel;
     [SerializeField] public GameObject ChoicePanelContent;
+    [SerializeField] public GameObject MonoChoiceButtons;
 
     [SerializeField] public GameObject PayXPanel;
     [SerializeField] public TMP_Text PayXCounter;
@@ -147,8 +148,8 @@ public class CardSystem : Singleton<CardSystem>
 
     private IEnumerator DrawCard(bool countAsDraw_INGAME)
     {
-        float FinalTime = 0;
-        FinalTime = Time.time;
+        //float FinalTime = 0;
+        //FinalTime = Time.time;
         if (hand.Count < MaxHandCount)
         {
             TriggerEventGA triggerEventGA = null;
@@ -202,8 +203,8 @@ public class CardSystem : Singleton<CardSystem>
 
             yield return handView.AddCard(cardView);
 
-            FinalTime -= Time.time;
-            Debug.Log("Time to draw " + cardView.Card + " : " + FinalTime);
+            //FinalTime -= Time.time;
+            //Debug.Log("Time to draw " + cardView.Card + " : " + FinalTime);
         }
 
     }
@@ -352,7 +353,37 @@ public class CardSystem : Singleton<CardSystem>
         SpendManaGA spendManaGA = new(playCardGA.Card.cost + playCardGA.Card.BonusCost);
         ActionSystem.Instance.AddReaction(spendManaGA);
 
-        GameEventSystem.Instance.ManageEffects(playCardGA.Card,null,null);
+        List<CopyVarGroup> copyVarGroup = CombatSystem.Instance.GetCopyValues(CopyTokenType.Spell, Enemy_Player_ENUM.Player);
+        List<CopyVarGroup> copyVarGroupUsed = new();
+        int nbCopie = 1;
+        if (copyVarGroup != null)
+        {
+            foreach (CopyVarGroup SubVarGroup in copyVarGroup)
+            {
+                if (SubVarGroup.Conditions.Count == 0)
+                {
+                    nbCopie += SubVarGroup.value;
+                    copyVarGroupUsed.Add(SubVarGroup);
+                }
+                else
+                {
+                    if (ConditionSystem.Instance.TestCondition(SubVarGroup.Conditions, playCardGA.Card, null, null,playCardGA.Card))
+                    {
+                        nbCopie += SubVarGroup.value;
+                        copyVarGroupUsed.Add(SubVarGroup);
+                    }                     
+                }               
+            }
+        }
+        for (int i = 0; i < nbCopie; i++)
+        {
+            GameEventSystem.Instance.ManageEffects(playCardGA.Card, null, null);
+        }
+
+        foreach (CopyVarGroup varGroup in copyVarGroupUsed)
+        {
+            CombatSystem.Instance.RemoveCopyGroup(CopyTokenType.Spell, Enemy_Player_ENUM.Player, varGroup);
+        }
     }
 
     public IEnumerator InsertCard(CardView card)
@@ -373,9 +404,25 @@ public class CardSystem : Singleton<CardSystem>
         CombatSystem.Instance.Interactable = true;
     }
 
-    public void ShowChoicePanel(List<Effect> effects, bool SelectMode, bool MayChoice)
+    public void ShowMonoChoiceButtons()
     {
-        DisplayChoiceCards(effects,SelectMode,MayChoice);
+        MonoChoiceButtons.SetActive(true);
+    }
+
+    public void HideMonoChoiceButtons()
+    {
+        MonoChoiceButtons.SetActive(false);
+    }
+    
+    public void MonoChoiceUnvalidate()
+    {
+        ZZZ_EmptyEffect ZZZ_EmptyEffect = new();
+        EffectChoosed = ZZZ_EmptyEffect;
+    }
+
+    public void ShowChoicePanel(List<Effect> effects, bool SelectMode)
+    {
+        DisplayChoiceCards(effects,SelectMode);
         ChoicePanel.SetActive(true);
         CombatSystem.Instance.Interactable = false;
     }
@@ -401,23 +448,9 @@ public class CardSystem : Singleton<CardSystem>
         }
     }
 
-    public void DisplayChoiceCards(List<Effect> effectsToDisplay, bool SelectMode, bool MayChoice)
+    public void DisplayChoiceCards(List<Effect> effectsToDisplay, bool SelectMode)
     {
         CleanChoicePanel();
-        if (MayChoice)
-        {
-            CardData noneChoiceCardData = ScriptableObject.CreateInstance<CardData>();
-            noneChoiceCardData.Title = "Do Nothing";
-            noneChoiceCardData.Description = "Do Nothing";
-            Card noneChoiceCard = new(noneChoiceCardData);
-            CardView cardView = CardViewCreator.Instance.CreateCardView(noneChoiceCard, Vector3.zero, Quaternion.identity, ChoicePanelContent.transform);
-            cardView.IsChoiceCard = true;
-            cardView.gameObject.GetComponent<SortingGroup>().sortingOrder = 5;
-            cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
-            cardView.gameObject.transform.position.Set(cardView.gameObject.transform.position.x, cardView.gameObject.transform.position.y, 0);
-            cardView.transform.DOScale(60, 0.5f);
-        }
-
         foreach (var effect in effectsToDisplay)
         {
             Card cardVisual = null;

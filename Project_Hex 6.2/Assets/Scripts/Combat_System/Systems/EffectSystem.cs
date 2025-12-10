@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EffectSystem : Singleton<EffectSystem>
@@ -28,6 +29,10 @@ public class EffectSystem : Singleton<EffectSystem>
         ActionSystem.AttachPerformer<RefreshGA>(RefreshPerformer);
         ActionSystem.AttachPerformer<ExhaustGA>(ExhaustedPerformer);
         ActionSystem.AttachPerformer<RetrieveExhaustedGA>(RetrieveExhaustedPerformer);
+        ActionSystem.AttachPerformer<AlterPowerGridGA>(AlterPowerGridPerformer);
+        ActionSystem.AttachPerformer<AddACopyGa>(AddACopyPerformer);
+        ActionSystem.AttachPerformer<DisableGA>(DisablePerformer);
+        ActionSystem.AttachPerformer<EnableGA>(EnablePerformer);
         ActionSystem.AttachPerformer<LetChoiceGA>(PlayerChoicePerformer);
     }
 
@@ -52,6 +57,10 @@ public class EffectSystem : Singleton<EffectSystem>
         ActionSystem.DetachPerformer<RefreshGA>();
         ActionSystem.DetachPerformer<ExhaustGA>();
         ActionSystem.DetachPerformer<RetrieveExhaustedGA>();
+        ActionSystem.DetachPerformer<AlterPowerGridGA>();
+        ActionSystem.DetachPerformer<AddACopyGa>();
+        ActionSystem.DetachPerformer<DisableGA>();
+        ActionSystem.DetachPerformer<EnableGA>();
         ActionSystem.DetachPerformer<LetChoiceGA>();
     }
 
@@ -365,10 +374,12 @@ public class EffectSystem : Singleton<EffectSystem>
     {
         foreach (PermanentView permanentView in CombatSystem.Instance.Player_Permanents)
         {
-            if (permanentView.DecayCounter > 0)
+            var decayKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Decay);
+            if (decayKeyword == null) continue;
+            if (decayKeyword.keyWordValue > 0)
             {
-                permanentView.DecayCounter--;
-                if (permanentView.DecayCounter == 0)
+                decayKeyword.keyWordValue--;
+                if (decayKeyword.keyWordValue == 0)
                 {
                     TriggerEventGA triggerEventGA = new(Events.OnSacrifice,null,permanentView,null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
@@ -384,10 +395,12 @@ public class EffectSystem : Singleton<EffectSystem>
     {
         foreach (EnemySlotView EnemySlot in CombatSystem.Instance.Enemy_Permanents)
         {
-            if (EnemySlot.DecayCounter > 0)
+            var decayKeyword = EnemySlot.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Decay);
+            if (decayKeyword == null) continue;
+            if (decayKeyword.keyWordValue > 0)
             {
-                EnemySlot.DecayCounter--;
-                if (EnemySlot.DecayCounter == 0)
+                decayKeyword.keyWordValue--;
+                if (decayKeyword.keyWordValue == 0)
                 {
                     DieEnemySlotGA dieEnemySlotGA = new(EnemySlot);
                     ActionSystem.Instance.AddReaction(dieEnemySlotGA);
@@ -426,7 +439,7 @@ public class EffectSystem : Singleton<EffectSystem>
 
         if (alterPowerGA.passive)
         {
-            var type = alterPowerGA.targetModeInfo.PermaType;
+            KeyWordType type = alterPowerGA.targetModeInfo.keyWordType;
             var side = alterPowerGA.targetModeInfo.PlayerOrEnemy;
 
             CombatSystem.Instance.AddPower(type, side, alterPowerGA.Amount);
@@ -492,7 +505,7 @@ public class EffectSystem : Singleton<EffectSystem>
 
         if (alterStaminaGA.passive)
         {
-            var type = alterStaminaGA.targetModeInfo.PermaType;
+            KeyWordType type = alterStaminaGA.targetModeInfo.keyWordType;
             var side = alterStaminaGA.targetModeInfo.PlayerOrEnemy;
 
             CombatSystem.Instance.AddStam(type, side, alterStaminaGA.Amount);
@@ -522,7 +535,7 @@ public class EffectSystem : Singleton<EffectSystem>
             }
         }
     }
-    
+
     private IEnumerator AlterCardCostPerformer(AlterCardCostGA alterCardCostGA)
     {
         if (alterCardCostGA.DynamicAmount != DynamicAmount.NULL)
@@ -531,11 +544,11 @@ public class EffectSystem : Singleton<EffectSystem>
             {
                 if (alterCardCostGA.CardActionner != null)
                 {
-                    alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, null, null,alterCardCostGA.CardActionner);
+                    alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, null, null, alterCardCostGA.CardActionner);
                 }
                 else
                 {
-                    alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, null, null);                 
+                    alterCardCostGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterCardCostGA.DynamicAmount, null, null);
                 }
             }
             else if (alterCardCostGA.Actionner.GetComponent<PermanentView>() != null)
@@ -552,7 +565,7 @@ public class EffectSystem : Singleton<EffectSystem>
 
         if (alterCardCostGA.passive)
         {
-            var type = alterCardCostGA.targetModeInfo.PermaType;
+            KeyWordType type = alterCardCostGA.targetModeInfo.keyWordType;
             var side = alterCardCostGA.targetModeInfo.PlayerOrEnemy;
 
             CombatSystem.Instance.AddCost(type, side, alterCardCostGA.Amount);
@@ -579,8 +592,75 @@ public class EffectSystem : Singleton<EffectSystem>
                     target.TakeAlterCardCost(alterCardCostGA.Amount);
                     yield return new WaitForSeconds(AnimDelay);
                 }
-            }            
+            }
+        } 
+    }
+    
+    private IEnumerator AddACopyPerformer(AddACopyGa addACopyGa)
+    {
+        if (addACopyGa.DynamicAmount != DynamicAmount.NULL)
+        {
+            if (addACopyGa.Actionner == null)
+            {
+                if (addACopyGa.CardActionner != null)
+                {
+                    addACopyGa.Amount = TargetSystem.Instance.GetDynamicAmount(addACopyGa.DynamicAmount, null, null, addACopyGa.CardActionner);
+                }
+                else
+                {
+                    addACopyGa.Amount = TargetSystem.Instance.GetDynamicAmount(addACopyGa.DynamicAmount, null, null);
+                }
+            }
+            else if (addACopyGa.Actionner.GetComponent<PermanentView>() != null)
+            {
+                addACopyGa.Amount = TargetSystem.Instance.GetDynamicAmount(addACopyGa.DynamicAmount, addACopyGa.Actionner.GetComponent<PermanentView>(), null);
+            }
+            else
+            {
+                addACopyGa.Amount = TargetSystem.Instance.GetDynamicAmount(addACopyGa.DynamicAmount, null, addACopyGa.Actionner.GetComponent<EnemySlotView>());
+            }
         }
+
+        addACopyGa.Amount = addACopyGa.Amount * addACopyGa.multiplyAmount;
+
+        for (int i = 0; i < addACopyGa.Amount; i++)
+        {
+            CombatSystem.Instance.AddCopyValue(addACopyGa.TypeOfCopy, addACopyGa.AffectedSide, addACopyGa.Amount, addACopyGa.ConditionToCopy);
+        }
+        
+        yield return null;
+    }
+
+    private IEnumerator AlterPowerGridPerformer(AlterPowerGridGA alterPowerGridGA)
+    {
+        if (alterPowerGridGA.DynamicAmount != DynamicAmount.NULL)
+        {
+            if (alterPowerGridGA.Actionner == null)
+            {
+                if (alterPowerGridGA.CardActionner != null)
+                {
+                    alterPowerGridGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterPowerGridGA.DynamicAmount, null, null, alterPowerGridGA.CardActionner);
+                }
+                else
+                {
+                    alterPowerGridGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterPowerGridGA.DynamicAmount, null, null);
+                }
+            }
+            else if (alterPowerGridGA.Actionner.GetComponent<PermanentView>() != null)
+            {
+                alterPowerGridGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterPowerGridGA.DynamicAmount, alterPowerGridGA.Actionner.GetComponent<PermanentView>(), null);
+            }
+            else
+            {
+                alterPowerGridGA.Amount = TargetSystem.Instance.GetDynamicAmount(alterPowerGridGA.DynamicAmount, null, alterPowerGridGA.Actionner.GetComponent<EnemySlotView>());
+            }
+        }
+
+        alterPowerGridGA.Amount = alterPowerGridGA.Amount * alterPowerGridGA.multiplyAmount;
+
+        CombatSystem.Instance.MaxPowerGrid += alterPowerGridGA.Amount;
+        CombatSystem.Instance.UpdatePowerGridText();
+        yield return null;
     }
 
     private IEnumerator LifeLossPerformer(LifeLossGA lifeLossGA)
@@ -629,6 +709,48 @@ public class EffectSystem : Singleton<EffectSystem>
         }
     }
 
+    private IEnumerator DisablePerformer(DisableGA disableGA)
+    {
+        if (disableGA.playerTargets != null)
+        {
+            foreach (var target in disableGA.playerTargets)
+            {
+                target.IsDisabled = true;
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+
+        if (disableGA.enemyTargets != null)
+        {
+            foreach (var target in disableGA.enemyTargets)
+            {
+                target.IsDisabled = true;
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+    }
+
+    private IEnumerator EnablePerformer(EnableGA enableGA)
+    {
+        if (enableGA.playerTargets != null)
+        {
+            foreach (var target in enableGA.playerTargets)
+            {
+                target.IsDisabled = false;
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+
+        if (enableGA.enemyTargets != null)
+        {
+            foreach (var target in enableGA.enemyTargets)
+            {
+                target.IsDisabled = false;
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+    }
+
     private IEnumerator DiscardCardPerformer(DiscardCardGA discardCardGA)
     {
         List<CardView> cardViewsToDiscard = new();
@@ -637,7 +759,7 @@ public class EffectSystem : Singleton<EffectSystem>
             cardViewsToDiscard.Add(cardView);
         }
 
-        DiscardOnceGA discardOnceGA = new(cardViewsToDiscard,true);
+        DiscardOnceGA discardOnceGA = new(cardViewsToDiscard, true);
         ActionSystem.Instance.AddReaction(discardOnceGA);
 
         yield return null;
@@ -712,7 +834,7 @@ public class EffectSystem : Singleton<EffectSystem>
 
         if (gainLifeGA.passive)
         {
-            var type = gainLifeGA.targetModeInfo.PermaType;
+            KeyWordType type = gainLifeGA.targetModeInfo.keyWordType;
             var side = gainLifeGA.targetModeInfo.PlayerOrEnemy;
 
             CombatSystem.Instance.AddHP(type, side, gainLifeGA.Amount);
@@ -785,8 +907,16 @@ public class EffectSystem : Singleton<EffectSystem>
                     {
                         Card card = new(item);
                         PermanentView newPerm = PermanentViewCreator.Instance.CreatePermanentViewCreator(card, card.permanentArea);
-                        if (newPerm != null && !newPerm.permaTypes.Contains(PermaTypes.Invoc))
-                            newPerm.permaTypes.Add(PermaTypes.Invoc);
+                        
+                        if (newPerm != null)
+                        {
+                            var InvocKeyword = newPerm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                            if (InvocKeyword == null)
+                            {
+                                KeyWord keyWord = new KeyWord(KeyWordType.Invoc,0);
+                                newPerm.KeyWords.Add(keyWord);
+                            }
+                        }
                     }
                 }
             }
@@ -802,7 +932,14 @@ public class EffectSystem : Singleton<EffectSystem>
                     {
                         EnemySlotView newEnemy = EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(item, item.permanentArea, false);
                         if (newEnemy != null)
-                            newEnemy.permaTypes.Add(PermaTypes.Invoc);
+                        {
+                            var InvocKeyword = newEnemy.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                            if (InvocKeyword == null)
+                            {
+                                KeyWord keyWord = new KeyWord(KeyWordType.Invoc,0);
+                                newEnemy.KeyWords.Add(keyWord);
+                            }
+                        }
                     }
                 }
             }
@@ -906,11 +1043,16 @@ public class EffectSystem : Singleton<EffectSystem>
 
     private IEnumerator PlayerChoicePerformer(LetChoiceGA letChoiceGA)
     {
-        CardSystem.Instance.ShowChoicePanel(letChoiceGA.ChoicesEffects,letChoiceGA.OnSelectMode,letChoiceGA.MayChoice);
+        CardSystem.Instance.ShowChoicePanel(letChoiceGA.ChoicesEffects, letChoiceGA.OnSelectMode);
+        if (letChoiceGA.MayChoice)
+        {
+            CardSystem.Instance.ShowMonoChoiceButtons();       
+        }
         CardSystem.Instance.EffectChoosed = null;
 
         yield return new WaitUntil(() => CardSystem.Instance.EffectChoosed != null);
 
+        CardSystem.Instance.HideMonoChoiceButtons();
         CardSystem.Instance.HideChoicePanel();
 
         if (CardSystem.Instance.EffectChoosed is ZZZ_EmptyEffect)
@@ -919,6 +1061,8 @@ public class EffectSystem : Singleton<EffectSystem>
         }
 
         Effect EffectToManage = CardSystem.Instance.EffectChoosed;
+
+        Debug.Log("EffectToManage : " + EffectToManage);
 
         if (EffectToManage.ORChoice)
         {
@@ -945,7 +1089,7 @@ public class EffectSystem : Singleton<EffectSystem>
             }
         }
 
-        if (letChoiceGA.OnSelectMode && EffectToManage.ActivateLeft != 999)
+        if (letChoiceGA.OnSelectMode && EffectToManage.ActivateLeft != 999 && EffectToManage.ActivateLeft > 0)
         {
             EffectToManage.ActivateLeft--;
         }
@@ -958,22 +1102,25 @@ public class EffectSystem : Singleton<EffectSystem>
                 {
                     SubEffect.Actionner = EffectToManage.Actionner;
                     SubEffect.CardActionner = EffectToManage.CardActionner;
-                    GameEventSystem.Instance.RegisterEffect(SubEffect);                                
+                    GameEventSystem.Instance.RegisterEffect(SubEffect);
                 }
             }
             else
             {
-                if (EffectToManage.Events.Count == 1)
+                if (EffectToManage.ActivateLeft > 0)
                 {
-                    Effect effectToExecute = EffectToManage.Clone();
-                    effectToExecute.Events = new List<Events> { Events.Instant };
-                    GameEventSystem.Instance.RegisterEffect(effectToExecute);
-                }
-                else
-                {
-                    Effect effectToExecute = EffectToManage.Clone();
-                    effectToExecute.Events.Remove(Events.OnSelect);
-                    GameEventSystem.Instance.RegisterEffect(effectToExecute);                                
+                    if (EffectToManage.Events.Count == 1)
+                    {
+                        Effect effectToExecute = EffectToManage.Clone();
+                        effectToExecute.Events = new List<Events> { Events.Instant };
+                        GameEventSystem.Instance.RegisterEffect(effectToExecute);
+                    }
+                    else
+                    {
+                        Effect effectToExecute = EffectToManage.Clone();
+                        effectToExecute.Events.Remove(Events.OnSelect);
+                        GameEventSystem.Instance.RegisterEffect(effectToExecute);
+                    }
                 }
             }
         }
@@ -991,7 +1138,7 @@ public class EffectSystem : Singleton<EffectSystem>
             else
             {
                 GameEventSystem.Instance.RegisterEffect(EffectToManage);
-            }            
+            }
         }
     } 
 }

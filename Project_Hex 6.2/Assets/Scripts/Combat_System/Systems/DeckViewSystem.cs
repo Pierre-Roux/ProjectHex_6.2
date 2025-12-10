@@ -30,6 +30,7 @@ public class DeckViewSystem : Singleton<DeckViewSystem>
             cardView.gameObject.GetComponent<SortingGroup>().sortingOrder = 2;
             cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
             cardView.transform.DOScale(50, 0.5f);
+            cardView.transform.DORotate(new Vector3(-20,0,0), 0.5f);
         }
     }
 

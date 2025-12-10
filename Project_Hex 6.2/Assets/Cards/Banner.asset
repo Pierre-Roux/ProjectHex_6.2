@@ -15,20 +15,18 @@ MonoBehaviour:
   <Title>k__BackingField: Banner
   <Description>k__BackingField: Whenever a Vessel you control deal DMG to an Enemy
     Core, Draw 1 and your Weapons gain +1 PWR until end of turn
+  <Rarity>k__BackingField: 1
   <cost>k__BackingField: 2
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
-  <Money_Cost>k__BackingField: 0
+  <Money_Cost>k__BackingField: 50
+  KeyWords: []
   <life>k__BackingField: 3
-  <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 3
   <MaxDurability>k__BackingField: 3
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <permanentArea>k__BackingField: 3
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642677219492009
@@ -97,6 +95,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -180,6 +185,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
@@ -188,6 +207,8 @@ MonoBehaviour:
     - rid: 3469642677219492009
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 18000000
         TypeOfCounter: 0
@@ -229,6 +250,8 @@ MonoBehaviour:
     - rid: 3469642677219492010
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 18000000
         TypeOfCounter: 0
@@ -273,7 +296,7 @@ MonoBehaviour:
           targetMode: 3
           PlayerOrEnemy: 1
           permanentArea: 1
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
@@ -281,33 +304,39 @@ MonoBehaviour:
       type: {class: DynamicConditionInfo, ns: , asm: Assembly-CSharp}
       data:
         DynamicCondition: 14
+        CounterType: 0
+        TestType: 0
         TestValue: 0
         TestDynamicAmount: 0
-        TestType: 0
     - rid: 7119592267123523993
       type: {class: DynamicConditionInfo, ns: , asm: Assembly-CSharp}
       data:
         DynamicCondition: 14
+        CounterType: 0
+        TestType: 0
         TestValue: 0
         TestDynamicAmount: 0
-        TestType: 0
     - rid: 7119592402115363190
       type: {class: DynamicConditionInfo, ns: , asm: Assembly-CSharp}
       data:
         DynamicCondition: 16
+        CounterType: 0
+        TestType: 0
         TestValue: 0
         TestDynamicAmount: 0
-        TestType: 0
     - rid: 7119592402115363191
       type: {class: DynamicConditionInfo, ns: , asm: Assembly-CSharp}
       data:
         DynamicCondition: 16
+        CounterType: 0
+        TestType: 0
         TestValue: 0
         TestDynamicAmount: 0
-        TestType: 0
     - rid: 7119592402115363203
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 03000000
         TypeOfCounter: 0
@@ -350,7 +379,7 @@ MonoBehaviour:
           targetMode: 3
           PlayerOrEnemy: 1
           permanentArea: 1
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []

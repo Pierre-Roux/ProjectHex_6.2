@@ -13,9 +13,10 @@ public class DrawCardsEffect : Effect
 
     public DrawCardsEffect(){}
 
-    public DrawCardsEffect(string effectID, bool activateToolTip, int priority, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx, CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DrawCardsEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx, CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
         drawAmount = Amount;
@@ -101,6 +102,7 @@ public class DrawCardsEffect : Effect
             EffectID,
             ActivateToolTip,
             Priority,
+            HollowEffect,
             drawAmount,
             multiplyAmount,
             PayXEffect,

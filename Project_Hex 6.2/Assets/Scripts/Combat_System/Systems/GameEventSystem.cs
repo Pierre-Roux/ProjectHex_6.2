@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FMODUnity;
 using SerializeReferenceEditor;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameEventSystem : Singleton<GameEventSystem>
@@ -72,6 +73,8 @@ public class GameEventSystem : Singleton<GameEventSystem>
                 CombatSystem combatSystem = CombatSystem.Instance;
                 foreach (Effect effect in matchingEffects)
                 {
+                    if (CheckDisabledState(effect)) continue;
+
                     int CounterValue = 0;
                     if (triggerEventGA.gameEvent == Events.WhenGlobalCounter)
                     {
@@ -156,29 +159,39 @@ public class GameEventSystem : Singleton<GameEventSystem>
         // Gestion des effets Standards et globaux
         foreach (var effect in new List<Effect>(effectList))
         {
+            if (CheckDisabledState(effect)) continue;
+            EffectCanceled = false;
             bool isActionnerMatch = false;
+            PermanentView permanentView = null;
+            EnemySlotView enemySlotView = null;
+            Card cardActionner = null;
             // Cas 1 : Permanent
             if (triggerEventGA.permanentView != null)
             {
                 if (effect.Actionner != null)
                 {
-                    isActionnerMatch = effect.Actionner.GetComponent<PermanentView>() == triggerEventGA.permanentView;
+                    permanentView = effect.Actionner.GetComponent<PermanentView>();
+                    isActionnerMatch = permanentView == triggerEventGA.permanentView;
                 }
-
             }
-
             // Cas 2 : Enemy
             else if (triggerEventGA.enemySlotView != null)
             {
                 if (effect.Actionner != null)
-                    isActionnerMatch = effect.Actionner.GetComponent<EnemySlotView>() == triggerEventGA.enemySlotView;
+                {
+                    enemySlotView = effect.Actionner.GetComponent<EnemySlotView>();
+                    isActionnerMatch = enemySlotView == triggerEventGA.enemySlotView;
+                }   
             }
 
             // Cas 3 : Card
             else if (triggerEventGA.Card != null)
             {
                 if (effect.CardActionner != null)
-                    isActionnerMatch = effect.CardActionner == triggerEventGA.Card;
+                {
+                    cardActionner = effect.CardActionner;
+                    isActionnerMatch = cardActionner == triggerEventGA.Card;
+                }
             }
 
             // Cas 4 : Aucun actionner attendu (par exemple événements de carte globale)
@@ -187,97 +200,110 @@ public class GameEventSystem : Singleton<GameEventSystem>
                 isActionnerMatch = true;
             }
 
-            //Debug.Log("ActionnerMatch : " + isActionnerMatch);
-            // Ajout des effets Onselect de l'entité pour post traitment
-            if (triggerEventGA.gameEvent == Events.OnSelect && isActionnerMatch)
+            if (permanentView != null)
             {
-                OnSelectEffects.Add(effect);
+                var HollowKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);                
+                bool canApply = (HollowKeyword != null && effect.HollowEffect)
+                            || (HollowKeyword == null && !effect.HollowEffect);
+                
+                if (!canApply) EffectCanceled = true;
             }
 
-            if (triggerEventGA.gameEvent != Events.WhenPermaDie && triggerEventGA.gameEvent != Events.OnSelect && isActionnerMatch)
+            if (!EffectCanceled)
             {
-                // Gestion du Payx effect
-                if (effect.PayXEffect == true)
+                //Debug.Log("ActionnerMatch : " + isActionnerMatch);
+                // Ajout des effets Onselect de l'entité pour post traitment
+                if (triggerEventGA.gameEvent == Events.OnSelect && isActionnerMatch)
                 {
-                    yield return StartCoroutine(CardSystem.Instance.ManagePayX(false, (result) =>
+                    OnSelectEffects.Add(effect);
+                }
+
+                if (triggerEventGA.gameEvent != Events.WhenPermaDie && triggerEventGA.gameEvent != Events.OnSelect && isActionnerMatch)
+                {
+                    // Gestion du Payx effect
+                    if (effect.PayXEffect == true)
                     {
-                        EffectCanceled = result;
-                    }, effect));
+                        yield return StartCoroutine(CardSystem.Instance.ManagePayX(false, (result) =>
+                        {
+                            EffectCanceled = result;
+                        }, effect));
+                    }
+
+                    if (!EffectCanceled)
+                    {
+                        // Gestion des effets avec durée
+                        if (effect.TriggerOnDurationEnd)
+                        {
+                            if (effect.Duration == 1)
+                            {
+                                DoAction(effect);
+                            }
+                        }
+                        else
+                        {
+                            DoAction(effect);
+                        }
+                    }
                 }
 
                 if (!EffectCanceled)
                 {
-                    // Gestion des effets avec durée
-                    if (effect.TriggerOnDurationEnd)
+                    // Fonctionnement pour les Events Concernant d'autre déclancheur que eux même et les flags
+                    if (triggerEventGA.gameEvent == Events.WhenPermaDie && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPermaExaust && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPermaBecomeType && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPermaSac && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPermaETB && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPermaLossDurability && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPermaDamaged && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPCoreDamaged && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenECoreDamaged && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenDiscard && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenDraw && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPlayCard && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPlaySpell && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.WhenPlayPerma && !isActionnerMatch
+
+                    || triggerEventGA.gameEvent == Events.HollowCountChanged && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.DecayCountChanged && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.InvocCountChanged && !isActionnerMatch
+                    || triggerEventGA.gameEvent == Events.ArtilleryCountChanged && !isActionnerMatch
+                    )
                     {
-                        if (effect.Duration == 1)
+                        PermanentView OriginPermanentView = null;
+                        EnemySlotView OriginEnemySlotView = null;
+                        Card OriginCard = null;
+                        if (effect.DynamicConditionInfos.Count != 0)
+                        {
+                            if (effect.Actionner != null)
+                            {
+                                if (effect.Actionner.GetComponent<PermanentView>() != null)
+                                {
+                                    OriginPermanentView = effect.Actionner.GetComponent<PermanentView>();
+                                }
+                                else if (effect.Actionner.GetComponent<EnemySlotView>() != null)
+                                {
+                                    OriginEnemySlotView = effect.Actionner.GetComponent<EnemySlotView>();
+                                }
+                            }
+                            else if (effect.CardActionner != null)
+                            {
+                                OriginCard = effect.CardActionner;
+                            }
+
+                            if (ConditionSystem.Instance.TestCondition(effect.DynamicConditionInfos, OriginCard, OriginPermanentView, OriginEnemySlotView, triggerEventGA.Card, triggerEventGA.permanentView, triggerEventGA.enemySlotView))
+                            {
+                                effect.BypassEntryCondition = true;
+                                DoAction(effect);
+                            }
+                        }
+                        else
                         {
                             DoAction(effect);
                         }
                     }
-                    else
-                    {
-                        DoAction(effect);
-                    }
                 }
-            }
 
-            // Fonctionnement pour les Events Concernant d'autre déclancheur que eux même et les flags
-            if (!EffectCanceled)
-            {
-                if (triggerEventGA.gameEvent == Events.WhenPermaDie && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPermaExaust && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPermaBecomeType && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPermaSac && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPermaETB && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPermaLossDurability && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPermaDamaged && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPCoreDamaged && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenECoreDamaged && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenDiscard && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenDraw && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPlayCard && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPlaySpell && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.WhenPlayPerma && !isActionnerMatch
-
-                || triggerEventGA.gameEvent == Events.HollowCountChanged && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.DecayCountChanged && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.InvocCountChanged && !isActionnerMatch
-                || triggerEventGA.gameEvent == Events.ArtilleryCountChanged && !isActionnerMatch
-                )
-                {
-                    PermanentView OriginPermanentView = null;
-                    EnemySlotView OriginEnemySlotView = null;
-                    Card OriginCard = null;
-                    if (effect.DynamicConditionInfos.Count != 0)
-                    {
-                        if (effect.Actionner != null)
-                        {
-                            if (effect.Actionner.GetComponent<PermanentView>() != null)
-                            {
-                                OriginPermanentView = effect.Actionner.GetComponent<PermanentView>();
-                            }
-                            else if (effect.Actionner.GetComponent<EnemySlotView>() != null)
-                            {
-                                OriginEnemySlotView = effect.Actionner.GetComponent<EnemySlotView>();
-                            }
-                        }
-                        else if (effect.CardActionner != null)
-                        {
-                            OriginCard = effect.CardActionner;
-                        }
-                        
-                        if (ConditionSystem.Instance.TestCondition(effect.DynamicConditionInfos, OriginCard, OriginPermanentView, OriginEnemySlotView, triggerEventGA.Card, triggerEventGA.permanentView, triggerEventGA.enemySlotView))
-                        {
-                            effect.BypassEntryCondition = true;
-                            DoAction(effect);
-                        }
-                    }
-                    else
-                    {
-                        DoAction(effect);
-                    }
-                }
             }
         }
 
@@ -286,31 +312,41 @@ public class GameEventSystem : Singleton<GameEventSystem>
         {
             if (OnSelectEffects.Count == 1)
             {
-                Effect effectToManage = OnSelectEffects[0];
-                effectToManage.ActivateLeft--;
-                if (effectToManage.Events.Count == 1)
+                if (!CheckDisabledState(OnSelectEffects[0]))
                 {
-                    Effect effectToExecute = effectToManage.Clone();
-                    effectToExecute.Events = new List<Events> { Events.Instant };
-                    RegisterEffect(effectToExecute);
-                }
-                else
-                {
-                    Effect effectToExecute = effectToManage.Clone();
-                    effectToExecute.Events.Remove(Events.OnSelect);
-                    RegisterEffect(effectToExecute);                                
+                    Effect effectToManage = OnSelectEffects[0];
+                    if (effectToManage.ActivateLeft > 0)
+                    {
+                        effectToManage.ActivateLeft--;
+                        //Debug.Log("Reduce ActivateLeft on : " + effectToManage + ", reste : " + effectToManage.ActivateLeft + " Activation");
+                        if (effectToManage.Events.Count == 1)
+                        {
+                            Effect effectToExecute = effectToManage.Clone();
+                            effectToExecute.Events = new List<Events> { Events.Instant };
+                            RegisterEffect(effectToExecute);
+                        }
+                        else
+                        {
+                            Effect effectToExecute = effectToManage.Clone();
+                            effectToExecute.Events.Remove(Events.OnSelect);
+                            RegisterEffect(effectToExecute);                                
+                        }                                
+                    }            
                 }
             }
             else if (OnSelectEffects.Count > 1)
             {
-                if (triggerEventGA.permanentView != null || triggerEventGA.enemySlotView != null)
+                if (!CheckDisabledState(OnSelectEffects[0]))
                 {
-                    LetChoiceGA letChoiceGA = new(OnSelectEffects, true);
-                    letChoiceGA.Actionner = OnSelectEffects[0].Actionner;
-                    letChoiceGA.CardActionner = OnSelectEffects[0].CardActionner;
-                    letChoiceGA.SourceEffect = OnSelectEffects[0];
-                    letChoiceGA.ActivateToolTip = false;
-                    ActionSystem.Instance.AddReaction(letChoiceGA);
+                    if (triggerEventGA.permanentView != null || triggerEventGA.enemySlotView != null)
+                    {
+                        LetChoiceGA letChoiceGA = new(OnSelectEffects, true);
+                        letChoiceGA.Actionner = OnSelectEffects[0].Actionner;
+                        letChoiceGA.CardActionner = OnSelectEffects[0].CardActionner;
+                        letChoiceGA.SourceEffect = OnSelectEffects[0];
+                        letChoiceGA.ActivateToolTip = false;
+                        ActionSystem.Instance.AddReaction(letChoiceGA);
+                    }
                 }
             }
         }
@@ -366,6 +402,23 @@ public class GameEventSystem : Singleton<GameEventSystem>
         EffectToolTip.Reset();
         yield return EffectToolTip.Disappear();
         EffectToolTip.gameObject.SetActive(false);
+    }
+
+    public bool CheckDisabledState(Effect effect)
+    {
+        bool Disabled = false;
+        if (effect.Actionner != null)
+        {
+            if (effect.Actionner.GetComponent<PermanentView>() != null)
+            {
+                Disabled = effect.Actionner.GetComponent<PermanentView>().IsDisabled;
+            }
+            else if (effect.Actionner.GetComponent<EnemySlotView>() != null)
+            {
+                Disabled = effect.Actionner.GetComponent<EnemySlotView>().IsDisabled;
+            }
+        }
+        return Disabled;
     }
 
     public void ClearAllEvents()
@@ -620,15 +673,16 @@ public class GameEventSystem : Singleton<GameEventSystem>
                             }
                             else
                             {
-                                DoAction(clonedEffect);
+                                if (!CheckDisabledState(clonedEffect))
+                                {
+                                    DoAction(clonedEffect);
+                                }
                             }
                         }
                         else
                         {
                             clonedEffect.LinkedEffect = null;
                         }
-
-                        // Instant ne va pas dans effectsByEvent
                         continue;
                     }
 
@@ -677,8 +731,9 @@ public class GameEventSystem : Singleton<GameEventSystem>
             PermanentView permanentView = effect.Actionner.GetComponent<PermanentView>();
             if (permanentView != null)
             {
-                bool canApply = (permanentView.permaTypes.Contains(PermaTypes.Hollow) && effect.HollowEffect)
-                            || (!permanentView.permaTypes.Contains(PermaTypes.Hollow) && !effect.HollowEffect);
+                var HollowKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
+                bool canApply = (HollowKeyword != null && effect.HollowEffect)
+                            || (HollowKeyword == null && !effect.HollowEffect);
                 if (!canApply) return;
             }
         }

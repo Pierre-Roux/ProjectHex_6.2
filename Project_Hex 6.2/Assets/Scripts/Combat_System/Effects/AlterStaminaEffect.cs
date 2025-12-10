@@ -29,9 +29,10 @@ public class AlterStaminaEffect : Effect
 
     public AlterStaminaEffect() { }
 
-    public AlterStaminaEffect(string effectID, bool activateToolTip, int priority, bool includeCardsInDeck, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterStaminaEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, bool includeCardsInDeck, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, List<Card> targetForLinked_Card, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
         IncludeCardsInDeck = includeCardsInDeck;
@@ -63,6 +64,7 @@ public class AlterStaminaEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
+        TargetForLinked_Card = targetForLinked_Card;
         DynamicAmount = dynamicAmount;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
@@ -302,8 +304,12 @@ public class AlterStaminaEffect : Effect
             ? new List<PermanentView>(TargetForLinked_Player) 
             : null;
 
-        var clonedEnemyTargets = TargetForLinked_Enemy != null 
-            ? new List<EnemySlotView>(TargetForLinked_Enemy) 
+        var clonedEnemyTargets = TargetForLinked_Enemy != null
+            ? new List<EnemySlotView>(TargetForLinked_Enemy)
+            : null;
+            
+        var clonedCardTargets = TargetForLinked_Card != null 
+            ? new List<Card>(TargetForLinked_Card) 
             : null;
 
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
@@ -312,6 +318,7 @@ public class AlterStaminaEffect : Effect
             EffectID,
             ActivateToolTip,
             Priority,
+            HollowEffect,
             IncludeCardsInDeck,
             alterAmount,
             multiplyAmount,
@@ -341,6 +348,7 @@ public class AlterStaminaEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
+            clonedCardTargets,
             DynamicAmount,
             SFX,
             TypeOfCounter,

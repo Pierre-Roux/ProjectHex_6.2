@@ -23,13 +23,13 @@ public class TargetModeInfo
     public TargetMode targetMode;
     public Enemy_Player_ENUM PlayerOrEnemy;
     public PermanentArea permanentArea;
-    public PermaTypes PermaType;
+    public KeyWordType keyWordType;
 
     public TargetModeInfo(){}
 
-    public TargetModeInfo(PermaTypes permaType, TargetMode TargetMode)
+    public TargetModeInfo(KeyWordType KeyWordType, TargetMode TargetMode)
     {
-        PermaType = permaType;
+        keyWordType = KeyWordType;
         targetMode = TargetMode;
     }
 }

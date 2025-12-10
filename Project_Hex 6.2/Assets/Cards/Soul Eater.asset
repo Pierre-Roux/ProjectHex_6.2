@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Soul Eater
   <Description>k__BackingField: 'A: Deal 3 DMG | Sac an Object: Gain +1PWR'
   <cost>k__BackingField: 1
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 20
@@ -187,6 +188,8 @@ MonoBehaviour:
     - rid: 7119592267123523769
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0
@@ -235,6 +238,8 @@ MonoBehaviour:
     - rid: 7119592267123523770
       type: {class: EffectGroup, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0
@@ -274,6 +279,8 @@ MonoBehaviour:
     - rid: 7119592267123523771
       type: {class: SacEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0
@@ -334,6 +341,8 @@ MonoBehaviour:
     - rid: 7119592267123523774
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0

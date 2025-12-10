@@ -223,7 +223,7 @@ MonoBehaviour:
       Data2: 1264354478
       Data3: -1598118774
       Data4: -459648317
-    Path: event:/Audio Manager/Click Sound
+    Path: event:/UI/Click Sound
   PlayCardSound:
     Guid:
       Data1: 0
@@ -260,6 +260,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   SummonEPermanentSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -421,6 +428,34 @@ MonoBehaviour:
       Data4: 0
     Path: 
   Effect_AlterIntegritySound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  Effect_AlterPowerGridSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  Effect_AddACopySound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  Effect_DisableSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  Effect_EnableSound:
     Guid:
       Data1: 0
       Data2: 0

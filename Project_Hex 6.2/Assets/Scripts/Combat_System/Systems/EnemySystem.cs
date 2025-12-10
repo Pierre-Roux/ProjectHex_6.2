@@ -6,11 +6,12 @@ using UnityEngine;
 
 public class EnemySystem : Singleton<EnemySystem>
 {
-    public EnemyView enemyView;
+    public EnemyView enemyView; 
 
     void OnEnable()
     {
         ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer);
+        ActionSystem.AttachPerformer<ExecEnemyTurnActionOnceGA>(ExecuteOnceEnemyTurnAction);
         ActionSystem.AttachPerformer<AttackPlayerGA>(AttackPlayerPerformer);
         ActionSystem.AttachPerformer<HealEnemyGA>(HealEnemyPerformer);
         ActionSystem.AttachPerformer<ShieldEnemyGA>(ShieldEnemyPerformer);
@@ -25,6 +26,10 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.AttachPerformer<EnemyRefreshGA>(RefreshEnemyPerformer);
         ActionSystem.AttachPerformer<EnemyExhaustGA>(ExhaustEnemyPerformer);
         ActionSystem.AttachPerformer<EnemyRetrieveExhaustedGA>(EnemyRetrieveExhaustedPerformer);
+        ActionSystem.AttachPerformer<EnemyAlterPowerGridGA>(AlterPowerGridEnemyPerformer);
+        ActionSystem.AttachPerformer<EnemyAddACopyGa>(EnemyAddACopyPlayerPerformer);
+        ActionSystem.AttachPerformer<EnemyDisableGA>(DisableEnemyPerformer);
+        ActionSystem.AttachPerformer<EnemyEnableGA>(EnableEnemyPerformer);
 
         ActionSystem.AttachPerformer<SpawnConstructGA>(PerformIntentConstructPerformer);
 
@@ -40,14 +45,19 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.SubscribeReaction<InvocEGA>(BeforeInvocEPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<SacEGA>(BeforeSacEPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<EnemyRefreshGA>(BeforeRefreshEPerformerPreReaction, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<EnemyExhaustGA>(BeforeExhaustedPPerformerPreReaction, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<EnemyRetrieveExhaustedGA>(BeforeRetrieveExhaustedPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyExhaustGA>(BeforeExhaustedEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyRetrieveExhaustedGA>(BeforeRetrieveExhaustedEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyAlterPowerGridGA>(BeforeAlterPowerGridEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyAddACopyGa>(BeforeAddACopyEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyDisableGA>(BeforeDisableEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<EnemyEnableGA>(BeforeEnableEPerformerPreReaction, ReactionTiming.PRE);
 
     }
 
     void OnDisable()
     {
         ActionSystem.DetachPerformer<EnemyTurnGA>();
+        ActionSystem.DetachPerformer<ExecEnemyTurnActionOnceGA>();
         ActionSystem.DetachPerformer<AttackPlayerGA>();
         ActionSystem.DetachPerformer<HealEnemyGA>();
         ActionSystem.DetachPerformer<ShieldEnemyGA>();
@@ -62,6 +72,10 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.DetachPerformer<EnemyRefreshGA>();
         ActionSystem.DetachPerformer<EnemyExhaustGA>();
         ActionSystem.DetachPerformer<EnemyRetrieveExhaustedGA>();
+        ActionSystem.DetachPerformer<EnemyAlterPowerGridGA>();
+        ActionSystem.DetachPerformer<EnemyAddACopyGa>();
+        ActionSystem.DetachPerformer<EnemyDisableGA>();
+        ActionSystem.DetachPerformer<EnemyEnableGA>();
 
         ActionSystem.DetachPerformer<SpawnConstructGA>();
 
@@ -77,14 +91,19 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.UnsubscribeReaction<InvocEGA>(BeforeInvocEPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<SacEGA>(BeforeSacEPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<EnemyRefreshGA>(BeforeRefreshEPerformerPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<EnemyExhaustGA>(BeforeExhaustedPPerformerPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<EnemyRetrieveExhaustedGA>(BeforeRetrieveExhaustedPPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyExhaustGA>(BeforeExhaustedEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyRetrieveExhaustedGA>(BeforeRetrieveExhaustedEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyAlterPowerGridGA>(BeforeAlterPowerGridEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyAddACopyGa>(BeforeAddACopyEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyDisableGA>(BeforeDisableEPerformerPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<EnemyEnableGA>(BeforeEnableEPerformerPreReaction, ReactionTiming.PRE);
     }
 
 
     // Performers
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA)
     {
+        List<Effect> EffectToExec = new();
         var intents = CombatSystem.Instance.Enemy_Permanents
             .Where(e => e.IntentAction != null && e.IntentAction.Events.Contains(Events.EnemyTurn))
             .Select(e => e.IntentAction)
@@ -99,48 +118,84 @@ public class EnemySystem : Singleton<EnemySystem>
             {
                 enemySlotView = enemySlotViewGO.GetComponent<EnemySlotView>();
             }
+
             if (enemySlotView == null || !CombatSystem.Instance.Enemy_Permanents.Contains(enemySlotView))
                 continue;
 
-            if (intent is EffectGroup)
+            if (!GameEventSystem.Instance.CheckDisabledState(intent))
             {
-                EffectGroup group = (EffectGroup)intent;
-                foreach (var effect in group.EffectGroups)
+                if (intent is EffectGroup choiceEffect)
                 {
-                    int MultiHit = effect.MultiHit;
-                    if (MultiHit < 1) MultiHit = 1;
-                    for (int i = 0; i < MultiHit; i++)
+                    foreach (Effect SubEffect in choiceEffect.EffectGroups)
                     {
-                        // Exécuter action
-                        GameAction action = effect.GetGameAction();
-                        yield return StartCoroutine(ActionSystem.Instance.RunAction(action));
+                        SubEffect.Actionner = intent.Actionner;
+                        SubEffect.CardActionner = intent.CardActionner;
+                        Effect effectToExecute = SubEffect.Clone();
+                        if (effectToExecute.Events.Count == 1 && effectToExecute.Events[0] == Events.EnemyTurn)
+                        {
+                            effectToExecute.Events = new List<Events> { Events.Instant };
+                            EffectToExec.Add(effectToExecute);
+                        }
+                        else if (effectToExecute.Events.Contains(Events.EnemyTurn))
+                        {
+                            effectToExecute.Events.Remove(Events.EnemyTurn);
+                            EffectToExec.Add(effectToExecute);
+                        }
+                        else
+                        {
+                            EffectToExec.Add(effectToExecute);
+                        }
                     }
+                    if (CombatSystem.Instance.Enemy_Permanents.Contains(enemySlotView))
+                        enemySlotView.UpdateIntent();
                 }
-
-                if (CombatSystem.Instance.Enemy_Permanents.Contains(enemySlotView))
-                    enemySlotView.UpdateIntent();
-            }
-            else
-            {
-                int MultiHit = intent.MultiHit;
-                if (MultiHit < 1) MultiHit = 1;
-                for (int i = 0; i < MultiHit; i++)
+                else
                 {
-                    // Exécuter action
-                    GameAction action = intent.GetGameAction();
-                    yield return StartCoroutine(ActionSystem.Instance.RunAction(action));
-                }
+                    Effect effectToExecute = intent.Clone();
+                    if (effectToExecute.Events.Count == 1 && effectToExecute.Events[0] == Events.EnemyTurn)
+                    {
+                        effectToExecute.Events = new List<Events> { Events.Instant };
+                        EffectToExec.Add(effectToExecute);
+                    }
+                    else if (effectToExecute.Events.Contains(Events.EnemyTurn))
+                    {
+                        effectToExecute.Events.Remove(Events.EnemyTurn);
+                        EffectToExec.Add(effectToExecute);
+                    }
+                    else
+                    {
+                        EffectToExec.Add(effectToExecute);
+                    }
 
-                if (CombatSystem.Instance.Enemy_Permanents.Contains(enemySlotView))
-                    enemySlotView.UpdateIntent();
+                    if (CombatSystem.Instance.Enemy_Permanents.Contains(enemySlotView))
+                        enemySlotView.UpdateIntent();
+                }
             }
         }
 
-        EndEnemyTurnGA endEnemyTurnGA = new();
-        ActionSystem.Instance.AddReaction(endEnemyTurnGA);
+        ExecEnemyTurnActionOnceGA execEnemyTurnActionOnceGA = new(EffectToExec);
+        ActionSystem.Instance.AddReaction(execEnemyTurnActionOnceGA);
         yield return null;
     }
     
+    IEnumerator ExecuteOnceEnemyTurnAction(ExecEnemyTurnActionOnceGA execGA)
+    {
+        if (execGA.EffectsToExec.Count > 0)
+        {
+            GameEventSystem.Instance.RegisterEffect(execGA.EffectsToExec[0]);
+            execGA.EffectsToExec.RemoveAt(0);
+            ExecEnemyTurnActionOnceGA NexecGA = new(execGA.EffectsToExec);
+            ActionSystem.Instance.AddReaction(NexecGA);
+        }
+        else
+        {
+            EndEnemyTurnGA endGA = new();
+            ActionSystem.Instance.AddReaction(endGA);
+        }        
+        
+        yield return null;
+    }
+
     private IEnumerator PerformIntentConstructPerformer(SpawnConstructGA spawnConstructGA)
     {
         if (!CombatSystem.Instance.Win)
@@ -205,7 +260,7 @@ public class EnemySystem : Singleton<EnemySystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
             DamageBonus = Attacker.CalculateBonusPower();
-        }    
+        }
 
         if (attackPlayerGA.playerTargets != null && attackPlayerGA.playerTargets.Count > 0)
         {
@@ -218,12 +273,12 @@ public class EnemySystem : Singleton<EnemySystem>
 
         if (attackPlayerGA.enemyTargets != null && attackPlayerGA.enemyTargets.Count > 0)
         {
-            DealDamageGA dealDamageGA = new(attackPlayerGA.Damage,DamageBonus,attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets);
+            DealDamageGA dealDamageGA = new(attackPlayerGA.Damage, DamageBonus, attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets);
             dealDamageGA.Actionner = attackPlayerGA.Actionner;
             dealDamageGA.SourceEffect = attackPlayerGA.SourceEffect;
             dealDamageGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(dealDamageGA);
-        }  
+        }
     }
 
     private IEnumerator HealEnemyPerformer(HealEnemyGA healEnemyGA)
@@ -273,7 +328,7 @@ public class EnemySystem : Singleton<EnemySystem>
             ActionSystem.Instance.AddReaction(retrieveExhaustedGA);
         }
     }
-    
+
     private IEnumerator ExhaustEnemyPerformer(EnemyExhaustGA enemyExhaustGA)
     {
         if (enemyExhaustGA.Actionner != null)
@@ -300,7 +355,7 @@ public class EnemySystem : Singleton<EnemySystem>
             exhaustGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(exhaustGA);
         }
-           
+
     }
 
     private IEnumerator ShieldEnemyPerformer(ShieldEnemyGA shieldEnemyGA)
@@ -474,7 +529,7 @@ public class EnemySystem : Singleton<EnemySystem>
                 alterStaminaGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(alterStaminaGA);
             }
-        }       
+        }
     }
 
     private IEnumerator AlterCardCostEnemyPerformer(EnemyAlterCardCostGA enemyAlterCardCostGA)
@@ -507,11 +562,45 @@ public class EnemySystem : Singleton<EnemySystem>
         }
     }
 
+    private IEnumerator AlterPowerGridEnemyPerformer(EnemyAlterPowerGridGA enemyAlterPowerGridGA)
+    {
+        if (enemyAlterPowerGridGA.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyAlterPowerGridGA.Actionner.GetComponent<EnemySlotView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            AlterPowerGridGA alterPowerGridGA = new AlterPowerGridGA(enemyAlterPowerGridGA.Amount, enemyAlterPowerGridGA.multiplyAmount, enemyAlterPowerGridGA.DynamicAmount);
+            alterPowerGridGA.SourceEffect = enemyAlterPowerGridGA.SourceEffect;
+            alterPowerGridGA.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(alterPowerGridGA);
+        }
+    }
+
+    private IEnumerator EnemyAddACopyPlayerPerformer(EnemyAddACopyGa enemyAddACopyGa)
+    {
+        if (enemyAddACopyGa.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyAddACopyGa.Actionner.GetComponent<EnemySlotView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            AddACopyGa addACopyGa = new AddACopyGa(enemyAddACopyGa.Amount, enemyAddACopyGa.multiplyAmount, enemyAddACopyGa.DynamicAmount, enemyAddACopyGa.AffectedSide, enemyAddACopyGa.TypeOfCopy, enemyAddACopyGa.ConditionToCopy);
+            addACopyGa.SourceEffect = enemyAddACopyGa.SourceEffect;
+            addACopyGa.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(addACopyGa);
+        }
+    }
+
     private IEnumerator LifeLossEnemyPerformer(EnemyLifeLossGA enemyLifeLossGA)
     {
         if (enemyLifeLossGA.Actionner != null)
         {
-            PermanentView Attacker = enemyLifeLossGA.Actionner.GetComponent<PermanentView>();
+            EnemySlotView Attacker = enemyLifeLossGA.Actionner.GetComponent<EnemySlotView>();
 
             Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
             yield return tween.WaitForCompletion();
@@ -525,7 +614,7 @@ public class EnemySystem : Singleton<EnemySystem>
             lifeLossGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(lifeLossGA);
         }
-            
+
         if (enemyLifeLossGA.enemyTargets != null && enemyLifeLossGA.enemyTargets.Count > 0)
         {
             LifeLossGA lifeLossGA = new LifeLossGA(enemyLifeLossGA.Amount, enemyLifeLossGA.multiplyAmount, enemyLifeLossGA.DynamicAmount, null, enemyLifeLossGA.enemyTargets);
@@ -534,6 +623,61 @@ public class EnemySystem : Singleton<EnemySystem>
             ActionSystem.Instance.AddReaction(lifeLossGA);
         }
     }
+
+    private IEnumerator DisableEnemyPerformer(EnemyDisableGA enemyDisableGA)
+    {
+        if (enemyDisableGA.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyDisableGA.Actionner.GetComponent<EnemySlotView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            if (enemyDisableGA.playerTargets != null && enemyDisableGA.playerTargets.Count > 0)
+            {
+                DisableGA disableGA = new DisableGA(enemyDisableGA.playerTargets, null);
+                disableGA.SourceEffect = enemyDisableGA.SourceEffect;
+                disableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(disableGA);
+            }
+            if (enemyDisableGA.enemyTargets != null && enemyDisableGA.enemyTargets.Count > 0)
+            {
+                DisableGA disableGA = new DisableGA(null, enemyDisableGA.enemyTargets);
+                disableGA.SourceEffect = enemyDisableGA.SourceEffect;
+                disableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(disableGA);
+            }
+        }
+    }
+
+    private IEnumerator EnableEnemyPerformer(EnemyEnableGA enemyEnableGA)
+    {
+        if (enemyEnableGA.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyEnableGA.Actionner.GetComponent<EnemySlotView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+
+            if (enemyEnableGA.playerTargets != null && enemyEnableGA.playerTargets.Count > 0)
+            {
+                EnableGA enableGA = new EnableGA(enemyEnableGA.playerTargets, null);
+                enableGA.SourceEffect = enemyEnableGA.SourceEffect;
+                enableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(enableGA);
+            }
+            if (enemyEnableGA.enemyTargets != null && enemyEnableGA.enemyTargets.Count > 0)
+            {
+                EnableGA enableGA = new EnableGA(null, enemyEnableGA.enemyTargets);
+                enableGA.SourceEffect = enemyEnableGA.SourceEffect;
+                enableGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(enableGA);
+            }
+        }
+    }
+
 
     private IEnumerator GainHPEnemyPerformer(EnemyGainLifeGA enemyGainLifeGA)
     {
@@ -557,15 +701,15 @@ public class EnemySystem : Singleton<EnemySystem>
         {
             if (enemyGainLifeGA.playerTargets != null && enemyGainLifeGA.playerTargets.Count > 0)
             {
-                GainLifeGA gainLifeGA = new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.aditive, enemyGainLifeGA.playerTargets, null);
+                GainLifeGA gainLifeGA = new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.aditive, enemyGainLifeGA.playerTargets, null);
                 gainLifeGA.SourceEffect = enemyGainLifeGA.SourceEffect;
                 gainLifeGA.ActivateToolTip = false;
-                ActionSystem.Instance.AddReaction(gainLifeGA);                
+                ActionSystem.Instance.AddReaction(gainLifeGA);
             }
 
             if (enemyGainLifeGA.enemyTargets != null && enemyGainLifeGA.enemyTargets.Count > 0)
             {
-                GainLifeGA gainLifeGA = new GainLifeGA(enemyGainLifeGA.Amount,enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.aditive, null, enemyGainLifeGA.enemyTargets);
+                GainLifeGA gainLifeGA = new GainLifeGA(enemyGainLifeGA.Amount, enemyGainLifeGA.multiplyAmount, enemyGainLifeGA.DynamicAmount, enemyGainLifeGA.passive, enemyGainLifeGA.aditive, null, enemyGainLifeGA.enemyTargets);
                 gainLifeGA.SourceEffect = enemyGainLifeGA.SourceEffect;
                 gainLifeGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(gainLifeGA);
@@ -717,7 +861,7 @@ public class EnemySystem : Singleton<EnemySystem>
         }
     }
 
-    private void BeforeRetrieveExhaustedPPerformerPreReaction(EnemyRetrieveExhaustedGA enemyRetrieveExhaustedGA)
+    private void BeforeRetrieveExhaustedEPerformerPreReaction(EnemyRetrieveExhaustedGA enemyRetrieveExhaustedGA)
     {
         if (enemyRetrieveExhaustedGA.Actionner != null)
         {
@@ -725,12 +869,48 @@ public class EnemySystem : Singleton<EnemySystem>
             Attacker.SetPosition(Attacker.transform.position);
         }
     }
-    
-    private void BeforeExhaustedPPerformerPreReaction(EnemyExhaustGA enemyExhaustGA)
+
+    private void BeforeExhaustedEPerformerPreReaction(EnemyExhaustGA enemyExhaustGA)
     {
         if (enemyExhaustGA.Actionner != null)
         {
             EnemySlotView Attacker = enemyExhaustGA.Actionner.GetComponent<EnemySlotView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeAlterPowerGridEPerformerPreReaction(EnemyAlterPowerGridGA enemyAlterPowerGridGA)
+    {
+        if (enemyAlterPowerGridGA.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyAlterPowerGridGA.Actionner.GetComponent<EnemySlotView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeAddACopyEPerformerPreReaction(EnemyAddACopyGa enemyAddACopyGa)
+    {
+        if (enemyAddACopyGa.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyAddACopyGa.Actionner.GetComponent<EnemySlotView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeDisableEPerformerPreReaction(EnemyDisableGA enemyDisableGA)
+    {
+        if (enemyDisableGA.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyDisableGA.Actionner.GetComponent<EnemySlotView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeEnableEPerformerPreReaction(EnemyEnableGA enemyEnableGA)
+    {
+        if (enemyEnableGA.Actionner != null)
+        {
+            EnemySlotView Attacker = enemyEnableGA.Actionner.GetComponent<EnemySlotView>();
             Attacker.SetPosition(Attacker.transform.position);
         }
     }

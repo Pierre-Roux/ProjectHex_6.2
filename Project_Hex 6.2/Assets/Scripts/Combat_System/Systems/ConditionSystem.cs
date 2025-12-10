@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ConditionSystem : Singleton<ConditionSystem>
@@ -30,7 +31,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                     case DynamicCondition.isHollow:
                         if (TestpermanentView != null)
                         {
-                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Hollow))
+                            var HollowKeyword = TestpermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
+                            if (HollowKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -41,7 +43,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         }
                         else if (TestenemySlotView != null)
                         {
-                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Hollow))
+                            var HollowKeyword = TestenemySlotView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
+                            if (HollowKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -61,7 +64,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                     case DynamicCondition.isDecay:
                         if (TestpermanentView != null)
                         {
-                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Decay))
+                            var decayKeyword = TestpermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Decay);
+                            if (decayKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -72,7 +76,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         }
                         else if (TestenemySlotView != null)
                         {
-                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Decay))
+                            var decayKeyword = TestenemySlotView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Decay);
+                            if (decayKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -91,7 +96,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                     case DynamicCondition.isInvoc:
                         if (TestpermanentView != null)
                         {
-                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Invoc))
+                            var InvocKeyword = TestpermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                            if (InvocKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -102,7 +108,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         }
                         else if (TestenemySlotView != null)
                         {
-                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Invoc))
+                            var InvocKeyword = TestenemySlotView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                            if (InvocKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -121,7 +128,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                     case DynamicCondition.isArtillery:
                         if (TestpermanentView != null)
                         {
-                            if (TestpermanentView.permaTypes.Contains(PermaTypes.Artillery))
+                            var ArtilleryKeyword = TestpermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Artillery);
+                            if (ArtilleryKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -132,7 +140,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         }
                         else if (TestenemySlotView != null)
                         {
-                            if (TestenemySlotView.permaTypes.Contains(PermaTypes.Artillery))
+                            var ArtilleryKeyword = TestpermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Artillery);
+                            if (ArtilleryKeyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -151,7 +160,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         bool trueConditionFound1 = false;
                         foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
                         {
-                            if (item.permaTypes.Contains(PermaTypes.Hollow))
+                            var HollowKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
+                            if (HollowKeyword != null)
                             {
                                 trueConditionFound1 = true;
                             }
@@ -169,9 +179,10 @@ public class ConditionSystem : Singleton<ConditionSystem>
 
                     case DynamicCondition.ifYouControlDecay:
                         bool trueConditionFound2 = false;
-                        foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
+                        foreach (PermanentView perm in CombatSystem.Instance.Player_Permanents)
                         {
-                            if (item.permaTypes.Contains(PermaTypes.Decay))
+                            var decayKeyword = TestenemySlotView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Decay);
+                            if (decayKeyword != null)
                             {
                                 trueConditionFound2 = true;
                             }
@@ -190,7 +201,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         bool trueConditionFound3 = false;
                         foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
                         {
-                            if (item.permaTypes.Contains(PermaTypes.Invoc))
+                            var InvocKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                            if (InvocKeyword != null)
                             {
                                 trueConditionFound3 = true;
                             }
@@ -209,7 +221,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         bool trueConditionFound4 = false;
                         foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
                         {
-                            if (item.permaTypes.Contains(PermaTypes.Artillery))
+                            var ArtilleryKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Artillery);
+                            if (ArtilleryKeyword != null)
                             {
                                 trueConditionFound4 = true;
                             }
@@ -227,7 +240,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                     case DynamicCondition.ifEventPermanentIsTypeOfTestType:
                         if (TriggerpermanentView != null)
                         {
-                            if (TriggerpermanentView.permaTypes.Contains(Condition.TestType))
+                            var Keyword = TriggerpermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == Condition.TestType);
+                            if (Keyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -238,7 +252,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         }
                         else if (TriggerenemySlotView != null)
                         {
-                            if (TriggerenemySlotView.permaTypes.Contains(Condition.TestType))
+                            var Keyword = TriggerenemySlotView.KeyWords.FirstOrDefault(k => k.keyWordType == Condition.TestType);
+                            if (Keyword != null)
                             {
                                 ConditionResult = true;
                             }
@@ -278,7 +293,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                     case DynamicCondition.ifEventPermanentIsVessel:
                         if (TriggerpermanentView != null)
                         {
-                            if (TriggerpermanentView.permaTypes.Contains(PermaTypes.Invoc))
+                            var InvocKeyword = TriggerpermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                            if (InvocKeyword != null)
                             {
                                 ConditionResult = false;
                             }
@@ -289,7 +305,8 @@ public class ConditionSystem : Singleton<ConditionSystem>
                         }
                         else if (TriggerenemySlotView != null)
                         {
-                            if (TriggerenemySlotView.permaTypes.Contains(PermaTypes.Invoc))
+                            var InvocKeyword = TriggerenemySlotView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                            if (InvocKeyword != null)
                             {
                                 ConditionResult = false;
                             }

@@ -414,6 +414,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 9b29e1b43d5587d46882d45d10b2a145, type: 2}
     - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: ActivateSound.Path
+      value: event:/UI/Click Sound
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: BuffLifeSound.Path
       value: event:/Place Holder/Place Holder Silence
       objectReference: {fileID: 0}
@@ -456,6 +460,38 @@ PrefabInstance:
     - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: TakeLifeLossSound.Path
       value: event:/Place Holder/Place Holder Silence
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: SelectedSound.Guid.Data4
+      value: -1918472180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: UnSelectedSound.Guid.Data4
+      value: -1918472180
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using DG.Tweening;
 using FMODUnity;
 using SerializeReferenceEditor;
 using UnityEngine;
@@ -32,12 +30,13 @@ public class DealDamageEffect : Effect
 
     public DealDamageEffect() { }
 
-    public DealDamageEffect(string effectID, bool activateToolTip, int priority, string description, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DealDamageEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, string description, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
         Description = description;
+        HollowEffect = hollowEffect;
         damageAmount = DamageAmount;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
@@ -74,7 +73,7 @@ public class DealDamageEffect : Effect
     public override string GetParsedDescription()
     {
         string desc = EffectDescription;
-
+        /*
         //@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate
 
         // ----- [1] Amount -----
@@ -178,7 +177,7 @@ public class DealDamageEffect : Effect
         desc = System.Text.RegularExpressions.Regex.Replace(desc, @"\s+", " ").Trim();
         if (desc.Length > 0)
             desc = char.ToUpper(desc[0]) + desc.Substring(1);
-
+        */
         return desc;
     }
 
@@ -236,7 +235,7 @@ public class DealDamageEffect : Effect
             }
             else
             {
-                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null,this);
+                var (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, null, this);
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
@@ -276,8 +275,7 @@ public class DealDamageEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
-
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner, this);
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
@@ -316,8 +314,7 @@ public class DealDamageEffect : Effect
                     }
                     else
                     {
-                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner,this);
-
+                        (playerTargets, enemyTargets) = TargetSystem.GetTargets(targetModeInfo, Actionner, this);
                         TargetForLinked_Player = playerTargets;
                         TargetForLinked_Enemy = enemyTargets;
                     }
@@ -354,6 +351,7 @@ public class DealDamageEffect : Effect
             EffectID,
             ActivateToolTip,
             Priority,
+            HollowEffect,
             Description,
             damageAmount,
             multiplyAmount,

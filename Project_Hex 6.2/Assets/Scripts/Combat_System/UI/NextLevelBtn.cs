@@ -7,9 +7,9 @@ public class NextLevelBtn : MonoBehaviour
 {
     public void onClick()
     {
-        DataBase.Instance.CurrentStage++;
+        DataBase.Instance.CurrentStage = CombatSystem.Instance.CurrentStage + 1;
         DataBase.Instance.CoreLife = CombatSystem.Instance.PlayerCore.currentLife;
-        if (DataBase.Instance.CurrentStage == 1 || DataBase.Instance.CurrentStage == 4)
+        if (DataBase.Instance.CurrentStage == 3 || DataBase.Instance.CurrentStage == 5)
         {
             SceneManager.LoadScene("ShopScene");
         }

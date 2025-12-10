@@ -15,19 +15,16 @@ MonoBehaviour:
   <Title>k__BackingField: Bramble Pike
   <Description>k__BackingField: 'A : deal 3 / SoT : +1pwr +1hp'
   <cost>k__BackingField: 1
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 0
+  KeyWords: []
   <life>k__BackingField: 2
-  <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 2
   <MaxDurability>k__BackingField: 2
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <permanentArea>k__BackingField: 1
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642561335328783
@@ -97,6 +94,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -180,6 +184,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
@@ -188,6 +206,8 @@ MonoBehaviour:
     - rid: 3469642561335328783
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0
@@ -228,7 +248,7 @@ MonoBehaviour:
           targetMode: 0
           PlayerOrEnemy: 0
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
@@ -236,6 +256,8 @@ MonoBehaviour:
     - rid: 3469642561335328784
       type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 03000000
         TypeOfCounter: 0
@@ -278,13 +300,15 @@ MonoBehaviour:
           targetMode: 1
           PlayerOrEnemy: 0
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []
     - rid: 3469642561335328785
       type: {class: GainHPEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 03000000
         TypeOfCounter: 0
@@ -327,7 +351,7 @@ MonoBehaviour:
           targetMode: 1
           PlayerOrEnemy: 0
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []

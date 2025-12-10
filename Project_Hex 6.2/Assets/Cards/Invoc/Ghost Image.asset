@@ -15,19 +15,17 @@ MonoBehaviour:
   <Title>k__BackingField: Ghost Image
   <Description>k__BackingField: A Deal 3
   <cost>k__BackingField: 0
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 20
+  KeyWords:
+  - rid: 655360801452064857
   <life>k__BackingField: 1
-  <DecayCounter>k__BackingField: 1
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <permanentArea>k__BackingField: 1
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 1
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 7119592267123523754
@@ -95,6 +93,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -178,14 +183,35 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 655360801452064857
+      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+      data:
+        keyWordType: 3
+        keyWordValue: 0
     - rid: 7119592267123523754
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0
@@ -226,7 +252,7 @@ MonoBehaviour:
           targetMode: 0
           PlayerOrEnemy: 0
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'

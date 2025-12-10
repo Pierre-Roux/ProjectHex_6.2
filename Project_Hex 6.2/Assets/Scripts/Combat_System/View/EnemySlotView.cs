@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using FMODUnity;
 using TMPro;
@@ -8,7 +9,7 @@ using UnityEngine;
 public class EnemySlotView : MonoBehaviour
 {
     [SerializeField] public List<Effect> PossibleIntent;
-    [HideInInspector] public EnemyPermanentData PermanentData;
+    [SerializeField] public EnemyPermanentData PermanentData;
     [SerializeField] public TMP_Text LifeText;
     [SerializeField] public TMP_Text IntentText;
     [SerializeField] public TMP_Text NameText;
@@ -19,6 +20,7 @@ public class EnemySlotView : MonoBehaviour
 
     [SerializeField] public EventReference DieSound;
     [SerializeField] public EventReference BeingDamageSound;
+    [SerializeField] public EventReference CollateralSound;
     [SerializeField] public EventReference BeingHealSound;
     [SerializeField] public EventReference BeingShieldSound;
     [SerializeField] public EventReference LoseShieldSound;
@@ -36,9 +38,9 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public int baseLife { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public bool IsCore { get; set; }
+    [HideInInspector] public bool IsDisabled = false;
     [HideInInspector] public bool IsDead = false;
     [HideInInspector] public Vector3 InitialPosition { get; set; }
-    [HideInInspector] public int DecayCounter { get; set; }
     [HideInInspector] public int BonusPower { get; set; }
     [HideInInspector] public int BonusLife { get; set; }
     [HideInInspector] public int CurrentHPBonus { get; set; }
@@ -57,11 +59,12 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public bool LoopingSequence;
     [HideInInspector] public int sequenceIndex = 0;
 
-    [HideInInspector] public List<PermaTypes> permaTypes = new List<PermaTypes>();
     [HideInInspector] public List<GameAction> AffectedGA = new List<GameAction>();
+    [HideInInspector] public List<KeyWord> KeyWords = new List<KeyWord>();
     [HideInInspector] public CounterManager InternCounters = new();
     public void setup()
     {
+        KeyWords = new List<KeyWord>(PermanentData.KeyWords);
         InternCounters.ClearAll();
         PossibleIntent = PermanentData.PossibleIntent;
         spriteRenderer.sprite = PermanentData.PermanentImage;
@@ -70,18 +73,23 @@ public class EnemySlotView : MonoBehaviour
         currentLife = MaxLife;
         UpdateLife();
         IsCore = PermanentData.IsCore;
-        UnShieldable = PermanentData.UnShieldable;
         ShieldVisual.SetActive(false);
-        UnTargetable = PermanentData.UnTargetable;
         RDMSequence = PermanentData.RDMSequence;
         IntentSequence = PermanentData.IntentSequence;
         LoopingSequence = PermanentData.LoopingSequence;
-        DecayCounter = PermanentData.DecayCounter;
         UpdateNameText(PermanentData.Title);
         deactivateAuraVisual();
 
-        if (PermanentData.IsInvoc) permaTypes.Add(PermaTypes.Invoc);
-        if (PermanentData.DecayCounter > 0) permaTypes.Add(PermaTypes.Decay);
+        var UnShieldableKeyword = KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable);
+        if (UnShieldableKeyword != null)
+        {
+            UnShieldable = true;
+        }
+        var UnTargetableKeyword = KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
+        if (UnTargetableKeyword != null)
+        {
+            UnTargetable = true;
+        }
 
         if (IsCore)
         {
@@ -95,6 +103,7 @@ public class EnemySlotView : MonoBehaviour
         //Audio
         if (AudioManager.Instance.IsValid(PermanentData.DieSound)) DieSound = PermanentData.DieSound;
         if (AudioManager.Instance.IsValid(PermanentData.BeingDamageSound)) BeingDamageSound = PermanentData.BeingDamageSound;
+        if (AudioManager.Instance.IsValid(PermanentData.CollateralSound)) CollateralSound = PermanentData.CollateralSound;
         if (AudioManager.Instance.IsValid(PermanentData.BeingHealSound)) BeingHealSound = PermanentData.BeingHealSound;
         if (AudioManager.Instance.IsValid(PermanentData.BeingShieldSound)) BeingShieldSound = PermanentData.BeingShieldSound;
         if (AudioManager.Instance.IsValid(PermanentData.LoseShieldSound)) LoseShieldSound = PermanentData.LoseShieldSound;
@@ -229,9 +238,9 @@ public class EnemySlotView : MonoBehaviour
     {
         int passiveBonus = 0;
 
-        foreach (var type in permaTypes)
+        foreach (var keyword in KeyWords)
         {
-            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(type, out var powerGroup))
+            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(keyword.keyWordType, out var powerGroup))
             {
                 passiveBonus += powerGroup.Enemy + powerGroup.Global;
             }
@@ -240,8 +249,8 @@ public class EnemySlotView : MonoBehaviour
         int finalDMG = BaseAmount
                     + BonusPower
                     + passiveBonus
-                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.Enemy)
-                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.Enemy)
+                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
 
         return Mathf.Max(finalDMG, 0);
     }
@@ -250,9 +259,9 @@ public class EnemySlotView : MonoBehaviour
     {
         int passiveBonus = 0;
 
-        foreach (var type in permaTypes)
+        foreach (var keyword in KeyWords)
         {
-            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(type, out var powerGroup))
+            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(keyword.keyWordType, out var powerGroup))
             {
                 passiveBonus += powerGroup.Enemy + powerGroup.Global;
             }
@@ -260,8 +269,8 @@ public class EnemySlotView : MonoBehaviour
 
         int finalDMG = BonusPower 
                     + passiveBonus 
-                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.Enemy)
-                    + CombatSystem.Instance.GetPower(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.Enemy)
+                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
 
         return finalDMG;
     }
@@ -270,17 +279,17 @@ public class EnemySlotView : MonoBehaviour
     {
         int passiveBonus = 0;
 
-        foreach (var type in permaTypes)
+        foreach (var keyword in KeyWords)
         {
-            passiveBonus += CombatSystem.Instance.GetHP(type, Enemy_Player_ENUM.Enemy);
-            passiveBonus += CombatSystem.Instance.GetHP(type, Enemy_Player_ENUM.NULL);
+            passiveBonus += CombatSystem.Instance.GetHP(keyword.keyWordType, Enemy_Player_ENUM.Enemy);
+            passiveBonus += CombatSystem.Instance.GetHP(keyword.keyWordType, Enemy_Player_ENUM.NULL);
         }
 
         int finalHP = BonusLife
                     + BonusPower
                     + passiveBonus
-                    + CombatSystem.Instance.GetHP(PermaTypes.NULL, Enemy_Player_ENUM.Enemy)
-                    + CombatSystem.Instance.GetHP(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+                    + CombatSystem.Instance.GetHP(KeyWordType.NULL, Enemy_Player_ENUM.Enemy)
+                    + CombatSystem.Instance.GetHP(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
 
         return finalHP;
     }
@@ -349,23 +358,46 @@ public class EnemySlotView : MonoBehaviour
     public void TakeDamage(int Amount, Card CardActionner = null, GameObject Actionner = null)
     {
         if (Amount <= 0) return;
+
+        PermanentView Pstriker = null;
+        EnemySlotView Estriker = null;
+        Card Cstriker = null;
+
+        if (Actionner != null)
+        {
+            if (Actionner.GetComponent<PermanentView>() != null)
+            {
+                Pstriker = Actionner.GetComponent<PermanentView>();
+            }
+            else if (Actionner.GetComponent<EnemySlotView>() != null)
+            {
+                Estriker = Actionner.GetComponent<EnemySlotView>();
+            }
+        }
+        else if (CardActionner != null)
+        {
+            Cstriker = CardActionner;
+        }
+
         if (!IsDead)
         {
             TriggerEventGA triggerEventGA;
             if (IsCore)
             {
-                if (Actionner != null)
+                if (Pstriker != null)
                 {
-                    if (Actionner.GetComponent<PermanentView>() != null)
-                    {
-                        triggerEventGA = new(Events.WhenECoreDamaged,null,Actionner.GetComponent<PermanentView>(),null);
-                        ActionSystem.Instance.AddReaction(triggerEventGA);
-                    }
-                    else if (Actionner.GetComponent<EnemySlotView>() != null)
-                    {
-                        triggerEventGA = new(Events.WhenECoreDamaged,null,null,Actionner.GetComponent<EnemySlotView>());
-                        ActionSystem.Instance.AddReaction(triggerEventGA);                    
-                    }                    
+                    triggerEventGA = new(Events.WhenECoreDamaged, null, Pstriker, null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                }
+                else if (Estriker != null)
+                {
+                    triggerEventGA = new(Events.WhenECoreDamaged, null, null, Estriker);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
+                }
+                else if (Cstriker != null)
+                {
+                    triggerEventGA = new(Events.WhenECoreDamaged, Cstriker, null, null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
                 }
             }
             transform.DOShakePosition(0.2f, 0.5f);
@@ -383,7 +415,35 @@ public class EnemySlotView : MonoBehaviour
                 RuntimeManager.PlayOneShot(BeingDamageSound);
                 DieEnemySlotGA dieEnemySlotGA = new(this);
                 ActionSystem.Instance.AddReaction(dieEnemySlotGA);
-                OnKillTrigger(CardActionner, Actionner);
+
+                if (Pstriker != null)
+                {
+                    if (Pstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral))
+                    {
+                        CollateralTrigger(-currentLife, Pstriker, Estriker, Cstriker);
+                        currentLife = 0;
+                    }
+                    OnKillTrigger(Pstriker, Estriker, Cstriker);
+                }
+                else if (Estriker != null)
+                {
+                    if (Estriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral))
+                    {
+                        CollateralTrigger(-currentLife, Pstriker, Estriker, Cstriker);
+                        currentLife = 0;
+                    }
+                    OnKillTrigger(Pstriker, Estriker, Cstriker);
+                }
+                else if (Cstriker != null)
+                {
+                    if (Cstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral))
+                    {
+                        CollateralTrigger(-currentLife, Pstriker, Estriker, Cstriker);
+                        currentLife = 0;
+                    }
+                        
+                    OnKillTrigger(Pstriker, Estriker, Cstriker);
+                }
                 IsDead = true;
             }
         }
@@ -395,25 +455,58 @@ public class EnemySlotView : MonoBehaviour
         UpdateLifeText();
     }
 
-    public void OnKillTrigger(Card CardActionner, GameObject Actionner)
+    public void OnKillTrigger(PermanentView Pstriker, EnemySlotView Estriker, Card Cstriker)
     {
-        if (Actionner != null)
+        if (Pstriker != null)
         {
-            if (Actionner.GetComponent<PermanentView>() != null)
-            {
-                TriggerEventGA triggerEventGA = new(Events.OnKill, null, Actionner.GetComponent<PermanentView>(), null);
-                ActionSystem.Instance.AddReaction(triggerEventGA);
-            }
-            else if (Actionner.GetComponent<EnemySlotView>())
-            {
-                TriggerEventGA triggerEventGA = new(Events.OnKill, null, null, Actionner.GetComponent<EnemySlotView>());
-                ActionSystem.Instance.AddReaction(triggerEventGA);
-            }
-        }
-        else if (CardActionner != null)
-        {
-            TriggerEventGA triggerEventGA = new(Events.OnKill, CardActionner, null, null);
+            TriggerEventGA triggerEventGA = new(Events.OnKill, null, Pstriker, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+        else if (Estriker != null)
+        {
+            TriggerEventGA triggerEventGA = new(Events.OnKill, null, null, Estriker);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+        else if (Cstriker != null)
+        {
+            TriggerEventGA triggerEventGA = new(Events.OnKill, Cstriker, null, null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+    }
+
+    public void CollateralTrigger(int CollateralAmount, PermanentView Pstriker, EnemySlotView Estriker, Card Cstriker)
+    {
+        if (CollateralAmount == 0) return;
+        if (IsCore) return;
+        if (Pstriker != null)
+        {
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
+            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, null, targets_Enemy);
+            dealDamageGA.Actionner = Pstriker.gameObject;
+            dealDamageGA.SourceEffect = null;
+            dealDamageGA.ActivateToolTip = false;
+            dealDamageGA.SFX = !AudioManager.Instance.IsValid(CollateralSound) ? AudioManager.Instance.CollateralSound : CollateralSound;
+            ActionSystem.Instance.AddReaction(dealDamageGA);
+        }
+        else if (Estriker != null)
+        {
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
+            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, null, targets_Enemy);
+            dealDamageGA.Actionner = Estriker.gameObject;
+            dealDamageGA.SourceEffect = null;
+            dealDamageGA.ActivateToolTip = false;
+            dealDamageGA.SFX = !AudioManager.Instance.IsValid(CollateralSound) ? AudioManager.Instance.CollateralSound : CollateralSound;
+            ActionSystem.Instance.AddReaction(dealDamageGA);
+        }
+        else if (Cstriker != null)
+        {
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
+            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, null, targets_Enemy);
+            dealDamageGA.CardActionner = Cstriker;
+            dealDamageGA.SourceEffect = null;
+            dealDamageGA.ActivateToolTip = false;
+            dealDamageGA.SFX = !AudioManager.Instance.IsValid(CollateralSound) ? AudioManager.Instance.CollateralSound : CollateralSound;
+            ActionSystem.Instance.AddReaction(dealDamageGA);
         }
     }
 
@@ -445,6 +538,7 @@ public class EnemySlotView : MonoBehaviour
 
             if (enemyShielder != null)
             {
+                RuntimeManager.PlayOneShot(BeingShieldSound);
                 if (!EnemyShielder.Contains(enemyShielder))
                 {
                     EnemyShielder.Add(enemyShielder);

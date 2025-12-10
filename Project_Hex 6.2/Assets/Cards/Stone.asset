@@ -14,20 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Stone
   <Description>k__BackingField: 'A : Gain 1 favor'
+  <Rarity>k__BackingField: 2
   <cost>k__BackingField: 1
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: efb1c7e40235c2a42b0198bdbc4f93cc, type: 3}
   <Money_Cost>k__BackingField: 0
+  KeyWords: []
   <life>k__BackingField: 2
-  <DecayCounter>k__BackingField: 0
   <Durability>k__BackingField: 2
   <MaxDurability>k__BackingField: 2
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: efb1c7e40235c2a42b0198bdbc4f93cc, type: 3}
   <permanentArea>k__BackingField: 3
-  UnShieldable: 0
-  UnTargetable: 0
-  isInvoc: 0
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642561335328778
@@ -95,6 +93,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -178,6 +183,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
@@ -186,6 +205,8 @@ MonoBehaviour:
     - rid: 3469642561335328778
       type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0

@@ -15,19 +15,19 @@ MonoBehaviour:
   <Title>k__BackingField: Spectral Wall
   <Description>k__BackingField: ETB scry 1 | Shieldcore | Decay 2
   <cost>k__BackingField: 0
+  <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <Money_Cost>k__BackingField: 0
+  KeyWords:
+  - rid: 655360801452064863
+  - rid: 655360801452064864
+  - rid: 655360801452064865
   <life>k__BackingField: 4
-  <DecayCounter>k__BackingField: 2
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <permanentArea>k__BackingField: 2
-  UnShieldable: 1
-  UnTargetable: 0
-  isInvoc: 1
-  isArtillery: 0
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3469642561335328804
@@ -96,6 +96,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -179,14 +186,45 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  CardSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CardUnSelectedSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 655360801452064863
+      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+      data:
+        keyWordType: 3
+        keyWordValue: 0
+    - rid: 655360801452064864
+      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+      data:
+        keyWordType: 6
+        keyWordValue: 0
+    - rid: 655360801452064865
+      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+      data:
+        keyWordType: 2
+        keyWordValue: 2
     - rid: 3469642561335328804
       type: {class: ScryEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0
@@ -226,6 +264,8 @@ MonoBehaviour:
     - rid: 3469642561335328805
       type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 00000000
         TypeOfCounter: 0
@@ -263,7 +303,7 @@ MonoBehaviour:
           targetMode: 2
           PlayerOrEnemy: 1
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 0
         targetNumber: 0
         targetLimitations: []

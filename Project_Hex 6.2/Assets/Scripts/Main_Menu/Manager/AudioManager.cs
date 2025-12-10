@@ -19,6 +19,7 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField] public EventReference PlaySpellSound;
     [SerializeField] public EventReference SummonPPermanentSound;
     [SerializeField] public EventReference SummonEPermanentSound;
+    [SerializeField] public EventReference CollateralSound;
     [SerializeField] public EventReference DieSound;
     [SerializeField] public EventReference HollowDieSound;
     [SerializeField] public EventReference DiscardCardSound;
@@ -45,6 +46,10 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField] public EventReference Effect_AlterPowerSound;
     [SerializeField] public EventReference Effect_AlterDurabilitySound;
     [SerializeField] public EventReference Effect_AlterIntegritySound;
+    [SerializeField] public EventReference Effect_AlterPowerGridSound;
+    [SerializeField] public EventReference Effect_AddACopySound;
+    [SerializeField] public EventReference Effect_DisableSound;
+    [SerializeField] public EventReference Effect_EnableSound;
 
     void Start()
     {

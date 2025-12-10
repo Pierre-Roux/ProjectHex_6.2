@@ -10,7 +10,7 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
     [SerializeField] public ZoneView ShieldZone;
     [SerializeField] public ZoneView SupportZone;
 
-    public PermanentView CreatePermanentViewCreator(Card cardReference, PermanentArea type)
+    public PermanentView CreatePermanentViewCreator(Card cardReference, PermanentArea type, bool setup = false)
     {
         GameObject Parent = null;
         switch (type)
@@ -37,13 +37,16 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
             return null;
         }
         
-        if (!AudioManager.Instance.IsValid(cardReference.SummonPPermanentSound))
+        if (!setup)
         {
-            RuntimeManager.PlayOneShot(AudioManager.Instance.SummonPPermanentSound);
-        }
-        else
-        {
-            RuntimeManager.PlayOneShot(cardReference.SummonPPermanentSound);
+            if (!AudioManager.Instance.IsValid(cardReference.SummonPPermanentSound))
+            {
+                RuntimeManager.PlayOneShot(AudioManager.Instance.SummonPPermanentSound);
+            }
+            else
+            {
+                RuntimeManager.PlayOneShot(cardReference.SummonPPermanentSound);
+            }
         }
 
         PermanentView PermanentView = Instantiate(PermanentViewPrefab, Vector3.zero, Quaternion.identity, Parent.transform);
@@ -53,6 +56,8 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
         PermanentView.Setup(cardReference);
 
         CombatSystem.Instance.Player_Permanents.Add(PermanentView);
+        CombatSystem.Instance.CurrentPowerGrid += cardReference.GridCost;
+        CombatSystem.Instance.UpdatePowerGridText();
 
         WeaponZone.RepositionChildrenPermanentView();
         ShieldZone.RepositionChildrenPermanentView();

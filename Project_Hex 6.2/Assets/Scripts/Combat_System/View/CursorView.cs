@@ -12,9 +12,13 @@ public class CursorView : MonoBehaviour
 
     public void Update()
     {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPos.z = -1;
-        Vector3 endPos = mouseWorldPos;
-        CursorGameObject.transform.position = endPos;
+        Plane plane = new Plane(Vector3.forward, Vector3.zero); // plan Z=0
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (plane.Raycast(ray, out float distance))
+        {
+            Vector3 worldPos = ray.GetPoint(distance);
+            CursorGameObject.transform.position = worldPos;
+        }
     }
 }

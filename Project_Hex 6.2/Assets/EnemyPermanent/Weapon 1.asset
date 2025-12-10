@@ -16,16 +16,14 @@ MonoBehaviour:
   PermanentImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
   PermanentLife: 4
   IsCore: 0
-  IsInvoc: 0
-  UnShieldable: 0
-  UnTargetable: 0
   permanentArea: 1
-  DecayCounter: 0
+  KeyWords: []
   <PossibleIntent>k__BackingField:
   - rid: 1273757063170490374
-  RDMSequence: 1
-  <IntentSequence>k__BackingField: []
-  LoopingSequence: 0
+  RDMSequence: 0
+  <IntentSequence>k__BackingField:
+  - A
+  LoopingSequence: 1
   SummonEPermanentSound:
     Guid:
       Data1: 0
@@ -41,6 +39,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -132,6 +137,8 @@ MonoBehaviour:
     - rid: 1273757063170490374
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 1
         Events: 01000000
         TypeOfCounter: 0
@@ -172,7 +179,7 @@ MonoBehaviour:
           targetMode: 4
           PlayerOrEnemy: 1
           permanentArea: 0
-          PermaType: 0
+          keyWordType: 0
         TargetUpTo: 0
         targetNumber: 0
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'

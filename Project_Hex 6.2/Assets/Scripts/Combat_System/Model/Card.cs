@@ -11,22 +11,21 @@ public class Card
     public string Description => data.Description;
     public Sprite Image => data.Image;
     public PermanentArea permanentArea => data.permanentArea;
-    public bool UnShieldable => data.UnShieldable;
-    public bool UnTargetable => data.UnTargetable;
-    
 
+    public int Rarity { get; private set; }
     public bool IsSpell { get; private set; }
     public int InitialCost { get; private set; }
     public int cost { get; private set; }
+    public int GridCost { get; private set; }
     public int BonusCost { get; set; }
     public bool PayX { get; private set; }
     public int PayXValue;
     public int life { get; private set; }
     public int Shield { get; private set; }
     public int Durability { get; set; }
-    public int DecayCounter { get; set; }
     public int MaxDurability { get; set; }
     public int Money_Cost { get; set; }
+    public List<KeyWord> KeyWords = new List<KeyWord>();
     public bool isInvoc;
     public CardView RefCardView = null;
 
@@ -39,6 +38,7 @@ public class Card
     public EventReference PlaySpellSound;
     public EventReference SummonPPermanentSound;
     public EventReference BeingDamageSound;
+    public EventReference CollateralSound;
     public EventReference DieSound;
     public EventReference HollowDieSound;
     public EventReference BeingHealSound;
@@ -52,6 +52,8 @@ public class Card
     public EventReference ActivateSound;
     public EventReference SelectedSound;
     public EventReference UnSelectedSound;
+    public EventReference CardSelectedSound;
+    public EventReference CardUnSelectedSound;
 
     public List<Effect> Effects => data.Effects;
     [HideInInspector] public CounterManager InternCounters = new();
@@ -59,22 +61,34 @@ public class Card
 
     public Card(CardData cardData)
     {
-        InternCounters.ClearAll();
         data = cardData;
+        InternCounters.ClearAll();
+        KeyWords = new List<KeyWord>(data.KeyWords);
         Title = cardData.Title;
+        Rarity = cardData.Rarity;
         InitialCost = cardData.cost;
         cost = InitialCost + CalculatePassiveCost();
+        GridCost = cardData.GridCost;
         BonusCost = 0;
         PayX = cardData.PayX;
         IsSpell = cardData.IsSpell;
         Money_Cost = data.Money_Cost;
-        isInvoc = data.isInvoc;
         if (!cardData.IsSpell)
         {
             life = cardData.life;
             Durability = cardData.Durability;
-            DecayCounter = cardData.DecayCounter;
             MaxDurability = cardData.MaxDurability;
+        }
+
+        if (IsSpell)
+        {
+            KeyWord keyWord = new(KeyWordType.SpellCard, 0);
+            KeyWords.Add(keyWord);
+        }
+        else
+        {
+            KeyWord keyWord = new(KeyWordType.PermaCard, 0);
+            KeyWords.Add(keyWord);
         }
 
         if (AudioManager.Instance.IsValid(cardData.PlayCardSound)) PlayCardSound = cardData.PlayCardSound;
@@ -85,6 +99,7 @@ public class Card
         if (AudioManager.Instance.IsValid(cardData.PlaySpellSound)) PlaySpellSound = cardData.PlaySpellSound;
         if (AudioManager.Instance.IsValid(cardData.SummonPPermanentSound)) SummonPPermanentSound = cardData.SummonPPermanentSound;
         if (AudioManager.Instance.IsValid(cardData.BeingDamageSound)) BeingDamageSound = cardData.BeingDamageSound;
+        if (AudioManager.Instance.IsValid(cardData.CollateralSound)) CollateralSound = cardData.CollateralSound;
 
         if (AudioManager.Instance.IsValid(cardData.DieSound)) DieSound = cardData.DieSound;
         if (AudioManager.Instance.IsValid(cardData.HollowDieSound)) HollowDieSound = cardData.HollowDieSound;
@@ -99,6 +114,8 @@ public class Card
         if (AudioManager.Instance.IsValid(cardData.ActivateSound)) ActivateSound = cardData.ActivateSound;
         if (AudioManager.Instance.IsValid(cardData.SelectedSound)) SelectedSound = cardData.SelectedSound;
         if (AudioManager.Instance.IsValid(cardData.UnSelectedSound)) UnSelectedSound = cardData.UnSelectedSound;
+        if (AudioManager.Instance.IsValid(cardData.CardSelectedSound)) CardSelectedSound = cardData.CardSelectedSound;
+        if (AudioManager.Instance.IsValid(cardData.CardUnSelectedSound)) CardUnSelectedSound = cardData.CardUnSelectedSound;
     }
 
     public void TakeAlterCardCost(int Amount)
@@ -115,23 +132,13 @@ public class Card
         if (CombatSystem.Instance != null)
         {
             int passiveBonus = 0;
-            List<PermaTypes> listType = new();
-            if (IsSpell)
+            foreach (var keyWord in KeyWords)
             {
-                listType.Add(PermaTypes.Spell_Card);
-            }
-            else
-            {
-                listType.Add(PermaTypes.Perma_Card);
-            }
-
-            foreach (var type in listType)
-            {
-                passiveBonus += CombatSystem.Instance.GetCost(type, Enemy_Player_ENUM.NULL);
+                passiveBonus += CombatSystem.Instance.GetCost(keyWord.keyWordType, Enemy_Player_ENUM.NULL);
             }
 
             // Bonus globaux (NULL)
-            passiveBonus += CombatSystem.Instance.GetCost(PermaTypes.NULL, Enemy_Player_ENUM.NULL);
+            passiveBonus += CombatSystem.Instance.GetCost(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
 
             return passiveBonus;
         }

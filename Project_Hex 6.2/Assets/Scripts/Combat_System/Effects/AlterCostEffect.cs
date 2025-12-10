@@ -29,9 +29,10 @@ public class AlterCostEffect : Effect
 
     public AlterCostEffect() { }
 
-    public AlterCostEffect(string effectID, bool activateToolTip, int priority, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, bool includeCardsInDeck, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool triggerOnDurationEnd, Effect linkedEffect, List<Card> targetForLinked_Card, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterCostEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, bool includeCardsInDeck, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool triggerOnDurationEnd, Effect linkedEffect, List<Card> targetForLinked_Card, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         Priority = priority;
         EffectID = effectID;
@@ -69,7 +70,7 @@ public class AlterCostEffect : Effect
         ModuloValue = moduloValue;
     }
     
-   public override GameAction GetGameAction()
+    public override GameAction GetGameAction()
     {
         if (!BypassEntryCondition)
         {
@@ -231,6 +232,7 @@ public class AlterCostEffect : Effect
             EffectID,
             ActivateToolTip,
             Priority,
+            HollowEffect,
             alterAmount,
             multiplyAmount,
             PayXEffect,

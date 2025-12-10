@@ -38,7 +38,37 @@ public class PermanentSystem : Singleton<PermanentSystem>
             RuntimeManager.PlayOneShot(cardToSummon.PlayCardSound);
         }
 
-        PermanentViewCreator.Instance.CreatePermanentViewCreator(cardToSummon, cardToSummon.permanentArea);
+        List<CopyVarGroup> copyVarGroup = CombatSystem.Instance.GetCopyValues(CopyTokenType.Permanent, Enemy_Player_ENUM.Player);
+        List<CopyVarGroup> copyVarGroupUsed = new();
+        int nbCopie = 1;
+        if (copyVarGroup != null)
+        {
+            foreach (CopyVarGroup SubVarGroup in copyVarGroup)
+            {
+                if (SubVarGroup.Conditions.Count == 0)
+                {
+                    nbCopie += SubVarGroup.value;
+                    copyVarGroupUsed.Add(SubVarGroup);
+                }
+                else
+                {
+                    if (ConditionSystem.Instance.TestCondition(SubVarGroup.Conditions, cardToSummon,null,null,cardToSummon))
+                    {
+                        nbCopie += SubVarGroup.value;
+                        copyVarGroupUsed.Add(SubVarGroup);
+                    }                      
+                }
+            }
+        }
+        for (int i = 0; i < nbCopie; i++)
+        {
+            PermanentViewCreator.Instance.CreatePermanentViewCreator(cardToSummon, cardToSummon.permanentArea);
+        }
+    
+        foreach (CopyVarGroup varGroup in copyVarGroupUsed)
+        {
+            CombatSystem.Instance.RemoveCopyGroup(CopyTokenType.Permanent, Enemy_Player_ENUM.Player, varGroup);
+        }
 
         yield return cardSystem.DestroyCard(cardView);
 

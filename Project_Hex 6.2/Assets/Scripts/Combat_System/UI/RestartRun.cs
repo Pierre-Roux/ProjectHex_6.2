@@ -7,7 +7,7 @@ public class RestartRun : MonoBehaviour
 {
     public void OnClick()
     {
-        DataBase.Instance.CurrentStage = 0;
+        DataBase.Instance.CurrentStage = 1;
         DataBase.Instance.CoreLife = DataBase.Instance.BaseCoreLife;
         DataBase.Instance.Money = 0;
         DataBase.Instance.DeckList = DataBase.Instance.INITIALDeckList;

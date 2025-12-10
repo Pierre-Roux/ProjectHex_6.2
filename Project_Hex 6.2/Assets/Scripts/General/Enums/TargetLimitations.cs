@@ -32,16 +32,16 @@ public enum TargetLimitations
 public class TargetLimitationInfo
 {
     public TargetLimitations targetLimitations;
-    public PermaTypes PermaType;
+    public KeyWordType keyWordType;
     public int IntValue = -1;
     public bool MandatoryLimitation;
 
     public TargetLimitationInfo(){}
 
-    public TargetLimitationInfo(int intValue, PermaTypes permaType, TargetLimitations TargetLimitations, bool mandatoryLimitation = true)
+    public TargetLimitationInfo(int intValue, KeyWordType KeyWordType, TargetLimitations TargetLimitations, bool mandatoryLimitation = true)
     {
         IntValue = intValue;
-        PermaType = permaType;
+        keyWordType = KeyWordType;
         targetLimitations = TargetLimitations;
         MandatoryLimitation = mandatoryLimitation;
     }

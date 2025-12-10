@@ -15,6 +15,7 @@ MonoBehaviour:
   <Title>k__BackingField: Fusion Core
   <Description>k__BackingField: 'A: Gain 2* OR Deal 6 DMG'
   <cost>k__BackingField: 3
+  <GridCost>k__BackingField: 2
   <PayX>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
   <Money_Cost>k__BackingField: 20
@@ -187,6 +188,8 @@ MonoBehaviour:
     - rid: 7119592267123523725
       type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0
@@ -226,6 +229,8 @@ MonoBehaviour:
     - rid: 7119592267123523726
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 0
         Events: 09000000
         TypeOfCounter: 0

@@ -609,20 +609,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   PermanentSpriteRenderer: {fileID: 3588991809432581948}
-  SelectedSound:
+  CardSelectedSound:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  UnSelectedSound:
+      Data1: 905812866
+      Data2: 1213785481
+      Data3: -1396295283
+      Data4: 717533454
+    Path: event:/UI/Selection
+  CardUnSelectedSound:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: -1261828738
+      Data2: 1246447463
+      Data3: -960289106
+      Data4: -1360623957
+    Path: event:/UI/Unselection
   IsReward: 0
   RewardTaken: 0
   shopSlot: {fileID: 0}

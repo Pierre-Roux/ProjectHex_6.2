@@ -20,7 +20,9 @@ public class TargetSystem : Singleton<TargetSystem>
     private int InitTargetingNumber;
     private bool TargetingUpTo;
     private bool TargetExhaust;
+    private bool WaitingValidation;
     private int TargetingNumber;
+    private int MaxTargeting;
     private List<TargetLimitationInfo> CurrentLimitations;
     private List<EnemySlotView> ETargets_ForAura = new();
     private List<PermanentView> PTargets_ForAura = new();
@@ -49,6 +51,7 @@ public class TargetSystem : Singleton<TargetSystem>
         ActivateAuraForTargets(startManualTargetingGA.TargetLimitations);
 
         TargetingNumber = InitTargetingNumber = startManualTargetingGA.TargetNumber;
+        MaxTargeting = TargetingNumber;
         TargetingUpTo = startManualTargetingGA.TargetUpTo;
         if (startManualTargetingGA.TargetLimitations != null)
         {
@@ -96,8 +99,9 @@ public class TargetSystem : Singleton<TargetSystem>
     public IEnumerator GetCardTargetsPerformer(StartCardTargetingGA startCardTargetingGA)
     {
         TargetExhaust = false;
-        List<CardView> cardViewTargets = new();
+        List<CardView> cardViewTargets;
         TargetingNumber = InitTargetingNumber = startCardTargetingGA.TargetNumber;
+        MaxTargeting = TargetingNumber;
         TargetingUpTo = startCardTargetingGA.TargetUpTo;
         CombatSystem.Instance.Interactable = false;
 
@@ -164,6 +168,19 @@ public class TargetSystem : Singleton<TargetSystem>
         ActionSystem.Instance.AddReaction(startCardTargetingGA.ActionToRealiseAfterTargetting);
     }
 
+    public void SetPromptValidation(int TargetLeft)
+    {
+        TopPrompt.gameObject.SetActive(true);
+        if (TargetLeft == 1)
+        {
+            TopPrompt.text = "Are you sure ?  " + TargetLeft + " Target left";
+        }
+        else
+        {
+            TopPrompt.text = "Are you sure ?  " + TargetLeft + " Targets left";
+        }
+    }
+    
     public void SetPrompt(int TargetNumber, bool TargetUpTo, string NatureOfTarget)
     {
         TopPrompt.gameObject.SetActive(true);
@@ -175,7 +192,7 @@ public class TargetSystem : Singleton<TargetSystem>
         {
             TopPrompt.text = "Select " + (TargetUpTo ? "Up To " : "") + TargetNumber + " " + NatureOfTarget + "s";
         }
-        
+
     }
 
     public void ResetPrompt()
@@ -244,7 +261,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             playerTargets.Add(perm);
                         }
                         break;
@@ -254,7 +275,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             enemyTargets.Add(perm);
                         }
                         break;
@@ -264,14 +289,22 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             playerTargets.Add(perm);
                         }
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             enemyTargets.Add(perm);
                         }
                         break;
@@ -298,7 +331,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             targetablePlayers.Add(perm);
                         }
                         if (targetablePlayers.Count > 0)
@@ -330,7 +367,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             targetableEnemies.Add(perm);
                         }
                         if (targetableEnemies.Count > 0)
@@ -362,14 +403,22 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             targetablePlayers.Add(perm);
                         }
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             targetableEnemies.Add(perm);
                         }
 
@@ -482,7 +531,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers.Add(perm);
                         }
                         maxTotal = highestTargetsP.Max(p => p.currentLife);
@@ -499,7 +552,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidEnemies.Add(perm);
                         }
                         maxTotal = highestTargetsE.Max(p => p.currentLife);
@@ -520,7 +577,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers.Add(perm);
                         }
                         maxTotal = highestTargetsP.Max(p => p.currentLife);
@@ -535,7 +596,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidEnemies.Add(perm);
                         }
                         maxTotal = highestTargetsE.Max(p => p.currentLife);
@@ -592,7 +657,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers2.Add(perm);
                         }
                         minTotal = LowestTargetsP.Min(p => p.currentLife);
@@ -609,7 +678,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidEnemies2.Add(perm);
                         }
                         minTotal = LowestTargetsE.Min(p => p.currentLife);
@@ -630,7 +703,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers2.Add(perm);
                         }
                         minTotal = LowestTargetsP.Min(p => p.currentLife);
@@ -645,7 +722,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidEnemies2.Add(perm);
                         }
                         minTotal = LowestTargetsE.Min(p => p.currentLife);
@@ -699,7 +780,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers3.Add(perm);
                         }
                         maxCostTotal = highestcostTargetsP.Max(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -716,7 +801,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers3.Add(perm);
                         }
                         maxCostTotal = highestcostTargetsP.Max(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -749,7 +838,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers4.Add(perm);
                         }
                         minCostTotal = lowestcostTargetsP.Min(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -766,7 +859,11 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
-                            if (TargetModeInfo.PermaType != PermaTypes.NULL) if (!perm.permaTypes.Contains(TargetModeInfo.PermaType)) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
                             ValidPlayers4.Add(perm);
                         }
                         minCostTotal = lowestcostTargetsP.Min(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
@@ -848,37 +945,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var card in cardsList)
                         {
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
-                            switch (TargetModeInfo.PermaType)
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
-                                case PermaTypes.Hollow:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.Durability == 0)
-                                    cardsTargets.Add(card);
-                                    break;
-                                case PermaTypes.Decay:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.DecayCounter > 0)
-                                    cardsTargets.Add(card);
-                                    break;
-                                case PermaTypes.Invoc:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isInvoc)
-                                    cardsTargets.Add(card);
-                                    break;
-                                case PermaTypes.Artillery:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isArtillery)
-                                    cardsTargets.Add(card);
-                                    break;
-                                case PermaTypes.Spell_Card:
-                                    if(card.IsSpell) cardsTargets.Add(card);
-                                    break;
-                                case PermaTypes.Perma_Card:
-                                    if(!card.IsSpell) cardsTargets.Add(card);
-                                    break;
-                                case PermaTypes.NULL:
-                                    cardsTargets.Add(card);
-                                    break;                                    
+                                var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            else
+                            {
+                                cardsTargets.Add(card);
                             }
                         }
                         break;
@@ -892,37 +966,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var card in cardsList)
                         {
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
-                            switch (TargetModeInfo.PermaType)
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
-                                case PermaTypes.Hollow:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.Durability == 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Decay:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.DecayCounter > 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Invoc:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isInvoc)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Artillery:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isArtillery)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Spell_Card:
-                                    if (card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Perma_Card:
-                                    if (!card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.NULL:
-                                    ValidcardsList.Add(card);
-                                    break;
+                                var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            else
+                            {
+                                ValidcardsList.Add(card);
                             }
                         }
                         break;
@@ -941,37 +992,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var card in cardsList)
                         {
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
-                            switch (TargetModeInfo.PermaType)
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
-                                case PermaTypes.Hollow:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.Durability == 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Decay:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.DecayCounter > 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Invoc:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isInvoc)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Artillery:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isArtillery)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Spell_Card:
-                                    if (card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Perma_Card:
-                                    if (!card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.NULL:
-                                    ValidcardsList.Add(card);
-                                    break;
+                                var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            else
+                            {
+                                ValidcardsList.Add(card);
                             }
                         }
                         break;
@@ -992,37 +1020,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var card in cardsList)
                         {
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
-                            switch (TargetModeInfo.PermaType)
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
-                                case PermaTypes.Hollow:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.Durability == 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Decay:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.DecayCounter > 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Invoc:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isInvoc)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Artillery:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isArtillery)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Spell_Card:
-                                    if (card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Perma_Card:
-                                    if (!card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.NULL:
-                                    ValidcardsList.Add(card);
-                                    break;
+                                var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            else
+                            {
+                                ValidcardsList.Add(card);
                             }
                         }
                         break;
@@ -1043,37 +1048,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var card in cardsList)
                         {
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
-                            switch (TargetModeInfo.PermaType)
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
-                                case PermaTypes.Hollow:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.Durability == 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Decay:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.DecayCounter > 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Invoc:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isInvoc)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Artillery:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isArtillery)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Spell_Card:
-                                    if (card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Perma_Card:
-                                    if (!card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.NULL:
-                                    ValidcardsList.Add(card);
-                                    break;
+                                var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            else
+                            {
+                                ValidcardsList.Add(card);
                             }
                         }
                         break;
@@ -1094,37 +1076,14 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var card in cardsList)
                         {
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
-                            switch (TargetModeInfo.PermaType)
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
-                                case PermaTypes.Hollow:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.Durability == 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Decay:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.DecayCounter > 0)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Invoc:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isInvoc)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Artillery:
-                                    if (card.IsSpell) continue;
-                                    if (card.data.isArtillery)
-                                        ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Spell_Card:
-                                    if (card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.Perma_Card:
-                                    if (!card.IsSpell) ValidcardsList.Add(card);
-                                    break;
-                                case PermaTypes.NULL:
-                                    ValidcardsList.Add(card);
-                                    break;
+                                var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            else
+                            {
+                                ValidcardsList.Add(card);
                             }
                         }
                         break;
@@ -1146,24 +1105,28 @@ public class TargetSystem : Singleton<TargetSystem>
     {
         enemySlots.Clear();
         permanents.Clear();
+        WaitingValidation = false;
         TargetingActive = true;
     }
 
     public (List<EnemySlotView> enemyTargets, List<PermanentView> playerTargets) EndManualTargeting()
     {
         TargetingActive = false;
+        WaitingValidation = false;
         return (enemySlots, permanents);
     }
 
     public void StartCardTargeting()
     {
         CardTargets.Clear();
+        WaitingValidation = false;
         CardTargetingActive = true;
     }
 
     public List<CardView> EndCardTargeting()
     {
         CardTargetingActive = false;
+        WaitingValidation = false;
         if (TargetExhaust)
         {
             DisplayDeckZone.SetActive(false);
@@ -1180,22 +1143,42 @@ public class TargetSystem : Singleton<TargetSystem>
             {
                 if (TargetingUpTo)
                 {
-                    TargetingActive = false;
-                    foreach (EnemySlotView enemy in enemySlots)
+                    if (WaitingValidation == true)
                     {
-                        enemy.RemoveSelectEffect(false);
+                        WaitingValidation = false;
                     }
-                    foreach (PermanentView permanent in permanents)
+                    else
                     {
-                        permanent.RemoveSelectEffect(false);
+                        if (TargetingNumber == MaxTargeting)
+                        {
+                            SetPromptValidation(TargetingNumber);
+                            WaitingValidation = true;
+                        }
+                        else
+                        {
+                            WaitingValidation = false;
+                        }
                     }
-                    foreach (EnemySlotView enemy in ETargets_ForAura)
+                    
+                    if (WaitingValidation == false)
                     {
-                        enemy.deactivateAuraVisual();
-                    }
-                    foreach (PermanentView permanent in PTargets_ForAura)
-                    {
-                        permanent.deactivateAuraVisual();
+                        TargetingActive = false;
+                        foreach (EnemySlotView enemy in enemySlots)
+                        {
+                            enemy.RemoveSelectEffect(false);
+                        }
+                        foreach (PermanentView permanent in permanents)
+                        {
+                            permanent.RemoveSelectEffect(false);
+                        }
+                        foreach (EnemySlotView enemy in ETargets_ForAura)
+                        {
+                            enemy.deactivateAuraVisual();
+                        }
+                        foreach (PermanentView permanent in PTargets_ForAura)
+                        {
+                            permanent.deactivateAuraVisual();
+                        }
                     }
                 }
                 else
@@ -1285,10 +1268,31 @@ public class TargetSystem : Singleton<TargetSystem>
             {
                 if (TargetingUpTo)
                 {
-                    CardTargetingActive = false;
-                    foreach (CardView cardview in CardTargets)
+                    if (WaitingValidation == true)
                     {
-                        cardview.RemoveSelectEffect(false);
+                        WaitingValidation = false;
+                    }
+                    else
+                    {
+                        if (TargetingNumber == MaxTargeting)
+                        {
+                            SetPromptValidation(TargetingNumber);
+                            WaitingValidation = true;
+                        }
+                        else
+                        {
+                            WaitingValidation = false;
+                        }
+                    }
+
+                    if (WaitingValidation == false)
+                    {
+                        // ici ajouter une validation pour être sur
+                        CardTargetingActive = false;
+                        foreach (CardView cardview in CardTargets)
+                        {
+                            cardview.RemoveSelectEffect(false);
+                        }
                     }
                 }
                 else
@@ -1406,7 +1410,8 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (effect.Events.Contains(Events.OnSelect) && effect.ActivateNumber >= 1)
                             {
-                                if (effect.ActivateLeft > 0)
+                                var HollowKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);     
+                                if ((effect.ActivateLeft > 0 && HollowKeyword != null && effect.HollowEffect) || (effect.ActivateLeft > 0  && HollowKeyword == null && !effect.HollowEffect))
                                 {
                                     HasEffectsToActivate = true;
                                 }
@@ -1545,7 +1550,8 @@ public class TargetSystem : Singleton<TargetSystem>
             case DynamicAmount.Artilery_Count:
                 foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
                 {
-                    if (item.permaTypes.Contains(PermaTypes.Artillery))
+                    var ArtilleryKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Artillery);
+                    if (ArtilleryKeyword != null)
                     {
                         FinalAmount++;
                     }
@@ -1555,7 +1561,8 @@ public class TargetSystem : Singleton<TargetSystem>
             case DynamicAmount.Decay_Count:
                 foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
                 {
-                    if (item.permaTypes.Contains(PermaTypes.Decay))
+                    var decayKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Decay);
+                    if (decayKeyword != null)
                     {
                         FinalAmount++;
                     }
@@ -1565,7 +1572,8 @@ public class TargetSystem : Singleton<TargetSystem>
             case DynamicAmount.Hollow_Count:
                 foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
                 {
-                    if (item.permaTypes.Contains(PermaTypes.Hollow))
+                    var HollowKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
+                    if (HollowKeyword != null)
                     {
                         FinalAmount++;
                     }
@@ -1575,7 +1583,8 @@ public class TargetSystem : Singleton<TargetSystem>
             case DynamicAmount.Invoc_Count:
                 foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
                 {
-                    if (item.permaTypes.Contains(PermaTypes.Invoc))
+                    var InvocKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
+                    if (InvocKeyword != null)
                     {
                         FinalAmount++;
                     }
@@ -1654,16 +1663,28 @@ public class TargetSystem : Singleton<TargetSystem>
 
             case TargetLimitations.Only_Type_Permanent:
                 if (permanent != null)
-                    return permanent.permaTypes.Contains(info.PermaType);
+                {
+                    var Keyword = permanent.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                    return Keyword != null;
+                }
                 if (enemySlot != null)
-                    return enemySlot.permaTypes.Contains(info.PermaType);
+                {
+                    var Keyword = enemySlot.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                    return Keyword != null;                    
+                }
                 return false;
 
             case TargetLimitations.PermanentIsNotType:
                 if (permanent != null)
-                    return !permanent.permaTypes.Contains(info.PermaType);
+                {
+                    var Keyword = permanent.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                    return Keyword == null;
+                }
                 if (enemySlot != null)
-                    return !enemySlot.permaTypes.Contains(info.PermaType);
+                {
+                    var Keyword = enemySlot.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                    return Keyword == null;
+                }
                 return false;
 
             case TargetLimitations.Only_SelectablePermanent:
@@ -1802,21 +1823,24 @@ public class TargetSystem : Singleton<TargetSystem>
 
             if (playerPerm != null)
             {
-                if (playerPerm.UnTargetable)
+                var Keyword = playerPerm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
+                if (Keyword != null)
                 {
                     return false;
                 }
             }
             else if (enemyPerm != null)
             {
-                if (enemyPerm.UnTargetable)
+                var Keyword = enemyPerm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
+                if (Keyword != null)
                 {
                     return false;
                 }
             }
             else if (Card != null)
             {
-                if(Card.UnTargetable)
+                var Keyword = Card.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
+                if(Keyword != null)
                 {
                     return false;
                 }

@@ -24,9 +24,10 @@ public class ShieldEffect : Effect
 
     public ShieldEffect() { }
 
-    public ShieldEffect(string effectID, bool activateToolTip, int priority, int activateNumber, int activateLeft, bool orChoice,TargetModeInfo TargetModeInfo, List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public ShieldEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int activateNumber, int activateLeft, bool orChoice,TargetModeInfo TargetModeInfo, List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
         ActivateNumber = activateNumber;
@@ -222,6 +223,7 @@ public class ShieldEffect : Effect
             EffectID,
             ActivateToolTip,
             Priority,
+            HollowEffect,
             ActivateNumber,
             ActivateLeft,
             ORChoice,

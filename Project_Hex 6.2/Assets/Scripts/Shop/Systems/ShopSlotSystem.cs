@@ -27,11 +27,11 @@ public class ShopSlotSystem : Singleton<ShopSlotSystem>
         DataBase dataBase = DataBase.Instance;
         foreach (CardData cardData in dataBase.ColorLessCardPool.CardDataList)
         {
-            PotentialRewards.Add(cardData);
+            PotentialRewards.Add(cardData.Clone());
         }
         foreach (CardData cardData in dataBase.ChoosedCardPool.CardDataList)
         {
-            PotentialRewards.Add(cardData);
+            PotentialRewards.Add(cardData.Clone());
         }
 
         RefreshCost_Text.text = RefreshCost.ToString();
@@ -106,11 +106,14 @@ public class ShopSlotSystem : Singleton<ShopSlotSystem>
 
     public void RefreshShop()
     {
-        ShopSelectionMode = false;
-        CurrentMoney -= RefreshCost;
-        DataBase.Instance.Money = CurrentMoney;
-        Money_Manager.Instance.UpdateMoneyText();
-        StartCoroutine(RefreshShopCoroutine());
+        if (ShopSelectionMode && CurrentMoney-RefreshCost >= 0)
+        {
+            ShopSelectionMode = false;
+            CurrentMoney -= RefreshCost;
+            DataBase.Instance.Money = CurrentMoney;
+            Money_Manager.Instance.UpdateMoneyText();
+            StartCoroutine(RefreshShopCoroutine());            
+        }
     }
 
     public IEnumerator RefreshShopCoroutine()

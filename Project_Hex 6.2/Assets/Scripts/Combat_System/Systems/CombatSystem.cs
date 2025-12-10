@@ -236,11 +236,11 @@ public class CombatSystem : Singleton<CombatSystem>
         //DefinePotentialRewards
         foreach (CardData cardData in dataBase.ColorLessCardPool.CardDataList)
         {
-            RewardSystem.Instance.PotentialRewards.Add(cardData);
+            RewardSystem.Instance.PotentialRewards.Add(cardData.Clone());
         }
         foreach (CardData cardData in dataBase.ChoosedCardPool.CardDataList)
         {
-            RewardSystem.Instance.PotentialRewards.Add(cardData);
+            RewardSystem.Instance.PotentialRewards.Add(cardData.Clone());
         }
         if (currentEnemy.EnemyRewardCardPool != null)
         {
@@ -248,7 +248,7 @@ public class CombatSystem : Singleton<CombatSystem>
             {
                 foreach (CardData cardData in currentEnemy.EnemyRewardCardPool.CardDataList)
                 {
-                    RewardSystem.Instance.PotentialRewards.Add(cardData);
+                    RewardSystem.Instance.PotentialRewards.Add(cardData.Clone());
                 }
             }
         }

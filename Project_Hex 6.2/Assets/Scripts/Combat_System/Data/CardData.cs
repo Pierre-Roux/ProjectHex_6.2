@@ -57,7 +57,7 @@ public class CardData : ScriptableObject
 
     public CardData Clone()
     {
-        CardData clone = ScriptableObject.CreateInstance<CardData>();
+        CardData clone = CreateInstance<CardData>();
 
         // Mandatory
         clone.Title = Title;

@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Prism
   <Description>k__BackingField: Sac self gain 1 favor
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: efb1c7e40235c2a42b0198bdbc4f93cc, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: efb1c7e40235c2a42b0198bdbc4f93cc, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords:
-  - rid: 655360801452064861
+  - rid: 3047188320285622440
   <life>k__BackingField: 1
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -28,8 +29,8 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 3
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642561335328780
-  - rid: 3469642561335328781
+  - rid: 3047188320285622441
+  - rid: 3047188320285622442
   PlayCardSound:
     Guid:
       Data1: 0
@@ -203,13 +204,13 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064861
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622440
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 3
         keyWordValue: 0
-    - rid: 3469642561335328780
-      type: {class: SacEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622441
+      type: {class: SacEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -245,17 +246,18 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 06f93caf-fbeb-45aa-975b-72b0c6b4f701
+        Disabled: 0
+        EffectID: 
         targetModeInfo:
           targetMode: 1
           PlayerOrEnemy: 0
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []
-    - rid: 3469642561335328781
-      type: {class: ManaGainEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622442
+      type: {class: ManaGainEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -274,7 +276,7 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
-        ActivateNumber: 0
+        ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
         number: 
@@ -291,7 +293,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: dccce643-667b-4216-b10c-e48d0432cbfc
+        Disabled: 0
+        EffectID: 
         GainAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0

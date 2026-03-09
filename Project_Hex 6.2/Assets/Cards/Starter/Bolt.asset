@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Bolt
   <Description>k__BackingField: Deal 3 to target
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 1
   <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: bb7b6ce2f1a61144083daba5680fbcfe, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 0
   KeyWords: []
   <life>k__BackingField: 0
@@ -27,7 +28,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 0
   <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
-  - rid: 3469642179070132224
+  - rid: 3047188320285622467
   PlayCardSound:
     Guid:
       Data1: 0
@@ -201,8 +202,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3469642179070132224
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622467
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -216,11 +217,11 @@ MonoBehaviour:
         MultiHit: 0
         SFX:
           Guid:
-            Data1: 2082713232
-            Data2: 1276791099
-            Data3: 50575253
-            Data4: -206638373
-          Path: event:/Cards/Bolt Sound
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
         ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
@@ -228,7 +229,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -238,7 +239,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 059487f0-2887-4a60-a603-5047c2478711
+        Disabled: 0
+        EffectID: 
         damageAmount: 3
         multiplyAmount: 1
         DynamicAmount: 0

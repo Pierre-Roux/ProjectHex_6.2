@@ -1,0 +1,24 @@
+{
+    "name": "_UnTrackAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ce8198f3664df8b4b962c8120dd7dd75",
+        "GUID:73841b09558a21a4aa74b7c5cfbf37e3",
+        "GUID:bf4205cbd36b48e4f8b64df1e539d5a8",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:79ad2193969254fbd829729521e3eee3",
+        "GUID:21d1eb854b91ade49bc69a263d12bee2",
+        "GUID:0c752da273b17c547ae705acf0f2adf2",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:16817817288f62f4dbd2f126b727249b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

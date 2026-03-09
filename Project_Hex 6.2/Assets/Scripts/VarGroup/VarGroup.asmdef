@@ -1,0 +1,16 @@
+{
+    "name": "VarGroup",
+    "rootNamespace": "",
+    "references": [
+        "GUID:73841b09558a21a4aa74b7c5cfbf37e3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

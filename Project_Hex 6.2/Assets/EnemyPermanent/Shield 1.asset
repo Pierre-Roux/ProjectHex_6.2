@@ -16,13 +16,11 @@ MonoBehaviour:
   PermanentImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
   PermanentLife: 5
   IsCore: 0
-  IsInvoc: 0
-  UnShieldable: 1
-  UnTargetable: 0
   permanentArea: 2
-  DecayCounter: 0
+  KeyWords:
+  - rid: 3047188320285622364
   <PossibleIntent>k__BackingField:
-  - rid: 2382742888600829953
+  - rid: 3047188320285622363
   RDMSequence: 0
   <IntentSequence>k__BackingField: []
   LoopingSequence: 0
@@ -41,6 +39,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingDamageSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  CollateralSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -129,9 +134,11 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 2382742888600829953
-      type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622363
+      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
       data:
+        ActivateToolTip: 1
+        Priority: 0
         actionnerType: 1
         Events: 00000000
         TypeOfCounter: 0
@@ -154,7 +161,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -164,12 +171,19 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 059e181a-000b-4aab-a309-765d4750857f
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         targetModeInfo:
           targetMode: 2
           PlayerOrEnemy: 2
           permanentArea: 0
-          PermaType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+          keyWordType: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []
+    - rid: 3047188320285622364
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 6
+        keyWordValue: 0

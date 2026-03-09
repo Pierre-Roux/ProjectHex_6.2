@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a558800783f42c4d8253f032eddb434, type: 3}
+  m_Name: StarterPlayerPool
+  m_EditorClassIdentifier: _UnTrackAssembly::NavCardPool
+  PoolName: TestPool
+  NavCardDataList:
+  - {fileID: 11400000, guid: ee69de141c6fbbc4192171e9c3363cdc, type: 2}
+  - {fileID: 11400000, guid: efb399dc13626ef44a03be528d7a9f8d, type: 2}
+  - {fileID: 11400000, guid: 5ae3c62743289e9418a393e89bfbf1b5, type: 2}

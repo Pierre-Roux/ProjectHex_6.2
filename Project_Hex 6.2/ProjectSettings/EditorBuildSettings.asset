@@ -15,6 +15,10 @@ EditorBuildSettings:
     path: Assets/Scenes/ShopScene.unity
     guid: 5aeb75533dd4f604290cc1ca91ded0b2
   - enabled: 1
-    path: Assets/Scenes/TransitionScene.unity
+    path: Assets/Scenes/NavigationScene.unity
+    guid: 5d8659e8fe3532b4e8b147a74f64cc0d
+  - enabled: 1
+    path: Assets/Scenes/CharacterSelectScene.unity
     guid: 0c522a0f58e87394297d7726cc337de3
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

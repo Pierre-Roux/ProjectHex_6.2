@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Spectral Wall
   <Description>k__BackingField: ETB scry 1 | Shieldcore | Decay 2
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords:
-  - rid: 655360801452064863
-  - rid: 655360801452064864
-  - rid: 655360801452064865
+  - rid: 3047188320285622448
+  - rid: 3047188320285622449
+  - rid: 3047188320285622450
   <life>k__BackingField: 4
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -30,8 +31,8 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 2
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642561335328804
-  - rid: 3469642561335328805
+  - rid: 3047188320285622451
+  - rid: 3047188320285622452
   PlayCardSound:
     Guid:
       Data1: 0
@@ -205,64 +206,23 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064863
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622448
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 3
         keyWordValue: 0
-    - rid: 655360801452064864
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622449
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 6
         keyWordValue: 0
-    - rid: 655360801452064865
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622450
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 2
         keyWordValue: 2
-    - rid: 3469642561335328804
-      type: {class: ScryEffect, ns: , asm: Assembly-CSharp}
-      data:
-        ActivateToolTip: 1
-        Priority: 0
-        actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
-        CounterValue: 0
-        ModuloValue: 0
-        HollowEffect: 0
-        PayXEffect: 0
-        MultiHit: 0
-        SFX:
-          Guid:
-            Data1: 0
-            Data2: 0
-            Data3: 0
-            Data4: 0
-          Path: 
-        ActivateNumber: 1
-        ORChoice: 0
-        Intent_Title: 
-        number: 
-        Duration: 0
-        DurationType: 0
-        TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
-        DynamicConditionInfos: []
-        LinkedEffect:
-          rid: -2
-        Actionner: {fileID: 0}
-        TargetForLinked_Player: []
-        TargetForLinked_Enemy: []
-        PayXValue: 0
-        ActivateLeft: 0
-        BypassEntryCondition: 0
-        EffectID: e9677e8d-b357-4c73-86e2-7888c5fd8cd2
-        ScryAmount: 1
-        multiplyAmount: 1
-        DynamicAmount: 0
-    - rid: 3469642561335328805
-      type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622451
+      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -298,12 +258,56 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 30c1d779-0244-4eae-bd4c-a326bd688041
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         targetModeInfo:
           targetMode: 2
           PlayerOrEnemy: 1
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []
+    - rid: 3047188320285622452
+      type: {class: ScryEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 
+        ScryAmount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0

@@ -43,6 +43,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3f4c9ccdc49ee274493a7f82e8e13671, type: 2}
   - {fileID: 11400000, guid: 76e74500f7a185b4eb6c4f8644074715, type: 2}
   - {fileID: 11400000, guid: dae39e8b5b4882042b0cbd161910439a, type: 2}
+  navDeckData: {fileID: 11400000, guid: 6247f90c2a05b584db84981c4d4a8064, type: 2}
   CoreHealth: 30
   CoreImage: {fileID: 21300000, guid: 7fb252da1857bb44696d06ffe588632e, type: 3}
   DieSound:

@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Title>k__BackingField: Tooth
   <Description>k__BackingField: 'A: Deal 3 DMG | Pay 1 Life: Refresh'
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 2
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords:
-  - rid: 655360801452064867
+  - rid: 3047188320285622458
   <life>k__BackingField: 3
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -28,8 +29,8 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 7119591967054102598
-  - rid: 7119591967054102600
+  - rid: 3047188320285622459
+  - rid: 3047188320285622461
   PlayCardSound:
     Guid:
       Data1: 0
@@ -203,13 +204,13 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064867
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622458
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 3
         keyWordValue: 0
-    - rid: 7119591967054102598
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622459
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -245,7 +246,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: db19955f-955c-46e8-8c49-714a5a4f167f
+        Disabled: 0
+        EffectID: a5006ea2-c862-45a5-b88a-aa0b0fc0aca5
         damageAmount: 3
         multiplyAmount: 1
         DynamicAmount: 0
@@ -258,8 +260,8 @@ MonoBehaviour:
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
-    - rid: 7119591967054102600
-      type: {class: EffectGroup, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622461
+      type: {class: EffectGroup, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -278,7 +280,7 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
-        ActivateNumber: 999
+        ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
         number: 
@@ -295,12 +297,13 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 2420ed9f-3e54-4d1e-8031-ab475eb941c9
+        Disabled: 0
+        EffectID: 262a426b-c3bb-4cc9-a3f5-cc4b13f5a4af
         EffectGroups:
-        - rid: 7119591967054102601
-        - rid: 7119591967054102602
-    - rid: 7119591967054102601
-      type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
+        - rid: 3047188320285622462
+        - rid: 3047188320285622463
+    - rid: 3047188320285622462
+      type: {class: LifeLossEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -336,7 +339,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 272cac57-08d3-45af-8b42-14c35ad7d54f
+        Disabled: 0
+        EffectID: 
         LifeLossAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
@@ -346,10 +350,10 @@ MonoBehaviour:
           permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
-        targetNumber: 0
+        targetNumber: 1
         targetLimitations: []
-    - rid: 7119591967054102602
-      type: {class: RefreshEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622463
+      type: {class: RefreshEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -385,12 +389,13 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 3ef57c7e-fbcc-40d7-aa91-b29eaddf9501
+        Disabled: 0
+        EffectID: 
         targetModeInfo:
           targetMode: 1
           PlayerOrEnemy: 0
           permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
-        targetNumber: 0
+        targetNumber: 1
         targetLimitations: []

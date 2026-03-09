@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Bramble Pike
   <Description>k__BackingField: 'A : deal 3 / SoT : +1pwr +1hp'
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 1
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords: []
   <life>k__BackingField: 2
@@ -27,9 +28,9 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642561335328783
-  - rid: 3469642561335328784
-  - rid: 3469642561335328785
+  - rid: 2238251843555426395
+  - rid: 2238251843555426396
+  - rid: 2238251843555426397
   PlayCardSound:
     Guid:
       Data1: 0
@@ -203,8 +204,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3469642561335328783
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426395
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -215,7 +216,7 @@ MonoBehaviour:
         ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
-        MultiHit: 1
+        MultiHit: 0
         SFX:
           Guid:
             Data1: 0
@@ -240,7 +241,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 80694026-7230-46ff-8a5e-6db54b2f8b46
+        Disabled: 0
+        EffectID: 
         damageAmount: 3
         multiplyAmount: 1
         DynamicAmount: 0
@@ -253,8 +255,8 @@ MonoBehaviour:
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
-    - rid: 3469642561335328784
-      type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426396
+      type: {class: AlterPowerEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -273,7 +275,7 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
-        ActivateNumber: 0
+        ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
         number: 
@@ -290,7 +292,9 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: b06c89b7-2eb8-4352-ba17-5bf3b7a6db64
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         alterAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
@@ -301,11 +305,11 @@ MonoBehaviour:
           PlayerOrEnemy: 0
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []
-    - rid: 3469642561335328785
-      type: {class: GainHPEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426397
+      type: {class: GainHPEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -324,7 +328,7 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
-        ActivateNumber: 0
+        ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
         number: 
@@ -341,7 +345,9 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 6a7b774f-63ba-4513-9d64-e623e57fbfbd
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         GainAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
@@ -352,6 +358,6 @@ MonoBehaviour:
           PlayerOrEnemy: 0
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []

@@ -18,7 +18,7 @@ MonoBehaviour:
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: c19246b2cd83c09409e2a3ca326c7582, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 20
   KeyWords: []
   <life>k__BackingField: 0
@@ -28,8 +28,8 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 0
   <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
-  - rid: 3469642677219492014
-  - rid: 3469642677219492015
+  - rid: 2238251843555426393
+  - rid: 2238251843555426394
   PlayCardSound:
     Guid:
       Data1: 0
@@ -203,8 +203,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3469642677219492014
-      type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426393
+      type: {class: LifeLossEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -230,7 +230,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -240,7 +240,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: a7e95ad9-7333-4a59-b9d9-1ac67483f0cd
+        Disabled: 0
+        EffectID: 
         LifeLossAmount: 2
         multiplyAmount: 1
         DynamicAmount: 0
@@ -249,11 +250,11 @@ MonoBehaviour:
           PlayerOrEnemy: 1
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []
-    - rid: 3469642677219492015
-      type: {class: InvocEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426394
+      type: {class: InvocEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -279,7 +280,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -289,7 +290,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 12f09ff7-655e-455c-954b-aad252d2eebf
+        Disabled: 0
+        EffectID: 
         amount: 1
         multiplyAmount: 1
         DynamicAmount: 0

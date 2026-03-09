@@ -562,7 +562,6 @@ MonoBehaviour:
   EnemyShielded: []
   UnTargetable: 0
   Shielded: 0
-  permaTypes: 
   KeyWords: []
 --- !u!65 &5313502043812365378
 BoxCollider:
@@ -583,7 +582,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 1}
+  m_Size: {x: 2.1, y: 2.1, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &142476830557939804
 Animator:

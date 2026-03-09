@@ -18,7 +18,7 @@ MonoBehaviour:
   <cost>k__BackingField: 2
   <GridCost>k__BackingField: 2
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
   <Money_Cost>k__BackingField: 50
   KeyWords: []
   <life>k__BackingField: 5
@@ -28,7 +28,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 7119591880825503840
+  - rid: 2238251843555426385
   PlayCardSound:
     Guid:
       Data1: 0
@@ -202,8 +202,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 7119591880825503840
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426385
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -239,7 +239,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: c404bbaf-c629-4c29-82ac-3691fdf317f1
+        Disabled: 0
+        EffectID: 
         damageAmount: 0
         multiplyAmount: 2
         DynamicAmount: 18

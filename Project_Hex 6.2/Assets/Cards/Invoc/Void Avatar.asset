@@ -15,13 +15,14 @@ MonoBehaviour:
   <Title>k__BackingField: Void Avatar
   <Description>k__BackingField: Whenever a Vessel EtB, if it was Invoked, Deal 4
     DMG
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 2
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords:
-  - rid: 655360801452064868
+  - rid: 3047188320285622464
   <life>k__BackingField: 6
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -29,7 +30,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642677219492007
+  - rid: 3047188320285622465
   PlayCardSound:
     Guid:
       Data1: 0
@@ -203,13 +204,13 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064868
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622464
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 3
         keyWordValue: 0
-    - rid: 3469642677219492007
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622465
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -235,9 +236,9 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos:
-        - rid: 7119591904511000648
+        - rid: 3047188320285622466
         LinkedEffect:
           rid: -2
         Actionner: {fileID: 0}
@@ -246,7 +247,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 140d72c4-cc28-486e-a207-d7cce917584a
+        Disabled: 0
+        EffectID: 
         damageAmount: 4
         multiplyAmount: 1
         DynamicAmount: 0
@@ -259,8 +261,8 @@ MonoBehaviour:
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
-    - rid: 7119591904511000648
-      type: {class: DynamicConditionInfo, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622466
+      type: {class: DynamicConditionInfo, ns: , asm: Enums}
       data:
         DynamicCondition: 13
         CounterType: 0

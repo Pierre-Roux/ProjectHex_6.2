@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdc4d860c021a0e4583a273f6d91769b, type: 3}
+  m_Name: Fight
+  m_EditorClassIdentifier: _UnTrackAssembly::NavCardData
+  <Title>k__BackingField: Fight
+  <Description>k__BackingField: 
+  <Image>k__BackingField: {fileID: 21300000, guid: 59d0bd81ea81fad45b386c2584911f05, type: 3}
+  <BackgroundImage>k__BackingField: {fileID: 21300000, guid: 689692388c3fd52469dc70613694423d, type: 3}

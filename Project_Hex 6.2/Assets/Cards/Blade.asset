@@ -18,7 +18,7 @@ MonoBehaviour:
   <cost>k__BackingField: 2
   <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: eeae6e620c49fd1449d6c8043182fa14, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 0
   KeyWords: []
   <life>k__BackingField: 0
@@ -28,7 +28,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 0
   <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
-  - rid: 3469642561335328806
+  - rid: 2238251843555426386
   PlayCardSound:
     Guid:
       Data1: 0
@@ -202,8 +202,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3469642561335328806
-      type: {class: LifeLossEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426386
+      type: {class: LifeLossEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -214,7 +214,7 @@ MonoBehaviour:
         ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
-        MultiHit: 1
+        MultiHit: 0
         SFX:
           Guid:
             Data1: 0
@@ -222,14 +222,14 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
-        ActivateNumber: 0
+        ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
         number: 
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -239,8 +239,9 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 35076af6-f470-4f0a-b145-1d9a7d19b690
-        LifeLossAmount: 1000
+        Disabled: 0
+        EffectID: 
+        LifeLossAmount: 999
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:
@@ -251,19 +252,19 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations:
-        - rid: 3469642561335328823
-        - rid: 3469642561335328824
-    - rid: 3469642561335328823
-      type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
+        - rid: 2238251843555426387
+        - rid: 2238251843555426388
+    - rid: 2238251843555426387
+      type: {class: TargetLimitationInfo, ns: , asm: Enums}
       data:
-        targetLimitations: 6
+        targetLimitations: 5
         keyWordType: 0
         IntValue: -1
         MandatoryLimitation: 0
-    - rid: 3469642561335328824
-      type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426388
+      type: {class: TargetLimitationInfo, ns: , asm: Enums}
       data:
-        targetLimitations: 5
+        targetLimitations: 6
         keyWordType: 0
         IntValue: -1
         MandatoryLimitation: 0

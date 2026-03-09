@@ -15,13 +15,14 @@ MonoBehaviour:
   <Title>k__BackingField: Avatar of Ruin
   <Description>k__BackingField: 'A: Deal 4 Damage x 2 | When Avatar destroys an Object,
     Draw 1'
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 3
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: a417aadf22939fc448801274e4cd8664, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords:
-  - rid: 655360801452064851
+  - rid: 3047188320285622424
   <life>k__BackingField: 6
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -29,8 +30,8 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642677219491997
-  - rid: 3469642677219491998
+  - rid: 3047188320285622420
+  - rid: 3047188320285622421
   PlayCardSound:
     Guid:
       Data1: 0
@@ -204,13 +205,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064851
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
-      data:
-        keyWordType: 3
-        keyWordValue: 0
-    - rid: 3469642677219491997
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622420
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -236,7 +232,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -246,7 +242,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 96026c71-a6fa-4d9d-bbf5-b158be003127
+        Disabled: 0
+        EffectID: 
         damageAmount: 4
         multiplyAmount: 1
         DynamicAmount: 0
@@ -259,8 +256,8 @@ MonoBehaviour:
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
-    - rid: 3469642677219491998
-      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622421
+      type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -286,7 +283,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -296,7 +293,13 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 7c608c18-8efd-457a-887d-4641e842b86f
+        Disabled: 0
+        EffectID: 
         drawAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
+    - rid: 3047188320285622424
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 3
+        keyWordValue: 0

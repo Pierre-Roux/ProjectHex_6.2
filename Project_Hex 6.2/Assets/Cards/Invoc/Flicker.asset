@@ -15,15 +15,16 @@ MonoBehaviour:
   <Title>k__BackingField: Flicker
   <Description>k__BackingField: Shield Core | Decay 1 | Whenever you Sacrifice Flicker,
     Draw 1
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords:
-  - rid: 655360801452064854
-  - rid: 655360801452064855
-  - rid: 655360801452064856
+  - rid: 3047188320285622427
+  - rid: 3047188320285622428
+  - rid: 3047188320285622429
   <life>k__BackingField: 1
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -31,8 +32,8 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 2
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642677219492000
-  - rid: 3469642677219492002
+  - rid: 3047188320285622430
+  - rid: 3047188320285622431
   PlayCardSound:
     Guid:
       Data1: 0
@@ -206,23 +207,23 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064854
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622427
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 3
         keyWordValue: 0
-    - rid: 655360801452064855
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
-      data:
-        keyWordType: 2
-        keyWordValue: 1
-    - rid: 655360801452064856
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622428
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 6
         keyWordValue: 0
-    - rid: 3469642677219492000
-      type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622429
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 2
+        keyWordValue: 1
+    - rid: 3047188320285622430
+      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -248,7 +249,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -258,17 +259,19 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 28786c03-551d-4a1a-8fb8-8d018cf139d1
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         targetModeInfo:
           targetMode: 2
           PlayerOrEnemy: 1
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []
-    - rid: 3469642677219492002
-      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622431
+      type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -294,7 +297,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -304,7 +307,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: f6ca30de-8c41-48c5-a850-6a0b43f3cc16
+        Disabled: 0
+        EffectID: 
         drawAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0

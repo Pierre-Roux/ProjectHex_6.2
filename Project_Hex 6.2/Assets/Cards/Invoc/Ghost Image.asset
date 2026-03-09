@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Title>k__BackingField: Ghost Image
   <Description>k__BackingField: A Deal 3
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 20
   KeyWords:
-  - rid: 655360801452064857
+  - rid: 3047188320285622432
   <life>k__BackingField: 1
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -28,7 +29,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 7119592267123523754
+  - rid: 3047188320285622433
   PlayCardSound:
     Guid:
       Data1: 0
@@ -202,13 +203,13 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064857
-      type: {class: KeyWord, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622432
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 3
         keyWordValue: 0
-    - rid: 7119592267123523754
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622433
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -244,7 +245,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 7bc4a2ef-5caf-4746-ae90-55689e2d2550
+        Disabled: 0
+        EffectID: 
         damageAmount: 3
         multiplyAmount: 1
         DynamicAmount: 0

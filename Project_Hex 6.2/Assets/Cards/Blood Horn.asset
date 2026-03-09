@@ -19,7 +19,7 @@ MonoBehaviour:
   <cost>k__BackingField: 1
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 20
   KeyWords: []
   <life>k__BackingField: 3
@@ -29,8 +29,8 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642677219492012
-  - rid: 3469642677219492013
+  - rid: 2238251843555426389
+  - rid: 2238251843555426390
   PlayCardSound:
     Guid:
       Data1: 0
@@ -204,15 +204,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 655360801452064869
-      type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
-      data:
-        targetLimitations: 5
-        keyWordType: 0
-        IntValue: -1
-        MandatoryLimitation: 1
-    - rid: 3469642677219492012
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426389
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -248,7 +241,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 9d7fb1e8-ff02-4d82-9d8a-962bd91c52f7
+        Disabled: 0
+        EffectID: 
         damageAmount: 2
         multiplyAmount: 1
         DynamicAmount: 0
@@ -261,8 +255,8 @@ MonoBehaviour:
         targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
-    - rid: 3469642677219492013
-      type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
+    - rid: 2238251843555426390
+      type: {class: AlterPowerEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -273,7 +267,7 @@ MonoBehaviour:
         ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
-        MultiHit: 1
+        MultiHit: 0
         SFX:
           Guid:
             Data1: 0
@@ -281,7 +275,7 @@ MonoBehaviour:
             Data3: 0
             Data4: 0
           Path: 
-        ActivateNumber: 0
+        ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
         number: 
@@ -298,7 +292,9 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 4c13b37c-43b7-470c-a5b6-3adbcf84b92c
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         alterAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
@@ -312,12 +308,19 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations:
-        - rid: 7119591880825503843
-        - rid: 655360801452064869
-    - rid: 7119591880825503843
-      type: {class: TargetLimitationInfo, ns: , asm: Assembly-CSharp}
+        - rid: 2238251843555426391
+        - rid: 2238251843555426392
+    - rid: 2238251843555426391
+      type: {class: TargetLimitationInfo, ns: , asm: Enums}
       data:
         targetLimitations: 1
+        keyWordType: 0
+        IntValue: -1
+        MandatoryLimitation: 0
+    - rid: 2238251843555426392
+      type: {class: TargetLimitationInfo, ns: , asm: Enums}
+      data:
+        targetLimitations: 5
         keyWordType: 0
         IntValue: -1
         MandatoryLimitation: 0

@@ -102,8 +102,8 @@ MonoBehaviour:
   SupportZone: {fileID: 351204710267823827}
   CoreSlot: {fileID: 4315666141863612670}
   <IntentConstructs>k__BackingField:
-  - rid: 2382742974966530048
-  - rid: 2382742974966530049
+  - rid: 3047188320285622356
+  - rid: 3047188320285622357
   ConstructSequence:
   - A
   - B
@@ -112,19 +112,17 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 2382742974966530048
-      type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622356
+      type: {class: GenericIntentConstruct, ns: , asm: _UnTrackAssembly}
       data:
         number: A
         EnemyData:
         - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
-        - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
-    - rid: 2382742974966530049
-      type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622357
+      type: {class: GenericIntentConstruct, ns: , asm: _UnTrackAssembly}
       data:
         number: B
         EnemyData:
-        - {fileID: 11400000, guid: 75a7d2efdc5b0d84e8a6b99e0d95be58, type: 2}
         - {fileID: 11400000, guid: ef1adf0c83444c9409eee8f1f0e0918d, type: 2}
 --- !u!1 &6470439035658852412
 GameObject:

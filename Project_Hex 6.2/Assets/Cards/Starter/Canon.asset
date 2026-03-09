@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Canon
   <Description>k__BackingField: Deal 2 on activate
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 1
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
   <Money_Cost>k__BackingField: 0
   KeyWords: []
   <life>k__BackingField: 3
@@ -27,7 +28,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642179070132224
+  - rid: 3047188320285622468
   PlayCardSound:
     Guid:
       Data1: 0
@@ -201,8 +202,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3469642179070132224
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622468
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -213,7 +214,7 @@ MonoBehaviour:
         ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
-        MultiHit: 1
+        MultiHit: 0
         SFX:
           Guid:
             Data1: 0
@@ -238,7 +239,8 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 926532a0-c012-49fc-940d-2f16364719d0
+        Disabled: 0
+        EffectID: 
         damageAmount: 2
         multiplyAmount: 1
         DynamicAmount: 0

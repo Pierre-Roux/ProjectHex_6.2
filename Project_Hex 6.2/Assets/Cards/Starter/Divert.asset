@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Title>k__BackingField: Divert
   <Description>k__BackingField: -2 power to 1 enemy until next turn
+  <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: 96f4f6521c088f54fb7ca8d50c29b516, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 0
   KeyWords: []
   <life>k__BackingField: 0
@@ -27,7 +28,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 0
   <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
-  - rid: 3469642179070132225
+  - rid: 3047188320285622470
   PlayCardSound:
     Guid:
       Data1: 0
@@ -201,8 +202,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3469642179070132225
-      type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622470
+      type: {class: AlterPowerEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -228,17 +229,19 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
-          rid: 3469642179070132226
+          rid: 3047188320285622471
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 863ec25d-1fc7-43ac-8fa6-41902b7e731d
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         alterAmount: -2
         multiplyAmount: 1
         DynamicAmount: 0
@@ -249,16 +252,16 @@ MonoBehaviour:
           PlayerOrEnemy: 0
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
+        TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
-    - rid: 3469642179070132226
-      type: {class: AlterPowerEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622471
+      type: {class: AlterPowerEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 2
-        Events: 02000000
+        Events: 03000000
         TypeOfCounter: 0
         CounterValue: 0
         ModuloValue: 0
@@ -277,9 +280,9 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 1
-        DurationType: 2
+        DurationType: 3
         TriggerOnDurationEnd: 1
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -289,7 +292,9 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 05489a35-0584-4dbd-a803-c7ce885c7610
+        Disabled: 0
+        EffectID: 
+        CanBeDisable: 1
         alterAmount: 2
         multiplyAmount: 1
         DynamicAmount: 0
@@ -300,6 +305,6 @@ MonoBehaviour:
           PlayerOrEnemy: 0
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []

@@ -19,7 +19,7 @@ MonoBehaviour:
   permanentArea: 1
   KeyWords: []
   <PossibleIntent>k__BackingField:
-  - rid: 1273757063170490374
+  - rid: 3047188320285622479
   RDMSequence: 0
   <IntentSequence>k__BackingField:
   - A
@@ -134,8 +134,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 1273757063170490374
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622479
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -156,12 +156,12 @@ MonoBehaviour:
           Path: 
         ActivateNumber: 1
         ORChoice: 0
-        Intent_Title: Deal 4 dmg to rdm
+        Intent_Title: 
         number: A
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -171,16 +171,17 @@ MonoBehaviour:
         PayXValue: 0
         ActivateLeft: 0
         BypassEntryCondition: 0
-        EffectID: 892ba960-7747-4e3e-abfc-86a03ad1332d
-        damageAmount: 4
+        Disabled: 0
+        EffectID: df9b1d92-e1c7-4350-ac0e-2fd9c3657cd9
+        damageAmount: 3
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:
           targetMode: 4
           PlayerOrEnemy: 1
-          permanentArea: 0
+          permanentArea: 1
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []

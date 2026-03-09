@@ -97,43 +97,33 @@ MonoBehaviour:
   EnemyRewardCardPool: {fileID: 0}
   EnemyPreset:
   - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
-  - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
-  - {fileID: 11400000, guid: aa35ebbfcb987fa469c49412b53f89fb, type: 2}
   WeaponZone: {fileID: 3491431722004416334}
   ShieldZone: {fileID: 938283172723516546}
   SupportZone: {fileID: 351204710267823827}
   CoreSlot: {fileID: 4315666141863612670}
   <IntentConstructs>k__BackingField:
-  - rid: 2382742974966530048
-  - rid: 3469642240805568513
-  - rid: 2382742974966530049
+  - rid: 3047188320285622358
+  - rid: 3047188320285622359
   ConstructSequence:
   - A
   - B
-  - C
   LoopingSequence: 1
   sequenceIndex: 0
   references:
     version: 2
     RefIds:
-    - rid: 2382742974966530048
-      type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
+    - rid: 3047188320285622358
+      type: {class: GenericIntentConstruct, ns: , asm: _UnTrackAssembly}
       data:
         number: A
         EnemyData:
-        - {fileID: 11400000, guid: aa35ebbfcb987fa469c49412b53f89fb, type: 2}
-    - rid: 2382742974966530049
-      type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
-      data:
-        number: C
-        EnemyData:
-        - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
-    - rid: 3469642240805568513
-      type: {class: GenericIntentConstruct, ns: , asm: Assembly-CSharp}
+        - {fileID: 11400000, guid: ef1adf0c83444c9409eee8f1f0e0918d, type: 2}
+    - rid: 3047188320285622359
+      type: {class: GenericIntentConstruct, ns: , asm: _UnTrackAssembly}
       data:
         number: B
         EnemyData:
-        - {fileID: 11400000, guid: 75a7d2efdc5b0d84e8a6b99e0d95be58, type: 2}
+        - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
 --- !u!1 &6470439035658852412
 GameObject:
   m_ObjectHideFlags: 0

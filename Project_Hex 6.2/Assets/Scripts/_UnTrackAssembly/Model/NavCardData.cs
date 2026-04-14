@@ -12,5 +12,6 @@ public class NavCardData : ScriptableObject
     [field: SerializeField] public string Description { get; private set; }
     [field: SerializeField] public Sprite Image { get; private set; }
     [field: SerializeField] public Sprite BackgroundImage { get; private set; }
+    [field: SerializeField] public NavCardType navCardType { get; private set; }
 
 }

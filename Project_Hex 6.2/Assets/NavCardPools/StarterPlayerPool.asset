@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: _UnTrackAssembly::NavCardPool
   PoolName: TestPool
   NavCardDataList:
-  - {fileID: 11400000, guid: ee69de141c6fbbc4192171e9c3363cdc, type: 2}
   - {fileID: 11400000, guid: efb399dc13626ef44a03be528d7a9f8d, type: 2}
-  - {fileID: 11400000, guid: 5ae3c62743289e9418a393e89bfbf1b5, type: 2}
+  - {fileID: 11400000, guid: efb399dc13626ef44a03be528d7a9f8d, type: 2}
+  - {fileID: 11400000, guid: efb399dc13626ef44a03be528d7a9f8d, type: 2}

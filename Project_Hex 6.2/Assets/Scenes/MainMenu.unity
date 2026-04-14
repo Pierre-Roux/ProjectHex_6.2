@@ -623,7 +623,7 @@ MonoBehaviour:
   MaxHandCount: 10
   MaxPowerGrid: 8
   NBCardDrawAtStartTurn: 6
-  NavOptionNumber: 2
+  NavOptionNumber: 3
   Common_Weigh: 75
   Uncommon_Weigh: 24
   Rare_Weigh: 1

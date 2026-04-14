@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: 
   PermanentImage: {fileID: 21300000, guid: f3ac8788ec4ac9d4fb8fa25adcfaf9d4, type: 3}
-  PermanentLife: 1
+  PermanentLife: 20
   IsCore: 1
   permanentArea: 0
   KeyWords: []

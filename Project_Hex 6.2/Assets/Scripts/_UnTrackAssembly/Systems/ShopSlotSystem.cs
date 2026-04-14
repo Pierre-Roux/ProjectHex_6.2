@@ -230,6 +230,6 @@ public class ShopSlotSystem : Singleton<ShopSlotSystem>
 
     public void CloseShop()
     {
-        SceneManager.LoadScene("TransitionScene");
+        SceneManager.LoadScene("NavigationScene");
     }
 }

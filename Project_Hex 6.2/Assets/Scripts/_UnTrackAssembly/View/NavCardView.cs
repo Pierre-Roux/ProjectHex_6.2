@@ -19,8 +19,9 @@ public class NavCardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     [HideInInspector] public NavCardData NavCard { get; private set; }
 
-    public void Setup(NavCardData NavCard)
+    public void Setup(NavCardData navCard)
     {
+        NavCard = navCard;
         ImageUI.sprite = NavCard.Image;
         BackGroundImage.sprite = NavCard.BackgroundImage;
         Title.text = NavCard.Title;
@@ -40,7 +41,15 @@ public class NavCardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     // Traitement des manipulations de carte sur l'UI
     public void OnPointerDown(PointerEventData eventData)
     {
-
+        NavigationSystem NavSys = NavigationSystem.Instance;
+        if (NavCard.navCardType == NavCardType.fight)
+        {
+            StartCoroutine(NavSys.HandleFight());
+        }
+        else if (NavCard.navCardType == NavCardType.shop)
+        {
+            StartCoroutine(NavSys.HandleShop());
+        }
     }
     
     public void OnPointerUp(PointerEventData eventData)

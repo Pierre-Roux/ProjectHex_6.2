@@ -8,4 +8,6 @@ public class Stage : ScriptableObject
     [SerializeField] public int Tier;
     [SerializeField] public NavCardPool StageNavCardPool;
     [SerializeField] public List<GameObject> Enemies;
+    [SerializeField] public List<GameObject> Elite_Enemies;
+    [SerializeField] public List<GameObject> Boss_Enemies;
 }

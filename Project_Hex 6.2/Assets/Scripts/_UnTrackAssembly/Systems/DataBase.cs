@@ -24,7 +24,8 @@ public class DataBase : Singleton<DataBase>
     public int Uncommon_Weigh;
     public int Rare_Weigh;
 
-    public PlayerData CurrentPlayer;
+    [HideInInspector] public PlayerData CurrentPlayer;
+    [HideInInspector] public GameObject SelectedEnemy;
 
     [HideInInspector] public List<CardData> INITIALDeckList;
     [HideInInspector] public List<CardData> DeckList;
@@ -39,9 +40,9 @@ public class DataBase : Singleton<DataBase>
     [HideInInspector] public float MasterVolume;
 
     //For fight
-    [HideInInspector] public bool IsElite;
     [HideInInspector] public int CoreLife;
     [HideInInspector] public int BaseCoreLife;
+    [HideInInspector] public bool BossFight;
 
     public new void Awake()
     {

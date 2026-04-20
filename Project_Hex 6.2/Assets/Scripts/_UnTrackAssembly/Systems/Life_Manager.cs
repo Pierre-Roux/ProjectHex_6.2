@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Life_Manager : Singleton<Money_Manager>
+public class Life_Manager : Singleton<Life_Manager>
 {
     [SerializeField] TMP_Text LifeText;
 

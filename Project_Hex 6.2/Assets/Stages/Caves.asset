@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 956099d8a79fe834385fde8cf2e41eda, type: 3}
-  m_Name: Marais
+  m_Name: Caves
   m_EditorClassIdentifier: _UnTrackAssembly::Stage
-  Name: Marais
-  Tier: 1
-  StageNavCardPool: {fileID: 11400000, guid: 4d658e19b99f9964c9ea3c6ebdc9e55d, type: 2}
+  Name: Caves
+  Tier: 2
+  StageNavCardPool: {fileID: 11400000, guid: d652a2c112d54c449abf59300c5b6d5d, type: 2}
   Enemies:
   - {fileID: 5728494894741626448, guid: 8c6f90f68e3cad64093a6a1b8e1af2e7, type: 3}
   Elite_Enemies:

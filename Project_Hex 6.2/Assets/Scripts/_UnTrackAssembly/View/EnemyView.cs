@@ -5,8 +5,7 @@ using SerializeReferenceEditor;
 
 public class EnemyView : MonoBehaviour
 {
-    [SerializeField] public int Tier;
-    [SerializeField] public bool isElite;
+    [SerializeField] public bool isBoss;
     [SerializeField] public CardPool EnemyRewardCardPool;
     [SerializeField] public List<EnemyPermanentData> EnemyPreset;
     [SerializeField] public EnemyZoneView WeaponZone;

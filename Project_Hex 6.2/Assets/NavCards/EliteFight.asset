@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdc4d860c021a0e4583a273f6d91769b, type: 3}
-  m_Name: TestEvent
+  m_Name: EliteFight
   m_EditorClassIdentifier: _UnTrackAssembly::NavCardData
-  <Title>k__BackingField: TestEvent
+  <Title>k__BackingField: Elite
   <Description>k__BackingField: 
-  <Image>k__BackingField: {fileID: 21300000, guid: 922f538cbe40e2c44bb4f7ffcbd0abf0, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 59d0bd81ea81fad45b386c2584911f05, type: 3}
   <BackgroundImage>k__BackingField: {fileID: 21300000, guid: 689692388c3fd52469dc70613694423d, type: 3}
-  <navCardType>k__BackingField: 5
+  <navCardType>k__BackingField: 2

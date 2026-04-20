@@ -23,8 +23,10 @@ public class CharacterSelectorSystem : Singleton<CharacterSelectorSystem>
         {
             dataBase.NavDeckList.Add(navCardData);
         }
-        
+
         dataBase.CurrentPlayer = Characters[CharaIndex];
+
+        dataBase.CoreLife = dataBase.BaseCoreLife = dataBase.CurrentPlayer.CoreHealth;
 
         // Choose starting level
 

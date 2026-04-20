@@ -618,6 +618,7 @@ MonoBehaviour:
   StarterPool: {fileID: 11400000, guid: a429477e2f9c4ba46940150ad13ad4b7, type: 2}
   Stages:
   - {fileID: 11400000, guid: fb53cc78dd6a73846b156480a3d91eb5, type: 2}
+  - {fileID: 11400000, guid: 579c7ff612d10e64b9a561db879abf84, type: 2}
   Money: 0
   MaxMana: 3
   MaxHandCount: 10
@@ -628,15 +629,16 @@ MonoBehaviour:
   Uncommon_Weigh: 24
   Rare_Weigh: 1
   CurrentPlayer: {fileID: 0}
+  SelectedEnemy: {fileID: 0}
   INITIALDeckList: []
   DeckList: []
   NavDeckList: []
   CurrentStage: {fileID: 0}
   AudioSource: {fileID: 0}
   MasterVolume: 0
-  IsElite: 0
   CoreLife: 0
   BaseCoreLife: 30
+  BossFight: 0
 --- !u!1 &115397218
 GameObject:
   m_ObjectHideFlags: 0

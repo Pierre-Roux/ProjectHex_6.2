@@ -38,17 +38,32 @@ public class NavCardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     }
 
-    // Traitement des manipulations de carte sur l'UI
+    // Traitement de la carte sur l'UI
     public void OnPointerDown(PointerEventData eventData)
     {
         NavigationSystem NavSys = NavigationSystem.Instance;
+
+        if (NavSys.Interractable == false) return;
+
         if (NavCard.navCardType == NavCardType.fight)
         {
             StartCoroutine(NavSys.HandleFight());
         }
+        else if (NavCard.navCardType == NavCardType.eliteFight)
+        {
+            StartCoroutine(NavSys.HandleEliteFight());
+        }
         else if (NavCard.navCardType == NavCardType.shop)
         {
             StartCoroutine(NavSys.HandleShop());
+        }
+        else if (NavCard.navCardType == NavCardType.campsite)
+        {
+            StartCoroutine(NavSys.HandleCampsite(NavCard));
+        }
+        else if (NavCard.navCardType == NavCardType.events)
+        {
+            StartCoroutine(NavSys.HandleEvent(NavCard));
         }
     }
     

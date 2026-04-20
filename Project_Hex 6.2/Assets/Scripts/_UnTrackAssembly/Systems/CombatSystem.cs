@@ -140,7 +140,6 @@ public class CombatSystem : Singleton<CombatSystem>
 
         EnemiesDataBase = dataBase.CurrentStage.Enemies;
 
-        int targetTier = 0;
         MaxPermPlayer = 9;
         MaxPermEnemy = 9;
         CardSystem.Instance.MaxHandCount = dataBase.MaxHandCount;
@@ -149,6 +148,8 @@ public class CombatSystem : Singleton<CombatSystem>
         CurrentPowerGrid = 0;
 
         UpdatePowerGridText();
+        PlayerCore.currentLife = dataBase.CoreLife;
+        PlayerCore.UpdateLifeText();
 
         if (dataBase.CurrentStage.Tier <= 1)
         {
@@ -159,69 +160,12 @@ public class CombatSystem : Singleton<CombatSystem>
             CurrentStageTier = dataBase.CurrentStage.Tier;
         }
 
-        if (CurrentStageTier == 1)
-        {
-            PlayerCore.currentLife = dataBase.BaseCoreLife = Player.CoreHealth;
-            PlayerCore.UpdateLifeText();
-        }
-        else
-        {
-            PlayerCore.currentLife = dataBase.CoreLife;
-            PlayerCore.UpdateLifeText();
-        }
-
-
-        // Détermine le Tier selon le Stage
-        if (CurrentStageTier <= 2)
-            targetTier = 0;
-        else if (CurrentStageTier <= 4)
-            targetTier = 1;
-        else if (CurrentStageTier <= 6)
-            targetTier = 2;
-        else if (CurrentStageTier <= 8)
-            targetTier = 3;
-        else if (CurrentStageTier <= 10)
-            targetTier = 4;
-        else if (CurrentStageTier <= 12)
-            targetTier = 5;
-        else
-            targetTier = 0;
-
-        //
-        //targetTier++;
-
-        // Filtrage
-        List<GameObject> validEnemies = EnemiesDataBase
-        .Where(e => e.GetComponent<EnemyView>().Tier == targetTier)
-        .ToList();
-
-        if (DataBase.Instance.IsElite)
-        {
-            validEnemies = validEnemies.Where(e => e.GetComponent<EnemyView>().isElite == true).ToList();
-        }
-
-        // Si aucun ennemi trouvé pour ce Tier
-        if (validEnemies.Count == 0)
-        {
-            Debug.LogWarning($"⚠ Aucun ennemi trouvé pour le Tier {targetTier} & IsElite = {DataBase.Instance.IsElite}. Selection Aléatoire d'Elite");
-            validEnemies = EnemiesDataBase;
-            if (DataBase.Instance.IsElite)
-            {
-                validEnemies = validEnemies.Where(e => e.GetComponent<EnemyView>().isElite == true).ToList();
-            }
-            if (validEnemies.Count == 0)
-            {
-                Debug.LogWarning($"⚠ Aucun ennemi d'Elite trouvé, sélection aléatoire globale.");
-                validEnemies = EnemiesDataBase;
-            }
-        }
-
         GameEventSystem.Instance.ClearAllEvents();
 
         Player_Permanents.Add(PlayerCore);
 
         // Choix aléatoire
-        GameObject selectedEnemy = validEnemies[Random.Range(0, validEnemies.Count - 1)];
+        GameObject selectedEnemy = dataBase.SelectedEnemy;
         GameObject SpawnedEnemy = Instantiate(selectedEnemy, EnemySpawn.position, EnemySpawn.rotation, EnemySpawn);
         EnemyView enemyView = SpawnedEnemy.GetComponent<EnemyView>();
         currentEnemy = enemyView;
@@ -255,10 +199,7 @@ public class CombatSystem : Singleton<CombatSystem>
 
         //Define Money Reward
         MoneyReward = CurrentStageTier * 10;
-        if (currentEnemy.isElite)
-        {
-            MoneyReward = MoneyReward * 2;
-        }
+
         RewardSystem.Instance.UpdateEndFightMoneyText(MoneyReward);
 
         //Set Cost of Card in inspector by priority

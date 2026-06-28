@@ -130,7 +130,7 @@ public class Card
     {
         if (CombatSystem.Instance != null)
         {
-            int passiveBonus = 0;
+            int passiveBonus = 0; 
             /*foreach (var keyWord in KeyWords)
             {
                 passiveBonus += CombatSystem.Instance.GetCost(keyWord.keyWordType, Enemy_Player_ENUM.NULL);

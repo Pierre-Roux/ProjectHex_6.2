@@ -8,35 +8,46 @@ public class NavigationSystem : Singleton<NavigationSystem>
 {
     [SerializeField] public GameObject NavPanel;
     [SerializeField] public GameObject NavPanelContent;
+    [SerializeField] public GameObject EventSLideParent;
+    [SerializeField] public GameObject EndGameDefeatPanel;
     [SerializeField] public TMP_Text CardCounterText;
+    [SerializeField] public TMP_Text StageTitleText;
 
-    [HideInInspector] private List<NavCardData> NavDeckData;
+    [HideInInspector] public List<NavCardData> NavDeckData;
     [HideInInspector] private DataBase dataBase;
     [HideInInspector] public int NavOptionNumber;
     [HideInInspector] public int CardCounter;
     [HideInInspector] public List<NavCardData> NavCardChoice;
 
     [HideInInspector] public bool Interractable;
+    [HideInInspector] public bool RedrawStarted;
 
 
     private void Start()
     {
         Interractable = false;
+        RedrawStarted = false;
         dataBase = DataBase.Instance;
         NavDeckData = dataBase.NavDeckList;
         CardCounter = NavDeckData.Count;
 
         UpdateCardCounterText();
+        UpdateStageTitleText();
 
         //DataBase.Instance.CurrentStageTier = CombatSystem.Instance.CurrentStageTier + 1;
         NavOptionNumber = dataBase.NavOptionNumber;
         NavDeckData.Shuffle();
         StartCoroutine(DrawNavigation());
     }
-    
+
     public void UpdateCardCounterText()
     {
         CardCounterText.text = CardCounter.ToString();
+    }
+    
+    public void UpdateStageTitleText()
+    {
+        StageTitleText.text = dataBase.CurrentStage.name;
     }
 
     public IEnumerator DrawNavigation()
@@ -69,13 +80,19 @@ public class NavigationSystem : Singleton<NavigationSystem>
 
         yield return null;
         Interractable = true;
+        RedrawStarted = false;
+    }
+
+    public void Redraw()
+    {
+        RedrawStarted = true;
+        StartCoroutine(RedrawNavigation());
     }
 
     public IEnumerator RedrawNavigation()
     {
         Interractable = false;
-        Coroutine ClearCoroutine = StartCoroutine(ClearNavigation());
-        yield return ClearCoroutine;
+        yield return StartCoroutine(ClearNavigation());
         StartCoroutine(DrawNavigation());
     }    
     
@@ -91,9 +108,14 @@ public class NavigationSystem : Singleton<NavigationSystem>
 
         foreach (Transform child in children)
         {
-            Destroy(child.gameObject);
-            yield return new WaitForSeconds(0.2f);
+            if (child.gameObject != null)
+            {
+                Destroy(child.gameObject);
+                yield return new WaitForSeconds(0.2f);                
+            }
         }
+
+        yield break;
     }
 
     public IEnumerator HandleFight()
@@ -152,6 +174,7 @@ public class NavigationSystem : Singleton<NavigationSystem>
     public IEnumerator HandleEvent(NavCardData EventData)
     {
         Interractable = false;
+        Instantiate(EventData.EventObject, EventSLideParent.transform.position, Quaternion.identity,EventSLideParent.transform);
         yield return null;
     }
 
@@ -172,7 +195,7 @@ public class NavigationSystem : Singleton<NavigationSystem>
 
         Life_Manager.Instance.UpdateLifeTextText();
 
-        StartCoroutine(RedrawNavigation());
+        Redraw();
         yield return null;
     }
 

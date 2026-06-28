@@ -30,7 +30,7 @@ MonoBehaviour:
   <permanentArea>k__BackingField: 2
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3469642677219491999
+  - rid: 368768051258589267
   PlayCardSound:
     Guid:
       Data1: 0
@@ -204,18 +204,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3047188320285622425
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 3
-        keyWordValue: 0
-    - rid: 3047188320285622426
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 6
-        keyWordValue: 0
-    - rid: 3469642677219491999
-      type: {class: ShieldEffect, ns: , asm: Assembly-CSharp}
+    - rid: 368768051258589267
+      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -241,7 +231,7 @@ MonoBehaviour:
         Duration: 0
         DurationType: 0
         TriggerOnDurationEnd: 0
-        CancelOnDeath: 0
+        CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
           rid: -2
@@ -252,13 +242,23 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 75b1972f-9dc1-42a5-a516-a1fc9b286b47
+        EffectID: 
         CanBeDisable: 1
         targetModeInfo:
           targetMode: 2
           PlayerOrEnemy: 1
           permanentArea: 0
           keyWordType: 0
-        TargetUpTo: 0
-        targetNumber: 0
+        TargetUpTo: 1
+        targetNumber: 1
         targetLimitations: []
+    - rid: 3047188320285622425
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 3
+        keyWordValue: 0
+    - rid: 3047188320285622426
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 6
+        keyWordValue: 0

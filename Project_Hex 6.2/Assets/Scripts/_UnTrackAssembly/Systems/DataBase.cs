@@ -28,6 +28,7 @@ public class DataBase : Singleton<DataBase>
     [HideInInspector] public GameObject SelectedEnemy;
 
     [HideInInspector] public List<CardData> INITIALDeckList;
+    [HideInInspector] public List<NavCardData> INITIALNavDeckList;
     [HideInInspector] public List<CardData> DeckList;
     [HideInInspector] public List<NavCardData> NavDeckList;
 

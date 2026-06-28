@@ -8,7 +8,7 @@ public class PlayerData : ScriptableObject
 {
     [field: Header("Mandatory")]
     [field: SerializeField] public string Name;
-    [field: SerializeField] public List<CardData> deckData;
+    [field: SerializeField] public CardPool deckData;
     [field: SerializeField] public NavCardPool navDeckData;
 
 

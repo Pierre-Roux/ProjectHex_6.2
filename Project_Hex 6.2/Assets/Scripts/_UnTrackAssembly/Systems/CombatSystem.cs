@@ -130,11 +130,6 @@ public class CombatSystem : Singleton<CombatSystem>
         DataBase dataBase = DataBase.Instance;
 
         Player = dataBase.CurrentPlayer;
-        if (dataBase.DeckList.Count == 0)
-        {
-            dataBase.DeckList = new List<CardData>(Player.deckData);
-            dataBase.INITIALDeckList = new List<CardData>(Player.deckData);
-        }
         CardSystem.Instance.Setup(dataBase.DeckList);
         PlayerCore.SetupCore(Player);
 

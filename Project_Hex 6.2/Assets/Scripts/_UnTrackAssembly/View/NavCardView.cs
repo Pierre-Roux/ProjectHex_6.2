@@ -47,22 +47,27 @@ public class NavCardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         if (NavCard.navCardType == NavCardType.fight)
         {
+            NavSys.Interractable = false;
             StartCoroutine(NavSys.HandleFight());
         }
         else if (NavCard.navCardType == NavCardType.eliteFight)
         {
+            NavSys.Interractable = false;
             StartCoroutine(NavSys.HandleEliteFight());
         }
         else if (NavCard.navCardType == NavCardType.shop)
         {
+            NavSys.Interractable = false;
             StartCoroutine(NavSys.HandleShop());
         }
         else if (NavCard.navCardType == NavCardType.campsite)
         {
+            NavSys.Interractable = false;
             StartCoroutine(NavSys.HandleCampsite(NavCard));
         }
         else if (NavCard.navCardType == NavCardType.events)
         {
+            NavSys.Interractable = false;
             StartCoroutine(NavSys.HandleEvent(NavCard));
         }
     }

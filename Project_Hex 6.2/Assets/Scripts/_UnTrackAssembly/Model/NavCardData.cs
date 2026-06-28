@@ -17,7 +17,7 @@ public class NavCardData : ScriptableObject
     [field: Header("CampSite")]
     [field: SerializeField] public int HealAmount { get; private set; }
 
-    [field: Header("Events")]
-    [field: SerializeField] public bool Hidden { get; private set; }
+    [field: Header("Event")]
+    [field: SerializeField] public GameObject EventObject { get; private set; }
     
 }

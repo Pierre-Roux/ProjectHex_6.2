@@ -47,6 +47,14 @@ public class CharacterSelectorSystem : Singleton<CharacterSelectorSystem>
             dataBase.NavDeckList.Add(navCardData);
         }
 
+        //SetupDeckList
+        if (dataBase.DeckList.Count == 0)
+        {
+            dataBase.DeckList = new List<CardData>(Characters[CharaIndex].deckData.CardDataList);
+            dataBase.INITIALDeckList = new List<CardData>(Characters[CharaIndex].deckData.CardDataList);
+            dataBase.INITIALNavDeckList = new List<NavCardData>(Characters[CharaIndex].navDeckData.NavCardDataList);
+        }
+
         SceneManager.LoadScene("NavigationScene");
     }
     

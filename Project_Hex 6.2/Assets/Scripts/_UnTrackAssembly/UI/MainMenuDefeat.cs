@@ -8,7 +8,11 @@ public class MainMenuDefeat : MonoBehaviour
     public void OnClick()
     {
         DataBase.Instance.CurrentStage = null;
+        DataBase.Instance.CoreLife = DataBase.Instance.BaseCoreLife;
+        DataBase.Instance.Money = 0;
         DataBase.Instance.DeckList = DataBase.Instance.INITIALDeckList;
+        DataBase.Instance.NavDeckList = DataBase.Instance.INITIALNavDeckList;
+        
         //SaveSystem.Instance.SaveGame();
         SceneManager.LoadScene("MainMenu");
     }

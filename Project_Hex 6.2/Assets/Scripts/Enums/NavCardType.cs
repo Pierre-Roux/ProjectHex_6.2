@@ -4,6 +4,5 @@ public enum NavCardType
     fight,
     eliteFight,
     shop,
-    campsite,
     events,
 }

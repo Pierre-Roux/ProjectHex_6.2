@@ -4,9 +4,8 @@ using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Splines;
-using Unity.Mathematics;
 
-public class HandView : MonoBehaviour
+public class HandView : Singleton<HandView>
 {
     [SerializeField] private SplineContainer SplineContainer;
 
@@ -17,7 +16,7 @@ public class HandView : MonoBehaviour
         CardView cardView = GetCardView(card);
         if (cardView == null) return null;
         cards.Remove(cardView);
-        StartCoroutine(UpdateCardPosition(0.15f));
+        UpdateCardPos(0.15f);
         return cardView;
     }
 
@@ -29,9 +28,13 @@ public class HandView : MonoBehaviour
     public IEnumerator AddCard(CardView cardView)
     {
         cards.Add(cardView);
-        StartCoroutine(UpdateCardPosition(0.15f));
-        //yield return UpdateCardPosition(0.15f);
+        UpdateCardPos(0.15f);
         yield return null;
+    }
+
+    public void UpdateCardPos(float Duration)
+    {
+        StartCoroutine(UpdateCardPosition(Duration));
     }
 
     private IEnumerator UpdateCardPosition(float duration)
@@ -54,8 +57,6 @@ public class HandView : MonoBehaviour
 
             cards[i].transform.DOMove(targetPos, duration);
             cards[i].transform.DORotateQuaternion(targetRot, duration);
-            cards[i].OriginalPos = targetPos;
-            cards[i].OriginalRotation = targetRot;
         }
 
         yield return new WaitForSeconds(duration); 

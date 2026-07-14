@@ -20,6 +20,7 @@ public class Card
     public bool PayX { get; private set; }
     public int PayXValue;
     public int life { get; private set; }
+    public int Armor { get; private set; }
     public int Shield { get; private set; }
     public int Durability { get; set; }
     public int MaxDurability { get; set; }
@@ -37,10 +38,13 @@ public class Card
     public EventReference PlaySpellSound;
     public EventReference SummonPPermanentSound;
     public EventReference BeingDamageSound;
+    public EventReference BeingDamageOnArmorSound;
+    public EventReference ArmorBreakSound;
     public EventReference CollateralSound;
     public EventReference DieSound;
     public EventReference HollowDieSound;
     public EventReference BeingHealSound;
+    public EventReference BeingArmorSound;
     public EventReference BeingShieldSound;
     public EventReference LoseShieldSound;
     public EventReference GainPowerSound;
@@ -75,6 +79,7 @@ public class Card
         if (!cardData.IsSpell)
         {
             life = cardData.life;
+            Armor = cardData.Armor;
             Durability = cardData.Durability;
             MaxDurability = cardData.MaxDurability;
         }
@@ -98,11 +103,14 @@ public class Card
         if (AudioManager.Instance.IsValid(cardData.PlaySpellSound)) PlaySpellSound = cardData.PlaySpellSound;
         if (AudioManager.Instance.IsValid(cardData.SummonPPermanentSound)) SummonPPermanentSound = cardData.SummonPPermanentSound;
         if (AudioManager.Instance.IsValid(cardData.BeingDamageSound)) BeingDamageSound = cardData.BeingDamageSound;
+        if (AudioManager.Instance.IsValid(cardData.BeingDamageOnArmorSound)) BeingDamageOnArmorSound = cardData.BeingDamageOnArmorSound;
+        if (AudioManager.Instance.IsValid(cardData.ArmorBreakSound)) ArmorBreakSound = cardData.ArmorBreakSound;
         if (AudioManager.Instance.IsValid(cardData.CollateralSound)) CollateralSound = cardData.CollateralSound;
 
         if (AudioManager.Instance.IsValid(cardData.DieSound)) DieSound = cardData.DieSound;
         if (AudioManager.Instance.IsValid(cardData.HollowDieSound)) HollowDieSound = cardData.HollowDieSound;
         if (AudioManager.Instance.IsValid(cardData.BeingHealSound)) BeingHealSound = cardData.BeingHealSound;
+        if (AudioManager.Instance.IsValid(cardData.BeingArmorSound)) BeingArmorSound = cardData.BeingArmorSound;
         if (AudioManager.Instance.IsValid(cardData.BeingShieldSound)) BeingShieldSound = cardData.BeingShieldSound;
         if (AudioManager.Instance.IsValid(cardData.LoseShieldSound)) LoseShieldSound = cardData.LoseShieldSound;
         if (AudioManager.Instance.IsValid(cardData.GainPowerSound)) GainPowerSound = cardData.GainPowerSound;

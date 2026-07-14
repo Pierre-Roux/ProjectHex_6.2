@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3766298591601733591}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21ce1077b53a7cd459100c281f3c25d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isElite: 0
+  isBoss: 0
   EnemyRewardCardPool: {fileID: 0}
   EnemyPreset:
   - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
@@ -150,7 +150,7 @@ Transform:
   m_GameObject: {fileID: 6470439035658852412}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.1, z: 0}
+  m_LocalPosition: {x: 0, y: -1.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -195,7 +195,7 @@ Transform:
   m_GameObject: {fileID: 7713955705517951290}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.4, z: 0}
+  m_LocalPosition: {x: 0, y: -2.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -356,7 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3644174211560009597, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.3
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3644174211560009597, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: m_LocalPosition.z

@@ -15,7 +15,6 @@ MonoBehaviour:
   <Title>k__BackingField: TestEvent
   <Description>k__BackingField: 
   <Image>k__BackingField: {fileID: 21300000, guid: 922f538cbe40e2c44bb4f7ffcbd0abf0, type: 3}
-  <BackgroundImage>k__BackingField: {fileID: 21300000, guid: 689692388c3fd52469dc70613694423d, type: 3}
-  <navCardType>k__BackingField: 5
-  <HealAmount>k__BackingField: 5
+  <BackgroundImage>k__BackingField: {fileID: 21300000, guid: 3e638cdf633b96841924f0d08c30e044, type: 3}
+  <navCardType>k__BackingField: 4
   <EventObject>k__BackingField: {fileID: 5568155388329863433, guid: a8c482e62aa74e3498979d327d974cf2, type: 3}

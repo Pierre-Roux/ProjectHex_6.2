@@ -14,6 +14,7 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.AttachPerformer<ExecEnemyTurnActionOnceGA>(ExecuteOnceEnemyTurnAction);
         ActionSystem.AttachPerformer<AttackPlayerGA>(AttackPlayerPerformer);
         ActionSystem.AttachPerformer<HealEnemyGA>(HealEnemyPerformer);
+        ActionSystem.AttachPerformer<ArmorEnemyGA>(ArmorEnemyPerformer);
         ActionSystem.AttachPerformer<ShieldEnemyGA>(ShieldEnemyPerformer);
         ActionSystem.AttachPerformer<EnemyUnShieldGA>(UnShieldEnemyPerformer);
         ActionSystem.AttachPerformer<EnemyAlterPowerGA>(AlterEnemyPerformer);
@@ -35,6 +36,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
         ActionSystem.SubscribeReaction<AttackPlayerGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<HealEnemyGA>(BeforeHealPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<ArmorEnemyGA>(BeforeArmorPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<ShieldEnemyGA>(BeforeShieldPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<EnemyUnShieldGA>(BeforeUnShieldEPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<EnemyAlterPowerGA>(BeforeAlterPreReaction, ReactionTiming.PRE);
@@ -60,6 +62,7 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.DetachPerformer<ExecEnemyTurnActionOnceGA>();
         ActionSystem.DetachPerformer<AttackPlayerGA>();
         ActionSystem.DetachPerformer<HealEnemyGA>();
+        ActionSystem.DetachPerformer<ArmorEnemyGA>();
         ActionSystem.DetachPerformer<ShieldEnemyGA>();
         ActionSystem.DetachPerformer<EnemyUnShieldGA>();
         ActionSystem.DetachPerformer<EnemyAlterPowerGA>();
@@ -81,6 +84,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
         ActionSystem.UnsubscribeReaction<AttackPlayerGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<HealEnemyGA>(BeforeHealPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<ArmorEnemyGA>(BeforeArmorPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<ShieldEnemyGA>(BeforeShieldPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<EnemyUnShieldGA>(BeforeUnShieldEPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<EnemyAlterPowerGA>(BeforeAlterPreReaction, ReactionTiming.PRE);
@@ -306,6 +310,34 @@ public class EnemySystem : Singleton<EnemySystem>
             healGA.SourceEffect = healEnemyGA.SourceEffect;
             healGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(healGA);
+        }
+    }
+
+    private IEnumerator ArmorEnemyPerformer(ArmorEnemyGA ArmorEnemyGA)
+    {
+        if (ArmorEnemyGA.Actionner != null)
+        {
+            EnemySlotView Attacker = ArmorEnemyGA.Actionner.GetComponent<EnemySlotView>();
+
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y - 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+        }
+
+        if (ArmorEnemyGA.playerTargets != null && ArmorEnemyGA.playerTargets.Count > 0)
+        {
+            ArmorGA ArmorGA = new ArmorGA(ArmorEnemyGA.ArmorAmount, ArmorEnemyGA.multiplyAmount, ArmorEnemyGA.DynamicAmount, ArmorEnemyGA.playerTargets, null);
+            ArmorGA.SourceEffect = ArmorEnemyGA.SourceEffect;
+            ArmorGA.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(ArmorGA);
+        }
+
+        if (ArmorEnemyGA.enemyTargets != null && ArmorEnemyGA.enemyTargets.Count > 0)
+        {
+            ArmorGA ArmorGA = new ArmorGA(ArmorEnemyGA.ArmorAmount, ArmorEnemyGA.multiplyAmount, ArmorEnemyGA.DynamicAmount, null, ArmorEnemyGA.enemyTargets);
+            ArmorGA.SourceEffect = ArmorEnemyGA.SourceEffect;
+            ArmorGA.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(ArmorGA);
         }
     }
 
@@ -767,6 +799,15 @@ public class EnemySystem : Singleton<EnemySystem>
         if (healEnemyGA.Actionner != null)
         {
             EnemySlotView Attacker = healEnemyGA.Actionner.GetComponent<EnemySlotView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeArmorPreReaction(ArmorEnemyGA ArmorEnemyGA)
+    {
+        if (ArmorEnemyGA.Actionner != null)
+        {
+            EnemySlotView Attacker = ArmorEnemyGA.Actionner.GetComponent<EnemySlotView>();
             Attacker.SetPosition(Attacker.transform.position);
         }
     }

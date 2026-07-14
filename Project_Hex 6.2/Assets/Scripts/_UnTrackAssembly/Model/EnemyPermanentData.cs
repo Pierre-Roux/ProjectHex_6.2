@@ -10,6 +10,7 @@ public class EnemyPermanentData : ScriptableObject
     [field: SerializeField] public string Title;
     [field: SerializeField] public Sprite PermanentImage;
     [field: SerializeField] public int PermanentLife;
+    [field: SerializeField] public int Armor;
     [field: SerializeField] public bool IsCore;
     [field: SerializeField] public PermanentArea permanentArea;
     [field: SerializeReference, SR] public List<KeyWord> KeyWords = new();
@@ -26,8 +27,11 @@ public class EnemyPermanentData : ScriptableObject
     [field: SerializeField] public EventReference SummonEPermanentSound;
     [field: SerializeField] public EventReference DieSound;
     [field: SerializeField] public EventReference BeingDamageSound;
+    [field: SerializeField] public EventReference BeingDamageOnArmorSound;
+    [field: SerializeField] public EventReference ArmorBreakSound;
     [field: SerializeField] public EventReference CollateralSound;
     [field: SerializeField] public EventReference BeingHealSound;
+    [field: SerializeField] public EventReference BeingArmorSound;
     [field: SerializeField] public EventReference BeingShieldSound;
     [field: SerializeField] public EventReference LoseShieldSound;
     [field: SerializeField] public EventReference GainPowerSound;

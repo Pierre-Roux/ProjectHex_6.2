@@ -60,11 +60,6 @@ public class NavCardView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             NavSys.Interractable = false;
             StartCoroutine(NavSys.HandleShop());
         }
-        else if (NavCard.navCardType == NavCardType.campsite)
-        {
-            NavSys.Interractable = false;
-            StartCoroutine(NavSys.HandleCampsite(NavCard));
-        }
         else if (NavCard.navCardType == NavCardType.events)
         {
             NavSys.Interractable = false;

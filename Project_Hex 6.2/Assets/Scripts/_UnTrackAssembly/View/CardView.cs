@@ -38,8 +38,6 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     [HideInInspector] public ShopSlot shopSlot;
     [HideInInspector] public bool isDragging = false;
 
-    [HideInInspector] public Vector3 OriginalPos;
-    [HideInInspector] public Quaternion OriginalRotation;
     [HideInInspector] public int OriginalSortingOrder;
 
     [HideInInspector] public Card Card { get; private set; }
@@ -181,7 +179,6 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                     if (ActionSystem.Instance.IsPerforming) return;
                     if (!CombatSystem.Instance.Interactable) return;
                 }
-                Debug.Log("Pointerdown");
                 isDragging = true;
                 Wrapper.transform.DOKill();
                 Wrapper.transform.DOLocalMove(Vector3.zero, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
@@ -233,8 +230,8 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
             }
             Wrapper.transform.DOKill(); 
             Wrapper.transform.DOScale(Vector3.one * hoverScale, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
-            Wrapper.transform.DOLocalMove(new Vector3(0, 2, 0f), HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
-            Wrapper.transform.DOLocalRotate(new Vector3(0,0,-transform.eulerAngles.z), HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
+            Wrapper.transform.DOLocalMove(new Vector3(0, 7, 0f), HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
+            Wrapper.transform.DOLocalRotate(new Vector3(-5,0,-transform.eulerAngles.z), HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
 
             if (!AudioManager.Instance.IsValid(Card.HoverCardSound))
             {
@@ -272,7 +269,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
             isDragging = true;
             Wrapper.transform.DOKill();
             Wrapper.transform.DOLocalMove(Vector3.zero, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
-            Wrapper.transform.DOLocalRotate(new Vector3(0,0,-transform.eulerAngles.z), HoverScaleAnimationSpeed).SetEase(Ease.OutBack);                          
+            Wrapper.transform.DOLocalRotate(new Vector3(-5,0,-transform.eulerAngles.z), HoverScaleAnimationSpeed).SetEase(Ease.OutBack);                          
         }
     }
 
@@ -463,8 +460,9 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     public void returnCardToHand(bool ErrorSound = false)
     {
         isDragging = false;
-        transform.DOMove(OriginalPos, 0.25f).SetEase(Ease.InOutBack);
-        transform.DORotate(OriginalRotation.eulerAngles, 0.25f).SetEase(Ease.OutCubic);
+        HandView handView = HandView.Instance;
+        transform.DOKill();
+        handView.UpdateCardPos(0.15f);
         Wrapper.transform.DOKill(); 
         Wrapper.transform.DOScale(Vector3.one, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
         Wrapper.transform.DOLocalMove(Vector3.zero, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);

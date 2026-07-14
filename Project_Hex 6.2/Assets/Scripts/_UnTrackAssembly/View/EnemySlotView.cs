@@ -11,6 +11,7 @@ public class EnemySlotView : MonoBehaviour
     [SerializeField] public List<Effect> PossibleIntent;
     [SerializeField] public EnemyPermanentData PermanentData;
     [SerializeField] public TMP_Text LifeText;
+    [SerializeField] TMP_Text ArmorText;
     [SerializeField] public TMP_Text IntentText;
     [SerializeField] public TMP_Text NameText;
     [SerializeField] public SpriteRenderer spriteRenderer;
@@ -20,8 +21,11 @@ public class EnemySlotView : MonoBehaviour
 
     [SerializeField] public EventReference DieSound;
     [SerializeField] public EventReference BeingDamageSound;
+    [SerializeField] public EventReference BeingDamageOnArmorSound;
+    [SerializeField] public EventReference ArmorBreakSound;
     [SerializeField] public EventReference CollateralSound;
     [SerializeField] public EventReference BeingHealSound;
+    [SerializeField] public EventReference BeingArmorSound;
     [SerializeField] public EventReference BeingShieldSound;
     [SerializeField] public EventReference LoseShieldSound;
     [SerializeField] public EventReference GainPowerSound;
@@ -35,7 +39,9 @@ public class EnemySlotView : MonoBehaviour
 
     [HideInInspector] public Effect IntentAction;
     [HideInInspector] public int currentLife { get; set; }
+    [HideInInspector] public int currentArmor { get; set; }
     [HideInInspector] public int baseLife { get; set; }
+    [HideInInspector] public int baseArmor { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public bool IsCore { get; set; }
     [HideInInspector] public bool IsDisabled = false;
@@ -71,9 +77,12 @@ public class EnemySlotView : MonoBehaviour
         PossibleIntent = PermanentData.PossibleIntent;
         spriteRenderer.sprite = PermanentData.PermanentImage;
         baseLife = PermanentData.PermanentLife;
+        baseArmor = PermanentData.Armor;
         MaxLife = baseLife;
         currentLife = MaxLife;
         UpdateLife();
+        currentArmor = baseArmor;
+        UpdateArmorText();
         IsCore = PermanentData.IsCore;
         ShieldVisual.SetActive(false);
         RDMSequence = PermanentData.RDMSequence;
@@ -105,7 +114,10 @@ public class EnemySlotView : MonoBehaviour
         //Audio
         if (AudioManager.Instance.IsValid(PermanentData.DieSound)) DieSound = PermanentData.DieSound;
         if (AudioManager.Instance.IsValid(PermanentData.BeingDamageSound)) BeingDamageSound = PermanentData.BeingDamageSound;
+        if (AudioManager.Instance.IsValid(PermanentData.BeingDamageOnArmorSound)) BeingDamageOnArmorSound = PermanentData.BeingDamageOnArmorSound;
+        if (AudioManager.Instance.IsValid(PermanentData.ArmorBreakSound)) ArmorBreakSound = PermanentData.ArmorBreakSound;
         if (AudioManager.Instance.IsValid(PermanentData.CollateralSound)) CollateralSound = PermanentData.CollateralSound;
+        if (AudioManager.Instance.IsValid(PermanentData.BeingArmorSound)) BeingArmorSound = PermanentData.BeingArmorSound;
         if (AudioManager.Instance.IsValid(PermanentData.BeingHealSound)) BeingHealSound = PermanentData.BeingHealSound;
         if (AudioManager.Instance.IsValid(PermanentData.BeingShieldSound)) BeingShieldSound = PermanentData.BeingShieldSound;
         if (AudioManager.Instance.IsValid(PermanentData.LoseShieldSound)) LoseShieldSound = PermanentData.LoseShieldSound;
@@ -127,7 +139,12 @@ public class EnemySlotView : MonoBehaviour
     }
     public void UpdateNameText(string name)
     {
-        NameText.text = name; 
+        NameText.text = name;
+    }
+    
+    public void UpdateArmorText()
+    {
+        ArmorText.text = currentArmor.ToString();
     }
 
     public void UpdateLifeText()
@@ -218,6 +235,10 @@ public class EnemySlotView : MonoBehaviour
 
             case HealEffect heal:
                 intentText = $"Heal {heal.amount} HP to {heal.targetModeInfo.targetMode}";
+                break;
+
+            case ArmorEffect Armor:
+                intentText = $"Armor {Armor.amount} HP to {Armor.targetModeInfo.targetMode}";
                 break;
 
             case DrawCardsEffect draw:
@@ -409,6 +430,24 @@ public class EnemySlotView : MonoBehaviour
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
+        if (currentArmor > 0)
+        {
+            int DamageAmountToLife = 0;
+            if (currentArmor >= Amount)
+            {
+                currentArmor -= Amount;
+                RuntimeManager.PlayOneShot(BeingDamageOnArmorSound);
+            }
+            else
+            {
+                RuntimeManager.PlayOneShot(ArmorBreakSound);
+                DamageAmountToLife = Amount - currentArmor;
+                currentArmor = 0;
+            }
+
+            Amount = DamageAmountToLife;
+        }
+
         currentLife -= Amount;
         if (currentLife <= 0)
         {
@@ -522,6 +561,18 @@ public class EnemySlotView : MonoBehaviour
         RuntimeManager.PlayOneShot(BeingHealSound);
         transform.DOShakePosition(0f, 0.1f);
         UpdateLifeText();
+    }
+
+    public void TakeArmor(int Amount)
+    {
+        currentArmor += Amount;
+        if (currentArmor < 0)
+        {
+            currentArmor = 0;
+        }
+        RuntimeManager.PlayOneShot(BeingArmorSound);
+        transform.DOShakePosition(0f, 0.1f);
+        UpdateArmorText();
     }
 
     public void TakeShield(PermanentView playerShielder = null, EnemySlotView enemyShielder = null)

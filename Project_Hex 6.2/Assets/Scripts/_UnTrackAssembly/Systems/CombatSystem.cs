@@ -9,7 +9,6 @@ public class CombatSystem : Singleton<CombatSystem>
 {
     [HideInInspector] public PlayerData Player;
     [SerializeField] public PermanentView PlayerCore;
-    [HideInInspector] private List<GameObject> EnemiesDataBase;
 
     [HideInInspector] public bool Interactable;
     [HideInInspector] public bool EndTurnBtnActivable;
@@ -133,9 +132,7 @@ public class CombatSystem : Singleton<CombatSystem>
         CardSystem.Instance.Setup(dataBase.DeckList);
         PlayerCore.SetupCore(Player);
 
-        EnemiesDataBase = dataBase.CurrentStage.Enemies;
-
-        MaxPermPlayer = 9;
+        MaxPermPlayer = 6;
         MaxPermEnemy = 9;
         CardSystem.Instance.MaxHandCount = dataBase.MaxHandCount;
         CardSystem.Instance.NBCardDrawAtStartTurn = dataBase.NBCardDrawAtStartTurn;
@@ -172,15 +169,7 @@ public class CombatSystem : Singleton<CombatSystem>
 
         ManaSystem.Instance.SetManaMax(DataBase.Instance.MaxMana);
 
-        //DefinePotentialRewards
-        foreach (CardData cardData in dataBase.ColorLessCardPool.CardDataList)
-        {
-            RewardSystem.Instance.PotentialRewards.Add(cardData.Clone());
-        }
-        foreach (CardData cardData in dataBase.ChoosedCardPool.CardDataList)
-        {
-            RewardSystem.Instance.PotentialRewards.Add(cardData.Clone());
-        }
+        //DefinePotentialRewardsEnemy
         if (currentEnemy.EnemyRewardCardPool != null)
         {
             if (currentEnemy.EnemyRewardCardPool.CardDataList.Count != 0)

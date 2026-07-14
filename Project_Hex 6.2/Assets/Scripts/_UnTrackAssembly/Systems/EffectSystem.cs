@@ -12,6 +12,7 @@ public class EffectSystem : Singleton<EffectSystem>
     {
         ActionSystem.AttachPerformer<DealDamageGA>(DealDamagePerformer);
         ActionSystem.AttachPerformer<HealGA>(DealHealPerformer);
+        ActionSystem.AttachPerformer<ArmorGA>(DealArmorPerformer);
         ActionSystem.AttachPerformer<ShieldGA>(DealShieldPerformer);
         ActionSystem.AttachPerformer<LoseShieldGA>(LoseShieldPerformer);
         ActionSystem.AttachPerformer<UnShieldGA>(UnShieldPerformer);
@@ -40,6 +41,7 @@ public class EffectSystem : Singleton<EffectSystem>
     {
         ActionSystem.DetachPerformer<DealDamageGA>();
         ActionSystem.DetachPerformer<HealGA>();
+        ActionSystem.DetachPerformer<ArmorGA>();
         ActionSystem.DetachPerformer<ShieldGA>();
         ActionSystem.DetachPerformer<LoseShieldGA>();
         ActionSystem.DetachPerformer<UnShieldGA>();
@@ -92,8 +94,6 @@ public class EffectSystem : Singleton<EffectSystem>
         dealDamageGA.Amount = dealDamageGA.Amount * dealDamageGA.multiplyAmount;
 
         dealDamageGA.Amount += dealDamageGA.BonusAmount;
-
-        Debug.Log("Amount : " + dealDamageGA.Amount);
 
         if (dealDamageGA.playerTargets != null)
         {
@@ -220,6 +220,52 @@ public class EffectSystem : Singleton<EffectSystem>
         }
     }
 
+    private IEnumerator DealArmorPerformer(ArmorGA ArmorGA)
+    {
+        if (ArmorGA.DynamicAmount != DynamicAmount.NULL)
+        {
+            if (ArmorGA.Actionner == null)
+            {
+                if (ArmorGA.CardActionner != null)
+                {
+                    ArmorGA.Amount = TargetSystem.Instance.GetDynamicAmount(ArmorGA.DynamicAmount, null, null, ArmorGA.CardActionner);
+                }
+                else
+                {
+                    ArmorGA.Amount = TargetSystem.Instance.GetDynamicAmount(ArmorGA.DynamicAmount, null, null);
+                }
+            }
+            else if (ArmorGA.Actionner.GetComponent<PermanentView>() != null)
+            {
+                ArmorGA.Amount = TargetSystem.Instance.GetDynamicAmount(ArmorGA.DynamicAmount, ArmorGA.Actionner.GetComponent<PermanentView>(), null);
+            }
+            else
+            {
+                ArmorGA.Amount = TargetSystem.Instance.GetDynamicAmount(ArmorGA.DynamicAmount, null, ArmorGA.Actionner.GetComponent<EnemySlotView>());
+            }
+        }
+        
+        ArmorGA.Amount = ArmorGA.Amount * ArmorGA.multiplyAmount;
+
+        if (ArmorGA.playerTargets != null)
+        {
+            foreach (var target in ArmorGA.playerTargets)
+            {
+                target.TakeArmor(ArmorGA.Amount);
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+
+        if (ArmorGA.enemyTargets != null)
+        {
+            foreach (var target in ArmorGA.enemyTargets)
+            {
+                target.TakeArmor(ArmorGA.Amount);
+                yield return new WaitForSeconds(AnimDelay);
+            }
+        }
+    }
+
     private IEnumerator DealShieldPerformer(ShieldGA shieldGA)
     {
         if (shieldGA.playerTargets != null)
@@ -238,8 +284,8 @@ public class EffectSystem : Singleton<EffectSystem>
                 {
                     target.TakeShield(null, shieldGA.Actionner.GetComponent<EnemySlotView>());
                     yield return new WaitForSeconds(AnimDelay);
-                }             
-            } 
+                }
+            }
 
         }
 
@@ -251,7 +297,7 @@ public class EffectSystem : Singleton<EffectSystem>
                 {
                     target.TakeShield(shieldGA.Actionner.GetComponent<PermanentView>(), null);
                     yield return new WaitForSeconds(AnimDelay);
-                }  
+                }
             }
             else if (shieldGA.Actionner.GetComponent<EnemySlotView>() != null)
             {
@@ -259,8 +305,8 @@ public class EffectSystem : Singleton<EffectSystem>
                 {
                     target.TakeShield(null, shieldGA.Actionner.GetComponent<EnemySlotView>());
                     yield return new WaitForSeconds(AnimDelay);
-                }                
-            }            
+                }
+            }
         }
     }
 

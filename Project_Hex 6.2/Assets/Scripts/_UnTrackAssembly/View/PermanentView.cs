@@ -10,6 +10,7 @@ public class PermanentView : MonoBehaviour
     [SerializeField] public SpriteRenderer PermanentSpriteRenderer;
     [SerializeField] SpriteRenderer AuraSpriteRenderer;
     [SerializeField] TMP_Text HealthText;
+    [SerializeField] TMP_Text ArmorText;
     [SerializeField] TMP_Text StaminaText;
     [SerializeField] public TMP_Text NameText;
     [SerializeField] public GameObject ShieldVisual;
@@ -19,7 +20,10 @@ public class PermanentView : MonoBehaviour
     [SerializeField] public EventReference HollowDieSound;
     [SerializeField] public EventReference CollateralSound;
     [SerializeField] public EventReference BeingDamageSound;
+    [SerializeField] public EventReference BeingDamageOnArmorSound;
+    [SerializeField] public EventReference ArmorBreakSound;
     [SerializeField] public EventReference BeingHealSound;
+    [SerializeField] public EventReference BeingArmorSound;
     [SerializeField] public EventReference BeingShieldSound;
     [SerializeField] public EventReference LoseShieldSound;
     [SerializeField] public EventReference GainPowerSound;
@@ -34,7 +38,9 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public bool IsCore { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public int currentLife { get; set; }
+    [HideInInspector] public int currentArmor { get; set; }
     [HideInInspector] public int baseLife { get; set; }
+    [HideInInspector] public int baseArmor { get; set; }
     [HideInInspector] public int MaxDurability { get; set; }
     [HideInInspector] public int Durability { get; set; } 
     [HideInInspector] public int BaseMaxDurability { get; set; }
@@ -68,9 +74,12 @@ public class PermanentView : MonoBehaviour
         CardReferenceArchive = cardReference;
         PermanentSpriteRenderer.sprite = cardReference.data.PermanentImage;
         baseLife = cardReference.data.life;
+        baseArmor = cardReference.data.Armor;
         MaxLife = baseLife;
         currentLife = MaxLife;
         UpdateLife();
+        currentArmor = baseArmor;
+        UpdateArmorText();
         BaseMaxDurability = cardReference.MaxDurability;
         MaxDurability = cardReference.MaxDurability;
         Durability = cardReference.Durability;
@@ -118,8 +127,11 @@ public class PermanentView : MonoBehaviour
         if (AudioManager.Instance.IsValid(cardReference.DieSound)) DieSound = cardReference.DieSound;
         if (AudioManager.Instance.IsValid(cardReference.HollowDieSound)) HollowDieSound = cardReference.HollowDieSound;
         if (AudioManager.Instance.IsValid(cardReference.BeingDamageSound)) BeingDamageSound = cardReference.BeingDamageSound;
+        if (AudioManager.Instance.IsValid(cardReference.BeingDamageOnArmorSound)) BeingDamageOnArmorSound = cardReference.BeingDamageOnArmorSound;
+        if (AudioManager.Instance.IsValid(cardReference.ArmorBreakSound)) ArmorBreakSound = cardReference.ArmorBreakSound;
         if (AudioManager.Instance.IsValid(cardReference.CollateralSound)) CollateralSound = cardReference.CollateralSound;
         if (AudioManager.Instance.IsValid(cardReference.BeingHealSound)) BeingHealSound = cardReference.BeingHealSound;
+        if (AudioManager.Instance.IsValid(cardReference.BeingArmorSound)) BeingArmorSound = cardReference.BeingArmorSound;
         if (AudioManager.Instance.IsValid(cardReference.BeingShieldSound)) BeingShieldSound = cardReference.BeingShieldSound;
         if (AudioManager.Instance.IsValid(cardReference.LoseShieldSound)) LoseShieldSound = cardReference.LoseShieldSound;
         if (AudioManager.Instance.IsValid(cardReference.GainPowerSound)) GainPowerSound = cardReference.GainPowerSound;
@@ -144,9 +156,12 @@ public class PermanentView : MonoBehaviour
         PermanentSpriteRenderer.sprite = CoreData.CoreImage;
         permanentArea = PermanentArea.NONE;
         baseLife = CoreData.CoreHealth;
+        baseArmor = CoreData.CoreArmor;
         MaxLife = baseLife;
         currentLife = MaxLife;
         UpdateLife();
+        currentArmor = baseArmor;
+        UpdateArmorText();
         UnShieldable = false;
         ShieldVisual.SetActive(false);
         deactivateAuraVisual();
@@ -154,6 +169,7 @@ public class PermanentView : MonoBehaviour
         if (AudioManager.Instance.IsValid(CoreData.DieSound)) DieSound = CoreData.DieSound;
         if (AudioManager.Instance.IsValid(CoreData.BeingDamageSound)) BeingDamageSound = CoreData.BeingDamageSound;
         if (AudioManager.Instance.IsValid(CoreData.BeingHealSound)) BeingHealSound = CoreData.BeingHealSound;
+        if (AudioManager.Instance.IsValid(CoreData.BeingArmorSound)) BeingArmorSound = CoreData.BeingArmorSound;
         if (AudioManager.Instance.IsValid(CoreData.BeingShieldSound)) BeingShieldSound = CoreData.BeingShieldSound;
         if (AudioManager.Instance.IsValid(CoreData.LoseShieldSound)) LoseShieldSound = CoreData.LoseShieldSound;
         if (AudioManager.Instance.IsValid(CoreData.TakeLifeLossSound)) TakeLifeLossSound = CoreData.TakeLifeLossSound;
@@ -172,6 +188,11 @@ public class PermanentView : MonoBehaviour
     {
         StaminaText.text = Durability.ToString() + "/" + MaxDurability.ToString();
     }*/
+
+    public void UpdateArmorText()
+    {
+        ArmorText.text = currentArmor.ToString();
+    }
 
     public void UpdateNameText(string name)
     {
@@ -447,6 +468,24 @@ public class PermanentView : MonoBehaviour
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
+        if (currentArmor > 0)
+        {
+            int DamageAmountToLife = 0;
+            if (currentArmor >= Amount)
+            {
+                currentArmor -= Amount;
+                RuntimeManager.PlayOneShot(BeingDamageOnArmorSound);
+            }
+            else
+            {
+                RuntimeManager.PlayOneShot(ArmorBreakSound);
+                DamageAmountToLife = Amount - currentArmor;
+                currentArmor = 0;
+            }
+
+            Amount = DamageAmountToLife;
+        }
+
         currentLife -= Amount;
         if (currentLife <= 0)
         {
@@ -491,8 +530,9 @@ public class PermanentView : MonoBehaviour
         {
             RuntimeManager.PlayOneShot(BeingDamageSound);
         }
-        
+
         UpdateLifeText();
+        UpdateArmorText();
     }
 
     public void OnKillTrigger(PermanentView Pstriker, EnemySlotView Estriker, Card Cstriker)
@@ -560,6 +600,18 @@ public class PermanentView : MonoBehaviour
         RuntimeManager.PlayOneShot(BeingHealSound);
         transform.DOShakePosition(0.1f, 0.1f);
         UpdateLifeText();
+    }
+
+    public void TakeArmor(int Amount)
+    {
+        currentArmor += Amount;
+        if (currentArmor < 0)
+        {
+            currentArmor = 0;
+        }
+        RuntimeManager.PlayOneShot(BeingArmorSound);
+        transform.DOShakePosition(0.1f, 0.1f);
+        UpdateArmorText();
     }
 
     public void TakeShield(PermanentView playerShielder = null, EnemySlotView enemyShielder = null)

@@ -297,7 +297,6 @@ public class DealDamageEffect : Effect
                     attackEnemyGA.SourceEffect = this;
                     attackEnemyGA.ActivateToolTip = false;
                     attackEnemyGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
-                    Debug.Log("send startManualTargetingGA");
                     StartManualTargetingGA startManualTargetingGA = new(attackEnemyGA, targetNumber, TargetUpTo, this, targetLimitations);
                     startManualTargetingGA.SourceEffect = this;
                     startManualTargetingGA.ActivateToolTip = ActivateToolTip;

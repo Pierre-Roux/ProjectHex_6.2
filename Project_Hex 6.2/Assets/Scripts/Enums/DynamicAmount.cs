@@ -29,6 +29,7 @@ public enum DynamicAmount
 
     Permanent_HP,
     Permanent_Endurance,
+    Permanent_Armor,
 
     CardsInHand_Count,
 

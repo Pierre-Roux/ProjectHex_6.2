@@ -1701,6 +1701,17 @@ public class TargetSystem : Singleton<TargetSystem>
                 }
                 break;
 
+            case DynamicAmount.Permanent_Armor:
+                if (permanentView != null)
+                {
+                    FinalAmount = permanentView.currentArmor;
+                }
+                else if (enemySlotView != null)
+                {
+                    FinalAmount = enemySlotView.currentArmor;
+                }
+                break;
+
             case DynamicAmount.Permanent_Endurance:
                 if (permanentView != null)
                 {

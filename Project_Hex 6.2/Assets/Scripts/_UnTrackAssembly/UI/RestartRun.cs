@@ -10,8 +10,8 @@ public class RestartRun : MonoBehaviour
         DataBase.Instance.CurrentStage = null;
         DataBase.Instance.CoreLife = DataBase.Instance.BaseCoreLife;
         DataBase.Instance.Money = 0;
-        DataBase.Instance.DeckList = DataBase.Instance.INITIALDeckList;
-        DataBase.Instance.NavDeckList = DataBase.Instance.INITIALNavDeckList;
+        DataBase.Instance.DeckList.Clear();
+        DataBase.Instance.NavDeckList.Clear();
         
         //SaveSystem.Instance.SaveGame();
         SceneManager.LoadScene("CharacterSelectScene");

@@ -34,6 +34,7 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField] public EventReference Effect_DrawSound;
     [SerializeField] public EventReference Effect_DiscardSound;
     [SerializeField] public EventReference Effect_HealSound;
+    [SerializeField] public EventReference Effect_ArmorSound;
     [SerializeField] public EventReference Effect_DealDamageSound;
     [SerializeField] public EventReference Effect_LifeLossSound;
     [SerializeField] public EventReference Effect_InvocSound;

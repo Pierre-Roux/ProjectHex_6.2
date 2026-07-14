@@ -14,9 +14,6 @@ public class NavCardData : ScriptableObject
     [field: SerializeField] public Sprite BackgroundImage { get; private set; }
     [field: SerializeField] public NavCardType navCardType { get; private set; }
 
-    [field: Header("CampSite")]
-    [field: SerializeField] public int HealAmount { get; private set; }
-
     [field: Header("Event")]
     [field: SerializeField] public GameObject EventObject { get; private set; }
     

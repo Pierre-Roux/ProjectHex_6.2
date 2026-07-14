@@ -8,13 +8,76 @@ using TMPro;
 public class RewardSystem : Singleton<RewardSystem>
 {
 
+    [SerializeField] public bool NavMode;
+
     [SerializeField] public Transform PilePoint;
     [SerializeField] public GameObject CardRewardPanel;
+    [SerializeField] public GameObject RewardPanelContent;
+
+    private List<Card> CardChoice = new List<Card>();
+
+    // For Combatmode
     [SerializeField] private Button ButtonCardReward;
     [SerializeField] private Button ButtonMoneyReward;
     [SerializeField] private TMP_Text ButtonMoneyReward_text;
 
     public List<CardData> PotentialRewards = new List<CardData>();
+
+    public void Start()
+    {
+        DataBase dataBase = DataBase.Instance;
+        foreach (CardData cardData in dataBase.ColorLessCardPool.CardDataList)
+        {
+            PotentialRewards.Add(cardData.Clone());
+        }
+        foreach (CardData cardData in dataBase.ChoosedCardPool.CardDataList)
+        {
+            PotentialRewards.Add(cardData.Clone());
+        }        
+    }
+
+    public void ClearDraftReward()
+    {
+        Debug.Log(RewardPanelContent.transform.childCount);
+        for (int i = RewardPanelContent.transform.childCount-1; i >= 0; i--)
+        {
+            Debug.Log(RewardPanelContent.transform.GetChild(i).gameObject);
+            Destroy(RewardPanelContent.transform.GetChild(i).gameObject);
+        }
+    }
+
+    public void DraftReward(int amount)
+    {
+        ClearDraftReward();
+        CardChoice.Clear();
+        var selected = new HashSet<CardData>();
+        int attempts = 0;
+        const int maxAttempts = 100;
+
+        while (CardChoice.Count < amount && attempts < maxAttempts)
+        {
+            attempts++;
+
+            var data = PickWeightedRandomCard();
+
+            if (selected.Add(data))
+            {
+                CardChoice.Add(new Card(data));
+            }
+        }
+
+        if (amount > CardChoice.Count)
+        {
+            amount = CardChoice.Count;
+        }
+
+        Vector3 Pos = new Vector3(0, 0, 0);
+        for (int i = 0; i < amount; i++)
+        {
+            CardView cardView = CardViewCreator.Instance.CreateUICardView(CardChoice[i], Pos, Quaternion.identity, RewardPanelContent.transform);
+            cardView.IsReward = true;
+        }
+    }
 
     private Dictionary<int, List<CardData>> GroupByRarity(List<CardData> cards)
     {
@@ -103,9 +166,16 @@ public class RewardSystem : Singleton<RewardSystem>
     public void PickCardFromRewardPanel(CardView cardView)
     {
         GainCard(cardView.Card, cardView);
-        ButtonCardReward.interactable = false;
+        if (!NavMode)
+            ButtonCardReward.interactable = false;
     }
 
+    public void OpenCardRewardPanel()
+    {
+        CardRewardPanel.SetActive(true);
+    }
+
+    // Used by button on rewardpanel
     public void CloseCardRewardPanel()
     {
         CardRewardPanel.SetActive(false);

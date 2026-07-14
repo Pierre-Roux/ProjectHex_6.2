@@ -10,6 +10,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
     {
         ActionSystem.AttachPerformer<AttackEnemyGA>(AttackEnemyPerformer); 
         ActionSystem.AttachPerformer<HealPlayerGA>(HealPlayerPerformer); 
+        ActionSystem.AttachPerformer<ArmorPlayerGA>(ArmorPlayerPerformer); 
         ActionSystem.AttachPerformer<ShieldPlayerGA>(ShieldPlayerPerformer);
         ActionSystem.AttachPerformer<PlayerUnShieldGA>(UnShieldPlayerPerformer);
         ActionSystem.AttachPerformer<PlayerAlterPowerGA>(AlterPlayerPerformer);
@@ -29,6 +30,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         ActionSystem.SubscribeReaction<AttackEnemyGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<HealPlayerGA>(BeforeHealPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<ArmorPlayerGA>(BeforeArmorPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<ShieldPlayerGA>(BeforeShieldPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<PlayerUnShieldGA>(BeforeUnShieldPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<PlayerAlterPowerGA>(BeforeAlterPreReaction, ReactionTiming.PRE);
@@ -52,6 +54,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
     {
         ActionSystem.DetachPerformer<AttackEnemyGA>();
         ActionSystem.DetachPerformer<HealPlayerGA>();
+        ActionSystem.DetachPerformer<ArmorPlayerGA>();
         ActionSystem.DetachPerformer<ShieldPlayerGA>();
         ActionSystem.DetachPerformer<PlayerUnShieldGA>();
         ActionSystem.DetachPerformer<PlayerAlterPowerGA>();
@@ -71,6 +74,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         ActionSystem.UnsubscribeReaction<AttackEnemyGA>(BeforeAttackPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<HealPlayerGA>(BeforeHealPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<ArmorPlayerGA>(BeforeArmorPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<ShieldPlayerGA>(BeforeShieldPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<PlayerUnShieldGA>(BeforeUnShieldPPerformerPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<PlayerAlterPowerGA>(BeforeAlterPreReaction, ReactionTiming.PRE);
@@ -114,7 +118,6 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (attackEnemyGA.enemyTargets != null && attackEnemyGA.enemyTargets.Count > 0)
         {
-            Debug.Log("Send DDGA");
             DealDamageGA dealDamageGA = new(attackEnemyGA.Damage,DamageBonus,attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmount, null, attackEnemyGA.enemyTargets);
             dealDamageGA.Actionner = attackEnemyGA.Actionner;
             dealDamageGA.SourceEffect = attackEnemyGA.SourceEffect;
@@ -137,6 +140,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
         if (healPlayerGA.playerTargets != null && healPlayerGA.playerTargets.Count > 0)
         {
             HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmount, healPlayerGA.playerTargets, null);
+            healGA.Actionner = healPlayerGA.Actionner;
             healGA.SourceEffect = healPlayerGA.SourceEffect;
             healGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(healGA);
@@ -145,12 +149,41 @@ public class PlayerSystem : Singleton<PlayerSystem>
         if (healPlayerGA.enemyTargets != null && healPlayerGA.enemyTargets.Count > 0)
         {
             HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmount, null, healPlayerGA.enemyTargets);
+            healGA.Actionner = healPlayerGA.Actionner;
             healGA.SourceEffect = healPlayerGA.SourceEffect;
             healGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(healGA);
         }
+    }
 
+    private IEnumerator ArmorPlayerPerformer(ArmorPlayerGA ArmorPlayerGA)
+    {
+        if (ArmorPlayerGA.Actionner != null)
+        {
+            PermanentView Attacker = ArmorPlayerGA.Actionner.GetComponent<PermanentView>();
 
+            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            yield return tween.WaitForCompletion();
+            Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
+        }
+
+        if (ArmorPlayerGA.playerTargets != null && ArmorPlayerGA.playerTargets.Count > 0)
+        {
+            ArmorGA ArmorGA = new ArmorGA(ArmorPlayerGA.ArmorAmount, ArmorPlayerGA.multiplyAmount, ArmorPlayerGA.DynamicAmount, ArmorPlayerGA.playerTargets, null);
+            ArmorGA.Actionner = ArmorPlayerGA.Actionner;
+            ArmorGA.SourceEffect = ArmorPlayerGA.SourceEffect;
+            ArmorGA.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(ArmorGA);
+        }
+
+        if (ArmorPlayerGA.enemyTargets != null && ArmorPlayerGA.enemyTargets.Count > 0)
+        {
+            ArmorGA ArmorGA = new ArmorGA(ArmorPlayerGA.ArmorAmount, ArmorPlayerGA.multiplyAmount, ArmorPlayerGA.DynamicAmount, null, ArmorPlayerGA.enemyTargets);
+            ArmorGA.Actionner = ArmorPlayerGA.Actionner;
+            ArmorGA.SourceEffect = ArmorPlayerGA.SourceEffect;
+            ArmorGA.ActivateToolTip = false;
+            ActionSystem.Instance.AddReaction(ArmorGA);
+        }
     }
 
     private IEnumerator PlayerRetrieveExhaustedPerformer(PlayerRetrieveExhaustedGA playerRetrieveExhaustedGA)
@@ -603,6 +636,15 @@ public class PlayerSystem : Singleton<PlayerSystem>
         if (healPlayerGA.Actionner != null)
         {
             PermanentView Attacker = healPlayerGA.Actionner.GetComponent<PermanentView>();
+            Attacker.SetPosition(Attacker.transform.position);
+        }
+    }
+
+    private void BeforeArmorPreReaction(ArmorPlayerGA ArmorPlayerGA)
+    {
+        if (ArmorPlayerGA.Actionner != null)
+        {
+            PermanentView Attacker = ArmorPlayerGA.Actionner.GetComponent<PermanentView>();
             Attacker.SetPosition(Attacker.transform.position);
         }
     }

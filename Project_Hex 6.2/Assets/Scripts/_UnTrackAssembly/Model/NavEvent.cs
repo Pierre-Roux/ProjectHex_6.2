@@ -69,6 +69,12 @@ public class NavEvent : MonoBehaviour
         }
     }
 
+    public void DraftReward(int Amount)
+    {
+        RewardSystem.Instance.OpenCardRewardPanel();
+        RewardSystem.Instance.DraftReward(Amount);
+    }
+
     public void Gain_CardReward()
     {
         dataBase.DeckList.Add(CardReward);
@@ -91,6 +97,7 @@ public class NavEvent : MonoBehaviour
         }
     }
 
+    // Used by buttons in events
     public void CloseSLide()
     {
         if (!navigationSystem.RedrawStarted)

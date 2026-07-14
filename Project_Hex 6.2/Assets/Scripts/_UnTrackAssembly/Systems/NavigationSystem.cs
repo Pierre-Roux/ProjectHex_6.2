@@ -44,7 +44,7 @@ public class NavigationSystem : Singleton<NavigationSystem>
     {
         CardCounterText.text = CardCounter.ToString();
     }
-    
+
     public void UpdateStageTitleText()
     {
         StageTitleText.text = dataBase.CurrentStage.name;
@@ -94,8 +94,8 @@ public class NavigationSystem : Singleton<NavigationSystem>
         Interractable = false;
         yield return StartCoroutine(ClearNavigation());
         StartCoroutine(DrawNavigation());
-    }    
-    
+    }
+
     public IEnumerator ClearNavigation()
     {
         Interractable = false;
@@ -111,7 +111,7 @@ public class NavigationSystem : Singleton<NavigationSystem>
             if (child.gameObject != null)
             {
                 Destroy(child.gameObject);
-                yield return new WaitForSeconds(0.2f);                
+                yield return new WaitForSeconds(0.2f);
             }
         }
 
@@ -174,30 +174,7 @@ public class NavigationSystem : Singleton<NavigationSystem>
     public IEnumerator HandleEvent(NavCardData EventData)
     {
         Interractable = false;
-        Instantiate(EventData.EventObject, EventSLideParent.transform.position, Quaternion.identity,EventSLideParent.transform);
+        Instantiate(EventData.EventObject, EventSLideParent.transform.position, Quaternion.identity, EventSLideParent.transform);
         yield return null;
     }
-
-    public IEnumerator HandleCampsite(NavCardData CampSite)
-    {
-        Interractable = false;
-        if (dataBase.CoreLife != dataBase.BaseCoreLife)
-        {
-            if (dataBase.CoreLife + CampSite.HealAmount >= dataBase.BaseCoreLife)
-            {
-                dataBase.CoreLife = dataBase.BaseCoreLife;
-            }
-            else
-            {
-                dataBase.CoreLife += CampSite.HealAmount;
-            }
-        }
-
-        Life_Manager.Instance.UpdateLifeTextText();
-
-        Redraw();
-        yield return null;
-    }
-
-
 }

@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class CardData : ScriptableObject
 {
+
+    [field: SerializeField] public string ID_Code { get; private set; }
+
     [field: Header("Mandatory")]
     [field: SerializeField] public string Title { get; private set; }
     [field: SerializeField] public string Description { get; private set; }
@@ -20,6 +23,7 @@ public class CardData : ScriptableObject
 
     [field: Header("Permanent")]
     [field: SerializeField] public int life { get; private set; }
+    [field: SerializeField] public int Armor { get; private set; }
     [field: SerializeField] public int Durability { get; private set; }
     [field: SerializeField] public int MaxDurability { get; private set; } = 1;
     [field: SerializeField] public Sprite PermanentImage { get; private set; }
@@ -40,8 +44,11 @@ public class CardData : ScriptableObject
     [field: SerializeField] public EventReference DieSound;
     [field: SerializeField] public EventReference HollowDieSound;
     [field: SerializeField] public EventReference BeingDamageSound;
+    [field: SerializeField] public EventReference BeingDamageOnArmorSound;
+    [field: SerializeField] public EventReference ArmorBreakSound;
     [field: SerializeField] public EventReference CollateralSound; 
     [field: SerializeField] public EventReference BeingHealSound;
+    [field: SerializeField] public EventReference BeingArmorSound;
     [field: SerializeField] public EventReference BeingShieldSound;
     [field: SerializeField] public EventReference LoseShieldSound;
     [field: SerializeField] public EventReference GainPowerSound;
@@ -72,6 +79,7 @@ public class CardData : ScriptableObject
 
         // Permanent
         clone.life = life;
+        clone.Armor = Armor;
         clone.Durability = Durability;
         clone.MaxDurability = MaxDurability;
         clone.PermanentImage = PermanentImage;
@@ -92,8 +100,11 @@ public class CardData : ScriptableObject
         clone.DieSound = DieSound;
         clone.HollowDieSound = HollowDieSound;
         clone.BeingDamageSound = BeingDamageSound;
+        clone.BeingDamageOnArmorSound = BeingDamageOnArmorSound;
+        clone.ArmorBreakSound = ArmorBreakSound;
         clone.CollateralSound = CollateralSound;
         clone.BeingHealSound = BeingHealSound;
+        clone.BeingArmorSound = BeingArmorSound;
         clone.BeingShieldSound = BeingShieldSound;
         clone.LoseShieldSound = LoseShieldSound;
         clone.GainPowerSound = GainPowerSound;

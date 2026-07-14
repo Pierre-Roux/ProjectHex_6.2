@@ -5,10 +5,11 @@ public class CardViewCreator : Singleton<CardViewCreator>
 {
     [SerializeField] private CardView cardViewPrefab;
     [SerializeField] private CardView cardViewPrefabUI;
+    [SerializeField] private GameObject CardParent;
 
     public CardView CreateCardView(Card Card, Vector3 position, Quaternion rotation, Transform Parent = null)
     {
-        CardView cardView = Instantiate(cardViewPrefab, position, rotation, Parent);
+        CardView cardView = Instantiate(cardViewPrefab, position, rotation, CardParent.transform);
         cardView.Setup(Card);
 
         if (Card.Effects != null)

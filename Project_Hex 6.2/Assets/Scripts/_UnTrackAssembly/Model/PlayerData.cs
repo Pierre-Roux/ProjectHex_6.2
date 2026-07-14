@@ -14,10 +14,12 @@ public class PlayerData : ScriptableObject
 
     [field: Header("Player Core")]
     [field: SerializeField] public int CoreHealth;
+    [field: SerializeField] public int CoreArmor;
     [field: SerializeField] public Sprite CoreImage;
     [SerializeField] public EventReference DieSound;
     [SerializeField] public EventReference BeingDamageSound;
     [SerializeField] public EventReference BeingHealSound;
+    [SerializeField] public EventReference BeingArmorSound;
     [SerializeField] public EventReference BeingShieldSound;
     [SerializeField] public EventReference LoseShieldSound;
     [SerializeField] public EventReference TakeLifeLossSound;

@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class EnemySlotView : MonoBehaviour
 {
+    [SerializeField] public GameObject WrapperGM;
     [SerializeField] public List<Effect> PossibleIntent;
     [SerializeField] public EnemyPermanentData PermanentData;
     [SerializeField] public TMP_Text LifeText;

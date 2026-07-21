@@ -501,8 +501,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
         if (playerDisableGA.Actionner != null)
         {
             PermanentView Attacker = playerDisableGA.Actionner.GetComponent<PermanentView>();
-
-            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            Tween tween = Attacker.WrapperGM.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f, 10, 1f);
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
@@ -528,8 +527,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
         if (playerEnableGA.Actionner != null)
         {
             PermanentView Attacker = playerEnableGA.Actionner.GetComponent<PermanentView>();
-
-            Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
+            Tween tween = Attacker.WrapperGM.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f, 10, 1f);
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 

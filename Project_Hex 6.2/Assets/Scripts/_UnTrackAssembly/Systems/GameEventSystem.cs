@@ -418,6 +418,12 @@ public class GameEventSystem : Singleton<GameEventSystem>
                 Disabled = effect.Actionner.GetComponent<EnemySlotView>().IsDisabled;
             }
         }
+
+        if (effect.GetType() == typeof(EnableEffect))
+        {
+            return false;
+        }
+
         return Disabled;
     }
 

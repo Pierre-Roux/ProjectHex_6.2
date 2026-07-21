@@ -8,6 +8,7 @@ using System.Linq;
 public class PermanentView : MonoBehaviour
 {
     [SerializeField] public SpriteRenderer PermanentSpriteRenderer;
+    [SerializeField] public GameObject WrapperGM;
     [SerializeField] SpriteRenderer AuraSpriteRenderer;
     [SerializeField] TMP_Text HealthText;
     [SerializeField] TMP_Text ArmorText;

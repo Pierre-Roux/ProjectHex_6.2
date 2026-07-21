@@ -70,7 +70,8 @@ public class CardSystem : Singleton<CardSystem>
     {
         DOTween.Init();
         DOTween.SetTweensCapacity(200, 10);
-        var dummy = CardViewCreator.Instance.CreateCardView(new Card(new CardData ()), new Vector3(-1000,-1000,0), Quaternion.identity);
+        var dummy = CardViewCreator.Instance.CreateCardView(new Card(new CardData()), new Vector3(-1000, -1000, 0), Quaternion.identity);
+        DOTween.Kill(dummy.gameObject);
         Destroy(dummy.gameObject);
     }
 
@@ -288,6 +289,7 @@ public class CardSystem : Singleton<CardSystem>
                 yield return tween.WaitForCompletion();
                 discardPile.Add(cardView.Card);
                 UpdatePiles();
+                DOTween.Kill(cardView.gameObject);
                 Destroy(cardView.gameObject);
             }
         }
@@ -303,6 +305,7 @@ public class CardSystem : Singleton<CardSystem>
     {
         Tween tween = cardView.transform.DOScale(Vector3.zero, 0.15f);
         yield return tween.WaitForCompletion();
+        DOTween.Kill(cardView.gameObject);
         Destroy(cardView.gameObject);
     }
 

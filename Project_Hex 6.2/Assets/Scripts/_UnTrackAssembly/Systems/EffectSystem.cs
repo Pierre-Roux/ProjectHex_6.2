@@ -784,9 +784,9 @@ public class EffectSystem : Singleton<EffectSystem>
         {
             foreach (var target in disableGA.playerTargets)
             {
-                target.IsDisabled = true;
                 if (target != null)
                 {
+                    target.IsDisabled = true;
                     foreach (Effect effect in target.ToggleableEffects)
                     {
                         if (effect.Disabled == false)
@@ -801,9 +801,9 @@ public class EffectSystem : Singleton<EffectSystem>
         {
             foreach (var target in disableGA.enemyTargets)
             {
-                target.IsDisabled = true;
                 if (target != null)
                 {
+                    target.IsDisabled = true;
                     foreach (Effect effect in target.ToggleableEffects)
                     {
                         if (effect.Disabled == false)

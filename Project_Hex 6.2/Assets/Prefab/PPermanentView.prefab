@@ -443,6 +443,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PermanentSpriteRenderer: {fileID: 5728508307362772071}
+  WrapperGM: {fileID: 2137741748336007858}
   AuraSpriteRenderer: {fileID: 2924154871817865630}
   HealthText: {fileID: 6262918214128263930}
   ArmorText: {fileID: 2770370787942614405}
@@ -478,6 +479,20 @@ MonoBehaviour:
       Data3: -1696235098
       Data4: -27272899
     Path: event:/Player/PPermWounded
+  BeingDamageOnArmorSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  ArmorBreakSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   BeingHealSound:
     Guid:
       Data1: 1179687985

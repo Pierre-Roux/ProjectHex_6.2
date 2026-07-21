@@ -331,6 +331,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                 isDragging = false;
                 CardSystem.Instance.ScryCardViews.Remove(this);
                 CardSystem.Instance.drawPile.PutTop(new[] { Card });
+                DOTween.Kill(gameObject);
                 Destroy(gameObject);
             }
             else if (hitDropDiscardLayer)
@@ -338,6 +339,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                 isDragging = false;
                 CardSystem.Instance.ScryCardViews.Remove(this);
                 CardSystem.Instance.discardPile.PutTop(new[] { Card });
+                DOTween.Kill(gameObject);
                 Destroy(gameObject);
             }
             else
@@ -509,6 +511,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
             else
             {
                 Vector3 mousePos = GetMouseWorldPositionOnZ(0);
+                DOTween.Kill(gameObject);
                 transform.DOMove(mousePos, 0.25f).SetEase(Ease.OutCubic);
                 transform.DORotate(Vector3.zero,0.25f);
             }           

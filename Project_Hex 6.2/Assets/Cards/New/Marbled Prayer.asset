@@ -10,29 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
-  m_Name: Barrier
-  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  m_Name: Marbled Prayer
+  m_EditorClassIdentifier: _UnTrackAssembly::CardData
   <ID_Code>k__BackingField: 
-  <Title>k__BackingField: Barrier
-  <Description>k__BackingField: 'Ward: Core'
+  <Title>k__BackingField: Marbled Prayer
+  <Description>k__BackingField: Invoke 2 Statue
   <Rarity>k__BackingField: 0
-  <cost>k__BackingField: 0
-  <GridCost>k__BackingField: 1
+  <cost>k__BackingField: 2
+  <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
-  <SpriteImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
-  <Money_Cost>k__BackingField: 0
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
+  <Money_Cost>k__BackingField: 20
   KeyWords:
-  - rid: 3047188320285622425
-  - rid: 3047188320285622426
-  <life>k__BackingField: 2
+  - rid: 3878124350565777560
+  <life>k__BackingField: 0
   <Armor>k__BackingField: 0
-  <Durability>k__BackingField: 1
+  <Durability>k__BackingField: 0
   <MaxDurability>k__BackingField: 1
-  <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
-  <permanentArea>k__BackingField: 2
-  <IsSpell>k__BackingField: 0
+  <PermanentImage>k__BackingField: {fileID: 0}
+  <permanentArea>k__BackingField: 0
+  <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
-  - rid: 368768051258589267
+  - rid: 3878124350565777501
   PlayCardSound:
     Guid:
       Data1: 0
@@ -227,12 +226,12 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 368768051258589267
-      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
+    - rid: 3878124350565777501
+      type: {class: InvocEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
-        actionnerType: 0
+        actionnerType: 2
         Events: 00000000
         TypeOfCounter: 0
         CounterValue: 0
@@ -266,22 +265,15 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
-        CanBeDisable: 1
-        targetModeInfo:
-          targetMode: 2
-          PlayerOrEnemy: 1
-          permanentArea: 0
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
-        targetLimitations: []
-    - rid: 3047188320285622425
+        amount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0
+        CardsToInvoc:
+        - {fileID: 11400000, guid: e023496008c9fdb4eb31beb44987e6e9, type: 2}
+        - {fileID: 11400000, guid: e023496008c9fdb4eb31beb44987e6e9, type: 2}
+        EnemyToInvoc: []
+    - rid: 3878124350565777560
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 3
-        keyWordValue: 0
-    - rid: 3047188320285622426
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 6
+        keyWordType: 8
         keyWordValue: 0

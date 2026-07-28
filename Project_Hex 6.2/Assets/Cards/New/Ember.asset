@@ -10,30 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
-  m_Name: Ghost Image
+  m_Name: Ember
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <ID_Code>k__BackingField: 
-  <Title>k__BackingField: Ghost Image
-  <Description>k__BackingField: 'A: Deal 3 DMG | Decay 1'
+  <Title>k__BackingField: Ember
+  <Description>k__BackingField: 'Sacrifice Ember: Gain *, You may Discard 1 to Draw
+    1'
   <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
-  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <Money_Cost>k__BackingField: 20
-  KeyWords:
-  - rid: 3047188320285622432
-  - rid: 3878124350565777618
+  KeyWords: []
   <life>k__BackingField: 1
   <Armor>k__BackingField: 0
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
-  <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
-  <permanentArea>k__BackingField: 1
+  <PermanentImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
+  <permanentArea>k__BackingField: 3
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 3047188320285622433
-  - rid: 3878124350565777617
+  - rid: 3878124350565777536
   PlayCardSound:
     Guid:
       Data1: 0
@@ -228,13 +226,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3047188320285622432
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 3
-        keyWordValue: 0
-    - rid: 3047188320285622433
-      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
+    - rid: 3878124350565777536
+      type: {class: EffectGroup, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -271,26 +264,18 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: bbc238a7-f0dd-48de-9575-1df6ed5d95e1
-        damageAmount: 3
-        multiplyAmount: 1
-        DynamicAmount: 0
-        targetModeInfo:
-          targetMode: 0
-          PlayerOrEnemy: 0
-          permanentArea: 0
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
-        targetLimitations: []
-    - rid: 3878124350565777617
-      type: {class: SacEffect, ns: , asm: _UnTrackAssembly}
+        EffectID: 759bea41-ac6b-4be0-a7f4-d832f03bd023
+        EffectGroups:
+        - rid: 3878124350565777540
+        - rid: 3878124350565777539
+        - rid: 3878124350565777541
+    - rid: 3878124350565777539
+      type: {class: ManaGainEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 02000000
+        Events: 00000000
         TypeOfCounter: 0
         CounterValue: 0
         ModuloValue: 0
@@ -308,9 +293,9 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
-        Duration: 1
-        DurationType: 2
-        TriggerOnDurationEnd: 1
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
@@ -322,7 +307,49 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 676329ce-bd9e-4ddb-bb0d-22b219a66fa1
+        EffectID: cd549691-9431-4cae-875d-836acc6c83a7
+        GainAmount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0
+    - rid: 3878124350565777540
+      type: {class: SacEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 0
+        Priority: 0
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 
         targetModeInfo:
           targetMode: 1
           PlayerOrEnemy: 0
@@ -331,8 +358,137 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
-    - rid: 3878124350565777618
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+    - rid: 3878124350565777541
+      type: {class: ChoiceEffect, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 2
-        keyWordValue: 0
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 
+        PlayerChoice: 1
+        MayChoice: 1
+        EffectsForPlayerChoice:
+        - rid: 3878124350565777546
+        EffectOnTrue:
+          rid: -2
+        EffectOnFalse:
+          rid: -2
+    - rid: 3878124350565777546
+      type: {class: DiscardEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: 3878124350565777547
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 
+        DiscardAmount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0
+        DiscardAll: 0
+        TargetUpTo: 0
+        targetLimitations: []
+    - rid: 3878124350565777547
+      type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 
+        drawAmount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0

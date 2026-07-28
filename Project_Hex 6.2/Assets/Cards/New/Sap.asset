@@ -10,29 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
-  m_Name: Barrier
+  m_Name: Sap
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <ID_Code>k__BackingField: 
-  <Title>k__BackingField: Barrier
-  <Description>k__BackingField: 'Ward: Core'
+  <Title>k__BackingField: Sap
+  <Description>k__BackingField: 'Shield Core | When Destroyed: Deal 3 DMG'
   <Rarity>k__BackingField: 0
-  <cost>k__BackingField: 0
+  <cost>k__BackingField: 1
   <GridCost>k__BackingField: 1
   <PayX>k__BackingField: 0
   <SpriteImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
-  <Money_Cost>k__BackingField: 0
+  <Money_Cost>k__BackingField: 20
   KeyWords:
-  - rid: 3047188320285622425
-  - rid: 3047188320285622426
-  <life>k__BackingField: 2
+  - rid: 3878124350565777602
+  <life>k__BackingField: 3
   <Armor>k__BackingField: 0
-  <Durability>k__BackingField: 1
-  <MaxDurability>k__BackingField: 1
+  <Durability>k__BackingField: 3
+  <MaxDurability>k__BackingField: 3
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
   <permanentArea>k__BackingField: 2
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 368768051258589267
+  - rid: 3878124350565777603
+  - rid: 3878124350565777604
   PlayCardSound:
     Guid:
       Data1: 0
@@ -227,7 +227,12 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 368768051258589267
+    - rid: 3878124350565777602
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 6
+        keyWordValue: 0
+    - rid: 3878124350565777603
       type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
@@ -265,7 +270,7 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 
+        EffectID: ebb3290a-d688-4061-aa7a-57b618c77d80
         CanBeDisable: 1
         targetModeInfo:
           targetMode: 2
@@ -275,13 +280,54 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
-    - rid: 3047188320285622425
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+    - rid: 3878124350565777604
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 3
-        keyWordValue: 0
-    - rid: 3047188320285622426
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 6
-        keyWordValue: 0
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 07000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: a59d8e0f-24e1-43a4-9ca7-66bca09a655b
+        damageAmount: 3
+        multiplyAmount: 1
+        DynamicAmount: 0
+        targetModeInfo:
+          targetMode: 0
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          keyWordType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
+        targetLimitations: []

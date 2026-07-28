@@ -10,29 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
-  m_Name: Barrier
-  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  m_Name: _WIP_Mind Pillar
+  m_EditorClassIdentifier: _UnTrackAssembly::CardData
   <ID_Code>k__BackingField: 
-  <Title>k__BackingField: Barrier
-  <Description>k__BackingField: 'Ward: Core'
-  <Rarity>k__BackingField: 0
-  <cost>k__BackingField: 0
-  <GridCost>k__BackingField: 1
+  <Title>k__BackingField: Mind Pillar
+  <Description>k__BackingField: 'Add 2 Focus Point to your Grid | At SoT: Add 1 Favor
+    and Draw 1'
+  <Rarity>k__BackingField: 1
+  <cost>k__BackingField: 2
+  <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
-  <SpriteImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
-  <Money_Cost>k__BackingField: 0
-  KeyWords:
-  - rid: 3047188320285622425
-  - rid: 3047188320285622426
-  <life>k__BackingField: 2
+  <SpriteImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
+  <Money_Cost>k__BackingField: 20
+  KeyWords: []
+  <life>k__BackingField: 3
   <Armor>k__BackingField: 0
-  <Durability>k__BackingField: 1
-  <MaxDurability>k__BackingField: 1
-  <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
-  <permanentArea>k__BackingField: 2
+  <Durability>k__BackingField: 2
+  <MaxDurability>k__BackingField: 2
+  <PermanentImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
+  <permanentArea>k__BackingField: 3
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
-  - rid: 368768051258589267
+  - rid: 3878124350565777517
+  - rid: 3878124350565777518
   PlayCardSound:
     Guid:
       Data1: 0
@@ -227,8 +227,8 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 368768051258589267
-      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
+    - rid: 3878124350565777517
+      type: {class: AlterPowerGridEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
@@ -265,23 +265,134 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 
+        EffectID: f9f675a6-b672-43ce-87f7-1d4a50718d1a
         CanBeDisable: 1
-        targetModeInfo:
-          targetMode: 2
-          PlayerOrEnemy: 1
-          permanentArea: 0
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
-        targetLimitations: []
-    - rid: 3047188320285622425
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+        Amount: 2
+        multiplyAmount: 1
+        DynamicAmount: 0
+    - rid: 3878124350565777518
+      type: {class: EffectGroup, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 3
-        keyWordValue: 0
-    - rid: 3047188320285622426
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 03000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: a11649c1-09e3-45df-a9e8-1f5ab76f32f5
+        EffectGroups:
+        - rid: 3878124350565777519
+        - rid: 3878124350565777520
+    - rid: 3878124350565777519
+      type: {class: ManaGainEffect, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 6
-        keyWordValue: 0
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: aa200e1d-64b0-4d52-a377-584de0218a4b
+        GainAmount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0
+    - rid: 3878124350565777520
+      type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 0
+        Events: 00000000
+        TypeOfCounter: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: a01263c2-3830-4e6e-a5f9-4b71422bafbb
+        drawAmount: 1
+        multiplyAmount: 1
+        DynamicAmount: 0

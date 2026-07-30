@@ -95,7 +95,6 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
     private IEnumerator AttackEnemyPerformer(AttackEnemyGA attackEnemyGA)
     {
-        int DamageBonus = 0;
         if (attackEnemyGA.Actionner != null)
         {
             PermanentView Attacker = attackEnemyGA.Actionner.GetComponent<PermanentView>();
@@ -103,13 +102,11 @@ public class PlayerSystem : Singleton<PlayerSystem>
             Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y + 1f, 0.25f);
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
-
-            DamageBonus = Attacker.CalculateBonusPower();
         }
 
         if (attackEnemyGA.playerTargets != null && attackEnemyGA.playerTargets.Count > 0)
         {
-            DealDamageGA dealDamageGA = new(attackEnemyGA.Damage, DamageBonus, attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmount, attackEnemyGA.playerTargets, null);
+            DealDamageGA dealDamageGA = new(attackEnemyGA.powerBased, attackEnemyGA.Damage, attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmount, attackEnemyGA.playerTargets, null);
             dealDamageGA.Actionner = attackEnemyGA.Actionner;
             dealDamageGA.SourceEffect = attackEnemyGA.SourceEffect;
             dealDamageGA.ActivateToolTip = false;
@@ -118,7 +115,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (attackEnemyGA.enemyTargets != null && attackEnemyGA.enemyTargets.Count > 0)
         {
-            DealDamageGA dealDamageGA = new(attackEnemyGA.Damage,DamageBonus,attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmount, null, attackEnemyGA.enemyTargets);
+            DealDamageGA dealDamageGA = new(attackEnemyGA.powerBased, attackEnemyGA.Damage,attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmount, null, attackEnemyGA.enemyTargets);
             dealDamageGA.Actionner = attackEnemyGA.Actionner;
             dealDamageGA.SourceEffect = attackEnemyGA.SourceEffect;
             dealDamageGA.ActivateToolTip = false;

@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Weapon
   PermanentImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
-  PermanentLife: 4
+  Life: 3
+  Power: 3
+  Armor: 0
   IsCore: 0
   permanentArea: 1
   KeyWords: []
@@ -45,6 +47,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  BeingDamageOnArmorSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  ArmorBreakSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   CollateralSound:
     Guid:
       Data1: 0
@@ -53,6 +69,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingArmorSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -173,7 +196,8 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: df9b1d92-e1c7-4350-ac0e-2fd9c3657cd9
-        damageAmount: 3
+        powerBased: 1
+        damageAmount: 0
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:
@@ -183,5 +207,4 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []

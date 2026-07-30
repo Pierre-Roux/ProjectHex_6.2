@@ -68,32 +68,50 @@ public class EffectSystem : Singleton<EffectSystem>
 
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
     {
+        int DamageAmount = 0;
+
         if (dealDamageGA.DynamicAmount != DynamicAmount.NULL)
         {
             if (dealDamageGA.Actionner == null)
             {
                 if (dealDamageGA.CardActionner != null)
                 {
-                    dealDamageGA.Amount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, null, null, dealDamageGA.CardActionner);
+                    DamageAmount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, null, null, dealDamageGA.CardActionner);
                 }
                 else
                 {
-                    dealDamageGA.Amount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, null, null);
+                    DamageAmount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, null, null);
                 }
             }
             else if (dealDamageGA.Actionner.GetComponent<PermanentView>() != null)
             {
-                dealDamageGA.Amount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, dealDamageGA.Actionner.GetComponent<PermanentView>(), null);
+                DamageAmount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, dealDamageGA.Actionner.GetComponent<PermanentView>(), null);
             }
             else
             {
-                dealDamageGA.Amount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, null, dealDamageGA.Actionner.GetComponent<EnemySlotView>());
+                DamageAmount = TargetSystem.Instance.GetDynamicAmount(dealDamageGA.DynamicAmount, null, dealDamageGA.Actionner.GetComponent<EnemySlotView>());
             }
         }
+        DamageAmount = DamageAmount * dealDamageGA.multiplyAmount;
 
-        dealDamageGA.Amount = dealDamageGA.Amount * dealDamageGA.multiplyAmount;
-
-        dealDamageGA.Amount += dealDamageGA.BonusAmount;
+        if (dealDamageGA.powerBased)
+        {
+            if (dealDamageGA.Actionner == null)
+            {
+                Debug.Log("Power base Dealdamage without actionner");
+            }
+            else
+            {
+                if (dealDamageGA.Actionner.GetComponent<PermanentView>() != null)
+                {
+                    DamageAmount = dealDamageGA.Actionner.GetComponent<PermanentView>().currentPower;
+                }
+                else
+                {
+                    DamageAmount = dealDamageGA.Actionner.GetComponent<EnemySlotView>().currentPower;
+                }                
+            }
+        }
 
         if (dealDamageGA.playerTargets != null)
         {
@@ -107,28 +125,28 @@ public class EffectSystem : Singleton<EffectSystem>
                         var newtargetE = target.EnemyShielder[Random.Range(0, target.EnemyShielder.Count)];
                         if (Random.Range(0, 1) == 0)
                         {
-                            newtargetP.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                            newtargetP.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                         }
                         else
                         {
-                            newtargetE.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                            newtargetE.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                         }
                     }
                     else if (target.EnemyShielder.Count != 0)
                     {
                         var newtargetE = target.EnemyShielder[Random.Range(0, target.EnemyShielder.Count)];
-                        newtargetE.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                        newtargetE.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                     }
                     else if (target.PlayerShielder.Count != 0)
                     {
                         var newtargetP = target.PlayerShielder[Random.Range(0, target.PlayerShielder.Count)];
-                        newtargetP.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                        newtargetP.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                     }
                     yield return new WaitForSeconds(AnimDelay);
                 }
                 else
                 {
-                    target.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                    target.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                     yield return new WaitForSeconds(AnimDelay);
                 }
             }
@@ -146,28 +164,29 @@ public class EffectSystem : Singleton<EffectSystem>
                         var newtargetE = target.EnemyShielder[Random.Range(0, target.EnemyShielder.Count)];
                         if (Random.Range(0, 1) == 0)
                         {
-                            newtargetP.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                            newtargetP.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                         }
                         else
                         {
-                            newtargetE.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                            newtargetE.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                         }
                     }
                     else if (target.EnemyShielder.Count != 0)
                     {
                         var newtargetE = target.EnemyShielder[Random.Range(0, target.EnemyShielder.Count)];
-                        newtargetE.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                        newtargetE.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                     }
                     else if (target.PlayerShielder.Count != 0)
                     {
                         var newtargetP = target.PlayerShielder[Random.Range(0, target.PlayerShielder.Count)];
-                        newtargetP.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+                        newtargetP.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                     }
                     yield return new WaitForSeconds(AnimDelay);
                 }
                 else
                 {
-                    target.TakeDamage(dealDamageGA.Amount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
+
+                    target.TakeDamage(DamageAmount, dealDamageGA.CardActionner, dealDamageGA.Actionner);
                     yield return new WaitForSeconds(AnimDelay);
                 }
             }
@@ -616,9 +635,11 @@ public class EffectSystem : Singleton<EffectSystem>
             KeyWordType type = alterCardCostGA.targetModeInfo.keyWordType;
             var side = alterCardCostGA.targetModeInfo.PlayerOrEnemy;
 
+            Debug.Log("ajout de " + alterCardCostGA.Amount + " en passif");
+
             CombatSystem.Instance.AddCost(type, side, alterCardCostGA.Amount);
 
-            foreach (Card item in CardSystem.Instance.hand)
+            /*foreach (Card item in CardSystem.Instance.hand)
             {
                 item.UpdateCost(CalculateCardPassiveCost());
             }
@@ -629,7 +650,7 @@ public class EffectSystem : Singleton<EffectSystem>
             foreach (Card item in CardSystem.Instance.drawPile)
             {
                 item.UpdateCost(CalculateCardPassiveCost());
-            }
+            }*/
         }
         else
         {
@@ -642,27 +663,7 @@ public class EffectSystem : Singleton<EffectSystem>
                 }
             }
         }
-    }
-    
-    public int CalculateCardPassiveCost()
-    {
-        if (CombatSystem.Instance != null)
-        {
-            int passiveBonus = 0;
-            /*foreach (var keyWord in KeyWords)
-            {
-                passiveBonus += CombatSystem.Instance.GetCost(keyWord.keyWordType, Enemy_Player_ENUM.NULL);
-            }*/
-
-            // Bonus globaux (NULL)
-            passiveBonus += CombatSystem.Instance.GetCost(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
-
-            return passiveBonus;
-        }
-        else
-        {
-            return 0;
-        }
+        yield return null;
     }
     
     private IEnumerator AddACopyPerformer(AddACopyGa addACopyGa)

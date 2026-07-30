@@ -23,6 +23,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     [SerializeField] public Image ImageUI;
     [SerializeField] public Image BackGroundImage;
     [SerializeField] public TMP_Text Life;
+    [SerializeField] public TMP_Text Power;
     [SerializeField] public TMP_Text Durability;
     [SerializeField] public GameObject Wrapper;
     [SerializeField] private LayerMask DropAreaLayer;
@@ -49,6 +50,10 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     [HideInInspector] public bool WhaitForPayX;
     [HideInInspector] public int PayXValue;
     [HideInInspector] public Effect EffectHolder;
+
+    [HideInInspector] public int CurrentCost;
+    [SerializeField] public int CardBonuspassiveCost;
+
 
     public void Setup(Card card)
     {
@@ -82,24 +87,28 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
         if (!Card.IsSpell)
         {
             Life.gameObject.SetActive(true);
+            Power.gameObject.SetActive(true);
             Durability.gameObject.SetActive(true);
 
-            Life.text = Card.life.ToString();
+            Power.text = Card.Power.ToString();
+            Life.text = Card.Life.ToString();
             UpdateDurabilityText();
         }
         else
         {
             Life.gameObject.SetActive(false);
+            Power.gameObject.SetActive(false);
             Durability.gameObject.SetActive(false);
         }
 
         if (AudioManager.Instance.IsValid(card.CardSelectedSound)) CardSelectedSound = card.CardSelectedSound;
         if (AudioManager.Instance.IsValid(card.CardUnSelectedSound)) CardUnSelectedSound = card.CardUnSelectedSound;
 
+        StartCoroutine(RealTimeUpdate());
         //UpdateDescription();
     }
 
-    public void UpdateDescription()
+    /*public void UpdateDescription()
     {
         List<string> effectDescriptions = new();
 
@@ -128,11 +137,28 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
         }
 
         Description.text = string.Join("\n", effectDescriptions);
+    }*/
+
+    private IEnumerator RealTimeUpdate()
+    {
+        while (true)
+        {
+            UpdateCost();
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    private void UpdateCost()
+    {
+        Card.CalculateCost();
+        CardBonuspassiveCost = Card.passiveCost;
+        CurrentCost = Card.CurrentCost;
+        UpdateCostText();
     }
 
     public void UpdateCostText()
     {
-        cost.text = Mathf.Max(0, Card.cost + Card.BonusCost).ToString();
+        cost.text = Mathf.Max(0, CurrentCost).ToString();
     }
     
     public void UpdateDurabilityText()

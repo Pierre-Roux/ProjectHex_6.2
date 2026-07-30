@@ -4,6 +4,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using FMODUnity;
 using System.Linq;
+using System.Collections;
 
 public class PermanentView : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PermanentView : MonoBehaviour
     [SerializeField] public GameObject WrapperGM;
     [SerializeField] SpriteRenderer AuraSpriteRenderer;
     [SerializeField] TMP_Text HealthText;
+    [SerializeField] TMP_Text PowerText;
     [SerializeField] TMP_Text ArmorText;
     [SerializeField] TMP_Text StaminaText;
     [SerializeField] public TMP_Text NameText;
@@ -39,8 +41,10 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public bool IsCore { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public int currentLife { get; set; }
+    [HideInInspector] public int currentPower { get; set; }
     [HideInInspector] public int currentArmor { get; set; }
     [HideInInspector] public int baseLife { get; set; }
+    [HideInInspector] public int basePower { get; set; }
     [HideInInspector] public int baseArmor { get; set; }
     [HideInInspector] public int MaxDurability { get; set; }
     [HideInInspector] public int Durability { get; set; } 
@@ -74,7 +78,8 @@ public class PermanentView : MonoBehaviour
         IsCore = false;
         CardReferenceArchive = cardReference;
         PermanentSpriteRenderer.sprite = cardReference.data.PermanentImage;
-        baseLife = cardReference.data.life;
+        baseLife = cardReference.data.Life;
+        basePower = cardReference.data.Power;
         baseArmor = cardReference.data.Armor;
         MaxLife = baseLife;
         currentLife = MaxLife;
@@ -143,6 +148,8 @@ public class PermanentView : MonoBehaviour
         if (AudioManager.Instance.IsValid(cardReference.ActivateSound)) ActivateSound = cardReference.ActivateSound;
         if (AudioManager.Instance.IsValid(cardReference.SelectedSound)) SelectedSound = cardReference.SelectedSound;
         if (AudioManager.Instance.IsValid(cardReference.UnSelectedSound)) UnSelectedSound = cardReference.UnSelectedSound;
+
+        StartCoroutine(RealTimeUpdate());
     }
 
     public void SetPosition(Vector3 pos)
@@ -158,6 +165,7 @@ public class PermanentView : MonoBehaviour
         permanentArea = PermanentArea.NONE;
         baseLife = CoreData.CoreHealth;
         baseArmor = CoreData.CoreArmor;
+        currentPower = basePower = 0;
         MaxLife = baseLife;
         currentLife = MaxLife;
         UpdateLife();
@@ -178,13 +186,35 @@ public class PermanentView : MonoBehaviour
         if (AudioManager.Instance.IsValid(CoreData.DebuffLifeSound)) DebuffLifeSound = CoreData.DebuffLifeSound;
         if (AudioManager.Instance.IsValid(CoreData.SelectedSound)) SelectedSound = CoreData.SelectedSound;
         if (AudioManager.Instance.IsValid(CoreData.UnSelectedSound)) UnSelectedSound = CoreData.UnSelectedSound;
+
+        //StartCoroutine(RealTimeUpdate());
+    }
+
+    private IEnumerator RealTimeUpdate()
+    {
+        while (true)
+        {
+            UpdatePower();
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    private void UpdatePower()
+    {
+        int Power = CalculateBonusPower();
+        //if (!IsCore) Debug.Log("Base " + basePower + " Bonus " + Power);
+        currentPower = basePower + Power;
+        UpdatePowerText();
     }
 
     public void UpdateLifeText()
     {
         HealthText.text = currentLife.ToString();
     }
-
+    public void UpdatePowerText()
+    {
+        PowerText.text = currentPower.ToString();
+    }
     /*public void UpdateStaminaText()
     {
         StaminaText.text = Durability.ToString() + "/" + MaxDurability.ToString();
@@ -562,7 +592,7 @@ public class PermanentView : MonoBehaviour
         if (Pstriker != null)
         {
             List<PermanentView> targets_Player = new List<PermanentView> { CombatSystem.Instance.PlayerCore };
-            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, targets_Player, null);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, targets_Player, null);
             dealDamageGA.Actionner = Pstriker.gameObject;
             dealDamageGA.SourceEffect = null;
             dealDamageGA.ActivateToolTip = false;
@@ -572,7 +602,7 @@ public class PermanentView : MonoBehaviour
         else if (Estriker != null)
         {
             List<PermanentView> targets_Player = new List<PermanentView> { CombatSystem.Instance.PlayerCore };
-            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, targets_Player, null);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, targets_Player, null);
             dealDamageGA.Actionner = Estriker.gameObject;
             dealDamageGA.SourceEffect = null;
             dealDamageGA.ActivateToolTip = false;
@@ -582,7 +612,7 @@ public class PermanentView : MonoBehaviour
         else if (Cstriker != null)
         {
             List<PermanentView> targets_Player = new List<PermanentView> { CombatSystem.Instance.PlayerCore };
-            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, targets_Player, null);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, targets_Player, null);
             dealDamageGA.CardActionner = Cstriker;
             dealDamageGA.SourceEffect = null;
             dealDamageGA.ActivateToolTip = false;

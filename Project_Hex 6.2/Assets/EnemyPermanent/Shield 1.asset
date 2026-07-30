@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Shield
   PermanentImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
-  PermanentLife: 5
+  Life: 5
+  Power: 0
+  Armor: 0
   IsCore: 0
   permanentArea: 2
   KeyWords:
@@ -45,6 +47,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  BeingDamageOnArmorSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  ArmorBreakSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   CollateralSound:
     Guid:
       Data1: 0
@@ -53,6 +69,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingArmorSound:
     Guid:
       Data1: 0
       Data2: 0

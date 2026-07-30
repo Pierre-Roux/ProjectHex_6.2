@@ -24,7 +24,8 @@ MonoBehaviour:
   KeyWords:
   - rid: 3047188320285622425
   - rid: 3047188320285622426
-  <life>k__BackingField: 2
+  <Life>k__BackingField: 2
+  <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1

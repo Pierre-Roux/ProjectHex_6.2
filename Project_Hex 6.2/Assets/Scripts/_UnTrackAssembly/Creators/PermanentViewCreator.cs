@@ -62,6 +62,8 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
         ShieldZone.RepositionChildrenPermanentView();
         SupportZone.RepositionChildrenPermanentViewCenterOut();
 
+        Debug.Log("je joue la carte creature -> " + cardReference.Title);
+
         GameEventSystem.Instance.ManageEffects(null, PermanentView, null);
 
         TriggerEventGA triggerEventGA = new(Events.WhenPermaETB,null,PermanentView,null);

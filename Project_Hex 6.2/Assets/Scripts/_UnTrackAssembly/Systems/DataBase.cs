@@ -9,7 +9,6 @@ public class DataBase : Singleton<DataBase>
     public CardPool ColorLessCardPool;
     public CardPool ChoosedCardPool;
     public CardPool BossCardPool;
-    public CardPool StarterPool;
 
     public List<Stage> Stages;
 

@@ -22,7 +22,8 @@ public class CardData : ScriptableObject
     [field: SerializeReference, SR] public List<KeyWord> KeyWords = new List<KeyWord>();
 
     [field: Header("Permanent")]
-    [field: SerializeField] public int life { get; private set; }
+    [field: SerializeField] public int Life { get; private set; }
+    [field: SerializeField] public int Power { get; private set; }
     [field: SerializeField] public int Armor { get; private set; }
     [field: SerializeField] public int Durability { get; private set; }
     [field: SerializeField] public int MaxDurability { get; private set; } = 1;
@@ -78,7 +79,8 @@ public class CardData : ScriptableObject
         clone.KeyWords = new List<KeyWord>(KeyWords);
 
         // Permanent
-        clone.life = life;
+        clone.Life = Life;
+        clone.Power = Power;
         clone.Armor = Armor;
         clone.Durability = Durability;
         clone.MaxDurability = MaxDurability;

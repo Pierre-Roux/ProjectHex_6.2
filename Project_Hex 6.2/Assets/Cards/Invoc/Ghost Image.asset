@@ -24,7 +24,8 @@ MonoBehaviour:
   KeyWords:
   - rid: 3047188320285622432
   - rid: 3878124350565777618
-  <life>k__BackingField: 1
+  <Life>k__BackingField: 1
+  <Power>k__BackingField: 3
   <Armor>k__BackingField: 0
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -33,7 +34,6 @@ MonoBehaviour:
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3047188320285622433
-  - rid: 3878124350565777617
   PlayCardSound:
     Guid:
       Data1: 0
@@ -272,6 +272,7 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: bbc238a7-f0dd-48de-9575-1df6ed5d95e1
+        powerBased: 0
         damageAmount: 3
         multiplyAmount: 1
         DynamicAmount: 0
@@ -282,57 +283,9 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
-        targetLimitations: []
-    - rid: 3878124350565777617
-      type: {class: SacEffect, ns: , asm: _UnTrackAssembly}
-      data:
-        ActivateToolTip: 1
-        Priority: 0
-        actionnerType: 0
-        Events: 02000000
-        TypeOfCounter: 0
-        CounterValue: 0
-        ModuloValue: 0
-        HollowEffect: 0
-        PayXEffect: 0
-        MultiHit: 0
-        SFX:
-          Guid:
-            Data1: 0
-            Data2: 0
-            Data3: 0
-            Data4: 0
-          Path: 
-        ActivateNumber: 1
-        ORChoice: 0
-        Intent_Title: 
-        number: 
-        Duration: 1
-        DurationType: 2
-        TriggerOnDurationEnd: 1
-        CancelOnDeath: 1
-        DynamicConditionInfos: []
-        LinkedEffect:
-          rid: -2
-        Actionner: {fileID: 0}
-        TargetForLinked_Player: []
-        TargetForLinked_Enemy: []
-        PayXValue: 0
-        ActivateLeft: 0
-        BypassEntryCondition: 0
-        Disabled: 0
-        EffectID: 676329ce-bd9e-4ddb-bb0d-22b219a66fa1
-        targetModeInfo:
-          targetMode: 1
-          PlayerOrEnemy: 0
-          permanentArea: 0
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
         targetLimitations: []
     - rid: 3878124350565777618
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 2
-        keyWordValue: 0
+        keyWordValue: 1

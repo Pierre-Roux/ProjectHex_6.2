@@ -13,13 +13,15 @@ public class Card
 
     public int Rarity { get; private set; }
     public bool IsSpell { get; private set; }
-    public int InitialCost { get; private set; }
     public int cost { get; private set; }
+    [HideInInspector] public int CurrentCost { get; private set; }
     public int GridCost { get; private set; }
     public int BonusCost { get; set; }
+    public int passiveCost { get; set; }
     public bool PayX { get; private set; }
     public int PayXValue;
-    public int life { get; private set; }
+    public int Life { get; private set; }
+    public int Power { get; private set; }
     public int Armor { get; private set; }
     public int Shield { get; private set; }
     public int Durability { get; set; }
@@ -69,8 +71,8 @@ public class Card
         KeyWords = new List<KeyWord>(data.KeyWords);
         Title = cardData.Title;
         Rarity = cardData.Rarity;
-        InitialCost = cardData.cost;
-        cost = InitialCost; //+ CalculatePassiveCost();
+        cost = cardData.cost;
+        CalculateCost();
         GridCost = cardData.GridCost;
         BonusCost = 0;
         PayX = cardData.PayX;
@@ -78,7 +80,8 @@ public class Card
         Money_Cost = data.Money_Cost;
         if (!cardData.IsSpell)
         {
-            life = cardData.life;
+            Life = cardData.Life;
+            Power = cardData.Power;
             Armor = cardData.Armor;
             Durability = cardData.Durability;
             MaxDurability = cardData.MaxDurability;
@@ -134,35 +137,31 @@ public class Card
         }
     }
 
-    public int CalculatePassiveCost()
+    public void CalculateCost()
     {
         if (CombatSystem.Instance != null)
         {
+            int FinalCost = 0;
             int passiveBonus = 0; 
-            /*foreach (var keyWord in KeyWords)
+
+            foreach (var keyWord in KeyWords)
             {
                 passiveBonus += CombatSystem.Instance.GetCost(keyWord.keyWordType, Enemy_Player_ENUM.NULL);
             }
 
             // Bonus globaux (NULL)
-            passiveBonus += CombatSystem.Instance.GetCost(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
+            //passiveBonus += CombatSystem.Instance.GetCost(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
+            passiveBonus += CombatSystem.Instance.GetCost(KeyWordType.NULL, Enemy_Player_ENUM.Card);
 
-            return passiveBonus;*/
-            return 0;
+            passiveCost = passiveBonus;
+
+            FinalCost = cost + BonusCost + passiveBonus;
+
+            CurrentCost = FinalCost;
         }
         else
         {
-            return 0;
-        }
-    }
-
-    public void UpdateCost(int passiveCost)
-    {
-        cost = InitialCost + passiveCost;
-
-        if (RefCardView != null)
-        {
-            RefCardView.UpdateCostText();
+            CurrentCost = 0;
         }
     }
     

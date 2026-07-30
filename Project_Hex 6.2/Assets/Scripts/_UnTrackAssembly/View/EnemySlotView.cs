@@ -12,6 +12,7 @@ public class EnemySlotView : MonoBehaviour
     [SerializeField] public List<Effect> PossibleIntent;
     [SerializeField] public EnemyPermanentData PermanentData;
     [SerializeField] public TMP_Text LifeText;
+    [SerializeField] public TMP_Text PowerText;
     [SerializeField] TMP_Text ArmorText;
     [SerializeField] public TMP_Text IntentText;
     [SerializeField] public TMP_Text NameText;
@@ -40,8 +41,10 @@ public class EnemySlotView : MonoBehaviour
 
     [HideInInspector] public Effect IntentAction;
     [HideInInspector] public int currentLife { get; set; }
+    [HideInInspector] public int currentPower { get; set; }
     [HideInInspector] public int currentArmor { get; set; }
     [HideInInspector] public int baseLife { get; set; }
+    [HideInInspector] public int basePower { get; set; }
     [HideInInspector] public int baseArmor { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public bool IsCore { get; set; }
@@ -50,7 +53,6 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public Vector3 InitialPosition { get; set; }
     [HideInInspector] public int BonusPower { get; set; }
     [HideInInspector] public int BonusLife { get; set; }
-    [HideInInspector] public int CurrentHPBonus { get; set; }
     [HideInInspector] public PermanentArea permanentArea;
 
     [HideInInspector] public List<PermanentView> PlayerShielder = new();
@@ -77,8 +79,9 @@ public class EnemySlotView : MonoBehaviour
         InternCounters.ClearAll();
         PossibleIntent = PermanentData.PossibleIntent;
         spriteRenderer.sprite = PermanentData.PermanentImage;
-        baseLife = PermanentData.PermanentLife;
+        baseLife = PermanentData.Life;
         baseArmor = PermanentData.Armor;
+        basePower = PermanentData.Power;
         MaxLife = baseLife;
         currentLife = MaxLife;
         UpdateLife();
@@ -132,6 +135,23 @@ public class EnemySlotView : MonoBehaviour
         if (AudioManager.Instance.IsValid(PermanentData.UnSelectedSound)) UnSelectedSound = PermanentData.UnSelectedSound;
 
         UpdateIntent();
+        StartCoroutine(RealTimeUpdate());
+    }
+
+    private IEnumerator RealTimeUpdate()
+    {
+        while (true)
+        {
+            UpdatePower();
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    private void UpdatePower()
+    {
+        CalculateBonusPower();
+        currentPower = basePower + BonusPower;
+        UpdatePowerText();
     }
 
     public void SetPosition(Vector3 pos)
@@ -151,6 +171,11 @@ public class EnemySlotView : MonoBehaviour
     public void UpdateLifeText()
     {
         LifeText.text = currentLife.ToString();
+    }
+
+    public void UpdatePowerText()
+    {
+        PowerText.text = currentPower.ToString();
     }
 
     public void UpdateIntent()
@@ -523,7 +548,7 @@ public class EnemySlotView : MonoBehaviour
         if (Pstriker != null)
         {
             List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
-            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, null, targets_Enemy);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, null, targets_Enemy);
             dealDamageGA.Actionner = Pstriker.gameObject;
             dealDamageGA.SourceEffect = null;
             dealDamageGA.ActivateToolTip = false;
@@ -533,7 +558,7 @@ public class EnemySlotView : MonoBehaviour
         else if (Estriker != null)
         {
             List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
-            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, null, targets_Enemy);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, null, targets_Enemy);
             dealDamageGA.Actionner = Estriker.gameObject;
             dealDamageGA.SourceEffect = null;
             dealDamageGA.ActivateToolTip = false;
@@ -543,7 +568,7 @@ public class EnemySlotView : MonoBehaviour
         else if (Cstriker != null)
         {
             List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
-            DealDamageGA dealDamageGA = new(CollateralAmount, 0, 1, DynamicAmount.NULL, null, targets_Enemy);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, null, targets_Enemy);
             dealDamageGA.CardActionner = Cstriker;
             dealDamageGA.SourceEffect = null;
             dealDamageGA.ActivateToolTip = false;

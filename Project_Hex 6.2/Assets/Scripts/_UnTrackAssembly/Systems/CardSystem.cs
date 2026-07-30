@@ -368,14 +368,15 @@ public class CardSystem : Singleton<CardSystem>
                 }
                 else
                 {
-                    if (ConditionSystem.Instance.TestCondition(SubVarGroup.Conditions, playCardGA.Card, null, null,playCardGA.Card))
+                    if (ConditionSystem.Instance.TestCondition(SubVarGroup.Conditions, playCardGA.Card, null, null, playCardGA.Card))
                     {
                         nbCopie += SubVarGroup.value;
                         copyVarGroupUsed.Add(SubVarGroup);
-                    }                     
-                }               
+                    }
+                }
             }
         }
+        
         for (int i = 0; i < nbCopie; i++)
         {
             GameEventSystem.Instance.ManageEffects(playCardGA.Card, null, null);

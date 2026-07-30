@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
   m_Name: Phantom Image
   m_EditorClassIdentifier: 
+  <ID_Code>k__BackingField: 
   <Title>k__BackingField: Phantom Image
   <Description>k__BackingField: 'A: Deal 4 DMG OR Shield an Object | Decay 2'
   <Rarity>k__BackingField: 0
@@ -24,7 +25,9 @@ MonoBehaviour:
   - rid: 3047188320285622434
   - rid: 3047188320285622435
   - rid: 3047188320285622436
-  <life>k__BackingField: 4
+  <Life>k__BackingField: 4
+  <Power>k__BackingField: 4
+  <Armor>k__BackingField: 0
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
@@ -102,6 +105,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  BeingDamageOnArmorSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  ArmorBreakSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   CollateralSound:
     Guid:
       Data1: 0
@@ -110,6 +127,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingArmorSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -307,7 +331,8 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
-        damageAmount: 4
+        powerBased: 1
+        damageAmount: 0
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:
@@ -317,7 +342,6 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3047188320285622439
       type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}

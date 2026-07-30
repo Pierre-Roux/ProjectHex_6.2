@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: 
   PermanentImage: {fileID: 21300000, guid: f3ac8788ec4ac9d4fb8fa25adcfaf9d4, type: 3}
-  PermanentLife: 1
+  Life: 10
+  Power: 0
+  Armor: 0
   IsCore: 1
   permanentArea: 0
   KeyWords: []
@@ -43,6 +45,20 @@ MonoBehaviour:
       Data3: -110237527
       Data4: 2081494394
     Path: event:/Ennemies/ECoreWounded
+  BeingDamageOnArmorSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  ArmorBreakSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   CollateralSound:
     Guid:
       Data1: 0
@@ -51,6 +67,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingArmorSound:
     Guid:
       Data1: 0
       Data2: 0

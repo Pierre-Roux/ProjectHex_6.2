@@ -253,8 +253,6 @@ public class EnemySystem : Singleton<EnemySystem>
 
     private IEnumerator AttackPlayerPerformer(AttackPlayerGA attackPlayerGA)
     {
-        int DamageBonus = 0;
-
         if (attackPlayerGA.Actionner != null)
         {
             EnemySlotView Attacker = attackPlayerGA.Actionner.GetComponent<EnemySlotView>();
@@ -262,13 +260,11 @@ public class EnemySystem : Singleton<EnemySystem>
             Tween tween = Attacker.transform.DOMoveY(Attacker.transform.position.y - 1f, 0.25f);
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
-
-            DamageBonus = Attacker.CalculateBonusPower();
         }
 
         if (attackPlayerGA.playerTargets != null && attackPlayerGA.playerTargets.Count > 0)
         {
-            DealDamageGA dealDamageGA = new(attackPlayerGA.Damage, DamageBonus, attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, attackPlayerGA.playerTargets, null);
+            DealDamageGA dealDamageGA = new(attackPlayerGA.powerBased, attackPlayerGA.Damage, attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, attackPlayerGA.playerTargets, null);
             dealDamageGA.Actionner = attackPlayerGA.Actionner;
             dealDamageGA.SourceEffect = attackPlayerGA.SourceEffect;
             dealDamageGA.ActivateToolTip = false;
@@ -277,7 +273,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
         if (attackPlayerGA.enemyTargets != null && attackPlayerGA.enemyTargets.Count > 0)
         {
-            DealDamageGA dealDamageGA = new(attackPlayerGA.Damage, DamageBonus, attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets);
+            DealDamageGA dealDamageGA = new(attackPlayerGA.powerBased, attackPlayerGA.Damage, attackPlayerGA.multiplyAmount, attackPlayerGA.DynamicAmount, null, attackPlayerGA.enemyTargets);
             dealDamageGA.Actionner = attackPlayerGA.Actionner;
             dealDamageGA.SourceEffect = attackPlayerGA.SourceEffect;
             dealDamageGA.ActivateToolTip = false;

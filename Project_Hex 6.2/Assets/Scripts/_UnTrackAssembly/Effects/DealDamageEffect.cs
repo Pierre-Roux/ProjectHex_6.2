@@ -8,6 +8,7 @@ public class DealDamageEffect : Effect
 {
     [Header("Effect Param")]
 
+    [SerializeField] public bool powerBased;
     [SerializeField] public int damageAmount;
     [SerializeField] public int multiplyAmount = 1;
     [SerializeField] public DynamicAmount DynamicAmount;
@@ -22,7 +23,7 @@ public class DealDamageEffect : Effect
     [SerializeField] private int targetNumber = 1;
     public override int EffectTargetNumber => targetNumber;
 
-    [SerializeField] private string Description = "@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate";
+    [HideInInspector] private string Description = "@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate";
     public override string EffectDescription => Description;
 
     [field: SerializeReference, SR] private List<TargetLimitationInfo> targetLimitations;
@@ -30,7 +31,7 @@ public class DealDamageEffect : Effect
 
     public DealDamageEffect() { }
 
-    public DealDamageEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, string description, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DealDamageEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, string description, bool PowerBased, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         ActivateToolTip = activateToolTip;
@@ -38,6 +39,7 @@ public class DealDamageEffect : Effect
         Description = description;
         HollowEffect = hollowEffect;
         damageAmount = DamageAmount;
+        powerBased = PowerBased;
         multiplyAmount = MultiplyAmount;
         PayXEffect = payXEffect;
         PayXValue = payXValue;
@@ -214,7 +216,7 @@ public class DealDamageEffect : Effect
         {
             if (targetModeInfo.targetMode == TargetMode.Manual)
             {
-                DealDamageGA dealDamageGA = new(damageAmount, 0, multiplyAmount, DynamicAmount, null, null);
+                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, null, null);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
                 dealDamageGA.ActivateToolTip = false;
@@ -226,7 +228,7 @@ public class DealDamageEffect : Effect
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                DealDamageGA dealDamageGA = new(damageAmount, 0, multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
                 dealDamageGA.ActivateToolTip = ActivateToolTip;
@@ -239,7 +241,7 @@ public class DealDamageEffect : Effect
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
-                DealDamageGA dealDamageGA = new(damageAmount, 0, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
                 dealDamageGA.ActivateToolTip = ActivateToolTip;
@@ -253,7 +255,7 @@ public class DealDamageEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    AttackPlayerGA attackPlayerGA = new(damageAmount, multiplyAmount, DynamicAmount, null, null);
+                    AttackPlayerGA attackPlayerGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, null, null);
                     attackPlayerGA.Actionner = Actionner;
                     attackPlayerGA.SourceEffect = this;
                     attackPlayerGA.ActivateToolTip = false;
@@ -280,7 +282,7 @@ public class DealDamageEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    AttackPlayerGA attackPlayerGA = new(damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    AttackPlayerGA attackPlayerGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     attackPlayerGA.Actionner = Actionner;
                     attackPlayerGA.SourceEffect = this;
                     attackPlayerGA.ActivateToolTip = ActivateToolTip;
@@ -292,7 +294,7 @@ public class DealDamageEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    AttackEnemyGA attackEnemyGA = new(damageAmount, multiplyAmount, DynamicAmount, null, null);
+                    AttackEnemyGA attackEnemyGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, null, null);
                     attackEnemyGA.Actionner = Actionner;
                     attackEnemyGA.SourceEffect = this;
                     attackEnemyGA.ActivateToolTip = false;
@@ -319,7 +321,7 @@ public class DealDamageEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    AttackEnemyGA attackEnemyGA = new(damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    AttackEnemyGA attackEnemyGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
                     attackEnemyGA.Actionner = Actionner;
                     attackEnemyGA.SourceEffect = this;
                     attackEnemyGA.ActivateToolTip = ActivateToolTip;
@@ -358,6 +360,7 @@ public class DealDamageEffect : Effect
             Priority,
             HollowEffect,
             Description,
+            powerBased,
             damageAmount,
             multiplyAmount,
             PayXEffect,

@@ -297,10 +297,14 @@ public class CombatSystem : Singleton<CombatSystem>
 
     public void AddCost(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
     {
+        Debug.Log("Keyword " + keyWordType + " SIDE : " + side);
         var Cost = CostByTypeGeneral[keyWordType];
         switch (side)
         {
             case Enemy_Player_ENUM.NULL:
+                Cost.Card += amount;
+                break;
+            case Enemy_Player_ENUM.Card:
                 Cost.Card += amount;
                 break;
         }

@@ -23,7 +23,8 @@ MonoBehaviour:
   <Money_Cost>k__BackingField: 0
   KeyWords:
   - rid: 3047188320285622476
-  <life>k__BackingField: 3
+  <Life>k__BackingField: 3
+  <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
   <Durability>k__BackingField: 3
   <MaxDurability>k__BackingField: 3

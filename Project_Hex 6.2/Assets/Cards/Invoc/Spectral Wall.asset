@@ -25,7 +25,8 @@ MonoBehaviour:
   - rid: 3047188320285622448
   - rid: 3047188320285622449
   - rid: 3047188320285622450
-  <life>k__BackingField: 4
+  <Life>k__BackingField: 0
+  <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
@@ -35,7 +36,6 @@ MonoBehaviour:
   <Effects>k__BackingField:
   - rid: 3047188320285622451
   - rid: 3047188320285622452
-  - rid: 3878124350565777616
   PlayCardSound:
     Guid:
       Data1: 0
@@ -244,7 +244,7 @@ MonoBehaviour:
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 2
-        keyWordValue: 0
+        keyWordValue: 2
     - rid: 3047188320285622451
       type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
       data:
@@ -335,50 +335,3 @@ MonoBehaviour:
         ScryAmount: 1
         multiplyAmount: 1
         DynamicAmount: 0
-    - rid: 3878124350565777616
-      type: {class: SacEffect, ns: , asm: _UnTrackAssembly}
-      data:
-        ActivateToolTip: 1
-        Priority: 0
-        actionnerType: 0
-        Events: 02000000
-        TypeOfCounter: 0
-        CounterValue: 0
-        ModuloValue: 0
-        HollowEffect: 0
-        PayXEffect: 0
-        MultiHit: 0
-        SFX:
-          Guid:
-            Data1: 0
-            Data2: 0
-            Data3: 0
-            Data4: 0
-          Path: 
-        ActivateNumber: 1
-        ORChoice: 0
-        Intent_Title: 
-        number: 
-        Duration: 2
-        DurationType: 2
-        TriggerOnDurationEnd: 1
-        CancelOnDeath: 1
-        DynamicConditionInfos: []
-        LinkedEffect:
-          rid: -2
-        Actionner: {fileID: 0}
-        TargetForLinked_Player: []
-        TargetForLinked_Enemy: []
-        PayXValue: 0
-        ActivateLeft: 0
-        BypassEntryCondition: 0
-        Disabled: 0
-        EffectID: 61ff5785-2e01-4931-b5e3-05f919e091c0
-        targetModeInfo:
-          targetMode: 1
-          PlayerOrEnemy: 0
-          permanentArea: 0
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
-        targetLimitations: []

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
   m_Name: Tooth
   m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <ID_Code>k__BackingField: 
   <Title>k__BackingField: Tooth
   <Description>k__BackingField: 'A: Deal 3 DMG | Pay 1 Life: Refresh'
   <Rarity>k__BackingField: 0
@@ -22,7 +23,9 @@ MonoBehaviour:
   <Money_Cost>k__BackingField: 0
   KeyWords:
   - rid: 3047188320285622458
-  <life>k__BackingField: 3
+  <Life>k__BackingField: 3
+  <Power>k__BackingField: 3
+  <Armor>k__BackingField: 0
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
@@ -101,6 +104,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  BeingDamageOnArmorSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  ArmorBreakSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   CollateralSound:
     Guid:
       Data1: 0
@@ -109,6 +126,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingArmorSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -248,7 +272,8 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: a5006ea2-c862-45a5-b88a-aa0b0fc0aca5
-        damageAmount: 3
+        powerBased: 1
+        damageAmount: 0
         multiplyAmount: 1
         DynamicAmount: 0
         targetModeInfo:
@@ -258,7 +283,6 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3047188320285622461
       type: {class: EffectGroup, ns: , asm: _UnTrackAssembly}

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEditor;
 using TMPro;
+using System.Runtime.CompilerServices;
 
 public class TargetSystem : Singleton<TargetSystem>
 {
@@ -16,6 +17,7 @@ public class TargetSystem : Singleton<TargetSystem>
     [SerializeField] private GameObject CursorGameobject;
     private bool TargetingActive;
     public bool CardTargetingActive;
+    public bool ShieldEffectTargeting = false;
     private int InitTargetingNumber;
     private bool TargetingUpTo;
     private bool TargetExhaust;
@@ -47,7 +49,12 @@ public class TargetSystem : Singleton<TargetSystem>
         List<PermanentView> playerTargets = new();
         List<EnemySlotView> enemyTargets = new();
 
-        ActivateAuraForTargets(startManualTargetingGA.TargetLimitations);
+        //ActivateAuraForTargets(startManualTargetingGA.TargetLimitations);
+
+        if (startManualTargetingGA.ActionToRealiseAfterTargetting is ShieldGA || startManualTargetingGA.ActionToRealiseAfterTargetting is ShieldPlayerGA || startManualTargetingGA.ActionToRealiseAfterTargetting is ShieldEnemyGA)
+        {
+            ShieldEffectTargeting = true;
+        }
 
         TargetingNumber = InitTargetingNumber = startManualTargetingGA.TargetNumber;
         MaxTargeting = TargetingNumber;
@@ -110,6 +117,8 @@ public class TargetSystem : Singleton<TargetSystem>
         {
             Debug.LogError("L'action ne contient pas les propriétés playerTargets ou enemyTargets");
         }
+
+        ShieldEffectTargeting = false;
 
         ActionSystem.Instance.AddReaction(startManualTargetingGA.ActionToRealiseAfterTargetting);
     }
@@ -270,6 +279,13 @@ public class TargetSystem : Singleton<TargetSystem>
             }
         }
 
+        // ici On vient check si l'effet est un shiel effect pour ne pas target les permanents qui seraient des shield eux même
+        bool ShieldEffectTargeting = false;
+        if ( effect is ShieldEffect)
+        {
+            ShieldEffectTargeting = true;
+        }
+
         switch (TargetModeInfo.targetMode)
         {
             case TargetMode.Self:
@@ -279,12 +295,14 @@ public class TargetSystem : Singleton<TargetSystem>
                     if (TestIfPlayerPermanent)
                     {
                         var self = actionner.GetComponent<PermanentView>();
+                        if (ShieldEffectTargeting && self.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) break;
                         if (self != null)
                             playerTargets.Add(self);
                     }
                     else
                     {
                         var self = actionner.GetComponent<EnemySlotView>();
+                        if (ShieldEffectTargeting && self.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) break;
                         if (self != null)
                             enemyTargets.Add(self);
                     }
@@ -297,6 +315,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -311,6 +330,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -325,6 +345,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -336,6 +357,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -367,6 +389,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -403,6 +426,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -439,6 +463,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -450,6 +475,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -544,11 +570,19 @@ public class TargetSystem : Singleton<TargetSystem>
                 {
                     case Enemy_Player_ENUM.Player:
                         foreach (var perm in playerPermanents)
-                            if (perm.IsCore && !perm.UnTargetable) playerTargets.Add(perm);
+                        {
+                            if (perm.IsCore && !perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            playerTargets.Add(perm);                            
+                        }
                         break;
                     case Enemy_Player_ENUM.Enemy:
                         foreach (var perm in enemyPermanents)
-                            if (perm.IsCore && !perm.UnTargetable) enemyTargets.Add(perm);
+                        {
+                            if (perm.IsCore && !perm.UnTargetable) 
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            enemyTargets.Add(perm);                            
+                        }
                         break;
                 }
                 break;
@@ -567,6 +601,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -588,6 +623,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -613,6 +649,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -632,6 +669,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -693,6 +731,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -714,6 +753,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -739,6 +779,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -758,6 +799,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in enemyPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -816,6 +858,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -837,6 +880,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -874,6 +918,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -895,6 +940,7 @@ public class TargetSystem : Singleton<TargetSystem>
                         foreach (var perm in playerPermanents)
                         {
                             if (perm.UnTargetable) continue;
+                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
                             if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
@@ -993,6 +1039,22 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                         }
                         break;
+
+                    case Enemy_Player_ENUM.Card:
+                        foreach (var card in cardsList)
+                        {
+                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
+                            if (TargetModeInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            else
+                            {
+                                cardsTargets.Add(card);
+                            }
+                        }
+                        break;
                 }
                 break;
 
@@ -1041,8 +1103,8 @@ public class TargetSystem : Singleton<TargetSystem>
                         }
                         break;
                 }
-                Amount = ValidcardsList.Max(p => p.life);
-                ValidcardsList = ValidcardsList.Where(p => p.life == Amount).ToList();
+                Amount = ValidcardsList.Max(p => p.Life);
+                ValidcardsList = ValidcardsList.Where(p => p.Life == Amount).ToList();
                 if (ValidcardsList.Count > 0)
                 {
                     Card selected = ValidcardsList[Random.Range(0, ValidcardsList.Count)];
@@ -1069,8 +1131,8 @@ public class TargetSystem : Singleton<TargetSystem>
                         }
                         break;
                 }
-                Amount = ValidcardsList.Min(p => p.life);
-                ValidcardsList = ValidcardsList.Where(p => p.life == Amount).ToList();
+                Amount = ValidcardsList.Min(p => p.Life);
+                ValidcardsList = ValidcardsList.Where(p => p.Life == Amount).ToList();
                 if (ValidcardsList.Count > 0)
                 {
                     Card selected = ValidcardsList[Random.Range(0, ValidcardsList.Count)];
@@ -1260,54 +1322,60 @@ public class TargetSystem : Singleton<TargetSystem>
                 }
                 if (hitTargetingLayerMask && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out EnemySlotView enemyView))
                 {
-                    if (!enemyView.UnTargetable && PassesAllLimitations(CurrentLimitations, null, null, enemyView))
+                    if (!ShieldEffectTargeting || ShieldEffectTargeting && enemyView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) == null)
                     {
-                        if (!enemySlots.Contains(enemyView))
+                        if (!enemyView.UnTargetable && PassesAllLimitations(CurrentLimitations, null, null, enemyView))
                         {
-                            if (TargetingNumber > 0)
+                            if (!enemySlots.Contains(enemyView))
                             {
-                                enemySlots.Add(enemyView);
-                                enemyView.ActiveSelectEffect();
-                                TargetingNumber -= 1;
-                                SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                if (TargetingNumber > 0)
+                                {
+                                    enemySlots.Add(enemyView);
+                                    enemyView.ActiveSelectEffect();
+                                    TargetingNumber -= 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                }
                             }
-                        }
-                        else
-                        {
-                            if (TargetingNumber < InitTargetingNumber)
+                            else
                             {
-                                enemySlots.Remove(enemyView);
-                                enemyView.RemoveSelectEffect();
-                                TargetingNumber += 1;
-                                SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                if (TargetingNumber < InitTargetingNumber)
+                                {
+                                    enemySlots.Remove(enemyView);
+                                    enemyView.RemoveSelectEffect();
+                                    TargetingNumber += 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                }
                             }
-                        }
+                        }                        
                     }
                 }
                 else if (hitTargetingLayerMask && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out PermanentView permanentView))
                 {
-                    if (!permanentView.UnTargetable && PassesAllLimitations(CurrentLimitations, null, permanentView, null))
+                    if (!ShieldEffectTargeting || ShieldEffectTargeting && permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) == null)
                     {
-                        if (!permanents.Contains(permanentView))
+                        if (!permanentView.UnTargetable && PassesAllLimitations(CurrentLimitations, null, permanentView, null))
                         {
-                            if (TargetingNumber > 0)
+                            if (!permanents.Contains(permanentView))
                             {
-                                permanents.Add(permanentView);
-                                permanentView.ActiveSelectEffect();
-                                TargetingNumber -= 1;
-                                SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                if (TargetingNumber > 0)
+                                {
+                                    permanents.Add(permanentView);
+                                    permanentView.ActiveSelectEffect();
+                                    TargetingNumber -= 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                }
                             }
-                        }
-                        else
-                        {
-                            if (TargetingNumber < InitTargetingNumber)
+                            else
                             {
-                                permanents.Remove(permanentView);
-                                permanentView.RemoveSelectEffect();
-                                TargetingNumber += 1;
-                                SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                if (TargetingNumber < InitTargetingNumber)
+                                {
+                                    permanents.Remove(permanentView);
+                                    permanentView.RemoveSelectEffect();
+                                    TargetingNumber += 1;
+                                    SetPrompt(TargetingNumber, TargetingUpTo, "Target");
+                                }
                             }
-                        }
+                        }                        
                     }
                 }
             }
@@ -1911,8 +1979,26 @@ public class TargetSystem : Singleton<TargetSystem>
         }
     }
 
-    public bool PassesAllLimitations(List<TargetLimitationInfo> limitations, Card Card, PermanentView playerPerm, EnemySlotView enemyPerm, bool checkEnoughtTarget = false)
+    public bool PassesAllLimitations(List<TargetLimitationInfo> limitations, Card Card, PermanentView playerPerm, EnemySlotView enemyPerm, bool checkEnoughtTarget = false, bool ForShieldEffect = false)
     {
+
+        // Check de la limitation du unshieldable dans le cas d'un effect shieldEffect
+        if (playerPerm != null)
+        {
+            if (ShieldEffectTargeting && playerPerm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null)
+            {
+                return false;
+            }
+        }
+        else if (enemyPerm != null)
+        {
+            if (ShieldEffectTargeting && enemyPerm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null)
+            {
+                return false;
+            }            
+        }
+
+
         if (limitations == null || limitations.Count == 0)
             return true;
 
@@ -1925,8 +2011,8 @@ public class TargetSystem : Singleton<TargetSystem>
 
             if (playerPerm != null)
             {
-                var Keyword = playerPerm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
-                if (Keyword != null)
+                var KeywordUntarget = playerPerm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
+                if (KeywordUntarget != null)
                 {
                     return false;
                 }
@@ -1942,12 +2028,12 @@ public class TargetSystem : Singleton<TargetSystem>
             else if (Card != null)
             {
                 var Keyword = Card.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
-                if(Keyword != null)
+                if (Keyword != null)
                 {
                     return false;
                 }
             }
-            
+
             if (!CheckTargetLimitation(limitation, Card, playerPerm, enemyPerm))
             {
                 return false;

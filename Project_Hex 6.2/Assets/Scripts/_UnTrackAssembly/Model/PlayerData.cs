@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using FMODUnity;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Data/Player")]
@@ -11,20 +9,6 @@ public class PlayerData : ScriptableObject
     [field: SerializeField] public CardPool deckData;
     [field: SerializeField] public NavCardPool navDeckData;
 
-
     [field: Header("Player Core")]
-    [field: SerializeField] public int CoreHealth;
-    [field: SerializeField] public int CoreArmor;
-    [field: SerializeField] public Sprite CoreImage;
-    [SerializeField] public EventReference DieSound;
-    [SerializeField] public EventReference BeingDamageSound;
-    [SerializeField] public EventReference BeingHealSound;
-    [SerializeField] public EventReference BeingArmorSound;
-    [SerializeField] public EventReference BeingShieldSound;
-    [SerializeField] public EventReference LoseShieldSound;
-    [SerializeField] public EventReference TakeLifeLossSound;
-    [SerializeField] public EventReference BuffLifeSound;
-    [SerializeField] public EventReference DebuffLifeSound;
-    [SerializeField] public EventReference SelectedSound;
-    [SerializeField] public EventReference UnSelectedSound;
+    [field: SerializeField] public CardData Core;
 }

@@ -12,7 +12,7 @@ public class AlterPowerEffect : Effect
     [SerializeField] public override bool CanBeDisableEffect => CanBeDisable;
     [SerializeField] public int alterAmount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public bool aditive = true;
     [SerializeField] public bool passive;
     [SerializeField] public TargetModeInfo targetModeInfo;
@@ -31,7 +31,7 @@ public class AlterPowerEffect : Effect
 
     public AlterPowerEffect() { }
 
-    public AlterPowerEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice , List<DynamicConditionInfo> dynamicConditionInfos ,TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterPowerEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice , List<DynamicConditionInfo> dynamicConditionInfos ,TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -52,7 +52,7 @@ public class AlterPowerEffect : Effect
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         Intent_Title = intent_Title;
@@ -65,7 +65,7 @@ public class AlterPowerEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -97,7 +97,7 @@ public class AlterPowerEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             alterAmount = PayXValue;
         }
 
@@ -107,7 +107,7 @@ public class AlterPowerEffect : Effect
         {
             if (passive)
             {
-                AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
+                AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                 alterPowerGA.CardActionner = CardActionner;
                 alterPowerGA.SourceEffect = this;
                 alterPowerGA.ActivateToolTip = ActivateToolTip;
@@ -118,7 +118,7 @@ public class AlterPowerEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null);
+                    AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null,null,null);
                     alterPowerGA.CardActionner = CardActionner;
                     alterPowerGA.SourceEffect = this;
                     alterPowerGA.ActivateToolTip = false;
@@ -130,7 +130,7 @@ public class AlterPowerEffect : Effect
                 }
                 else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                 {
-                    AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                    AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, ParentEffect.TargetForLinked_Card);
                     alterPowerGA.CardActionner = CardActionner;
                     alterPowerGA.SourceEffect = this;
                     alterPowerGA.ActivateToolTip = ActivateToolTip;
@@ -144,7 +144,7 @@ public class AlterPowerEffect : Effect
                     TargetForLinked_Player = playerTargets;
                     TargetForLinked_Enemy = enemyTargets;
 
-                    AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets);
+                    AlterPowerGA alterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, playerTargets, enemyTargets,null);
                     alterPowerGA.CardActionner = CardActionner;
                     alterPowerGA.SourceEffect = this;
                     alterPowerGA.ActivateToolTip = ActivateToolTip;
@@ -160,7 +160,7 @@ public class AlterPowerEffect : Effect
             {
                 if (passive)
                 {
-                    EnemyAlterPowerGA enemyAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
+                    EnemyAlterPowerGA enemyAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                     enemyAlterPowerGA.Actionner = Actionner;
                     enemyAlterPowerGA.SourceEffect = this;
                     enemyAlterPowerGA.ActivateToolTip = ActivateToolTip;
@@ -171,7 +171,7 @@ public class AlterPowerEffect : Effect
                 {
                     if (targetModeInfo.targetMode == TargetMode.Manual)
                     {
-                        EnemyAlterPowerGA enemyAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
+                        EnemyAlterPowerGA enemyAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                         enemyAlterPowerGA.Actionner = Actionner;
                         enemyAlterPowerGA.SourceEffect = this;
                         enemyAlterPowerGA.ActivateToolTip = false;
@@ -185,11 +185,13 @@ public class AlterPowerEffect : Effect
                     {
                         List<PermanentView> playerTargets;
                         List<EnemySlotView> enemyTargets;
+                        List<Card> cardTargets;
 
                         if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                         {
                             playerTargets = ParentEffect.TargetForLinked_Player;
                             enemyTargets = ParentEffect.TargetForLinked_Enemy;
+                            cardTargets = ParentEffect.TargetForLinked_Card;
                         }
                         else
                         {
@@ -197,9 +199,12 @@ public class AlterPowerEffect : Effect
 
                             TargetForLinked_Player = playerTargets;
                             TargetForLinked_Enemy = enemyTargets;
+
+                            // Ligne a modifier pour que les cartes recoivent du AlterPower TODO
+                            //TargetForLinked_Card = cardTargets = TargetSystem.GetCardsTargets(targetModeInfo, CardActionner);
                         }
 
-                        EnemyAlterPowerGA enemyAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets);
+                        EnemyAlterPowerGA enemyAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, playerTargets, enemyTargets, null);
                         enemyAlterPowerGA.Actionner = Actionner;
                         enemyAlterPowerGA.SourceEffect = this;
                         enemyAlterPowerGA.ActivateToolTip = ActivateToolTip;
@@ -213,7 +218,7 @@ public class AlterPowerEffect : Effect
             {
                 if (passive)
                 {
-                    PlayerAlterPowerGA playerAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
+                    PlayerAlterPowerGA playerAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                     playerAlterPowerGA.Actionner = Actionner;
                     playerAlterPowerGA.SourceEffect = this;
                     playerAlterPowerGA.ActivateToolTip = ActivateToolTip;
@@ -224,7 +229,7 @@ public class AlterPowerEffect : Effect
                 {
                     if (targetModeInfo.targetMode == TargetMode.Manual)
                     {
-                        PlayerAlterPowerGA playerAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, targetModeInfo);
+                        PlayerAlterPowerGA playerAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                         playerAlterPowerGA.Actionner = Actionner;
                         playerAlterPowerGA.SourceEffect = this;
                         playerAlterPowerGA.ActivateToolTip = false;
@@ -252,7 +257,7 @@ public class AlterPowerEffect : Effect
                             TargetForLinked_Enemy = enemyTargets;
                         }
 
-                        PlayerAlterPowerGA playerAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets);
+                        PlayerAlterPowerGA playerAlterPowerGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, playerTargets, enemyTargets, null);
                         playerAlterPowerGA.Actionner = Actionner;
                         playerAlterPowerGA.SourceEffect = this;
                         playerAlterPowerGA.ActivateToolTip = ActivateToolTip;
@@ -272,7 +277,7 @@ public class AlterPowerEffect : Effect
     public override GameAction GetCounterMesure()
     {
         Disabled = true;
-        AlterPowerGA alterPowerGA = new(-alterAmount, multiplyAmount, DynamicAmount, passive, aditive, TargetForLinked_Player, TargetForLinked_Enemy,null);
+        AlterPowerGA alterPowerGA = new(-alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, TargetForLinked_Player, TargetForLinked_Enemy,null);
         alterPowerGA.Actionner = Actionner;
         alterPowerGA.SourceEffect = this;
         alterPowerGA.ActivateToolTip = false;
@@ -311,7 +316,7 @@ public class AlterPowerEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -325,7 +330,7 @@ public class AlterPowerEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

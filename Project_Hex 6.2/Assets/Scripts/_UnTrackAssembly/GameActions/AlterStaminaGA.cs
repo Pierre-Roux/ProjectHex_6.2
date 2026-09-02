@@ -4,7 +4,7 @@ public class AlterStaminaGA : GameAction
 {
     public int Amount { get; set; }
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
     public bool passive;
     public bool aditive;
     public TargetModeInfo targetModeInfo;
@@ -12,11 +12,11 @@ public class AlterStaminaGA : GameAction
     public List<EnemySlotView> enemyTargets { get; set; }
     public List<Card> cardTargets { get; set; }
 
-    public AlterStaminaGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, bool Passive, bool Aditive, List<PermanentView> targets_Player = null, List<EnemySlotView> targets_Enemy = null, List<Card> CardTargets = null, TargetModeInfo TargetModeInfo = null)
+    public AlterStaminaGA(int amount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo, bool Passive, bool Aditive, List<PermanentView> targets_Player = null, List<EnemySlotView> targets_Enemy = null, List<Card> CardTargets = null, TargetModeInfo TargetModeInfo = null)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         passive = Passive;
         aditive = Aditive;
         targetModeInfo = TargetModeInfo;

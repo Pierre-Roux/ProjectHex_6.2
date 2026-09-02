@@ -8,6 +8,7 @@ using UnityEngine.Splines;
 public class HandView : Singleton<HandView>
 {
     [SerializeField] private SplineContainer SplineContainer;
+    [SerializeField] public float cardSpacing = 0.1f;
 
     private readonly List<CardView> cards = new();
 
@@ -40,18 +41,25 @@ public class HandView : Singleton<HandView>
     private IEnumerator UpdateCardPosition(float duration)
     {
         if (cards.Count == 0) yield break;
-        float cardSpacing = 1f / 10f;
-        float firstCardPosition = 0.5f - (cards.Count - 1) * cardSpacing / 2;
+
+        float totalWidth = (cards.Count - 1) * cardSpacing;
+        if (totalWidth > 1f)
+        {
+            cardSpacing = 1f / (cards.Count - 1);
+        }
+        float firstCardPosition = 0.5f - (cards.Count - 1) * cardSpacing * 0.5f;
+
+        //float firstCardPosition = 0.5f - (cards.Count - 1) * cardSpacing / 2;
         Spline spline = SplineContainer.Spline;
 
         for (int i = 0; i < cards.Count; i++)
         {
             float p = firstCardPosition + i * cardSpacing;
+            p = Mathf.Clamp(p,0.0001f,0.9999f);
             Vector3 splinePosition = spline.EvaluatePosition(p);
             Vector3 forward = spline.EvaluateTangent(p);
-            Vector3 up = spline.EvaluateUpVector(p);
-            Quaternion rotation = Quaternion.LookRotation(Vector3.Cross(up, forward).normalized, up);
-
+            forward.Normalize();
+            Quaternion rotation = Quaternion.LookRotation(forward, Vector3.up) * Quaternion.Euler(0, 90, 0);
             Vector3 targetPos = splinePosition + transform.position + 0.01f * i * Vector3.back;
             Quaternion targetRot = rotation;
 

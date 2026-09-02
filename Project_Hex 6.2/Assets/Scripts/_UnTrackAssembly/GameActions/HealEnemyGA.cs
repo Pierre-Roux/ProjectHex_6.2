@@ -8,13 +8,13 @@ public class HealEnemyGA : GameAction
     public List<EnemySlotView> enemyTargets { get; set; }
     public int HealAmount;
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
 
-    public HealEnemyGA(int healAmount, int MultiplyAmount, DynamicAmount dynamicAmount, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
+    public HealEnemyGA(int healAmount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
     {
         HealAmount = healAmount;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         playerTargets = PlayerTargets;
         enemyTargets = EnemyTargets;
     }

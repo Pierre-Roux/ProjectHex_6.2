@@ -14,17 +14,22 @@ public class Card
     public int Rarity { get; private set; }
     public bool IsSpell { get; private set; }
     public int cost { get; private set; }
-    [HideInInspector] public int CurrentCost { get; private set; }
+    [HideInInspector] public int InitCost { get; set; }
     public int GridCost { get; private set; }
-    public int BonusCost { get; set; }
-    public int passiveCost { get; set; }
+    [HideInInspector] public int BonusCost { get; set; }
     public bool PayX { get; private set; }
     public int PayXValue;
     public int Life { get; private set; }
+    [HideInInspector] public int InitLife { get; set; }
+    [HideInInspector] public int BonusLife { get; set; }
     public int Power { get; private set; }
+    [HideInInspector] public int InitPower { get; set; }
+    [HideInInspector] public int BonusPower { get; set; }
     public int Armor { get; private set; }
-    public int Shield { get; private set; }
+    [HideInInspector] public int InitArmor { get; set; }
     public int Durability { get; set; }
+    [HideInInspector] public int InitDurability { get; set; }
+    [HideInInspector] public int BonusStam { get; set; }
     public int MaxDurability { get; set; }
     public int Money_Cost { get; set; }
     public List<KeyWord> KeyWords = new List<KeyWord>();
@@ -63,38 +68,36 @@ public class Card
     public List<Effect> Effects => data.Effects;
     [HideInInspector] public CounterModel InternCounters = new();
 
+    [HideInInspector] private CombatSystem combatSystem;
+
 
     public Card(CardData cardData)
     {
+        combatSystem = CombatSystem.Instance;
         data = cardData;
         InternCounters.ClearAll();
         KeyWords = new List<KeyWord>(data.KeyWords);
         Title = cardData.Title;
         Rarity = cardData.Rarity;
-        cost = cardData.cost;
-        CalculateCost();
+        InitCost = cost = cardData.cost;
         GridCost = cardData.GridCost;
         BonusCost = 0;
         PayX = cardData.PayX;
         IsSpell = cardData.IsSpell;
         Money_Cost = data.Money_Cost;
-        if (!cardData.IsSpell)
+        if (!IsSpell)
         {
-            Life = cardData.Life;
-            Power = cardData.Power;
-            Armor = cardData.Armor;
-            Durability = cardData.Durability;
+            InitLife = Life = cardData.Life;
+            InitPower = Power = cardData.Power;
+            InitArmor = Armor = cardData.Armor;
+            InitDurability = Durability = cardData.Durability;
             MaxDurability = cardData.MaxDurability;
-        }
-
-        if (IsSpell)
-        {
-            KeyWord keyWord = new(KeyWordType.SpellCard, 0);
+            KeyWord keyWord = new(KeyWordType.PermaCard, 0);
             KeyWords.Add(keyWord);
         }
         else
         {
-            KeyWord keyWord = new(KeyWordType.PermaCard, 0);
+            KeyWord keyWord = new(KeyWordType.SpellCard, 0);
             KeyWords.Add(keyWord);
         }
 
@@ -137,34 +140,42 @@ public class Card
         }
     }
 
-    public void CalculateCost()
+    public int CalculateBonusCost()
     {
-        if (CombatSystem.Instance != null)
-        {
-            int FinalCost = 0;
-            int passiveBonus = 0; 
+        if (combatSystem == null) return 0;
+        int FinalCost;
+        int passiveBonus = combatSystem.GetPassive(BasicParam.Cost, Enemy_Player_ENUM.Card, this, null, null);
 
-            foreach (var keyWord in KeyWords)
-            {
-                passiveBonus += CombatSystem.Instance.GetCost(keyWord.keyWordType, Enemy_Player_ENUM.NULL);
-            }
-
-            // Bonus globaux (NULL)
-            //passiveBonus += CombatSystem.Instance.GetCost(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
-            passiveBonus += CombatSystem.Instance.GetCost(KeyWordType.NULL, Enemy_Player_ENUM.Card);
-
-            passiveCost = passiveBonus;
-
-            FinalCost = cost + BonusCost + passiveBonus;
-
-            CurrentCost = FinalCost;
-        }
-        else
-        {
-            CurrentCost = 0;
-        }
+        FinalCost = BonusCost + passiveBonus;
+        return FinalCost;
     }
     
+    public int CalculateBonusMaxLife(Card card, PermanentView permanentView)
+    {
+        if (combatSystem == null) return 0;
+        int passiveBonus = combatSystem.GetPassive(BasicParam.Life,Enemy_Player_ENUM.Player,card,permanentView,null);;
+        int finalHP = BonusLife + passiveBonus;
+
+        return finalHP;
+    }
+
+    public int CalculateBonusStam(Card card, PermanentView permanentView)
+    {
+        if (combatSystem == null) return 0;
+        int passiveBonus = combatSystem.GetPassive(BasicParam.Durability,Enemy_Player_ENUM.Player,card,permanentView,null);;
+        int finalStamina = BonusStam + passiveBonus;
+
+        return finalStamina;
+    }
+    public int CalculateBonusPower(Card card, PermanentView permanentView)
+    {
+        if (combatSystem == null) return 0;
+        int passiveBonus = combatSystem.GetPassive(BasicParam.Power,Enemy_Player_ENUM.Player,card,permanentView,null);
+        int finalDMG = BonusPower + passiveBonus;
+        
+        return finalDMG;
+    }
+
     public void TakeAlterStamina(int Amount)
     {
         if (IsSpell) return;
@@ -182,7 +193,13 @@ public class Card
 
         if (RefCardView != null)
         {
-            RefCardView.UpdateDurabilityText();
+
         }
+    }
+    
+    public void TakeAlterPower(int Amount)
+    {
+        if (IsSpell) return;
+        BonusPower += Amount;
     }
 }

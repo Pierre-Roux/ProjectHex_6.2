@@ -70,9 +70,9 @@ public class CardSystem : Singleton<CardSystem>
     {
         DOTween.Init();
         DOTween.SetTweensCapacity(200, 10);
-        var dummy = CardViewCreator.Instance.CreateCardView(new Card(new CardData()), new Vector3(-1000, -1000, 0), Quaternion.identity);
+        /*var dummy = CardViewCreator.Instance.CreateCardView(new Card(new CardData()), new Vector3(-1000, -1000, 0), Quaternion.identity);
         DOTween.Kill(dummy.gameObject);
-        Destroy(dummy.gameObject);
+        Destroy(dummy.gameObject);*/
     }
 
     // DECK Setup
@@ -118,26 +118,26 @@ public class CardSystem : Singleton<CardSystem>
     }
     private IEnumerator DrawCardsPerformer(DrawCardsGA drawCardsGA)
     {
-        if (drawCardsGA.DynamicAmount != DynamicAmount.NULL)
+        if (drawCardsGA.DynamicAmountInfo.DynamicAmount != DynamicAmount.NULL)
         {
             if (drawCardsGA.Actionner == null)
             {
                 if (drawCardsGA.CardActionner != null)
                 {
-                    drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, null, null, drawCardsGA.CardActionner);
+                    drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmountInfo, null, null, drawCardsGA.CardActionner);
                 }
                 else
                 {
-                    drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, null, null);
+                    drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmountInfo, null, null);
                 }
             }
             else if (drawCardsGA.Actionner.GetComponent<PermanentView>() != null)
             {
-                drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, drawCardsGA.Actionner.GetComponent<PermanentView>(), null);
+                drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmountInfo, drawCardsGA.Actionner.GetComponent<PermanentView>(), null);
             }
             else
             {
-                drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmount, null, drawCardsGA.Actionner.GetComponent<EnemySlotView>());
+                drawCardsGA.Amount = TargetSystem.Instance.GetDynamicAmount(drawCardsGA.DynamicAmountInfo, null, drawCardsGA.Actionner.GetComponent<EnemySlotView>());
             }
         }
 
@@ -152,13 +152,16 @@ public class CardSystem : Singleton<CardSystem>
         if (hand.Count < MaxHandCount)
         {
             TriggerEventGA triggerEventGA;
+            EventInfo eventInfo;
+            CounterTypeInfo counterTypeInfo;
 
             Card card = drawPile.Draw();
             UpdatePiles();
 
             if (hand.Count == 0)
             {
-                triggerEventGA = new(Events.HandNoLongerEmpty, null, null, null);
+                eventInfo = new EventInfo(Events.HandNoLongerEmpty);
+                triggerEventGA = new(eventInfo, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
             }
 
@@ -166,7 +169,8 @@ public class CardSystem : Singleton<CardSystem>
 
             if (hand.Count == MaxHandCount)
             {
-                triggerEventGA = new(Events.HandFull, null, null, null);
+                eventInfo = new EventInfo(Events.HandFull);
+                triggerEventGA = new(eventInfo, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
             }
 
@@ -174,21 +178,38 @@ public class CardSystem : Singleton<CardSystem>
 
             if (countAsDraw_INGAME)
             {
-                CounterSystem.Instance.Add(CounterType.CardsDraw_This_Turn);
-                CounterSystem.Instance.Add(CounterType.CardsDraw_Since_Load);
-                triggerEventGA = new(Events.WhenGlobalCounter, null, null, null, CounterType.CardsDraw_This_Turn);
+                counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.CardsDraw);
+                CounterSystem.Instance.Add(counterTypeInfo);
+
+                eventInfo = new EventInfo(Events.WhenGlobalCounter);
+                triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
-                triggerEventGA = new(Events.WhenInternCounter, null, null, null, CounterType.CardsDraw_This_Turn);
+
+                eventInfo = new EventInfo(Events.WhenInternCounter);
+                triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
-                triggerEventGA = new(Events.WhenGlobalCounter, null, null, null, CounterType.CardsDraw_Since_Load);
+
+                counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.CardsDraw);
+                CounterSystem.Instance.Add(counterTypeInfo);
+
+                eventInfo = new EventInfo(Events.WhenGlobalCounter);
+                triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
-                triggerEventGA = new(Events.WhenInternCounter, null, null, null, CounterType.CardsDraw_Since_Load);
+
+                eventInfo = new EventInfo(Events.WhenInternCounter);
+                triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+
+                eventInfo = new EventInfo(Events.WhenDraw);
+                triggerEventGA = new(eventInfo, null, cardView.Card);
+                ActionSystem.Instance.AddReaction(triggerEventGA);
+
+                eventInfo = new EventInfo(Events.OnSelfDraw);
+                triggerEventGA = new(eventInfo, null, cardView.Card);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
             }
-            triggerEventGA = new(Events.WhenDraw, cardView.Card);
-            ActionSystem.Instance.AddReaction(triggerEventGA);
-            triggerEventGA = new(Events.OnDraw, cardView.Card);
-            ActionSystem.Instance.AddReaction(triggerEventGA);
+            
+
 
 
             if (!AudioManager.Instance.IsValid(card.DrawCardSound))
@@ -201,9 +222,6 @@ public class CardSystem : Singleton<CardSystem>
             }
 
             yield return handView.AddCard(cardView);
-
-            //FinalTime -= Time.time;
-            //Debug.Log("Time to draw " + cardView.Card + " : " + FinalTime);
         }
 
     }
@@ -252,21 +270,40 @@ public class CardSystem : Singleton<CardSystem>
 
     public IEnumerator DiscardCard(CardView cardView, bool countAsDiscard_INGAME)
     {
+        EventInfo eventInfo;
+        CounterTypeInfo counterTypeInfo;
+        TriggerEventGA triggerEventGA;
+
         if (countAsDiscard_INGAME)
         {
-            CounterSystem.Instance.Add(CounterType.CardsDiscard_This_Turn);
-            CounterSystem.Instance.Add(CounterType.CardsDiscard_Since_Load);
-            TriggerEventGA triggerEventGA = new(Events.WhenDiscard, cardView.Card);
+            counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.CardsDiscard);
+            CounterSystem.Instance.Add(counterTypeInfo);
+
+            eventInfo = new EventInfo(Events.WhenGlobalCounter);
+            triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
-            triggerEventGA = new(Events.OnDiscard, cardView.Card);
-            ActionSystem.Instance.AddReaction(triggerEventGA);      
-            triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.CardsDiscard_This_Turn);
+
+            eventInfo = new EventInfo(Events.WhenInternCounter);
+            triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
-            triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.CardsDiscard_This_Turn);
+
+            counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.CardsDiscard);
+            CounterSystem.Instance.Add(counterTypeInfo);
+
+            eventInfo = new EventInfo(Events.WhenGlobalCounter);
+            triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
-            triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.CardsDiscard_Since_Load);
+
+            eventInfo = new EventInfo(Events.WhenInternCounter);
+            triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
-            triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.CardsDiscard_Since_Load);
+
+            eventInfo = new EventInfo(Events.OnSelfDiscard);
+            triggerEventGA = new(eventInfo, null, cardView.Card);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenDiscard);
+            triggerEventGA = new(eventInfo, null, cardView.Card);
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
@@ -296,7 +333,8 @@ public class CardSystem : Singleton<CardSystem>
         
         if (hand.Count == 0)
         {
-            TriggerEventGA triggerEventGA = new(Events.EmptyHanded,null,null,null);
+            eventInfo = new EventInfo(Events.EmptyHanded);
+            triggerEventGA = new(eventInfo,null,null,null);
             ActionSystem.Instance.AddReaction(triggerEventGA);            
         }
     }
@@ -312,21 +350,35 @@ public class CardSystem : Singleton<CardSystem>
 
     private IEnumerator PlayCardPerformer(PlayCardGA playCardGA)
     {
-        // Si on joue une carte toute les event OnPlay ce joue (il faudrait faire des OnPlaySpell, OnPlayPermanent ect...)
-        TriggerEventGA triggerEventGA = new(Events.WhenPlayCard);
-        ActionSystem.Instance.AddReaction(triggerEventGA);
-
-        triggerEventGA = new(Events.WhenPlaySpell);
-        ActionSystem.Instance.AddReaction(triggerEventGA);
+        EventInfo eventInfo;
+        CounterTypeInfo counterTypeInfo;
+        TriggerEventGA triggerEventGA;
 
         //Gestion des events de counter interne et globaux
-        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.SpellCast_This_Turn);
+        counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.SpellCast);
+        CounterSystem.Instance.Add(counterTypeInfo);
+
+        eventInfo = new EventInfo(Events.WhenGlobalCounter);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.SpellCast_This_Turn);
+
+        eventInfo = new EventInfo(Events.WhenInternCounter);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.SpellCast_Since_Load);
+
+        counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.SpellCast);
+        CounterSystem.Instance.Add(counterTypeInfo);
+
+        eventInfo = new EventInfo(Events.WhenGlobalCounter);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.SpellCast_Since_Load);
+
+        eventInfo = new EventInfo(Events.WhenInternCounter);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        eventInfo = new EventInfo(Events.WhenPlayType);
+        triggerEventGA = new(eventInfo, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
         if (!AudioManager.Instance.IsValid(playCardGA.Card.PlayCardSound))
@@ -354,7 +406,7 @@ public class CardSystem : Singleton<CardSystem>
         SpendManaGA spendManaGA = new(playCardGA.Card.cost + playCardGA.Card.BonusCost);
         ActionSystem.Instance.AddReaction(spendManaGA);
 
-        List<CopyVarGroup> copyVarGroup = CombatSystem.Instance.GetCopyValues(CopyTokenType.Spell, Enemy_Player_ENUM.Player);
+        List<CopyVarGroup> copyVarGroup = null;
         List<CopyVarGroup> copyVarGroupUsed = new();
         int nbCopie = 1;
         if (copyVarGroup != null)
@@ -384,7 +436,7 @@ public class CardSystem : Singleton<CardSystem>
 
         foreach (CopyVarGroup varGroup in copyVarGroupUsed)
         {
-            CombatSystem.Instance.RemoveCopyGroup(CopyTokenType.Spell, Enemy_Player_ENUM.Player, varGroup);
+            //CombatSystem.Instance.RemoveCopyGroup(CopyTokenType.Spell, Enemy_Player_ENUM.Player, varGroup);
         }
     }
 
@@ -442,9 +494,6 @@ public class CardSystem : Singleton<CardSystem>
         {
             CardView cardView = CardViewCreator.Instance.CreateUICardView(card, Vector3.zero, Quaternion.identity, ScryPanelContent.transform);
             cardView.IsScryCard = true;
-            //cardView.gameObject.GetComponent<SortingGroup>().sortingOrder = 5;
-            //cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
-            //cardView.gameObject.transform.position.Set(cardView.gameObject.transform.position.x, cardView.gameObject.transform.position.y, 0);
             ScryCardViews.Add(cardView);
         }
     }
@@ -477,9 +526,6 @@ public class CardSystem : Singleton<CardSystem>
             cardView.EffectHolder = effect;
             cardView.EffectHolder.Actionner = effect.Actionner;
             cardView.EffectHolder.CardActionner = effect.CardActionner;
-            //cardView.gameObject.GetComponent<SortingGroup>().sortingOrder = 5;
-            //cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
-            //cardView.gameObject.transform.position.Set(cardView.gameObject.transform.position.x, cardView.gameObject.transform.position.y, 0);
 
             if (effect.ActivateLeft == 0 && SelectMode)
             {

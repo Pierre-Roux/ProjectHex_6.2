@@ -9,11 +9,11 @@ public class ManaGainEffect : Effect
     [Header("Effect Param")]
     [SerializeField] public int GainAmount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
 
     public ManaGainEffect(){}
 
-    public ManaGainEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public ManaGainEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -27,7 +27,7 @@ public class ManaGainEffect : Effect
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
         ORChoice = orChoice;
-        Events = Event;
+        EventInfos = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
         actionnerType = ActionnerType;
@@ -41,7 +41,7 @@ public class ManaGainEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -73,11 +73,11 @@ public class ManaGainEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             GainAmount = PayXValue;
         }
 
-        GainManaGA gainManaGA = new(GainAmount, multiplyAmount, DynamicAmount);
+        GainManaGA gainManaGA = new(GainAmount, multiplyAmount, DynamicAmountInfo);
         gainManaGA.CardActionner = CardActionner;
         gainManaGA.Actionner = Actionner;
         gainManaGA.SourceEffect = this;
@@ -118,7 +118,7 @@ public class ManaGainEffect : Effect
             ORChoice,
             DynamicConditionInfos,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -130,7 +130,7 @@ public class ManaGainEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

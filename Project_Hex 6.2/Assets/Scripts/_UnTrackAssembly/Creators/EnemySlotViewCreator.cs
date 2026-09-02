@@ -65,7 +65,8 @@ public class EnemySlotViewCreator : Singleton<EnemySlotViewCreator>
             GameEventSystem.Instance.ManageEffects(null, null, enemySlotView);
         }
 
-        TriggerEventGA triggerEventGA = new(Events.WhenPermaETB,null,null,enemySlotView);
+        EventInfo eventInfo = new EventInfo(Events.WhenPermaETB, Enemy_Player_ENUM.Enemy, KeyWordType.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, enemySlotView);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
         return enemySlotView;

@@ -24,7 +24,6 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     [SerializeField] public Image BackGroundImage;
     [SerializeField] public TMP_Text Life;
     [SerializeField] public TMP_Text Power;
-    [SerializeField] public TMP_Text Durability;
     [SerializeField] public GameObject Wrapper;
     [SerializeField] private LayerMask DropAreaLayer;
     [SerializeField] private LayerMask DropDeckLayer;
@@ -52,7 +51,8 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     [HideInInspector] public Effect EffectHolder;
 
     [HideInInspector] public int CurrentCost;
-    [SerializeField] public int CardBonuspassiveCost;
+    [HideInInspector] public int CurrentPower;
+    [HideInInspector] public int CurrentLife;
 
 
     public void Setup(Card card)
@@ -72,7 +72,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
         Title.text = Card.Title;
         name = Title.text;
         Description.text = Card.Description;
-        UpdateCostText();
+        UpdateCost();
 
         if (IsUI)
         {
@@ -86,84 +86,124 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
         if (!Card.IsSpell)
         {
+            // On cache les Text param inutiles
+            bool HasPower = false;
             Life.gameObject.SetActive(true);
-            Power.gameObject.SetActive(true);
-            Durability.gameObject.SetActive(true);
+            foreach (Effect effect in Card.Effects)
+            {
+                if (ContainsPowerBasedDamage(effect))
+                {
+                    HasPower = true;
+                    break;
+                }
+            }
 
-            Power.text = Card.Power.ToString();
-            Life.text = Card.Life.ToString();
-            UpdateDurabilityText();
+            if (HasPower)
+            {
+                Power.gameObject.SetActive(true);
+            }
+            else
+            {
+                Power.gameObject.SetActive(false);
+            }
+
+            UpdatePower();
+            UpdateMaxLife();
         }
         else
         {
             Life.gameObject.SetActive(false);
             Power.gameObject.SetActive(false);
-            Durability.gameObject.SetActive(false);
+
+            
         }
 
         if (AudioManager.Instance.IsValid(card.CardSelectedSound)) CardSelectedSound = card.CardSelectedSound;
         if (AudioManager.Instance.IsValid(card.CardUnSelectedSound)) CardUnSelectedSound = card.CardUnSelectedSound;
-
-        StartCoroutine(RealTimeUpdate());
-        //UpdateDescription();
     }
 
-    /*public void UpdateDescription()
+    private bool ContainsPowerBasedDamage(Effect effect)
     {
-        List<string> effectDescriptions = new();
-
-        foreach (Effect effect in Card.Effects)
+        if (effect is DealDamageEffect dealDamageEffect)
         {
-            if (effect is EffectGroup group)
+            return dealDamageEffect.powerBased;
+        }
+
+        if (effect is EffectGroup effectGroup)
+        {
+            foreach (Effect childEffect in effectGroup.EffectGroups)
             {
-                foreach (Effect subEffect in group.EffectGroups)
-                {
-                    effectDescriptions.Add(" And ");
-                    effectDescriptions.Add(subEffect.GetParsedDescription());
-                }
-            }
-            else if (effect is ChoiceEffect choice)
-            {
-                foreach (Effect subEffect in choice.EffectsForPlayerChoice)
-                {
-                    effectDescriptions.Add(" Or ");
-                    effectDescriptions.Add(subEffect.GetParsedDescription());
-                }
-            }
-            else
-            {
-                effectDescriptions.Add(effect.GetParsedDescription());
+                if (ContainsPowerBasedDamage(childEffect))
+                    return true;
             }
         }
 
-        Description.text = string.Join("\n", effectDescriptions);
-    }*/
-
-    private IEnumerator RealTimeUpdate()
-    {
-        while (true)
+        if (effect is ChoiceEffect choiceEffect)
         {
-            UpdateCost();
-            yield return new WaitForSeconds(0.2f);
+            foreach (Effect childEffect in choiceEffect.EffectsForPlayerChoice)
+            {
+                if (ContainsPowerBasedDamage(childEffect))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void OnEnable()
+    {
+        if (CombatSystem.Instance != null)
+        {
+            CombatSystem.Instance.PassivesChanged += UpdatePower;
+            CombatSystem.Instance.PassivesChanged += UpdateMaxLife;
+            CombatSystem.Instance.PassivesChanged += UpdateCost;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (CombatSystem.Instance != null)
+        {
+            CombatSystem.Instance.PassivesChanged -= UpdatePower;
+            CombatSystem.Instance.PassivesChanged -= UpdateMaxLife;
+            CombatSystem.Instance.PassivesChanged -= UpdateCost;
         }
     }
 
     private void UpdateCost()
     {
-        Card.CalculateCost();
-        CardBonuspassiveCost = Card.passiveCost;
-        CurrentCost = Card.CurrentCost;
+        int TotalCost = Card.cost + Card.CalculateBonusCost();
+        CurrentCost = TotalCost;
         UpdateCostText();
+    }
+
+    private void UpdatePower()
+    {
+        int TotalPower = Card.Power + Card.CalculateBonusPower(Card, null);
+        CurrentPower = TotalPower;
+        UpdatePowerText();
+    }
+
+    private void UpdateMaxLife()
+    {
+        int TotalLife = Card.Life + Card.CalculateBonusMaxLife(Card, null);
+        CurrentLife = TotalLife;
+        UpdateLifeText();
     }
 
     public void UpdateCostText()
     {
         cost.text = Mathf.Max(0, CurrentCost).ToString();
     }
-    
-    public void UpdateDurabilityText()
+
+    public void UpdateLifeText()
     {
-        Durability.text = Card.Durability.ToString() + "/" + Card.MaxDurability.ToString();        
+        Life.text = Mathf.Max(0, CurrentLife).ToString();
+    }
+
+    public void UpdatePowerText()
+    {
+        Power.text = Mathf.Max(0, CurrentPower).ToString();
     }
 
     // UI HOVER SYSTEM
@@ -412,8 +452,16 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                         PlayCardGA playCardGA = new(Card);
                         playCardGA.CardActionner = Card;
                         ActionSystem.Instance.Perform(playCardGA);
-                        CounterSystem.Instance.Add(CounterType.SpellCast_This_Turn);
-                        CounterSystem.Instance.Add(CounterType.SpellCast_Since_Load);
+
+                        CounterTypeInfo counterTypeInfo = new CounterTypeInfo(false, false, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.SpellCast);
+                        CounterSystem.Instance.Add(counterTypeInfo);
+                        counterTypeInfo = new CounterTypeInfo(true, false, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.SpellCast);
+                        CounterSystem.Instance.Add(counterTypeInfo);
+
+                        counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.SpellCast);
+                        CounterSystem.Instance.Add(counterTypeInfo);
+                        counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.Player,KeyWordType.NULL,CounterType.SpellCast);
+                        CounterSystem.Instance.Add(counterTypeInfo);
                     }
                     else
                     {
@@ -465,8 +513,15 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                                 isDragging = false;
                                 SummonGA summonGA = new(Card);
                                 ActionSystem.Instance.Perform(summonGA);
-                                CounterSystem.Instance.Add(CounterType.PermanentCast_This_Turn);
-                                CounterSystem.Instance.Add(CounterType.PermanentCast_Since_Load);
+                                CounterTypeInfo counterTypeInfo = new CounterTypeInfo(true, false, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.PermanentCast);
+                                CounterSystem.Instance.Add(counterTypeInfo);
+                                counterTypeInfo = new CounterTypeInfo(true, false, Enemy_Player_ENUM.Player,KeyWordType.NULL,CounterType.PermanentCast);
+                                CounterSystem.Instance.Add(counterTypeInfo);
+
+                                counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player, KeyWordType.NULL, CounterType.PermanentCast);
+                                CounterSystem.Instance.Add(counterTypeInfo);
+                                counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player,KeyWordType.NULL,CounterType.PermanentCast);
+                                CounterSystem.Instance.Add(counterTypeInfo);
                             }
                         }
                     }

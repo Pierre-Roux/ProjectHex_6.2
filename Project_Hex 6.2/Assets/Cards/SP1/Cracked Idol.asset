@@ -21,7 +21,8 @@ MonoBehaviour:
   <PayX>k__BackingField: 0
   <SpriteImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <Money_Cost>k__BackingField: 20
-  KeyWords: []
+  KeyWords:
+  - rid: 4855037151783682102
   <Life>k__BackingField: 1
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
@@ -234,8 +235,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -253,7 +263,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -270,7 +284,19 @@ MonoBehaviour:
         powerBased: 0
         damageAmount: 2
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
@@ -285,8 +311,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -304,7 +339,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -320,15 +359,36 @@ MonoBehaviour:
         EffectID: 35291b2f-9486-4840-b6c2-d3a2ad2428c4
         drawAmount: 1
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
     - rid: 3878124350565777607
       type: {class: LifeLossEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -346,7 +406,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -362,7 +426,19 @@ MonoBehaviour:
         EffectID: 9493f86c-658a-4529-8d4b-8f677e7c7d54
         LifeLossAmount: 1
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 2
           PlayerOrEnemy: 1
@@ -371,3 +447,8 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
+    - rid: 4855037151783682102
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 18
+        keyWordValue: 0

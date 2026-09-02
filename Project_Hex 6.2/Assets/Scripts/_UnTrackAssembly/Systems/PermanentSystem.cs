@@ -38,7 +38,8 @@ public class PermanentSystem : Singleton<PermanentSystem>
             RuntimeManager.PlayOneShot(cardToSummon.PlayCardSound);
         }
 
-        List<CopyVarGroup> copyVarGroup = CombatSystem.Instance.GetCopyValues(CopyTokenType.Permanent, Enemy_Player_ENUM.Player);
+        //List<CopyVarGroup> copyVarGroup = CombatSystem.Instance.GetCopyValues(CopyTokenType.Permanent, Enemy_Player_ENUM.Player);
+        List<CopyVarGroup> copyVarGroup = null;
         List<CopyVarGroup> copyVarGroupUsed = new();
         int nbCopie = 1;
         if (copyVarGroup != null)
@@ -52,14 +53,15 @@ public class PermanentSystem : Singleton<PermanentSystem>
                 }
                 else
                 {
-                    if (ConditionSystem.Instance.TestCondition(SubVarGroup.Conditions, cardToSummon,null,null,cardToSummon))
+                    if (ConditionSystem.Instance.TestCondition(SubVarGroup.Conditions, cardToSummon, null, null, cardToSummon))
                     {
                         nbCopie += SubVarGroup.value;
                         copyVarGroupUsed.Add(SubVarGroup);
-                    }                      
+                    }
                 }
             }
         }
+
         for (int i = 0; i < nbCopie; i++)
         {
             PermanentViewCreator.Instance.CreatePermanentViewCreator(cardToSummon, cardToSummon.permanentArea);
@@ -67,31 +69,52 @@ public class PermanentSystem : Singleton<PermanentSystem>
     
         foreach (CopyVarGroup varGroup in copyVarGroupUsed)
         {
-            CombatSystem.Instance.RemoveCopyGroup(CopyTokenType.Permanent, Enemy_Player_ENUM.Player, varGroup);
+            //CombatSystem.Instance.RemoveCopyGroup(CopyTokenType.Permanent, Enemy_Player_ENUM.Player, varGroup);
         }
 
         yield return cardSystem.DestroyCard(cardView);
 
+        EventInfo eventInfo;
         if (cardSystem.hand.Count == 0)
         {
-            triggerEventGA = new(Events.EmptyHanded,null,null,null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);            
+            eventInfo = new EventInfo(Events.EmptyHanded, Enemy_Player_ENUM.NULL, KeyWordType.NULL);
+            triggerEventGA = new(eventInfo, null, null, null, null);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
         SpendManaGA spendManaGA = new(summonGA.cardToInvoke.cost + summonGA.cardToInvoke.BonusCost);
         ActionSystem.Instance.AddReaction(spendManaGA);
-        triggerEventGA = new(Events.WhenPlayCard);
-        ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.WhenPlayPerma);
+
+        eventInfo = new EventInfo(Events.WhenPlayType, Enemy_Player_ENUM.Player, KeyWordType.PermaCard);
+        triggerEventGA = new(eventInfo, null, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
-        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.PermanentCast_This_Turn);
+        eventInfo = new EventInfo(Events.WhenPlayType, Enemy_Player_ENUM.Player, KeyWordType.SpellCard);
+        triggerEventGA = new(eventInfo, null, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.PermanentCast_This_Turn);
+
+        eventInfo = new EventInfo(Events.WhenPlayType, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        triggerEventGA = new(eventInfo, null, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.WhenGlobalCounter,null,null,null,CounterType.PermanentCast_Since_Load);
+
+        eventInfo = new EventInfo(Events.WhenGlobalCounter, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        CounterTypeInfo counterTypeInfo = new CounterTypeInfo(false, false, Enemy_Player_ENUM.Player, KeyWordType.NULL,CounterType.PermanentCast);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.WhenInternCounter,null,null,null,CounterType.PermanentCast_Since_Load);
+
+        eventInfo = new EventInfo(Events.WhenGlobalCounter, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        counterTypeInfo = new CounterTypeInfo(true, false, Enemy_Player_ENUM.Player, KeyWordType.NULL,CounterType.PermanentCast);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        eventInfo = new EventInfo(Events.WhenInternCounter, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.Player, KeyWordType.NULL,CounterType.PermanentCast);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        eventInfo = new EventInfo(Events.WhenInternCounter, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player, KeyWordType.NULL,CounterType.PermanentCast);
+        triggerEventGA = new(eventInfo, counterTypeInfo, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
     }
 

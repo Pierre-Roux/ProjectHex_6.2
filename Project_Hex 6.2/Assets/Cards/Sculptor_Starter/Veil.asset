@@ -230,7 +230,7 @@ MonoBehaviour:
     - rid: 3047188320285622476
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 6
+        keyWordType: 16
         keyWordValue: 0
     - rid: 3047188320285622477
       type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
@@ -238,8 +238,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -257,7 +266,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -270,7 +283,7 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 
+        EffectID: e9a52f22-29b2-4116-8d30-0a308470c734
         CanBeDisable: 1
         targetModeInfo:
           targetMode: 2

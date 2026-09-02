@@ -5,21 +5,23 @@ public class PlayerAlterPowerGA : GameAction
 {
     public int Amount;
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
     public List<PermanentView> playerTargets { get; set; }
     public List<EnemySlotView> enemyTargets { get; set; }
+    public List<Card> cardTargets { get; set; }
     public TargetModeInfo targetModeInfo;
     public bool passive;
     public bool aditive;
-    public PlayerAlterPowerGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, bool Passive, bool Aditive, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets, TargetModeInfo TargetModeInfo = null)
+    public PlayerAlterPowerGA(int amount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo, bool Passive, bool Aditive, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets, List<Card> CardTargets, TargetModeInfo TargetModeInfo = null)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         passive = Passive;
         aditive = Aditive;
         playerTargets = PlayerTargets;
         enemyTargets = EnemyTargets;
+        cardTargets = CardTargets;
         targetModeInfo = TargetModeInfo;
     }
 }

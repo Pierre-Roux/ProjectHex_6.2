@@ -4,18 +4,16 @@ public class EnemyAddACopyGa : GameAction
 {
     public int Amount { get; set; }
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
     public Enemy_Player_ENUM AffectedSide;
     public CopyTokenType TypeOfCopy;
-    public List<DynamicConditionInfo> ConditionToCopy;
 
-    public EnemyAddACopyGa(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, Enemy_Player_ENUM affectedSide, CopyTokenType typeOfCopy, List<DynamicConditionInfo> conditionToCopy)
+    public EnemyAddACopyGa(int amount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo, Enemy_Player_ENUM affectedSide, CopyTokenType typeOfCopy)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         AffectedSide = affectedSide;
         TypeOfCopy = typeOfCopy;
-        ConditionToCopy = conditionToCopy;
     } 
 }

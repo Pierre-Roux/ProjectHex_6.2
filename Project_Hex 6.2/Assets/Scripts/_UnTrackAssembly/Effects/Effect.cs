@@ -11,8 +11,8 @@ public abstract class Effect
     [SerializeField] public bool ActivateToolTip = true;
     [SerializeField] public int Priority = 0;
     [SerializeField] public ActionnerType actionnerType;
-    [SerializeField] public List<Events> Events;
-    [SerializeField] public CounterType TypeOfCounter;
+    [SerializeField] public List<EventInfo> EventInfos;
+    [SerializeField] public CounterTypeInfo TypeOfCounter;
     [SerializeField] public int CounterValue;
     [SerializeField] public bool ModuloValue;
     [SerializeField] public bool HollowEffect;
@@ -31,7 +31,7 @@ public abstract class Effect
     [Header("On Delayed Events")]
 
     [SerializeField] public int Duration;
-    [SerializeField] public Events DurationType;
+    [SerializeField] public EventInfo DurationType;
     [SerializeField] public bool TriggerOnDurationEnd;
     [SerializeField] public bool CancelOnDeath = true;
 
@@ -63,33 +63,10 @@ public abstract class Effect
 
     protected Effect()
     {
-        // Génère un identifiant unique
-        //if (string.IsNullOrEmpty(EffectID))
-        //    EffectID = System.Guid.NewGuid().ToString();
     }
+
     public abstract GameAction GetGameAction();
     public abstract GameAction GetCounterMesure();
-
-    public virtual string GetParsedDescription()
-    {
-        string desc = EffectDescription;
-
-        if (string.IsNullOrEmpty(desc))
-            return "";
-
-        // Dictionnaire de base pour les marqueurs communs
-        Dictionary<string, string> replacements = new()
-        {
-            { "@Duration", Duration.ToString() },
-            { "@Event", Events.ToString() }
-        };
-
-        foreach (var kvp in replacements)
-            desc = desc.Replace(kvp.Key, kvp.Value);
-
-        return desc;
-    }
-
     public virtual Effect Clone()
     {
         return null;

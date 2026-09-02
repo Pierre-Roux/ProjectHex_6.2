@@ -163,8 +163,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 1
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -182,7 +191,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -195,7 +208,7 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 
+        EffectID: 542cc247-cb9d-4fed-a286-5bb4aec3fe27
         CanBeDisable: 1
         targetModeInfo:
           targetMode: 2
@@ -208,5 +221,5 @@ MonoBehaviour:
     - rid: 3047188320285622364
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 6
+        keyWordType: 16
         keyWordValue: 0

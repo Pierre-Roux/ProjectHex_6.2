@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CounterSystem : Singleton<CounterSystem>
 {
-    public void Add(CounterType type, int amount = 1)
+    public void Add(CounterTypeInfo type, int amount = 1)
     {
         List<Card> cardList = new List<Card>();
         cardList.AddRange(CardSystem.Instance.hand);
@@ -33,7 +33,7 @@ public class CounterSystem : Singleton<CounterSystem>
         }
     }
 
-    public void Set(CounterType type, int value)
+    public void Set(CounterTypeInfo type, int value)
     {
         List<Card> cardList = new List<Card>();
         cardList.AddRange(CardSystem.Instance.hand);
@@ -56,7 +56,7 @@ public class CounterSystem : Singleton<CounterSystem>
         }
     }
 
-    public void Reset(CounterType type)
+    public void Reset(CounterTypeInfo type)
     {
         List<Card> cardList = new List<Card>();
         cardList.AddRange(CardSystem.Instance.hand);

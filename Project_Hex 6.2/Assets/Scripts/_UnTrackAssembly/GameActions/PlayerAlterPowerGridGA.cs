@@ -4,12 +4,12 @@ public class PlayerAlterPowerGridGA : GameAction
 {
     public int Amount { get; set; }
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
 
-    public PlayerAlterPowerGridGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount)
+    public PlayerAlterPowerGridGA(int amount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
     }
 }

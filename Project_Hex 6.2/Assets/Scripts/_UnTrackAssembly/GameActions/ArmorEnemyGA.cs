@@ -8,13 +8,13 @@ public class ArmorEnemyGA : GameAction
     public List<EnemySlotView> enemyTargets { get; set; }
     public int ArmorAmount;
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
 
-    public ArmorEnemyGA(int armorAmount, int MultiplyAmount, DynamicAmount dynamicAmount, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
+    public ArmorEnemyGA(int armorAmount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
     {
         ArmorAmount = armorAmount;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         playerTargets = PlayerTargets;
         enemyTargets = EnemyTargets;
     }

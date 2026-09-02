@@ -9,11 +9,11 @@ public class AlterPowerGridEffect : Effect
     [SerializeField] public override bool CanBeDisableEffect => CanBeDisable;
     [SerializeField] public int Amount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
 
     public AlterPowerGridEffect(){}
 
-    public AlterPowerGridEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int amount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterPowerGridEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int amount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -26,7 +26,7 @@ public class AlterPowerGridEffect : Effect
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
         ORChoice = orChoice;
-        Events = Event;
+        EventInfos = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
         actionnerType = ActionnerType;
@@ -40,7 +40,7 @@ public class AlterPowerGridEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -72,7 +72,7 @@ public class AlterPowerGridEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             Amount = PayXValue;
         }
 
@@ -80,7 +80,7 @@ public class AlterPowerGridEffect : Effect
 
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-            AlterPowerGridGA alterPowerGridGA = new(Amount, multiplyAmount, DynamicAmount);
+            AlterPowerGridGA alterPowerGridGA = new(Amount, multiplyAmount, DynamicAmountInfo);
             alterPowerGridGA.CardActionner = CardActionner;
             alterPowerGridGA.SourceEffect = this;
             alterPowerGridGA.ActivateToolTip = ActivateToolTip;
@@ -91,7 +91,7 @@ public class AlterPowerGridEffect : Effect
         {
             if (actionnerType == ActionnerType.ENEMY)
             {
-                PlayerAlterPowerGridGA playerAlterPowerGridGA = new(Amount, multiplyAmount, DynamicAmount);
+                PlayerAlterPowerGridGA playerAlterPowerGridGA = new(Amount, multiplyAmount, DynamicAmountInfo);
                 playerAlterPowerGridGA.Actionner = Actionner;
                 playerAlterPowerGridGA.SourceEffect = this;
                 playerAlterPowerGridGA.ActivateToolTip = ActivateToolTip;
@@ -100,7 +100,7 @@ public class AlterPowerGridEffect : Effect
             }
             else if (actionnerType == ActionnerType.PLAYER)
             {
-                EnemyAlterPowerGridGA enemyAlterPowerGridGA = new(Amount, multiplyAmount, DynamicAmount);
+                EnemyAlterPowerGridGA enemyAlterPowerGridGA = new(Amount, multiplyAmount, DynamicAmountInfo);
                 enemyAlterPowerGridGA.Actionner = Actionner;
                 enemyAlterPowerGridGA.SourceEffect = this;
                 enemyAlterPowerGridGA.ActivateToolTip = ActivateToolTip;
@@ -118,7 +118,7 @@ public class AlterPowerGridEffect : Effect
     public override GameAction GetCounterMesure()
     {
         Disabled = true;
-        AlterPowerGridGA alterPowerGridGA = new(-Amount, multiplyAmount, DynamicAmount);
+        AlterPowerGridGA alterPowerGridGA = new(-Amount, multiplyAmount, DynamicAmountInfo);
         alterPowerGridGA.CardActionner = CardActionner;
         alterPowerGridGA.SourceEffect = this;
         alterPowerGridGA.ActivateToolTip = false;
@@ -152,7 +152,7 @@ public class AlterPowerGridEffect : Effect
             ORChoice,
             DynamicConditionInfos,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -164,7 +164,7 @@ public class AlterPowerGridEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

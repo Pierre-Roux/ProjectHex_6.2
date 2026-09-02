@@ -22,7 +22,7 @@ public class RetrieveExhaustedEffect : Effect
 
     public RetrieveExhaustedEffect() { }
 
-    public RetrieveExhaustedEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public RetrieveExhaustedEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -40,7 +40,7 @@ public class RetrieveExhaustedEffect : Effect
         TargetUpTo = targetUpTo;
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         CardActionner = cardActionner;
@@ -240,7 +240,7 @@ public class RetrieveExhaustedEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,

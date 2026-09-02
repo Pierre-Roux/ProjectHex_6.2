@@ -8,14 +8,14 @@ public class AttackEnemyGA : GameAction
     public List<EnemySlotView> enemyTargets { get; set; }
     public int Damage;
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
 
-    public AttackEnemyGA(bool PowerBased, int damage, int MultiplyAmount, DynamicAmount dynamicAmount, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
+    public AttackEnemyGA(bool PowerBased, int damage, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
     {
         powerBased = PowerBased;
         Damage = damage;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         playerTargets = PlayerTargets;
         enemyTargets = EnemyTargets;
     }

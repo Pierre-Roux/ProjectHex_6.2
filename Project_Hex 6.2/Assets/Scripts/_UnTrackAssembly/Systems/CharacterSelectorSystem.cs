@@ -26,7 +26,7 @@ public class CharacterSelectorSystem : Singleton<CharacterSelectorSystem>
 
         dataBase.CurrentPlayer = Characters[CharaIndex];
 
-        dataBase.CoreLife = dataBase.BaseCoreLife = dataBase.CurrentPlayer.CoreHealth;
+        dataBase.CoreLife = dataBase.BaseCoreLife = dataBase.CurrentPlayer.Core.Life;
 
         // Choose starting level
 

@@ -22,7 +22,8 @@ MonoBehaviour:
   <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 0
   KeyWords: []
-  <life>k__BackingField: 0
+  <Life>k__BackingField: 0
+  <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
   <Durability>k__BackingField: 0
   <MaxDurability>k__BackingField: 0
@@ -231,10 +232,19 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 2
-        Events: 00000000
-        TypeOfCounter: 0
-        CounterValue: 0
-        ModuloValue: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 1
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
+        CounterValue: 5
+        ModuloValue: 1
         HollowEffect: 0
         PayXEffect: 0
         MultiHit: 0
@@ -250,7 +260,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -264,9 +278,22 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
+        powerBased: 0
         damageAmount: 3
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 6
+            TestType: 6
+            Owner: 1
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 1
+          CardLocation: 0
+          CurrentParam: 1
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
@@ -274,5 +301,4 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []

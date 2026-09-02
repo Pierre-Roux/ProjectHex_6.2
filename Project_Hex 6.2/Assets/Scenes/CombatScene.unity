@@ -2505,8 +2505,8 @@ MonoBehaviour:
   - m_EditModeType: 1
     m_Knots:
     - Position:
-        x: 2.5
-        y: -0.25
+        x: 3
+        y: 0.25
         z: 0
       TangentIn:
         x: 0
@@ -2541,8 +2541,8 @@ MonoBehaviour:
           z: -0
           w: 0.7071072
     - Position:
-        x: -2.5
-        y: -0.25
+        x: -3
+        y: 0.25
         z: 0
       TangentIn:
         x: 0
@@ -4344,6 +4344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimDelay: 0.25
+  conditionSystem: {fileID: 0}
 --- !u!1 &839244691
 GameObject:
   m_ObjectHideFlags: 0
@@ -6073,6 +6074,7 @@ MonoBehaviour:
   DisplayDeckZone: {fileID: 46689598}
   CursorGameobject: {fileID: 95042430}
   CardTargetingActive: 0
+  ShieldEffectTargeting: 0
 --- !u!1 &1153776335
 GameObject:
   m_ObjectHideFlags: 0
@@ -6118,7 +6120,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 11400000, guid: 235f1968b92f4364481730e3bb26565e, type: 2}
-  PlayerCore: {fileID: 1803367976}
+  CoreSpawn: {fileID: 1691236518}
+  CoreParent: {fileID: 2109100550}
+  PermanentViewPrefab: {fileID: 4584687650056087244, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
+  PlayerCore: {fileID: 0}
   Interactable: 0
   EndTurnBtnActivable: 0
   Win: 0
@@ -6137,6 +6142,7 @@ MonoBehaviour:
   MaxPermEnemy: 0
   MaxPowerGrid: 0
   CurrentPowerGrid: 0
+  Passives: []
   currentEnemy: {fileID: 0}
   CurrentStageTier: 0
   MoneyReward: 0
@@ -6220,6 +6226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SplineContainer: {fileID: 509523012}
+  cardSpacing: 0.2
 --- !u!114 &1176795705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7962,8 +7969,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -7981,7 +7993,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -7997,18 +8013,34 @@ MonoBehaviour:
         EffectID: 
         Amount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         AffectedSide: 0
         TypeOfCopy: 0
-        ConditionToCopy: []
     - rid: 3047188320285622393
       type: {class: AlterCostEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8026,7 +8058,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8043,7 +8079,19 @@ MonoBehaviour:
         CanBeDisable: 1
         alterAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         IncludeCardsInDeck: 0
         targetModeInfo:
           targetMode: 0
@@ -8060,8 +8108,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8079,7 +8132,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8096,7 +8153,19 @@ MonoBehaviour:
         CanBeDisable: 1
         alterAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         aditive: 1
         passive: 0
         targetModeInfo:
@@ -8113,8 +8182,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8132,7 +8206,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8149,15 +8227,32 @@ MonoBehaviour:
         CanBeDisable: 1
         Amount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
     - rid: 3047188320285622396
       type: {class: AlterStaminaEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8175,7 +8270,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8192,7 +8291,19 @@ MonoBehaviour:
         CanBeDisable: 1
         alterAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         IncludeCardsInDeck: 0
         aditive: 1
         passive: 0
@@ -8210,8 +8321,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8229,7 +8345,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8256,8 +8376,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8275,7 +8400,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8289,9 +8418,22 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
+        powerBased: 0
         damageAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
@@ -8299,7 +8441,6 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3047188320285622399
       type: {class: DisableEffect, ns: , asm: _UnTrackAssembly}
@@ -8307,8 +8448,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8326,7 +8472,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8347,7 +8497,6 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3047188320285622400
       type: {class: DiscardEffect, ns: , asm: _UnTrackAssembly}
@@ -8355,8 +8504,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8374,7 +8528,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8390,7 +8548,19 @@ MonoBehaviour:
         EffectID: 
         DiscardAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         DiscardAll: 0
         TargetUpTo: 1
         targetLimitations: []
@@ -8400,8 +8570,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8419,7 +8594,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8435,15 +8614,32 @@ MonoBehaviour:
         EffectID: 
         drawAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
     - rid: 3047188320285622403
       type: {class: EnableEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8461,7 +8657,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8482,7 +8682,6 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3047188320285622404
       type: {class: ExhaustEffect, ns: , asm: _UnTrackAssembly}
@@ -8490,8 +8689,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8509,7 +8713,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8538,8 +8746,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8557,7 +8770,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8574,7 +8791,19 @@ MonoBehaviour:
         CanBeDisable: 1
         GainAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         aditive: 1
         passive: 0
         targetModeInfo:
@@ -8591,8 +8820,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8610,7 +8844,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8626,7 +8864,19 @@ MonoBehaviour:
         EffectID: 
         amount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
@@ -8641,8 +8891,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8660,7 +8915,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8676,7 +8935,19 @@ MonoBehaviour:
         EffectID: 
         amount: 1
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         CardsToInvoc: []
         EnemyToInvoc: []
     - rid: 3047188320285622408
@@ -8685,8 +8956,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8704,7 +8980,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8720,7 +9000,19 @@ MonoBehaviour:
         EffectID: 
         LifeLossAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
@@ -8735,8 +9027,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8754,7 +9051,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8770,15 +9071,32 @@ MonoBehaviour:
         EffectID: 
         GainAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
     - rid: 3047188320285622410
       type: {class: RefreshEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8796,7 +9114,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8824,8 +9146,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8843,7 +9170,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8871,8 +9202,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8890,7 +9226,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8918,8 +9258,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8937,7 +9282,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -8953,15 +9302,32 @@ MonoBehaviour:
         EffectID: 
         ScryAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
     - rid: 3047188320285622414
       type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -8979,7 +9345,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -9008,8 +9378,13 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 
-        TypeOfCounter: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -9027,7 +9402,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -9745,6 +10124,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1667777295}
   m_CullTransparentMesh: 1
+--- !u!1 &1691236517
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1691236518}
+  - component: {fileID: 1691236519}
+  m_Layer: 0
+  m_Name: CoreSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1691236518
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691236517}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -2.5, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2109100551}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1691236519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691236517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21ce1077b53a7cd459100c281f3c25d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isBoss: 0
+  EnemyRewardCardPool: {fileID: 0}
+  EnemyPreset: []
+  WeaponZone: {fileID: 0}
+  ShieldZone: {fileID: 0}
+  SupportZone: {fileID: 0}
+  CoreSlot: {fileID: 0}
+  <IntentConstructs>k__BackingField: []
+  ConstructSequence: []
+  LoopingSequence: 0
+  sequenceIndex: 0
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &1708626975
 GameObject:
   m_ObjectHideFlags: 0
@@ -9991,105 +10428,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1801707317}
   m_CullTransparentMesh: 1
---- !u!1001 &1803367975
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 2109100551}
-    m_Modifications:
-    - target: {fileID: 1024515846376142620, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: PermanentSpriteRenderer
-      value: 
-      objectReference: {fileID: 1803367978}
-    - target: {fileID: 4584687650056087244, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_Name
-      value: CoreView
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 90671665829664467, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 8007201454077152743, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 188891017439071157, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-  m_SourcePrefab: {fileID: 100100000, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
---- !u!114 &1803367976 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1024515846376142620, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-  m_PrefabInstance: {fileID: 1803367975}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78d29da0632f26e439708c215bb343ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1803367977 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5512188775583461209, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-  m_PrefabInstance: {fileID: 1803367975}
-  m_PrefabAsset: {fileID: 0}
---- !u!212 &1803367978 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 5728508307362772071, guid: 2023ce2dc50df9740abb5c66f70d55d2, type: 3}
-  m_PrefabInstance: {fileID: 1803367975}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1835893383
 GameObject:
   m_ObjectHideFlags: 0
@@ -11507,7 +11845,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 776000403}
-  - {fileID: 1803367977}
+  - {fileID: 1691236518}
   m_Father: {fileID: 1461848484}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2113872675

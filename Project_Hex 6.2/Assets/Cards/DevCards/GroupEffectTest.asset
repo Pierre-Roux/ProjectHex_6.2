@@ -10,31 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
-  m_Name: Fortifying Veil 1
+  m_Name: GroupEffectTest
   m_EditorClassIdentifier: _UnTrackAssembly::CardData
   <ID_Code>k__BackingField: 
-  <Title>k__BackingField: Fortifying Veil
-  <Description>k__BackingField: 'Ward: Core | When EtB, each other Vessels you control
-    gain 1 Armor'
+  <Title>k__BackingField: GroupEffectTest
+  <Description>k__BackingField: 2 armor to core draw 1 instant
   <Rarity>k__BackingField: 0
-  <cost>k__BackingField: 1
-  <GridCost>k__BackingField: 2
+  <cost>k__BackingField: 0
+  <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
-  <SpriteImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
+  <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 20
-  KeyWords:
-  - rid: 3878124350565777556
-  <Life>k__BackingField: 3
+  KeyWords: []
+  <Life>k__BackingField: 0
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
-  <Durability>k__BackingField: 2
-  <MaxDurability>k__BackingField: 2
-  <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
-  <permanentArea>k__BackingField: 2
-  <IsSpell>k__BackingField: 0
+  <Durability>k__BackingField: 0
+  <MaxDurability>k__BackingField: 1
+  <PermanentImage>k__BackingField: {fileID: 0}
+  <permanentArea>k__BackingField: 0
+  <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
-  - rid: 3878124350565777502
-  - rid: 3878124350565777503
+  - rid: 46883213955563629
   PlayCardSound:
     Guid:
       Data1: 0
@@ -229,14 +226,23 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3878124350565777502
-      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
+    - rid: 46883213955563629
+      type: {class: EffectGroup, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
-        actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        actionnerType: 2
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -254,7 +260,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -267,29 +277,32 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 809c6d0f-2c95-4494-aad8-cad7dc24f8a6
-        CanBeDisable: 1
-        targetModeInfo:
-          targetMode: 2
-          PlayerOrEnemy: 0
-          permanentArea: 0
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
-        targetLimitations: []
-    - rid: 3878124350565777503
+        EffectID: 
+        EffectGroups:
+        - rid: 46883213955563630
+        - rid: 46883213955563631
+    - rid: 46883213955563630
       type: {class: ArmorEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
-        actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        actionnerType: 2
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
         PayXEffect: 0
-        MultiHit: 1
+        MultiHit: 0
         SFX:
           Guid:
             Data1: 0
@@ -302,7 +315,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -315,28 +332,94 @@ MonoBehaviour:
         ActivateLeft: 0
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 1ac101d5-bc6b-4911-9d43-48a8378fe676
-        amount: 1
+        EffectID: 
+        amount: 2
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
-          targetMode: 3
+          targetMode: 2
           PlayerOrEnemy: 1
           permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        targetLimitations:
-        - rid: 3878124350565777504
-    - rid: 3878124350565777504
-      type: {class: TargetLimitationInfo, ns: , asm: Enums}
+        targetLimitations: []
+    - rid: 46883213955563631
+      type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
       data:
-        targetLimitations: 5
-        keyWordType: 0
-        IntValue: -1
-        MandatoryLimitation: 0
-    - rid: 3878124350565777556
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 6
-        keyWordValue: 0
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 2
+        EventInfos:
+        - Events: 36
+          TestType: 0
+          Owner: 1
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 1
+        DurationType:
+          Events: 36
+          TestType: 0
+          Owner: 1
+          BasicParam: 0
+        TriggerOnDurationEnd: 1
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 
+        drawAmount: 1
+        multiplyAmount: 1
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0

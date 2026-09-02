@@ -24,6 +24,7 @@ MonoBehaviour:
   <Money_Cost>k__BackingField: 0
   KeyWords:
   - rid: 3047188320285622464
+  - rid: 4855037171066994806
   <Life>k__BackingField: 6
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
@@ -231,7 +232,7 @@ MonoBehaviour:
     - rid: 3047188320285622464
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 3
+        keyWordType: 7
         keyWordValue: 0
     - rid: 3047188320285622465
       type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
@@ -239,8 +240,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 14000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 19
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -258,7 +268,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos:
@@ -276,7 +290,19 @@ MonoBehaviour:
         powerBased: 0
         damageAmount: 4
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
@@ -288,8 +314,32 @@ MonoBehaviour:
     - rid: 3047188320285622466
       type: {class: DynamicConditionInfo, ns: , asm: Enums}
       data:
-        DynamicCondition: 13
-        CounterType: 0
-        TestType: 3
+        DynamicCondition: 15
+        CounterTypeInfo:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
+        TestType: 7
         TestValue: 0
-        TestDynamicAmount: 0
+        TestDynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
+        basicParam: 0
+        currentParam: 0
+    - rid: 4855037171066994806
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 18
+        keyWordValue: 0

@@ -10,13 +10,13 @@ public class InvocEffect : Effect
     [Header("Effect Param")]
     [SerializeField] public int amount = 1;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public List<CardData> CardsToInvoc;
     [SerializeField] public List<EnemyPermanentData> EnemyToInvoc;
 
     public InvocEffect() { }
 
-    public InvocEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public InvocEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<CardData> cardsToInvoc,List<EnemyPermanentData> enemyToInvoc , List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -34,7 +34,7 @@ public class InvocEffect : Effect
         EnemyToInvoc = enemyToInvoc;
         DynamicConditionInfos = dynamicConditionInfos;
         actionnerType = ActionnerType;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         CardActionner = cardActionner;
@@ -46,7 +46,7 @@ public class InvocEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -78,14 +78,14 @@ public class InvocEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             amount = PayXValue;
         }
 
         // SI CARTE
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-            InvocGA invocGA = new(amount, multiplyAmount, DynamicAmount, CardsToInvoc, EnemyToInvoc);
+            InvocGA invocGA = new(amount, multiplyAmount, DynamicAmountInfo, CardsToInvoc, EnemyToInvoc);
             invocGA.CardActionner = CardActionner;
             invocGA.SourceEffect = this;
             invocGA.ActivateToolTip = ActivateToolTip;
@@ -98,7 +98,7 @@ public class InvocEffect : Effect
             // SI ENEMY
             if (actionnerType == ActionnerType.ENEMY)
             {
-                InvocEGA invocEGA = new(amount, multiplyAmount, DynamicAmount, EnemyToInvoc);
+                InvocEGA invocEGA = new(amount, multiplyAmount, DynamicAmountInfo, EnemyToInvoc);
                 invocEGA.Actionner = Actionner;
                 invocEGA.SourceEffect = this;
                 invocEGA.ActivateToolTip = ActivateToolTip;
@@ -108,7 +108,7 @@ public class InvocEffect : Effect
             // SI PLAYER
             else if (actionnerType == ActionnerType.PLAYER)
             {
-                InvocPGA invocPGA = new(amount, multiplyAmount, DynamicAmount, CardsToInvoc);
+                InvocPGA invocPGA = new(amount, multiplyAmount, DynamicAmountInfo, CardsToInvoc);
                 invocPGA.Actionner = Actionner;
                 invocPGA.SourceEffect = this;
                 invocPGA.ActivateToolTip = ActivateToolTip;
@@ -158,7 +158,7 @@ public class InvocEffect : Effect
             EnemyToInvoc,
             DynamicConditionInfos,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -170,7 +170,7 @@ public class InvocEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

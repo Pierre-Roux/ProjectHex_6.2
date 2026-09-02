@@ -2,46 +2,37 @@ public enum TargetLimitations
 {
     NULL,
 
-    Only_Player_Permanent,
-    Only_Enemy_Permanent,
-    Only_Type_Permanent,
-    Only_SelectablePermanent,
+    OnlyOwnerType,
+    ExceptOwnerType,
 
-    NO_Player_Core,
-    NO_Enemy_Core,
+    Param_More_Than_Value,
+    Param_Less_Than_Value,
+    Param_Equal_Value,
 
-    Permanent_HP,
-    Permanent_HP_More_Than_Value,
-    Permanent_HP_Less_Than_Value,
-
-    Permanent_Endurance,
-    Permanent_Endurance_More_Than_Value,
-    Permanent_Endurance_Less_Than_Value,
-
-    Card_Cost_Value,
-    Card_Cost_More_Than_Value,
-    Card_Cost_Less_Than_Value,
-
+    // General
     Only_Activated,
-
-    PermanentIsNotType,
-
+    Only_SelectablePermanent,
 }
 
 [System.Serializable]
 public class TargetLimitationInfo
 {
     public TargetLimitations targetLimitations;
+    public Enemy_Player_ENUM Owner;
     public KeyWordType keyWordType;
-    public int IntValue = -1;
+    public BasicParam Param;
+    public int ParamValue = -1;
     public bool MandatoryLimitation;
+    
 
     public TargetLimitationInfo(){}
 
-    public TargetLimitationInfo(int intValue, KeyWordType KeyWordType, TargetLimitations TargetLimitations, bool mandatoryLimitation = true)
+    public TargetLimitationInfo(int intValue, KeyWordType KeyWordType, Enemy_Player_ENUM owner, BasicParam param, TargetLimitations TargetLimitations, bool mandatoryLimitation = true)
     {
-        IntValue = intValue;
+        ParamValue = intValue;
         keyWordType = KeyWordType;
+        Owner = owner;
+        Param = param;
         targetLimitations = TargetLimitations;
         MandatoryLimitation = mandatoryLimitation;
     }

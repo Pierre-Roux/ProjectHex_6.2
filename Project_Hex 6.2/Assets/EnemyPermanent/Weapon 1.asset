@@ -19,7 +19,8 @@ MonoBehaviour:
   Armor: 0
   IsCore: 0
   permanentArea: 1
-  KeyWords: []
+  KeyWords:
+  - rid: 4855037132895683281
   <PossibleIntent>k__BackingField:
   - rid: 3047188320285622479
   RDMSequence: 0
@@ -163,8 +164,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 1
-        Events: 01000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 37
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -182,7 +192,11 @@ MonoBehaviour:
         Intent_Title: 
         number: A
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -199,12 +213,29 @@ MonoBehaviour:
         powerBased: 1
         damageAmount: 0
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 4
           PlayerOrEnemy: 1
-          permanentArea: 1
+          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
+    - rid: 4855037132895683281
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 17
+        keyWordValue: 0

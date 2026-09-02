@@ -14,21 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardPool
   PoolName: 
   CardDataList:
-  - {fileID: 11400000, guid: 740fbc3d10a26fb458e702dc59b5040e, type: 2}
-  - {fileID: 11400000, guid: 4d64f98a7cfc69a41ba9e6130d7a0274, type: 2}
-  - {fileID: 11400000, guid: cab5b0a1cc769e548adee3e0e843e1eb, type: 2}
-  - {fileID: 11400000, guid: 3a2fdd31789d70643872c2777547dea0, type: 2}
-  - {fileID: 11400000, guid: 9e2dcda81f9b0ce4dacde30e33f05fcb, type: 2}
-  - {fileID: 11400000, guid: 9e2dcda81f9b0ce4dacde30e33f05fcb, type: 2}
-  - {fileID: 11400000, guid: 9e2dcda81f9b0ce4dacde30e33f05fcb, type: 2}
-  - {fileID: 11400000, guid: 41dbe51100091f14f9d09aedd465c5fd, type: 2}
-  - {fileID: 11400000, guid: 41dbe51100091f14f9d09aedd465c5fd, type: 2}
-  - {fileID: 11400000, guid: 41dbe51100091f14f9d09aedd465c5fd, type: 2}
-  - {fileID: 11400000, guid: a7446c604582d33468a94a0941775ae9, type: 2}
-  - {fileID: 11400000, guid: e313ccc81499b2c428631b1c22c7befe, type: 2}
-  - {fileID: 11400000, guid: e313ccc81499b2c428631b1c22c7befe, type: 2}
-  - {fileID: 11400000, guid: e313ccc81499b2c428631b1c22c7befe, type: 2}
-  - {fileID: 11400000, guid: e313ccc81499b2c428631b1c22c7befe, type: 2}
-  - {fileID: 11400000, guid: e313ccc81499b2c428631b1c22c7befe, type: 2}
-  - {fileID: 11400000, guid: e313ccc81499b2c428631b1c22c7befe, type: 2}
-  - {fileID: 11400000, guid: e313ccc81499b2c428631b1c22c7befe, type: 2}
+  - {fileID: 11400000, guid: 216c93c68bce1ca4cbd47ba638619139, type: 2}
+  - {fileID: 11400000, guid: ddab836bd96f6444f9ac498106d3cce7, type: 2}
+  - {fileID: 11400000, guid: f3112cf4b0118634aa62200cd9d95ccf, type: 2}
+  - {fileID: 11400000, guid: afa9ddfa8be60d143aaa5bbeff1f0dad, type: 2}
+  - {fileID: 11400000, guid: 506202706f6fd51429f7917c2119a78d, type: 2}
+  - {fileID: 11400000, guid: 7b246690b6d3faa4fb977906778e7c60, type: 2}
+  - {fileID: 11400000, guid: 245428de982ef3443b1e4bb771d3b74b, type: 2}
+  - {fileID: 11400000, guid: e95822ae470d5c64c918f06a957f51da, type: 2}
+  - {fileID: 11400000, guid: 0c3e4b7c3a79c734495e25caa79bddd9, type: 2}

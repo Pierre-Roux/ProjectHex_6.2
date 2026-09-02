@@ -26,7 +26,7 @@ public class RefreshEffect : Effect
 
     public RefreshEffect() { }
 
-    public RefreshEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy,EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public RefreshEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy,EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -43,7 +43,7 @@ public class RefreshEffect : Effect
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         Intent_Title = intent_Title;
@@ -242,7 +242,7 @@ public class RefreshEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,

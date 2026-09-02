@@ -8,13 +8,13 @@ public class PlayerLifeLossGA : GameAction
     public List<EnemySlotView> enemyTargets { get; set; }
     public int Amount;
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
-    public PlayerLifeLossGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets)
+    public DynamicAmountInfo DynamicAmountInfo;
+    public PlayerLifeLossGA(int amount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo, List<PermanentView> PlayerTargets, List<EnemySlotView> EnemyTargets, List<DynamicConditionInfo> dynamicConditionInfos = null)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
         playerTargets = PlayerTargets;
         enemyTargets = EnemyTargets;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
     }
 }

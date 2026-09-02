@@ -9,7 +9,7 @@ public class ArmorEffect : Effect
     [Header("Effect Param")]
     [SerializeField] public int amount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
@@ -25,7 +25,7 @@ public class ArmorEffect : Effect
 
     public ArmorEffect() { }
 
-    public ArmorEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public ArmorEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -45,7 +45,7 @@ public class ArmorEffect : Effect
         TargetUpTo = targetUpTo;
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         CardActionner = cardActionner;
@@ -57,7 +57,7 @@ public class ArmorEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -89,7 +89,7 @@ public class ArmorEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             amount = PayXValue;
         }
 
@@ -98,7 +98,7 @@ public class ArmorEffect : Effect
         {
             if (targetModeInfo.targetMode == TargetMode.Manual)
             {
-                ArmorGA ArmorGA = new(amount, multiplyAmount, DynamicAmount, null, null);
+                ArmorGA ArmorGA = new(amount, multiplyAmount, DynamicAmountInfo, null, null);
                 ArmorGA.CardActionner = CardActionner;
                 ArmorGA.SourceEffect = this;
                 ArmorGA.ActivateToolTip = false;
@@ -110,7 +110,7 @@ public class ArmorEffect : Effect
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                ArmorGA ArmorGA = new(amount, multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                ArmorGA ArmorGA = new(amount, multiplyAmount, DynamicAmountInfo, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 ArmorGA.CardActionner = CardActionner;
                 ArmorGA.SourceEffect = this;
                 ArmorGA.ActivateToolTip = ActivateToolTip;
@@ -123,7 +123,7 @@ public class ArmorEffect : Effect
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
-                ArmorGA ArmorGA = new(amount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                ArmorGA ArmorGA = new(amount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                 ArmorGA.CardActionner = CardActionner;
                 ArmorGA.SourceEffect = this;
                 ArmorGA.ActivateToolTip = ActivateToolTip;
@@ -139,7 +139,7 @@ public class ArmorEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    ArmorEnemyGA ArmorEnemyGA = new(amount, multiplyAmount, DynamicAmount, null, null);
+                    ArmorEnemyGA ArmorEnemyGA = new(amount, multiplyAmount, DynamicAmountInfo, null, null);
                     ArmorEnemyGA.Actionner = Actionner;
                     ArmorEnemyGA.SourceEffect = this;
                     ArmorEnemyGA.ActivateToolTip = false;
@@ -167,7 +167,7 @@ public class ArmorEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    ArmorEnemyGA ArmorEnemyGA = new(amount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    ArmorEnemyGA ArmorEnemyGA = new(amount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                     ArmorEnemyGA.Actionner = Actionner;
                     ArmorEnemyGA.SourceEffect = this;
                     ArmorEnemyGA.ActivateToolTip = ActivateToolTip;
@@ -180,7 +180,7 @@ public class ArmorEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    ArmorPlayerGA ArmorPlayerGA = new(amount, multiplyAmount, DynamicAmount, null, null);
+                    ArmorPlayerGA ArmorPlayerGA = new(amount, multiplyAmount, DynamicAmountInfo, null, null);
                     ArmorPlayerGA.Actionner = Actionner;
                     ArmorPlayerGA.SourceEffect = this;
                     ArmorPlayerGA.ActivateToolTip = false;
@@ -208,7 +208,7 @@ public class ArmorEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    ArmorPlayerGA ArmorPlayerGA = new(amount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    ArmorPlayerGA ArmorPlayerGA = new(amount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                     ArmorPlayerGA.Actionner = Actionner;
                     ArmorPlayerGA.SourceEffect = this;
                     ArmorPlayerGA.ActivateToolTip = ActivateToolTip;
@@ -261,7 +261,7 @@ public class ArmorEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -273,7 +273,7 @@ public class ArmorEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

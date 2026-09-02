@@ -13,7 +13,7 @@ public class AlterCostEffect : Effect
     [SerializeField] public override bool CanBeDisableEffect => CanBeDisable;
     [SerializeField] public int alterAmount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public bool IncludeCardsInDeck;
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
@@ -31,7 +31,7 @@ public class AlterCostEffect : Effect
 
     public AlterCostEffect() { }
 
-    public AlterCostEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, bool includeCardsInDeck, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool triggerOnDurationEnd, Effect linkedEffect, List<Card> targetForLinked_Card, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterCostEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, bool includeCardsInDeck, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool Passive, bool triggerOnDurationEnd, Effect linkedEffect, List<Card> targetForLinked_Card, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -54,7 +54,7 @@ public class AlterCostEffect : Effect
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         Intent_Title = intent_Title;
@@ -65,7 +65,7 @@ public class AlterCostEffect : Effect
         TriggerOnDurationEnd = triggerOnDurationEnd;
         LinkedEffect = linkedEffect;
         TargetForLinked_Card = targetForLinked_Card;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -97,7 +97,7 @@ public class AlterCostEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             alterAmount = PayXValue;
         }
 
@@ -107,7 +107,7 @@ public class AlterCostEffect : Effect
         {
             if (targetModeInfo.targetMode == TargetMode.Manual && targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
             {
-                AlterCardCostGA alterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, null, targetModeInfo);
+                AlterCardCostGA alterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, null, targetModeInfo);
                 alterCardCostGA.CardActionner = CardActionner;
                 alterCardCostGA.SourceEffect = this;
                 alterCardCostGA.ActivateToolTip = false;
@@ -119,7 +119,7 @@ public class AlterCostEffect : Effect
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                AlterCardCostGA alterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, ParentEffect.TargetForLinked_Card, targetModeInfo);
+                AlterCardCostGA alterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, ParentEffect.TargetForLinked_Card, targetModeInfo);
                 alterCardCostGA.CardActionner = CardActionner;
                 alterCardCostGA.SourceEffect = this;
                 alterCardCostGA.ActivateToolTip = ActivateToolTip;
@@ -132,7 +132,7 @@ public class AlterCostEffect : Effect
 
                 TargetForLinked_Card = cardsTargets;
 
-                AlterCardCostGA alterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, cardsTargets, targetModeInfo);
+                AlterCardCostGA alterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, cardsTargets, targetModeInfo);
                 alterCardCostGA.CardActionner = CardActionner;
                 alterCardCostGA.SourceEffect = this;
                 alterCardCostGA.ActivateToolTip = ActivateToolTip;
@@ -146,7 +146,7 @@ public class AlterCostEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual && targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
                 {
-                    EnemyAlterCardCostGA enemyAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, null, targetModeInfo);
+                    EnemyAlterCardCostGA enemyAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, null, targetModeInfo);
                     enemyAlterCardCostGA.Actionner = Actionner;
                     enemyAlterCardCostGA.SourceEffect = this;
                     enemyAlterCardCostGA.ActivateToolTip = false;
@@ -171,7 +171,7 @@ public class AlterCostEffect : Effect
                         TargetForLinked_Card = CardsTargets;
                     }
 
-                    EnemyAlterCardCostGA enemyAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, CardsTargets, targetModeInfo);
+                    EnemyAlterCardCostGA enemyAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, CardsTargets, targetModeInfo);
                     enemyAlterCardCostGA.Actionner = Actionner;
                     enemyAlterCardCostGA.SourceEffect = this;
                     enemyAlterCardCostGA.ActivateToolTip = ActivateToolTip;
@@ -183,7 +183,7 @@ public class AlterCostEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual && targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.Card)
                 {
-                    PlayerAlterCardCostGA playerAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, null, targetModeInfo);
+                    PlayerAlterCardCostGA playerAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, null, targetModeInfo);
                     playerAlterCardCostGA.Actionner = Actionner;
                     playerAlterCardCostGA.SourceEffect = this;
                     playerAlterCardCostGA.ActivateToolTip = false;
@@ -208,7 +208,7 @@ public class AlterCostEffect : Effect
                         TargetForLinked_Card = cardsTargets;
                     }
 
-                    PlayerAlterCardCostGA playerAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, cardsTargets, targetModeInfo);
+                    PlayerAlterCardCostGA playerAlterCardCostGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, cardsTargets, targetModeInfo);
                     playerAlterCardCostGA.Actionner = Actionner;
                     playerAlterCardCostGA.SourceEffect = this;
                     playerAlterCardCostGA.ActivateToolTip = ActivateToolTip;
@@ -227,7 +227,7 @@ public class AlterCostEffect : Effect
     public override GameAction GetCounterMesure()
     {
         Disabled = true;
-        AlterCardCostGA alterCardCostGA = new(-alterAmount, multiplyAmount, DynamicAmount, passive, ParentEffect.TargetForLinked_Card, targetModeInfo);
+        AlterCardCostGA alterCardCostGA = new(-alterAmount, multiplyAmount, DynamicAmountInfo, passive, ParentEffect.TargetForLinked_Card, targetModeInfo);
         alterCardCostGA.CardActionner = CardActionner;
         alterCardCostGA.SourceEffect = this;
         alterCardCostGA.ActivateToolTip = false;
@@ -263,7 +263,7 @@ public class AlterCostEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -275,7 +275,7 @@ public class AlterCostEffect : Effect
             TriggerOnDurationEnd,
             clonedLinked,
             clonedCardTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

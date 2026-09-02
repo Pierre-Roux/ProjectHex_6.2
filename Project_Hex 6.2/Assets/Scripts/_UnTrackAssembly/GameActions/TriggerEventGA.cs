@@ -4,19 +4,18 @@ using UnityEngine;
 
 public class TriggerEventGA : GameAction
 {
-    public Events gameEvent;
+    public EventInfo EventInfo;
     public Card Card;
-    public PermanentView permanentView;
-    public EnemySlotView enemySlotView;
+    public PermanentView PermanentView;
+    public EnemySlotView EnemySlotView;
+    public CounterTypeInfo CounterTypeInfo;
 
-    public CounterType counterTypeConcerned;
-
-    public TriggerEventGA(Events events, Card card = null, PermanentView PermanentView = null, EnemySlotView EnemySlotView = null,CounterType CounterTypeConcerned = CounterType.NULL)
+    public TriggerEventGA(EventInfo eventinfo,CounterTypeInfo counterTypeInfo, Card card = null, PermanentView permanentView = null, EnemySlotView enemySlotView = null)
     {
-        gameEvent = events;
+        EventInfo = eventinfo;
         Card = card;
-        permanentView = PermanentView;
-        enemySlotView = EnemySlotView;
-        counterTypeConcerned = CounterTypeConcerned;
+        PermanentView = permanentView;
+        EnemySlotView = enemySlotView;
+        CounterTypeInfo = counterTypeInfo;
     }
 }

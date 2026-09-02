@@ -35,7 +35,7 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
             //Debug.Log($"[EnemySlotViewCreator] Cannot add {data.name} to {type} zone — already {childCount} slots (limit = 9)");
             return null;
         }
-        
+
         if (!setup)
         {
             if (!AudioManager.Instance.IsValid(cardReference.SummonPPermanentSound))
@@ -62,11 +62,12 @@ public class PermanentViewCreator : Singleton<PermanentViewCreator>
         ShieldZone.RepositionChildrenPermanentView();
         SupportZone.RepositionChildrenPermanentViewCenterOut();
 
-        Debug.Log("je joue la carte creature -> " + cardReference.Title);
+        Debug.Log("je joue la carte creature -> " + PermanentView.CardReferenceArchive.Title);
 
         GameEventSystem.Instance.ManageEffects(null, PermanentView, null);
 
-        TriggerEventGA triggerEventGA = new(Events.WhenPermaETB,null,PermanentView,null);
+        EventInfo eventInfo = new EventInfo(Events.WhenPermaETB, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, PermanentView, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
         return PermanentView;

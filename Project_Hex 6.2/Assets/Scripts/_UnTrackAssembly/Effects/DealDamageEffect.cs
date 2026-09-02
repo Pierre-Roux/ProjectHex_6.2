@@ -11,7 +11,7 @@ public class DealDamageEffect : Effect
     [SerializeField] public bool powerBased;
     [SerializeField] public int damageAmount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
@@ -31,7 +31,7 @@ public class DealDamageEffect : Effect
 
     public DealDamageEffect() { }
 
-    public DealDamageEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, string description, bool PowerBased, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DealDamageEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, string description, bool PowerBased, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         ActivateToolTip = activateToolTip;
@@ -54,7 +54,7 @@ public class DealDamageEffect : Effect
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         Intent_Title = intent_Title;
@@ -65,122 +65,11 @@ public class DealDamageEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
         ModuloValue = moduloValue;
-    }
-
-    public override string GetParsedDescription()
-    {
-        string desc = EffectDescription;
-        /*
-        //@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate
-
-        // ----- [1] Amount -----
-        string amountText = PayXEffect ? "X" :
-            (DynamicAmount != DynamicAmount.NULL ? DynamicAmount.ToString() : damageAmount.ToString());
-
-        string multiplyText = multiplyAmount > 1 ? $"×{multiplyAmount}" : "";
-
-        // ----- [2] Duration -----
-        string durationText = "";
-        //if (Duration > 0 && DurationType != Events.NULL)
-        {
-            string durationTypeText = DurationType.ToString().Replace("On", ""); // ex: OnTurnStart → TurnStart
-            durationTypeText = char.ToLower(durationTypeText[0]) + durationTypeText.Substring(1);
-
-            if (TriggerOnDurationEnd)
-                durationText = $" after {Duration} {durationTypeText}{(Duration > 1 ? "s" : "")}";
-            else
-                durationText = $" in {Duration} {durationTypeText}{(Duration > 1 ? "s" : "")}";
-        }
-
-        // ----- [3] Activation -----
-        string activateText = (ActivateNumber > 0)
-            ? $" ({ActivateNumber} time{(ActivateNumber > 1 ? "s" : "")})"
-            : "";
-
-        // ----- [4] Conditions -----
-        string conditionsText = "";
-        if (DynamicConditionInfos != null && DynamicConditionInfos.Count > 0)
-        {
-            var condTexts = new List<string>();
-            foreach (var cond in DynamicConditionInfos)
-                if (cond != null)
-                    condTexts.Add($"if {cond}");
-            conditionsText = string.Join(", ", condTexts) + ", ";
-        }
-
-        // ----- [5] Target Mode Info -----
-        string targetModeText = "";
-        if (targetModeInfo != null)
-        {
-            // 1️⃣ Type de camp : Player / Enemy
-            string sideText = targetModeInfo.PlayerOrEnemy switch
-            {
-                Enemy_Player_ENUM.Player => "ally",
-                Enemy_Player_ENUM.Enemy => "enemy",
-                _ => ""
-            };
-
-            // 3️⃣ Type de permanent
-            string typeText = targetModeInfo.PermaType != PermaTypes.NULL
-                ? $" {targetModeInfo.PermaType.ToString().ToLower()}"
-                : "";
-
-            // 4️⃣ Mode de ciblage
-            string modeText = targetModeInfo.targetMode switch
-            {
-                TargetMode.Self => "self",
-                TargetMode.Core => "core",
-                TargetMode.All => $"all {(sideText != "" ? sideText + " " : "")}{typeText.Trim()}s",
-                TargetMode.RDM => $"a random {(sideText != "" ? sideText + " " : "")}{typeText.Trim()}",
-                TargetMode.HighHP => $"the {(sideText != "" ? sideText + " " : "")}{typeText.Trim()} with the highest HP",
-                TargetMode.LowHP => $"the {(sideText != "" ? sideText + " " : "")}{typeText.Trim()} with the lowest HP",
-                _ => $"{(sideText != "" ? sideText + " " : "")}{typeText.Trim()}"
-            };
-
-            targetModeText = modeText.Trim();
-        }
-
-        // ----- [6] Nombre de cibles -----
-        string targetNumberText = "";
-        if (EffectTargetNumber > 0)
-        {
-            string upTo = EffectTargetUpTo ? "up to " : "";
-            string plural = EffectTargetNumber > 1 ? "s" : "";
-            targetNumberText = $" {upTo}{EffectTargetNumber} {targetModeText}{plural}";
-        }
-        else if (!string.IsNullOrEmpty(targetModeText))
-        {
-            targetNumberText = $" {targetModeText}";
-        }
-
-        // ----- [7] Dictionnaire des remplacements -----
-        Dictionary<string, string> replacements = new()
-        {
-            { "@ConditionsDeal", conditionsText },
-            { "@Amount", amountText },
-            { "@Multiply", multiplyText },
-            { "@TargetDuration", durationText },
-            { "@TargetActivate", activateText },
-            { "@TargetNumber", targetNumberText },
-            { "@TargetMode", "" },
-            { "@TargetLimitations", "" },
-            { "@TargetUpTo", "" }
-        };
-
-        foreach (var kvp in replacements)
-            desc = desc.Replace(kvp.Key, kvp.Value);
-
-        // ----- [8] Nettoyage -----
-        desc = System.Text.RegularExpressions.Regex.Replace(desc, @"\s+", " ").Trim();
-        if (desc.Length > 0)
-            desc = char.ToUpper(desc[0]) + desc.Substring(1);
-        */
-        return desc;
     }
 
     public override GameAction GetGameAction()
@@ -208,7 +97,7 @@ public class DealDamageEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             damageAmount = PayXValue;
         }
 
@@ -216,7 +105,7 @@ public class DealDamageEffect : Effect
         {
             if (targetModeInfo.targetMode == TargetMode.Manual)
             {
-                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, null, null);
+                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, null, null);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
                 dealDamageGA.ActivateToolTip = false;
@@ -228,7 +117,7 @@ public class DealDamageEffect : Effect
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
                 dealDamageGA.ActivateToolTip = ActivateToolTip;
@@ -241,7 +130,7 @@ public class DealDamageEffect : Effect
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
-                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                 dealDamageGA.CardActionner = CardActionner;
                 dealDamageGA.SourceEffect = this;
                 dealDamageGA.ActivateToolTip = ActivateToolTip;
@@ -255,7 +144,7 @@ public class DealDamageEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    AttackPlayerGA attackPlayerGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, null, null);
+                    AttackPlayerGA attackPlayerGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, null, null);
                     attackPlayerGA.Actionner = Actionner;
                     attackPlayerGA.SourceEffect = this;
                     attackPlayerGA.ActivateToolTip = false;
@@ -282,7 +171,7 @@ public class DealDamageEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    AttackPlayerGA attackPlayerGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    AttackPlayerGA attackPlayerGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                     attackPlayerGA.Actionner = Actionner;
                     attackPlayerGA.SourceEffect = this;
                     attackPlayerGA.ActivateToolTip = ActivateToolTip;
@@ -294,7 +183,7 @@ public class DealDamageEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    AttackEnemyGA attackEnemyGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, null, null);
+                    AttackEnemyGA attackEnemyGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, null, null);
                     attackEnemyGA.Actionner = Actionner;
                     attackEnemyGA.SourceEffect = this;
                     attackEnemyGA.ActivateToolTip = false;
@@ -321,7 +210,7 @@ public class DealDamageEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    AttackEnemyGA attackEnemyGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    AttackEnemyGA attackEnemyGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                     attackEnemyGA.Actionner = Actionner;
                     attackEnemyGA.SourceEffect = this;
                     attackEnemyGA.ActivateToolTip = ActivateToolTip;
@@ -375,7 +264,7 @@ public class DealDamageEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -387,7 +276,7 @@ public class DealDamageEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

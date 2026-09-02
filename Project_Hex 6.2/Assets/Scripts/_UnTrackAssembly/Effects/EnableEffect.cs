@@ -18,21 +18,17 @@ public class EnableEffect : Effect
     [SerializeField] private int targetNumber = 1;
     public override int EffectTargetNumber => targetNumber;
 
-    [SerializeField] private string Description = "@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate";
-    public override string EffectDescription => Description;
-
     [field: SerializeReference, SR] private List<TargetLimitationInfo> targetLimitations;
     public override List<TargetLimitationInfo> EffectTargetLimitations => targetLimitations;
 
     public EnableEffect() { }
 
-    public EnableEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, string description, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public EnableEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
-        Description = description;
         PayXEffect = payXEffect;
         PayXValue = payXValue;
         MultiHit = multiHit;
@@ -46,7 +42,7 @@ public class EnableEffect : Effect
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         Intent_Title = intent_Title;
@@ -235,7 +231,6 @@ public class EnableEffect : Effect
             ActivateToolTip,
             Priority,
             HollowEffect,
-            Description,
             PayXEffect,
             PayXValue,
             MultiHit,
@@ -248,7 +243,7 @@ public class EnableEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,

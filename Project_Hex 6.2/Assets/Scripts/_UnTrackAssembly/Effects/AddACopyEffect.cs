@@ -8,14 +8,13 @@ public class AddACopyEffect : Effect
     [Header("Effect Param")]
     [SerializeField] public int Amount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public Enemy_Player_ENUM AffectedSide;
     [SerializeField] public CopyTokenType TypeOfCopy;
-    [SerializeField] public List<DynamicConditionInfo> ConditionToCopy;
 
     public AddACopyEffect(){}
 
-    public AddACopyEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int amount, Enemy_Player_ENUM affectedSide, CopyTokenType typeOfCopy, List<DynamicConditionInfo> conditionToCopy, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AddACopyEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int amount, Enemy_Player_ENUM affectedSide, CopyTokenType typeOfCopy, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -24,14 +23,13 @@ public class AddACopyEffect : Effect
         Amount = amount;
         AffectedSide = affectedSide;
         TypeOfCopy = typeOfCopy;
-        ConditionToCopy = conditionToCopy;
         PayXEffect = payXEffect;
         PayXValue = payXValue;
         MultiHit = multiHit;
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
         ORChoice = orChoice;
-        Events = Event;
+        EventInfos = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
         actionnerType = ActionnerType;
@@ -45,7 +43,7 @@ public class AddACopyEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -77,13 +75,13 @@ public class AddACopyEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             Amount = PayXValue;
         }
 
         if (Actionner == null && actionnerType == ActionnerType.NONE)
         {
-            AddACopyGa addACopyGa = new(Amount, multiplyAmount, DynamicAmount, AffectedSide, TypeOfCopy, ConditionToCopy);
+            AddACopyGa addACopyGa = new(Amount, multiplyAmount, DynamicAmountInfo, AffectedSide, TypeOfCopy);
             addACopyGa.CardActionner = CardActionner;
             addACopyGa.SourceEffect = this;
             addACopyGa.ActivateToolTip = ActivateToolTip;
@@ -94,7 +92,7 @@ public class AddACopyEffect : Effect
         {
             if (actionnerType == ActionnerType.ENEMY)
             {
-                PlayerAddACopyGa playerAddACopyGa = new(Amount, multiplyAmount, DynamicAmount, AffectedSide, TypeOfCopy, ConditionToCopy);
+                PlayerAddACopyGa playerAddACopyGa = new(Amount, multiplyAmount, DynamicAmountInfo, AffectedSide, TypeOfCopy);
                 playerAddACopyGa.Actionner = Actionner;
                 playerAddACopyGa.SourceEffect = this;
                 playerAddACopyGa.ActivateToolTip = ActivateToolTip;
@@ -103,7 +101,7 @@ public class AddACopyEffect : Effect
             }
             else if (actionnerType == ActionnerType.PLAYER)
             {
-                EnemyAddACopyGa enemyAddACopyGa = new(Amount, multiplyAmount, DynamicAmount, AffectedSide, TypeOfCopy, ConditionToCopy);
+                EnemyAddACopyGa enemyAddACopyGa = new(Amount, multiplyAmount, DynamicAmountInfo, AffectedSide, TypeOfCopy);
                 enemyAddACopyGa.Actionner = Actionner;
                 enemyAddACopyGa.SourceEffect = this;
                 enemyAddACopyGa.ActivateToolTip = ActivateToolTip;
@@ -143,7 +141,6 @@ public class AddACopyEffect : Effect
             Amount,
             AffectedSide,
             TypeOfCopy,
-            ConditionToCopy,
             PayXEffect,
             PayXValue,
             MultiHit,
@@ -152,7 +149,7 @@ public class AddACopyEffect : Effect
             ORChoice,
             DynamicConditionInfos,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -164,7 +161,7 @@ public class AddACopyEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

@@ -12,7 +12,7 @@ public class LifeLossEffect : Effect
 
     [SerializeField] public int LifeLossAmount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
@@ -28,7 +28,7 @@ public class LifeLossEffect : Effect
 
     public LifeLossEffect() { }
 
-    public LifeLossEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int lifeLossAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public LifeLossEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int lifeLossAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -49,7 +49,7 @@ public class LifeLossEffect : Effect
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         Intent_Title = intent_Title;
@@ -60,7 +60,7 @@ public class LifeLossEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -92,7 +92,7 @@ public class LifeLossEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             LifeLossAmount = PayXValue;
         }
 
@@ -100,7 +100,7 @@ public class LifeLossEffect : Effect
         {
             if (targetModeInfo.targetMode == TargetMode.Manual)
             {
-                LifeLossGA lifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmount, null, null);
+                LifeLossGA lifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmountInfo, null, null);
                 lifeLossGA.CardActionner = CardActionner;
                 lifeLossGA.SourceEffect = this;
                 lifeLossGA.ActivateToolTip = false;
@@ -112,7 +112,7 @@ public class LifeLossEffect : Effect
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                LifeLossGA lifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmount, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
+                LifeLossGA lifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmountInfo, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
                 lifeLossGA.CardActionner = CardActionner;
                 lifeLossGA.SourceEffect = this;
                 lifeLossGA.ActivateToolTip = ActivateToolTip;
@@ -125,7 +125,7 @@ public class LifeLossEffect : Effect
                 TargetForLinked_Player = playerTargets;
                 TargetForLinked_Enemy = enemyTargets;
 
-                LifeLossGA lifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                LifeLossGA lifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                 lifeLossGA.CardActionner = CardActionner;
                 lifeLossGA.SourceEffect = this;
                 lifeLossGA.ActivateToolTip = ActivateToolTip;
@@ -139,7 +139,7 @@ public class LifeLossEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmount, null, null);
+                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmountInfo, null, null);
                     enemyLifeLossGA.Actionner = Actionner;
                     enemyLifeLossGA.SourceEffect = this;
                     enemyLifeLossGA.ActivateToolTip = false;
@@ -167,7 +167,7 @@ public class LifeLossEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    EnemyLifeLossGA enemyLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                     enemyLifeLossGA.Actionner = Actionner;
                     enemyLifeLossGA.SourceEffect = this;
                     enemyLifeLossGA.ActivateToolTip = ActivateToolTip;
@@ -179,7 +179,7 @@ public class LifeLossEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmount, null, null);
+                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmountInfo, null, null);
                     playerLifeLossGA.Actionner = Actionner;
                     playerLifeLossGA.SourceEffect = this;
                     playerLifeLossGA.ActivateToolTip = false;
@@ -207,7 +207,7 @@ public class LifeLossEffect : Effect
                         TargetForLinked_Enemy = enemyTargets;
                     }
 
-                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmount, playerTargets, enemyTargets);
+                    PlayerLifeLossGA playerLifeLossGA = new(LifeLossAmount, multiplyAmount, DynamicAmountInfo, playerTargets, enemyTargets);
                     playerLifeLossGA.Actionner = Actionner;
                     playerLifeLossGA.SourceEffect = this;
                     playerLifeLossGA.ActivateToolTip = ActivateToolTip;
@@ -259,7 +259,7 @@ public class LifeLossEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -271,7 +271,7 @@ public class LifeLossEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

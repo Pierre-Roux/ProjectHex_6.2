@@ -1,14 +1,38 @@
 public enum CounterType
 {
     NULL,
-    SpellCast_This_Turn,
-    PermanentCast_This_Turn,
-    SpellCast_Since_Load,
-    PermanentCast_Since_Load,
 
-    CardsDraw_This_Turn,
-    CardsDraw_Since_Load,
+    SpellCast,
+    PermanentCast,
+    CardsDraw,
+    CardsDiscard,
+    CardsExhaust,
+    DamageAmount,
+    ManaSpent,
 
-    CardsDiscard_This_Turn,
-    CardsDiscard_Since_Load,
+    _counter1,
+    _counter2,
+    _counter3,
+    _counter4,
+}
+
+[System.Serializable]
+public record CounterTypeInfo
+{
+    public CounterType CounterType;
+    public KeyWordType TestType;
+    public Enemy_Player_ENUM Owner;
+    public bool SinceLoad;
+    public bool Intern;
+
+    public CounterTypeInfo(){}
+
+    public CounterTypeInfo(bool sinceLoad, bool intern, Enemy_Player_ENUM owner, KeyWordType testType, CounterType counterType)
+    {
+        TestType = testType;
+        CounterType = counterType;
+        Owner = owner;
+        SinceLoad = sinceLoad;
+        Intern = intern;
+    }
 }

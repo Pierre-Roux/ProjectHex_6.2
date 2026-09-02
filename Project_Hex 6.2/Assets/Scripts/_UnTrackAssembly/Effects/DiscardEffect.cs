@@ -10,7 +10,7 @@ public class DiscardEffect : Effect
     [Header("Effect Param")]
     [SerializeField] public int DiscardAmount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public bool DiscardAll;
     [SerializeField] private bool TargetUpTo = true;
     public override bool EffectTargetUpTo => TargetUpTo;
@@ -23,7 +23,7 @@ public class DiscardEffect : Effect
 
     public DiscardEffect(){}
 
-    public DiscardEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmount dynamicAmount, bool discardAll, EventReference sfx, bool conditionTested,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public DiscardEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, bool discardAll, EventReference sfx, bool conditionTested,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -37,7 +37,7 @@ public class DiscardEffect : Effect
         ActivateNumber = activateNumber;
         ActivateLeft = activateLeft;
         ORChoice = orChoice;
-        Events = Event;
+        EventInfos = Event;
         DynamicConditionInfos = dynamicConditionInfos;
         CancelOnDeath = cancelOnDeath;
         actionnerType = ActionnerType;
@@ -53,7 +53,7 @@ public class DiscardEffect : Effect
         LinkedEffect = linkedEffect;
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         DiscardAll = discardAll;
         SFX = sfx;
         ConditionTested = conditionTested;
@@ -93,32 +93,32 @@ public class DiscardEffect : Effect
         }
         else
         {
-            if (DynamicAmount != DynamicAmount.NULL)
+            if (DynamicAmountInfo.DynamicAmount != DynamicAmount.NULL)
             {
                 if (Actionner == null)
                 {
                     if (CardActionner != null)
                     {
-                        DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmount, null, null, CardActionner);
+                        DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmountInfo, null, null, CardActionner);
                     }
                     else
                     {
-                        DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmount, null, null);
+                        DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmountInfo, null, null);
                     }
                 }
                 else if (Actionner.GetComponent<PermanentView>() != null)
                 {
-                    DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmount, Actionner.GetComponent<PermanentView>(), null);
+                    DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmountInfo, Actionner.GetComponent<PermanentView>(), null);
                 }
                 else
                 {
-                    DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmount, null, Actionner.GetComponent<EnemySlotView>());
+                    DiscardAmount = TargetSystem.Instance.GetDynamicAmount(DynamicAmountInfo, null, Actionner.GetComponent<EnemySlotView>());
                 }
             }
 
             if (PayXValue != 0)
             {
-                DynamicAmount = DynamicAmount.NULL;
+                DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
                 DiscardAmount = PayXValue;
             }
 
@@ -130,7 +130,9 @@ public class DiscardEffect : Effect
                 DiscardEffect DiscardManuEffect = (DiscardEffect)Clone();
                 DiscardManuEffect.ConditionTested = true;
 
-                DynamicConditionInfo Condition = new(DiscardAmount * multiplyAmount, DynamicCondition.DynamicAmountInfOrEqualsToValue, DynamicAmount.CardsInHand_Count, KeyWordType.NULL, CounterType.NULL);
+                DynamicAmountInfo DynamicAmountInfo = new DynamicAmountInfo();
+                CounterTypeInfo counterTypeInfo = new CounterTypeInfo();
+                DynamicConditionInfo Condition = new(DiscardAmount * multiplyAmount, DynamicCondition.DynamicAmountInfOrEqualsToValue, DynamicAmountInfo, KeyWordType.NULL, counterTypeInfo, BasicParam.NULL, false);
                 List<DynamicConditionInfo> Conditions = new List<DynamicConditionInfo> { Condition };
 
                 if (ConditionSystem.Instance.TestCondition(Conditions, null, null, null))
@@ -192,7 +194,7 @@ public class DiscardEffect : Effect
             targetLimitations,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -204,7 +206,7 @@ public class DiscardEffect : Effect
             clonedLinked,
             clonedPlayerTargets,
             clonedEnemyTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             DiscardAll,
             SFX,
             ConditionTested,

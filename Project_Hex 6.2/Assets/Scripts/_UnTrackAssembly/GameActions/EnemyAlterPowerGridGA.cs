@@ -4,12 +4,12 @@ public class EnemyAlterPowerGridGA : GameAction
 {
     public int Amount { get; set; }
     public int multiplyAmount { get; set; }
-    public DynamicAmount DynamicAmount;
+    public DynamicAmountInfo DynamicAmountInfo;
 
-    public EnemyAlterPowerGridGA(int amount, int MultiplyAmount, DynamicAmount dynamicAmount)
+    public EnemyAlterPowerGridGA(int amount, int MultiplyAmount, DynamicAmountInfo dynamicAmountInfo)
     {
         Amount = amount;
         multiplyAmount = MultiplyAmount;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
     }
 }

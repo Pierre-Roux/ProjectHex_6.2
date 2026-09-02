@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
   m_Name: Blade
   m_EditorClassIdentifier: 
+  <ID_Code>k__BackingField: 
   <Title>k__BackingField: Blade
   <Description>k__BackingField: Destroy an object
   <Rarity>k__BackingField: 1
@@ -21,7 +22,9 @@ MonoBehaviour:
   <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 0
   KeyWords: []
-  <life>k__BackingField: 0
+  <Life>k__BackingField: 0
+  <Power>k__BackingField: 0
+  <Armor>k__BackingField: 0
   <Durability>k__BackingField: 0
   <MaxDurability>k__BackingField: 0
   <PermanentImage>k__BackingField: {fileID: 0}
@@ -99,6 +102,20 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  BeingDamageOnArmorSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  ArmorBreakSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   CollateralSound:
     Guid:
       Data1: 0
@@ -107,6 +124,13 @@ MonoBehaviour:
       Data4: 0
     Path: 
   BeingHealSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  BeingArmorSound:
     Guid:
       Data1: 0
       Data2: 0
@@ -208,8 +232,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 2
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -227,7 +260,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -243,7 +280,19 @@ MonoBehaviour:
         EffectID: 
         LifeLossAmount: 999
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
@@ -252,19 +301,13 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations:
-        - rid: 2238251843555426387
         - rid: 2238251843555426388
-    - rid: 2238251843555426387
-      type: {class: TargetLimitationInfo, ns: , asm: Enums}
-      data:
-        targetLimitations: 5
-        keyWordType: 0
-        IntValue: -1
-        MandatoryLimitation: 0
     - rid: 2238251843555426388
       type: {class: TargetLimitationInfo, ns: , asm: Enums}
       data:
-        targetLimitations: 6
-        keyWordType: 0
-        IntValue: -1
+        targetLimitations: 2
+        Owner: 0
+        keyWordType: 6
+        Param: 0
+        ParamValue: -1
         MandatoryLimitation: 0

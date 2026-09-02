@@ -15,7 +15,6 @@ public class EnemySlotView : MonoBehaviour
     [SerializeField] public TMP_Text PowerText;
     [SerializeField] TMP_Text ArmorText;
     [SerializeField] public TMP_Text IntentText;
-    [SerializeField] public TMP_Text NameText;
     [SerializeField] public SpriteRenderer spriteRenderer;
     [SerializeField] SpriteRenderer AuraSpriteRenderer;
     [SerializeField] public GameObject ShieldVisual;
@@ -43,9 +42,6 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public int currentLife { get; set; }
     [HideInInspector] public int currentPower { get; set; }
     [HideInInspector] public int currentArmor { get; set; }
-    [HideInInspector] public int baseLife { get; set; }
-    [HideInInspector] public int basePower { get; set; }
-    [HideInInspector] public int baseArmor { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public bool IsCore { get; set; }
     [HideInInspector] public bool IsDisabled = false;
@@ -73,33 +69,64 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public CounterModel InternCounters = new();
     [HideInInspector] public List<Effect> ToggleableEffects = new();
 
+    [HideInInspector] private CombatSystem combatSystem;
+
     public void setup()
     {
+        combatSystem = CombatSystem.Instance;
         KeyWords = new List<KeyWord>(PermanentData.KeyWords);
         InternCounters.ClearAll();
         PossibleIntent = PermanentData.PossibleIntent;
         spriteRenderer.sprite = PermanentData.PermanentImage;
-        baseLife = PermanentData.Life;
-        baseArmor = PermanentData.Armor;
-        basePower = PermanentData.Power;
-        MaxLife = baseLife;
+        UpdatePower();
+        currentLife = PermanentData.Life;
+        UpdateMaxLife();
         currentLife = MaxLife;
-        UpdateLife();
-        currentArmor = baseArmor;
+        UpdateLifeText();
+        currentArmor = PermanentData.Armor;
         UpdateArmorText();
         IsCore = PermanentData.IsCore;
         ShieldVisual.SetActive(false);
         RDMSequence = PermanentData.RDMSequence;
         IntentSequence = PermanentData.IntentSequence;
         LoopingSequence = PermanentData.LoopingSequence;
-        UpdateNameText(PermanentData.Title);
         deactivateAuraVisual();
 
-        var UnShieldableKeyword = KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable);
-        if (UnShieldableKeyword != null)
+        bool HasPower = false;
+        foreach (Effect effect in PossibleIntent)
         {
+            if (ContainsPowerBasedDamage(effect))
+            {
+                HasPower = true;
+                break;
+            }
+        }
+        if (HasPower)
+        {
+            PowerText.gameObject.SetActive(true);
+        }
+        else
+        {
+            PowerText.gameObject.SetActive(false);
+            LifeText.transform.localPosition = new Vector3(0, -0.2f, 0);
+        }
+        if (currentArmor > 0)
+        {
+            ArmorText.gameObject.SetActive(true);
+        }
+        else
+        {
+            ArmorText.gameObject.SetActive(false);
+        }
+
+        var WardKeyword = KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Ward);
+        if (WardKeyword != null)
+        {
+            KeyWord keyWord = new(KeyWordType.UnShieldable, 0);
+            KeyWords.Add(keyWord);
             UnShieldable = true;
         }
+
         var UnTargetableKeyword = KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnTargetable);
         if (UnTargetableKeyword != null)
         {
@@ -109,6 +136,8 @@ public class EnemySlotView : MonoBehaviour
         if (IsCore)
         {
             permanentArea = PermanentArea.NONE;
+            KeyWord keyWord = new(KeyWordType.Core, 0);
+            KeyWords.Add(keyWord);
         }
         else
         {
@@ -135,22 +164,81 @@ public class EnemySlotView : MonoBehaviour
         if (AudioManager.Instance.IsValid(PermanentData.UnSelectedSound)) UnSelectedSound = PermanentData.UnSelectedSound;
 
         UpdateIntent();
-        StartCoroutine(RealTimeUpdate());
     }
 
-    private IEnumerator RealTimeUpdate()
+    private bool ContainsPowerBasedDamage(Effect effect)
     {
-        while (true)
+        if (effect is DealDamageEffect dealDamageEffect)
         {
-            UpdatePower();
-            yield return new WaitForSeconds(0.2f);
+            return dealDamageEffect.powerBased;
+        }
+
+        if (effect is EffectGroup effectGroup)
+        {
+            foreach (Effect childEffect in effectGroup.EffectGroups)
+            {
+                if (ContainsPowerBasedDamage(childEffect))
+                    return true;
+            }
+        }
+
+        if (effect is ChoiceEffect choiceEffect)
+        {
+            foreach (Effect childEffect in choiceEffect.EffectsForPlayerChoice)
+            {
+                if (ContainsPowerBasedDamage(childEffect))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void OnEnable()
+    {
+        if (combatSystem != null)
+        {
+            combatSystem.PassivesChanged += UpdatePower;
+            combatSystem.PassivesChanged += UpdateMaxLife;
+        }  
+    }
+
+    private void OnDisable()
+    {
+        if (combatSystem != null)
+        {
+            combatSystem.PassivesChanged -= UpdatePower;
+            combatSystem.PassivesChanged -= UpdateMaxLife;
         }
     }
 
     private void UpdatePower()
     {
+        int oldPower = currentPower;
         CalculateBonusPower();
-        currentPower = basePower + BonusPower;
+        currentPower = PermanentData.Power + BonusPower;
+
+        if (currentPower > oldPower)
+        {
+            EventInfo eventInfo = new EventInfo(Events.WhenPermaGainParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Power);
+            TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Power);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+        else if (oldPower > currentPower)
+        {
+            EventInfo eventInfo = new EventInfo(Events.WhenPermaLoseParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Power);
+            TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Power);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);            
+        }
+
         UpdatePowerText();
     }
 
@@ -158,24 +246,28 @@ public class EnemySlotView : MonoBehaviour
     {
         InitialPosition = pos;
     }
-    public void UpdateNameText(string name)
-    {
-        NameText.text = name;
-    }
     
     public void UpdateArmorText()
     {
-        ArmorText.text = currentArmor.ToString();
+        ArmorText.text = Mathf.Max(0, currentArmor).ToString();
+        if (currentArmor > 0)
+        {
+            ArmorText.gameObject.SetActive(true);
+        }
+        else
+        {
+            ArmorText.gameObject.SetActive(false);
+        }
     }
 
     public void UpdateLifeText()
     {
-        LifeText.text = currentLife.ToString();
+        LifeText.text = Mathf.Max(0,currentLife).ToString();
     }
 
     public void UpdatePowerText()
     {
-        PowerText.text = currentPower.ToString();
+        PowerText.text = Mathf.Max(0,currentPower).ToString();
     }
 
     public void UpdateIntent()
@@ -185,7 +277,7 @@ public class EnemySlotView : MonoBehaviour
 
         if (RDMSequence)
         {
-            List<Effect> valid = PossibleIntent.FindAll(e =>  e.Events.Contains(Events.EnemyTurn));
+            List<Effect> valid = PossibleIntent.FindAll(e =>  e.EventInfos[0].Events == Events.EnemyTurn);
 
             if (valid.Count > 0)
             {
@@ -210,7 +302,16 @@ public class EnemySlotView : MonoBehaviour
             string currentKey = IntentSequence[sequenceIndex];
             if (currentKey != "")
             {
-                selectedEffect = PossibleIntent.Find(e => e.Events.Contains(Events.EnemyTurn) && e.number == currentKey);
+                for (int i = 0; i < PossibleIntent.Count; i++)
+                {
+                    for (int y = 0; y < PossibleIntent[i].EventInfos.Count; y++)
+                    {
+                        if (PossibleIntent[i].EventInfos[y].Events == Events.EnemyTurn && PossibleIntent[i].number == currentKey)
+                        {
+                            selectedEffect = PossibleIntent[i];
+                        }                        
+                    }
+                }
 
                 if (selectedEffect == null)
                 {
@@ -254,8 +355,15 @@ public class EnemySlotView : MonoBehaviour
         switch (selectedEffect)
         {
             case DealDamageEffect dmg:
-                int damagetext = CalculateBonusPowerForText(dmg.damageAmount);
-
+                int damagetext;
+                if (dmg.powerBased)
+                {
+                    damagetext = currentPower;
+                }
+                else
+                {
+                    damagetext = dmg.damageAmount;
+                }
                 intentText = $"Deal {damagetext} damage to {dmg.targetModeInfo.targetMode}";
                 break;
 
@@ -283,70 +391,32 @@ public class EnemySlotView : MonoBehaviour
         IntentText.text = intentText;
     }
 
-    public int CalculateBonusPowerForText(int BaseAmount)
-    {
-        int passiveBonus = 0;
-
-        foreach (var keyword in KeyWords)
-        {
-            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(keyword.keyWordType, out var powerGroup))
-            {
-                passiveBonus += powerGroup.Enemy + powerGroup.Global;
-            }
-        }
-
-        int finalDMG = BaseAmount
-                    + BonusPower
-                    + passiveBonus
-                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.Enemy)
-                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
-
-        return Mathf.Max(finalDMG, 0);
-    }
-
     public int CalculateBonusPower()
     {
-        int passiveBonus = 0;
-
-        foreach (var keyword in KeyWords)
-        {
-            if (CombatSystem.Instance.PowerByTypeGeneral.TryGetValue(keyword.keyWordType, out var powerGroup))
-            {
-                passiveBonus += powerGroup.Enemy + powerGroup.Global;
-            }
-        }
-
-        int finalDMG = BonusPower 
-                    + passiveBonus 
-                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.Enemy)
-                    + CombatSystem.Instance.GetPower(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
-
+        int passiveBonus = combatSystem.GetPassive(BasicParam.Power,Enemy_Player_ENUM.Enemy,null,null,this);
+        int finalDMG = BonusPower + passiveBonus;
+        
         return finalDMG;
     }
 
     public int CalculateBonusLife()
     {
-        int passiveBonus = 0;
-
-        foreach (var keyword in KeyWords)
-        {
-            passiveBonus += CombatSystem.Instance.GetHP(keyword.keyWordType, Enemy_Player_ENUM.Enemy);
-            passiveBonus += CombatSystem.Instance.GetHP(keyword.keyWordType, Enemy_Player_ENUM.NULL);
-        }
-
-        int finalHP = BonusLife
-                    + BonusPower
-                    + passiveBonus
-                    + CombatSystem.Instance.GetHP(KeyWordType.NULL, Enemy_Player_ENUM.Enemy)
-                    + CombatSystem.Instance.GetHP(KeyWordType.NULL, Enemy_Player_ENUM.NULL);
+        int passiveBonus = combatSystem.GetPassive(BasicParam.Life,Enemy_Player_ENUM.Enemy,null,null,this);;
+        int finalHP = BonusLife + passiveBonus;
 
         return finalHP;
     }
 
-    public void UpdateLife()
+    public void UpdateMaxLife()
     {
+        int oldMaxLife = MaxLife;
         int passiveBonus = CalculateBonusLife();
-        MaxLife = baseLife + passiveBonus;
+        MaxLife = PermanentData.Life + passiveBonus;
+
+        if (MaxLife <= 0)
+        {
+            MaxLife = 0;
+        }
 
         if (currentLife > MaxLife)
         {
@@ -364,11 +434,6 @@ public class EnemySlotView : MonoBehaviour
             }
         }
 
-        if (MaxLife <= 0)
-        {
-            MaxLife = 1;
-        }
-
         if (currentLife < 0)
         {
             currentLife = 0;
@@ -383,6 +448,27 @@ public class EnemySlotView : MonoBehaviour
             DieEnemySlotGA dieEnemySlotGA = new(this);
             ActionSystem.Instance.AddReaction(dieEnemySlotGA);
             IsDead = true;
+        }
+
+        if (MaxLife > oldMaxLife)
+        {
+            EventInfo eventInfo = new EventInfo(Events.WhenPermaGainParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+        else if (oldMaxLife > MaxLife)
+        {
+            EventInfo eventInfo = new EventInfo(Events.WhenPermaLoseParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);            
         }
 
         UpdateLifeText();
@@ -411,6 +497,8 @@ public class EnemySlotView : MonoBehaviour
         PermanentView Pstriker = null;
         EnemySlotView Estriker = null;
         Card Cstriker = null;
+        EventInfo eventInfo = new EventInfo();
+        TriggerEventGA triggerEventGA;
 
         if (Actionner != null)
         {
@@ -430,29 +518,9 @@ public class EnemySlotView : MonoBehaviour
 
         if (!IsDead)
         {
-            TriggerEventGA triggerEventGA;
-            if (IsCore)
-            {
-                if (Pstriker != null)
-                {
-                    triggerEventGA = new(Events.WhenECoreDamaged, null, Pstriker, null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                }
-                else if (Estriker != null)
-                {
-                    triggerEventGA = new(Events.WhenECoreDamaged, null, null, Estriker);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                }
-                else if (Cstriker != null)
-                {
-                    triggerEventGA = new(Events.WhenECoreDamaged, Cstriker, null, null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                }
-            }
             transform.DOShakePosition(0.2f, 0.5f);
-            triggerEventGA = new(Events.WhenPermaDamaged,null,null,this);
-            ActionSystem.Instance.AddReaction(triggerEventGA);
-            triggerEventGA = new(Events.OnDamaged,null,null,this);
+            eventInfo = new EventInfo(Events.OnSelfDamaged, Enemy_Player_ENUM.NULL, KeyWordType.NULL,BasicParam.NULL);
+            triggerEventGA = new(eventInfo, null, null, null, this);
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
@@ -471,7 +539,26 @@ public class EnemySlotView : MonoBehaviour
                 currentArmor = 0;
             }
 
+            eventInfo = new EventInfo(Events.WhenPermaLoseParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Armor);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Armor);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
             Amount = DamageAmountToLife;
+        }
+
+        if (Amount > 0)
+        {
+            eventInfo = new EventInfo(Events.WhenPermaLoseParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
         currentLife -= Amount;
@@ -482,10 +569,9 @@ public class EnemySlotView : MonoBehaviour
                 RuntimeManager.PlayOneShot(BeingDamageSound);
                 DieEnemySlotGA dieEnemySlotGA = new(this);
                 ActionSystem.Instance.AddReaction(dieEnemySlotGA);
-
                 if (Pstriker != null)
                 {
-                    if (Pstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral))
+                    if (Pstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral) && KeyWords.Any(k => k.keyWordType == KeyWordType.Ward))
                     {
                         CollateralTrigger(-currentLife, Pstriker, Estriker, Cstriker);
                         currentLife = 0;
@@ -494,7 +580,7 @@ public class EnemySlotView : MonoBehaviour
                 }
                 else if (Estriker != null)
                 {
-                    if (Estriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral))
+                    if (Estriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral) && KeyWords.Any(k => k.keyWordType == KeyWordType.Ward))
                     {
                         CollateralTrigger(-currentLife, Pstriker, Estriker, Cstriker);
                         currentLife = 0;
@@ -503,7 +589,7 @@ public class EnemySlotView : MonoBehaviour
                 }
                 else if (Cstriker != null)
                 {
-                    if (Cstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral))
+                    if (Cstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral) && KeyWords.Any(k => k.keyWordType == KeyWordType.Ward))
                     {
                         CollateralTrigger(-currentLife, Pstriker, Estriker, Cstriker);
                         currentLife = 0;
@@ -524,21 +610,9 @@ public class EnemySlotView : MonoBehaviour
 
     public void OnKillTrigger(PermanentView Pstriker, EnemySlotView Estriker, Card Cstriker)
     {
-        if (Pstriker != null)
-        {
-            TriggerEventGA triggerEventGA = new(Events.OnKill, null, Pstriker, null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);
-        }
-        else if (Estriker != null)
-        {
-            TriggerEventGA triggerEventGA = new(Events.OnKill, null, null, Estriker);
-            ActionSystem.Instance.AddReaction(triggerEventGA);
-        }
-        else if (Cstriker != null)
-        {
-            TriggerEventGA triggerEventGA = new(Events.OnKill, Cstriker, null, null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);
-        }
+        EventInfo eventInfo = new EventInfo(Events.OnSelfKill, Enemy_Player_ENUM.NULL, KeyWordType.NULL,BasicParam.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, Cstriker, Pstriker, Estriker);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
     }
 
     public void CollateralTrigger(int CollateralAmount, PermanentView Pstriker, EnemySlotView Estriker, Card Cstriker)
@@ -547,30 +621,69 @@ public class EnemySlotView : MonoBehaviour
         if (IsCore) return;
         if (Pstriker != null)
         {
-            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
-            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, null, targets_Enemy);
+            List<PermanentView> targets_Player = new List<PermanentView>{};
+            foreach (PermanentView item in PlayerShielded)
+            {
+                targets_Player.Add(item);
+            }
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView>{};
+            foreach (EnemySlotView item in EnemyShielded)
+            {
+                targets_Enemy.Add(item);
+            }
+
+            CounterTypeInfo counterTypeInfo = new();
+            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL,Enemy_Player_ENUM.NULL,KeyWordType.NULL,counterTypeInfo,BasicParam.NULL,false,CardLocation.NULL);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, dynamicAmountInfo, targets_Player, targets_Enemy);
             dealDamageGA.Actionner = Pstriker.gameObject;
-            dealDamageGA.SourceEffect = null;
+            dealDamageGA.SourceEffect = new DealDamageEffect();
+            dealDamageGA.powerBased = false;
             dealDamageGA.ActivateToolTip = false;
             dealDamageGA.SFX = !AudioManager.Instance.IsValid(CollateralSound) ? AudioManager.Instance.CollateralSound : CollateralSound;
             ActionSystem.Instance.AddReaction(dealDamageGA);
         }
         else if (Estriker != null)
         {
-            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
-            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, null, targets_Enemy);
+            List<PermanentView> targets_Player = new List<PermanentView>{};
+            foreach (PermanentView item in PlayerShielded)
+            {
+                targets_Player.Add(item);
+            }
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView>{};
+            foreach (EnemySlotView item in EnemyShielded)
+            {
+                targets_Enemy.Add(item);
+            }
+
+            CounterTypeInfo counterTypeInfo = new();
+            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL,Enemy_Player_ENUM.NULL,KeyWordType.NULL,counterTypeInfo,BasicParam.NULL,false,CardLocation.NULL);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, dynamicAmountInfo, targets_Player, targets_Enemy);
             dealDamageGA.Actionner = Estriker.gameObject;
-            dealDamageGA.SourceEffect = null;
+            dealDamageGA.SourceEffect = new DealDamageEffect();
+            dealDamageGA.powerBased = false;
             dealDamageGA.ActivateToolTip = false;
             dealDamageGA.SFX = !AudioManager.Instance.IsValid(CollateralSound) ? AudioManager.Instance.CollateralSound : CollateralSound;
             ActionSystem.Instance.AddReaction(dealDamageGA);
         }
         else if (Cstriker != null)
         {
-            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { CombatSystem.Instance.currentEnemy.CoreSlot };
-            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, DynamicAmount.NULL, null, targets_Enemy);
+            List<PermanentView> targets_Player = new List<PermanentView>{};
+            foreach (PermanentView item in PlayerShielded)
+            {
+                targets_Player.Add(item);
+            }
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView>{};
+            foreach (EnemySlotView item in EnemyShielded)
+            {
+                targets_Enemy.Add(item);
+            }
+
+            CounterTypeInfo counterTypeInfo = new();
+            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL,Enemy_Player_ENUM.NULL,KeyWordType.NULL,counterTypeInfo,BasicParam.NULL,false,CardLocation.NULL);
+            DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, dynamicAmountInfo, targets_Player, targets_Enemy);
             dealDamageGA.CardActionner = Cstriker;
-            dealDamageGA.SourceEffect = null;
+            dealDamageGA.SourceEffect = new DealDamageEffect();
+            dealDamageGA.powerBased = false;
             dealDamageGA.ActivateToolTip = false;
             dealDamageGA.SFX = !AudioManager.Instance.IsValid(CollateralSound) ? AudioManager.Instance.CollateralSound : CollateralSound;
             ActionSystem.Instance.AddReaction(dealDamageGA);
@@ -584,6 +697,15 @@ public class EnemySlotView : MonoBehaviour
         {
             currentLife = MaxLife;
         }
+
+        EventInfo eventInfo = new EventInfo(Events.WhenPermaGainParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, this);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+        triggerEventGA = new(eventInfo, null, null, null, this);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
         RuntimeManager.PlayOneShot(BeingHealSound);
         transform.DOShakePosition(0f, 0.1f);
         UpdateLifeText();
@@ -596,6 +718,15 @@ public class EnemySlotView : MonoBehaviour
         {
             currentArmor = 0;
         }
+
+        EventInfo eventInfo = new EventInfo(Events.WhenPermaGainParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Armor);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, this);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Armor);
+        triggerEventGA = new(eventInfo, null, null, null, this);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
         RuntimeManager.PlayOneShot(BeingArmorSound);
         transform.DOShakePosition(0f, 0.1f);
         UpdateArmorText();
@@ -704,50 +835,14 @@ public class EnemySlotView : MonoBehaviour
             }
         }
 
-        UpdateBonusPowerAmount();
         if (transform != null)
         {
             transform.DOShakePosition(0f, 0.1f);
         }
         UpdateIntentText(IntentAction);
-    }
 
-    public void UpdateBonusPowerAmount()
-    {
-        BonusPower = 0;
-        foreach (GameAction Ga in AffectedGA)
-        {
-            if (Ga is AlterPowerGA)
-            {
-                AlterPowerGA alterPowerGa = (AlterPowerGA) Ga;
-                BonusPower += alterPowerGa.Amount;
-            }
-        }
-    }
-
-    public void TakeLifeLoss(int Amount)
-    {
-        if (IsDead) return;
-        if (Amount <= 0) return;
-
-        transform.DOShakePosition(0.2f, 0.5f);
-        TriggerEventGA triggerEventGA = new(Events.OnDamaged,null,null,this);
-        ActionSystem.Instance.AddReaction(triggerEventGA);
-        
-
-        currentLife -= Amount;
-        if (currentLife <= 0)
-        {
-            DieEnemySlotGA dieEnemySlotGA = new(this);
-            ActionSystem.Instance.AddReaction(dieEnemySlotGA);
-            IsDead = true;
-        }
-        else
-        {
-            RuntimeManager.PlayOneShot(TakeLifeLossSound);
-        }
-
-        UpdateLifeText();
+        UpdateBonusPowerAmount();
+        UpdatePower();
     }
 
     public void TakeAlterLife(GainLifeGA Ga)
@@ -784,7 +879,66 @@ public class EnemySlotView : MonoBehaviour
         }
 
         UpdateBonusLifeAmount();
-        UpdateLife();
+        UpdateMaxLife();
+    }
+    
+    public void UpdateBonusPowerAmount()
+    {
+        BonusPower = 0;
+        foreach (GameAction Ga in AffectedGA)
+        {
+            if (Ga is AlterPowerGA)
+            {
+                AlterPowerGA alterPowerGa = (AlterPowerGA) Ga;
+                BonusPower += alterPowerGa.Amount;
+            }
+        }
+    }
+
+    public void TakeLifeLoss(int Amount)
+    {
+        if (IsDead) return;
+        if (Amount <= 0) return;
+
+        transform.DOShakePosition(0.2f, 0.5f);
+        EventInfo eventInfo = new EventInfo(Events.OnSelfDamaged, Enemy_Player_ENUM.NULL, KeyWordType.NULL,BasicParam.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, this);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
+
+        if (Amount > 0)
+        {
+            eventInfo = new EventInfo(Events.WhenPermaGainParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+        else
+        {
+            eventInfo = new EventInfo(Events.WhenPermaLoseParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+
+            eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
+            triggerEventGA = new(eventInfo, null, null, null, this);
+            ActionSystem.Instance.AddReaction(triggerEventGA);            
+        }
+
+        currentLife -= Amount;
+        if (currentLife <= 0)
+        {
+            DieEnemySlotGA dieEnemySlotGA = new(this);
+            ActionSystem.Instance.AddReaction(dieEnemySlotGA);
+            IsDead = true;
+        }
+        else
+        {
+            RuntimeManager.PlayOneShot(TakeLifeLossSound);
+        }
+
+        UpdateLifeText();
     }
     
     public void UpdateBonusLifeAmount()
@@ -804,9 +958,12 @@ public class EnemySlotView : MonoBehaviour
     {
         foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,null,this))
         {
-            if (effect.Events.Contains(Events.OnSelect))
+            foreach (EventInfo item in effect.EventInfos)
             {
-                effect.ActivateLeft = effect.ActivateNumber;
+                if (item.Events == Events.OnSelect)
+                {
+                    effect.ActivateLeft = effect.ActivateNumber;
+                }
             }
         }
     }

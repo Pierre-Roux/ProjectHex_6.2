@@ -11,7 +11,7 @@ public class AlterStaminaEffect : Effect
     [SerializeField] public override bool CanBeDisableEffect => CanBeDisable;
     [SerializeField] public int alterAmount;
     [SerializeField] public int multiplyAmount = 1;
-    [SerializeField] public DynamicAmount DynamicAmount;
+    [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public bool IncludeCardsInDeck;
     [SerializeField] public bool aditive = true;
     [SerializeField] public bool passive;
@@ -30,7 +30,7 @@ public class AlterStaminaEffect : Effect
 
     public AlterStaminaEffect() { }
 
-    public AlterStaminaEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, bool includeCardsInDeck, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<Events> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, Events durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, List<Card> targetForLinked_Card, DynamicAmount dynamicAmount, EventReference sfx,CounterType typeOfCounter, int counterValue, bool moduloValue)
+    public AlterStaminaEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, bool includeCardsInDeck, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, List<Card> targetForLinked_Card, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -52,7 +52,7 @@ public class AlterStaminaEffect : Effect
         targetLimitations = TargetLimitations;
         actionnerType = ActionnerType;
         CardActionner = cardActionner;
-        Events = Event;
+        EventInfos = Event;
         CancelOnDeath = cancelOnDeath;
         Actionner = actionner;
         Intent_Title = intent_Title;
@@ -66,7 +66,7 @@ public class AlterStaminaEffect : Effect
         TargetForLinked_Player = targetForLinked_Player;
         TargetForLinked_Enemy = targetForLinked_Enemy;
         TargetForLinked_Card = targetForLinked_Card;
-        DynamicAmount = dynamicAmount;
+        DynamicAmountInfo = dynamicAmountInfo;
         SFX = sfx;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
@@ -100,7 +100,7 @@ public class AlterStaminaEffect : Effect
 
         if (PayXValue != 0)
         {
-            DynamicAmount = DynamicAmount.NULL;
+            DynamicAmountInfo.DynamicAmount = DynamicAmount.NULL;
             alterAmount = PayXValue;
         }
 
@@ -108,7 +108,7 @@ public class AlterStaminaEffect : Effect
         {
             if (targetModeInfo.targetMode == TargetMode.Manual)
             {
-                AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, null, targetModeInfo);
+                AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                 alterStaminaGA.CardActionner = CardActionner;
                 alterStaminaGA.SourceEffect = this;
                 alterStaminaGA.ActivateToolTip = false;
@@ -131,7 +131,7 @@ public class AlterStaminaEffect : Effect
             }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
-                AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, ParentEffect.TargetForLinked_Card, targetModeInfo);
+                AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, ParentEffect.TargetForLinked_Card, targetModeInfo);
                 alterStaminaGA.CardActionner = CardActionner;
                 alterStaminaGA.SourceEffect = this;
                 alterStaminaGA.ActivateToolTip = ActivateToolTip;
@@ -146,7 +146,7 @@ public class AlterStaminaEffect : Effect
 
                     TargetForLinked_Card = cardTargets;
 
-                    AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, cardTargets, targetModeInfo);
+                    AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, cardTargets, targetModeInfo);
                     alterStaminaGA.CardActionner = CardActionner;
                     alterStaminaGA.SourceEffect = this;
                     alterStaminaGA.ActivateToolTip = ActivateToolTip;
@@ -160,7 +160,7 @@ public class AlterStaminaEffect : Effect
                     TargetForLinked_Player = playerTargets;
                     TargetForLinked_Enemy = enemyTargets;
 
-                    AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets, null, targetModeInfo);
+                    AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, playerTargets, enemyTargets, null, targetModeInfo);
                     alterStaminaGA.CardActionner = CardActionner;
                     alterStaminaGA.SourceEffect = this;
                     alterStaminaGA.ActivateToolTip = ActivateToolTip;
@@ -175,7 +175,7 @@ public class AlterStaminaEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, null, targetModeInfo);
+                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                     enemyAlterStaminaGA.Actionner = Actionner;
                     enemyAlterStaminaGA.SourceEffect = this;
                     enemyAlterStaminaGA.ActivateToolTip = false;
@@ -224,7 +224,7 @@ public class AlterStaminaEffect : Effect
                         }
                     }
 
-                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets, cardTargets, targetModeInfo);
+                    EnemyAlterStaminaGA enemyAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, playerTargets, enemyTargets, cardTargets, targetModeInfo);
                     enemyAlterStaminaGA.Actionner = Actionner;
                     enemyAlterStaminaGA.SourceEffect = this;
                     enemyAlterStaminaGA.ActivateToolTip = ActivateToolTip;
@@ -236,7 +236,7 @@ public class AlterStaminaEffect : Effect
             {
                 if (targetModeInfo.targetMode == TargetMode.Manual)
                 {
-                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, null, null, null, targetModeInfo);
+                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, null, null, null, targetModeInfo);
                     playerAlterStaminaGA.Actionner = Actionner;
                     playerAlterStaminaGA.SourceEffect = this;
                     playerAlterStaminaGA.ActivateToolTip = false;
@@ -285,7 +285,7 @@ public class AlterStaminaEffect : Effect
                         }
                     }
 
-                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmount, passive, aditive, playerTargets, enemyTargets, cardTargets, targetModeInfo);
+                    PlayerAlterStaminaGA playerAlterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, playerTargets, enemyTargets, cardTargets, targetModeInfo);
                     playerAlterStaminaGA.Actionner = Actionner;
                     playerAlterStaminaGA.SourceEffect = this;
                     playerAlterStaminaGA.ActivateToolTip = ActivateToolTip;
@@ -304,7 +304,7 @@ public class AlterStaminaEffect : Effect
     public override GameAction GetCounterMesure()
     {
         Disabled = true;
-        AlterStaminaGA alterStaminaGA = new(-alterAmount, multiplyAmount, DynamicAmount, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, ParentEffect.TargetForLinked_Card, targetModeInfo);
+        AlterStaminaGA alterStaminaGA = new(-alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, ParentEffect.TargetForLinked_Card, targetModeInfo);
         alterStaminaGA.CardActionner = CardActionner;
         alterStaminaGA.SourceEffect = this;
         alterStaminaGA.ActivateToolTip = false;
@@ -348,7 +348,7 @@ public class AlterStaminaEffect : Effect
             targetNumber,
             TargetUpTo,
             actionnerType,
-            Events,
+            EventInfos,
             CancelOnDeath,
             Actionner,
             CardActionner,
@@ -363,7 +363,7 @@ public class AlterStaminaEffect : Effect
             clonedPlayerTargets,
             clonedEnemyTargets,
             clonedCardTargets,
-            DynamicAmount,
+            DynamicAmountInfo,
             SFX,
             TypeOfCounter,
             CounterValue,

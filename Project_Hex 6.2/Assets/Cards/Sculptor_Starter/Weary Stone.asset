@@ -235,8 +235,16 @@ MonoBehaviour:
         ActivateToolTip: 0
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -254,7 +262,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -275,7 +287,6 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3878124325882822743
       type: {class: EnableEffect, ns: , asm: _UnTrackAssembly}
@@ -283,8 +294,16 @@ MonoBehaviour:
         ActivateToolTip: 0
         Priority: 0
         actionnerType: 0
-        Events: 04000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 35
+          TestType: 0
+          Owner: 1
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -302,7 +321,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 1
-        DurationType: 4
+        DurationType:
+          Events: 35
+          TestType: 0
+          Owner: 1
+          BasicParam: 0
         TriggerOnDurationEnd: 1
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -323,7 +346,6 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
     - rid: 3878124325882822744
       type: {class: EffectGroup, ns: , asm: _UnTrackAssembly}
@@ -331,8 +353,16 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 09000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 4
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -350,7 +380,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -373,8 +407,16 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -392,7 +434,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -408,15 +454,34 @@ MonoBehaviour:
         EffectID: 
         GainAmount: 1
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
     - rid: 3878124325882822746
       type: {class: AlterStaminaEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -434,7 +499,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -451,7 +520,18 @@ MonoBehaviour:
         CanBeDisable: 1
         alterAmount: -1
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         IncludeCardsInDeck: 0
         aditive: 1
         passive: 0

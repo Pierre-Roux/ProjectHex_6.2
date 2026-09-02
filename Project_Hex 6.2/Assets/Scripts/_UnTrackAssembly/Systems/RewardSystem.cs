@@ -38,7 +38,6 @@ public class RewardSystem : Singleton<RewardSystem>
 
     public void ClearDraftReward()
     {
-        Debug.Log(RewardPanelContent.transform.childCount);
         for (int i = RewardPanelContent.transform.childCount-1; i >= 0; i--)
         {
             Debug.Log(RewardPanelContent.transform.GetChild(i).gameObject);

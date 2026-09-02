@@ -4,11 +4,15 @@ using UnityEngine;
 using DG.Tweening;
 using System.Linq;
 using FMODUnity;
+using System;
 
 public class CombatSystem : Singleton<CombatSystem>
 {
     [HideInInspector] public PlayerData Player;
-    [SerializeField] public PermanentView PlayerCore;
+    [SerializeField] public Transform CoreSpawn;
+    [SerializeField] public GameObject CoreParent;
+    [SerializeField] private GameObject PermanentViewPrefab;
+    [HideInInspector] public PermanentView PlayerCore;
 
     [HideInInspector] public bool Interactable;
     [HideInInspector] public bool EndTurnBtnActivable;
@@ -35,12 +39,9 @@ public class CombatSystem : Singleton<CombatSystem>
     [HideInInspector] public int MaxPowerGrid;
     [HideInInspector] public int CurrentPowerGrid;
 
-    [HideInInspector] public Dictionary<KeyWordType, PowerVarGroup> PowerByTypeGeneral = new();
-    [HideInInspector] public Dictionary<KeyWordType, HPVarGroup> HPByTypeGeneral = new();
-    [HideInInspector] public Dictionary<KeyWordType, StamVarGroup> StamByTypeGeneral = new();
-    [HideInInspector] public Dictionary<KeyWordType, CostVarGroup> CostByTypeGeneral = new();
-    [HideInInspector] public Dictionary<CopyTokenType, List<CopyVarGroup>> playerCopyTokens = new Dictionary<CopyTokenType, List<CopyVarGroup>>();
-    [HideInInspector] public Dictionary<CopyTokenType, List<CopyVarGroup>> enemyCopyTokens = new Dictionary<CopyTokenType, List<CopyVarGroup>>();
+    [HideInInspector] public List<PassiveVarGroup> Passives = new List<PassiveVarGroup>();
+    public event Action PassivesChanged;
+
 
     [HideInInspector] public CounterModel GlobalCounters = new();
 
@@ -52,6 +53,8 @@ public class CombatSystem : Singleton<CombatSystem>
     public List<PermanentView> Player_Permanents;
 
     private bool startFightSubscribed = false;
+
+    private ConditionSystem conditionSystem;
 
     public void OnEnable()
     {
@@ -95,29 +98,7 @@ public class CombatSystem : Singleton<CombatSystem>
 
     private void Start()
     {
-        // Init Dictoniary
-        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
-        {
-            PowerByTypeGeneral[keyWordType] = new PowerVarGroup();
-        }
-        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
-        {
-            HPByTypeGeneral[keyWordType] = new HPVarGroup();
-        }
-        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
-        {
-            StamByTypeGeneral[keyWordType] = new StamVarGroup();
-        }
-        foreach (KeyWordType keyWordType in System.Enum.GetValues(typeof(KeyWordType)))
-        {
-            CostByTypeGeneral[keyWordType] = new CostVarGroup();
-        }
-        foreach (CopyTokenType type in System.Enum.GetValues(typeof(CopyTokenType)))
-        {
-            playerCopyTokens[type] = new List<CopyVarGroup>();
-
-            enemyCopyTokens[type] = new List<CopyVarGroup>();
-        }
+        conditionSystem = ConditionSystem.Instance;
         ClassicStartUp();
     }
 
@@ -130,7 +111,16 @@ public class CombatSystem : Singleton<CombatSystem>
 
         Player = dataBase.CurrentPlayer;
         CardSystem.Instance.Setup(dataBase.DeckList);
-        PlayerCore.SetupCore(Player);
+
+        GameObject CoreObject = Instantiate(PermanentViewPrefab, CoreSpawn.transform.position, Quaternion.identity, CoreParent.transform);
+        PermanentView CoreView = CoreObject.GetComponent<PermanentView>();
+        CoreView.transform.localScale = Vector3.zero;
+        CoreView.transform.DOScale(PermanentViewPrefab.transform.localScale, 0.15f);
+        CoreView.gameObject.name = "Core player";
+        Card CoreCard = new Card(Player.Core);
+        CoreView.Setup(CoreCard);
+
+        PlayerCore = CoreView;
 
         MaxPermPlayer = 6;
         MaxPermEnemy = 9;
@@ -140,8 +130,8 @@ public class CombatSystem : Singleton<CombatSystem>
         CurrentPowerGrid = 0;
 
         UpdatePowerGridText();
-        PlayerCore.currentLife = dataBase.CoreLife;
-        PlayerCore.UpdateLifeText();
+        CoreView.currentLife = dataBase.CoreLife;
+        CoreView.UpdateLifeText();
 
         if (dataBase.CurrentStage.Tier <= 1)
         {
@@ -154,7 +144,7 @@ public class CombatSystem : Singleton<CombatSystem>
 
         GameEventSystem.Instance.ClearAllEvents();
 
-        Player_Permanents.Add(PlayerCore);
+        Player_Permanents.Add(CoreView);
 
         // Choix aléatoire
         GameObject selectedEnemy = dataBase.SelectedEnemy;
@@ -210,142 +200,88 @@ public class CombatSystem : Singleton<CombatSystem>
     }
 
     // GESTION DES DICTIONNAIRES DE PASSIF
-    public int GetPower(KeyWordType keyWordType, Enemy_Player_ENUM side)
+    public int GetPassive(BasicParam basicParam, Enemy_Player_ENUM enemy_Player_ENUM, Card card, PermanentView permanentView, EnemySlotView enemySlotView)
     {
-        var power = PowerByTypeGeneral[keyWordType];
-        return side switch
+        int TotalValue = 0;
+        foreach (PassiveVarGroup passive in Passives)
         {
-            Enemy_Player_ENUM.Player => power.Player,
-            Enemy_Player_ENUM.Enemy => power.Enemy,
-            _ => power.Global
-        };
-    }
-
-    public void AddPower(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
-    {
-        var power = PowerByTypeGeneral[keyWordType];
-        switch (side)
-        {
-            case Enemy_Player_ENUM.Player:
-                power.Player += amount;
-                break;
-            case Enemy_Player_ENUM.Enemy:
-                power.Enemy += amount;
-                break;
-            default:
-                power.Global += amount;
-                break;
+            
+            // on test d'abord si la nature du passif est la bonne
+            if (passive.basicParam == basicParam)
+            {
+                if (card != null && (enemy_Player_ENUM == Enemy_Player_ENUM.Card || passive.targetModeInfo.PlayerOrEnemy == Enemy_Player_ENUM.NULL))
+                {
+                    // on test si le passif est relatif à un keyword
+                    if (card.KeyWords.FirstOrDefault(k => k.keyWordType == passive.targetModeInfo.keyWordType) != null || passive.targetModeInfo.keyWordType == KeyWordType.NULL)
+                    {
+                        // On test si les conditions du passif sont remplie
+                        if (!conditionSystem.TestCondition(passive.conditions, null, null, null, null, null, null, true, card, null, null, card.RefCardView.gameObject)) continue;
+                        {
+                            TotalValue += passive.value;
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                else if (permanentView != null && enemy_Player_ENUM == Enemy_Player_ENUM.Player)
+                {
+                    // on test si le passif est relatif à un keyword
+                    if (permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == passive.targetModeInfo.keyWordType) != null || passive.targetModeInfo.keyWordType == KeyWordType.NULL)
+                    {
+                        // On test si les conditions du passif sont remplie
+                        if (!conditionSystem.TestCondition(passive.conditions, null, null, null, null, null, null, true, null, permanentView, null, permanentView.gameObject)) continue;
+                        {
+                            TotalValue += passive.value;
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                else if (enemySlotView != null && enemy_Player_ENUM == Enemy_Player_ENUM.Enemy)
+                {
+                    // on test si le passif est relatif à un keyword
+                    if (enemySlotView.KeyWords.FirstOrDefault(k => k.keyWordType == passive.targetModeInfo.keyWordType) != null || passive.targetModeInfo.keyWordType == KeyWordType.NULL)
+                    {
+                        // On test si les conditions du passif sont remplie
+                        if (!conditionSystem.TestCondition(passive.conditions, null, null, null, null, null, null, true, null, null, enemySlotView, enemySlotView.gameObject)) continue;
+                        {
+                            TotalValue += passive.value;
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                continue;
+            }
         }
+
+        return TotalValue;
     }
 
-    public int GetHP(KeyWordType keyWordType, Enemy_Player_ENUM side)
+    public void AddPassive(GameObject owner, int value, BasicParam basicParam, TargetModeInfo targetModeInfo, List<DynamicConditionInfo> dynamicConditions)
     {
-        var HP = HPByTypeGeneral[keyWordType];
-        return side switch
-        {
-            Enemy_Player_ENUM.Player => HP.Player,
-            Enemy_Player_ENUM.Enemy => HP.Enemy,
-            _ => HP.Global
-        };
+        Debug.Log("add passive of " + owner.name);
+        PassiveVarGroup passiveVarGroup = new PassiveVarGroup(owner, value, basicParam, targetModeInfo, dynamicConditions);
+        Passives.Add(passiveVarGroup);
+        PassivesChanged?.Invoke();
     }
 
-    public void AddHP(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
+    public void RemovePassive(GameObject Owner)
     {
-        var HP = HPByTypeGeneral[keyWordType];
-        switch (side)
-        {
-            case Enemy_Player_ENUM.Player:
-                HP.Player += amount;
-                break;
-            case Enemy_Player_ENUM.Enemy:
-                HP.Enemy += amount;
-                break;
-            default:
-                HP.Global += amount;
-                break;
-        }
-    }
-
-    public int GetStam(KeyWordType keyWordType, Enemy_Player_ENUM side)
-    {
-        var Stam = StamByTypeGeneral[keyWordType];
-        return side switch
-        {
-            _ => Stam.Player
-        };
-    }
-
-    public void AddStam(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
-    {
-        var Stam = StamByTypeGeneral[keyWordType];
-        switch (side)
-        {
-            case Enemy_Player_ENUM.Player:
-                Stam.Player += amount;
-                break;
-        }
-    }
-
-    public int GetCost(KeyWordType keyWordType, Enemy_Player_ENUM side)
-    {
-        var Cost = CostByTypeGeneral[keyWordType];
-        return side switch
-        {
-            _ => Cost.Card
-        };
-    }
-
-    public void AddCost(KeyWordType keyWordType, Enemy_Player_ENUM side, int amount)
-    {
-        Debug.Log("Keyword " + keyWordType + " SIDE : " + side);
-        var Cost = CostByTypeGeneral[keyWordType];
-        switch (side)
-        {
-            case Enemy_Player_ENUM.NULL:
-                Cost.Card += amount;
-                break;
-            case Enemy_Player_ENUM.Card:
-                Cost.Card += amount;
-                break;
-        }
-    }
-
-    public List<CopyVarGroup> GetCopyValues(CopyTokenType type, Enemy_Player_ENUM side)
-    {
-        var dict = side == Enemy_Player_ENUM.Player ? playerCopyTokens : enemyCopyTokens;
-
-        if (!dict.ContainsKey(type))
-            return new List<CopyVarGroup>();
-
-        return dict[type];
-    }
-
-    public void AddCopyValue(CopyTokenType type, Enemy_Player_ENUM side, int amount, List<DynamicConditionInfo> conditions)
-    {
-        var dict = side == Enemy_Player_ENUM.Player ? playerCopyTokens : enemyCopyTokens;
-
-        if (!dict.ContainsKey(type))
-            dict[type] = new List<CopyVarGroup>();
-
-        dict[type].Add(new CopyVarGroup
-        {
-            value = amount,
-            Conditions = new List<DynamicConditionInfo>(conditions)
-        });
-    }
-
-    public void RemoveCopyGroup(CopyTokenType type, Enemy_Player_ENUM side, CopyVarGroup group)
-    {
-        var dict = side == Enemy_Player_ENUM.Player ? playerCopyTokens : enemyCopyTokens;
-
-        if (dict.ContainsKey(type))
-        {
-            dict[type].Remove(group);
-        }
+        Passives.RemoveAll(x => x.owner == Owner);
+        PassivesChanged?.Invoke();
     }
 
     //Utils
-
     public void UpdatePowerGridText()
     {
         PowerGridUI.UpdatePowerGridText(CurrentPowerGrid, MaxPowerGrid);
@@ -354,6 +290,7 @@ public class CombatSystem : Singleton<CombatSystem>
     // PERFORMER
     public IEnumerator DiePermanentPerformer(DiePermanentGA diePermanentGA)
     {
+        Debug.Log("PermanentDie : " + diePermanentGA.PermanentView.name + " core ? : " + diePermanentGA.IsCore);
         if (!diePermanentGA.IsCore)
         {
             var InvocKeyword = diePermanentGA.PermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
@@ -364,19 +301,25 @@ public class CombatSystem : Singleton<CombatSystem>
                     CurrentPowerGrid -= diePermanentGA.PermanentView.CardReferenceArchive.GridCost;
                     UpdatePowerGridText();
 
+                    RemovePassive(diePermanentGA.PermanentView.gameObject);
+
                     LoseShieldGA loseShieldGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(loseShieldGA);
 
-                    TriggerEventGA triggerEventGA = new(Events.WhenPermaDie, null, diePermanentGA.PermanentView, null);
+                    EventInfo eventInfo = new EventInfo(Events.WhenPermaDie, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    TriggerEventGA triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
-                    triggerEventGA = new(Events.WhenPermaExaust, null, diePermanentGA.PermanentView, null);
+                    eventInfo = new EventInfo(Events.WhenPermaExaust, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
-                    triggerEventGA = new(Events.OnDeath, null, diePermanentGA.PermanentView, null);
+                    eventInfo = new EventInfo(Events.OnSelfDeath, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
-                    triggerEventGA = new(Events.OnDestroy, null, diePermanentGA.PermanentView, null);
+                    eventInfo = new EventInfo(Events.OnSelfDestroy, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
                     Player_Permanents.Remove(diePermanentGA.PermanentView);
@@ -384,13 +327,14 @@ public class CombatSystem : Singleton<CombatSystem>
                     DestroyPermanentGA destroyPermanentGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(destroyPermanentGA);
 
-                    triggerEventGA = new(Events.HollowCountChanged,null,null,null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                    triggerEventGA = new(Events.DecayCountChanged,null,null,null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                    triggerEventGA = new(Events.ArtilleryCountChanged,null,null,null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                    triggerEventGA = new(Events.InvocCountChanged,null,null,null);
+                    foreach (KeyWord keyword in diePermanentGA.PermanentView.KeyWords)
+                    {
+                        eventInfo = new EventInfo(Events.TypeCountChanged, Enemy_Player_ENUM.Player, keyword.keyWordType);
+                        triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
+                        ActionSystem.Instance.AddReaction(triggerEventGA);
+                    }
+                    eventInfo = new EventInfo(Events.TypeCountChanged, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
                     if (!AudioManager.Instance.IsValid(destroyPermanentGA.PermanentView.CardReferenceArchive.HollowDieSound))
@@ -414,30 +358,36 @@ public class CombatSystem : Singleton<CombatSystem>
                 {
                     CurrentPowerGrid -= diePermanentGA.PermanentView.CardReferenceArchive.GridCost;
                     UpdatePowerGridText();
+
+                    RemovePassive(diePermanentGA.PermanentView.gameObject);
+
                     LoseShieldGA loseShieldGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(loseShieldGA);
 
                     diePermanentGA.CardReferenceArchive.Durability -= 1;
                     CardView newCardView = CardViewCreator.Instance.CreateCardView(diePermanentGA.CardReferenceArchive, diePermanentGA.PermanentView.transform.position, diePermanentGA.PermanentView.transform.rotation);
 
-                    TriggerEventGA triggerEventGA = new(Events.WhenPermaDie, null, diePermanentGA.PermanentView, null);
+                    EventInfo eventInfo = new EventInfo(Events.WhenPermaDie, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    TriggerEventGA triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
 
-                    TriggerEventGA triggerPermanentEventGA = new(Events.OnDeath, null, diePermanentGA.PermanentView, null);
-                    ActionSystem.Instance.AddReaction(triggerPermanentEventGA);
+                    eventInfo = new EventInfo(Events.OnSelfDeath, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
+                    ActionSystem.Instance.AddReaction(triggerEventGA);
 
                     DestroyPermanentGA destroyPermanentGA = new(diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(destroyPermanentGA);
 
-                    triggerEventGA = new(Events.HollowCountChanged,null,null,null);
+                    foreach (KeyWord keyword in diePermanentGA.PermanentView.KeyWords)
+                    {
+                        eventInfo = new EventInfo(Events.TypeCountChanged, Enemy_Player_ENUM.Player, keyword.keyWordType);
+                        triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
+                        ActionSystem.Instance.AddReaction(triggerEventGA);
+                    }
+                    eventInfo = new EventInfo(Events.TypeCountChanged, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                    triggerEventGA = new(eventInfo, null, null, diePermanentGA.PermanentView, null);
                     ActionSystem.Instance.AddReaction(triggerEventGA);
-                    triggerEventGA = new(Events.DecayCountChanged,null,null,null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                    triggerEventGA = new(Events.ArtilleryCountChanged,null,null,null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-                    triggerEventGA = new(Events.InvocCountChanged,null,null,null);
-                    ActionSystem.Instance.AddReaction(triggerEventGA);
-
+                        
                     if (!AudioManager.Instance.IsValid(destroyPermanentGA.PermanentView.CardReferenceArchive.DieSound))
                     {
                         RuntimeManager.PlayOneShot(AudioManager.Instance.DieSound);
@@ -465,22 +415,31 @@ public class CombatSystem : Singleton<CombatSystem>
 
     public IEnumerator DieEnemySlotView(DieEnemySlotGA dieEnemySlotGA)
     {
+        RemovePassive(dieEnemySlotGA.EnemySlotView.gameObject);
+
         LoseShieldGA loseShieldGA = new(null, dieEnemySlotGA.EnemySlotView);
         ActionSystem.Instance.AddReaction(loseShieldGA);
 
-        TriggerEventGA triggerEventGA = new(Events.WhenPermaDie,null,null, dieEnemySlotGA.EnemySlotView);
+        EventInfo eventInfo = new EventInfo(Events.WhenPermaDie, Enemy_Player_ENUM.Enemy, KeyWordType.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, dieEnemySlotGA.EnemySlotView);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
-        TriggerEventGA triggerEnemyEventGA = new(Events.OnDeath,null,null,dieEnemySlotGA.EnemySlotView);
-        ActionSystem.Instance.AddReaction(triggerEnemyEventGA);
+        eventInfo = new EventInfo(Events.OnSelfDeath, Enemy_Player_ENUM.Enemy, KeyWordType.NULL);
+        triggerEventGA = new(eventInfo, null, null, null, dieEnemySlotGA.EnemySlotView);
+        ActionSystem.Instance.AddReaction(triggerEventGA);
 
         Enemy_Permanents.Remove(dieEnemySlotGA.EnemySlotView);
 
         DestroyPermanentGA destroyPermanentGA = new(null, dieEnemySlotGA.EnemySlotView);
 
-        triggerEventGA = new(Events.DecayCountChanged,null,null,null);
-        ActionSystem.Instance.AddReaction(triggerEventGA);
-        triggerEventGA = new(Events.InvocCountChanged,null,null,null);
+        foreach (KeyWord keyword in dieEnemySlotGA.EnemySlotView.KeyWords)
+        {
+            eventInfo = new EventInfo(Events.TypeCountChanged, Enemy_Player_ENUM.Enemy, keyword.keyWordType);
+            triggerEventGA = new(eventInfo, null, null, null, dieEnemySlotGA.EnemySlotView);
+            ActionSystem.Instance.AddReaction(triggerEventGA);            
+        }
+        eventInfo = new EventInfo(Events.TypeCountChanged, Enemy_Player_ENUM.Enemy, KeyWordType.NULL);
+        triggerEventGA = new(eventInfo, null, null, null, dieEnemySlotGA.EnemySlotView);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
         ActionSystem.Instance.AddReaction(destroyPermanentGA);
@@ -549,7 +508,7 @@ public class CombatSystem : Singleton<CombatSystem>
         {
             foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,null,item))
             {
-                if (effect.Events.Contains(Events.OnSelect))
+                //if (effect.Events.Contains(Events.OnSelect))
                 {
                     effect.ActivateLeft = effect.ActivateNumber;
                 }
@@ -585,25 +544,36 @@ public class CombatSystem : Singleton<CombatSystem>
     private void PlayerTurnPreReaction(PlayerTurnGA playerTurnGA)
     {
         // Reset NewTurnCounters
-        CounterSystem.Instance.Reset(CounterType.SpellCast_This_Turn);
-        CounterSystem.Instance.Reset(CounterType.PermanentCast_This_Turn);
-        CounterSystem.Instance.Reset(CounterType.CardsDraw_This_Turn);
-        CounterSystem.Instance.Reset(CounterType.CardsDiscard_This_Turn);
+        CounterTypeInfo counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.NULL, KeyWordType.NULL,CounterType.SpellCast);
+        CounterSystem.Instance.Reset(counterTypeInfo);
+        counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.NULL, KeyWordType.NULL,CounterType.PermanentCast);
+        CounterSystem.Instance.Reset(counterTypeInfo);
+        counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.NULL, KeyWordType.NULL,CounterType.CardsDraw);
+        CounterSystem.Instance.Reset(counterTypeInfo);
+        counterTypeInfo = new CounterTypeInfo(false, true, Enemy_Player_ENUM.NULL, KeyWordType.NULL,CounterType.CardsDiscard);
+        CounterSystem.Instance.Reset(counterTypeInfo);
 
         ReffilManaGA reffilManaGA = new();
         ActionSystem.Instance.AddReaction(reffilManaGA);
-        DrawCardsGA drawCardsGA = new(CardSystem.Instance.NBCardDrawAtStartTurn,1,DynamicAmount.NULL,false);
+
+        DynamicAmountInfo dynamicAmountInfo = new DynamicAmountInfo(DynamicAmount.NULL,Enemy_Player_ENUM.NULL,KeyWordType.NULL,new CounterTypeInfo(),BasicParam.NULL,false,CardLocation.NULL);
+        DrawCardsGA drawCardsGA = new(CardSystem.Instance.NBCardDrawAtStartTurn,1,dynamicAmountInfo,false);
         ActionSystem.Instance.AddReaction(drawCardsGA);
+
         DecountPlayerDecayGA decountPlayerDecayGA = new();
         ActionSystem.Instance.AddReaction(decountPlayerDecayGA);
-        TriggerEventGA triggerEventGA = new(Events.StartTurn);
+
+        EventInfo eventInfo = new EventInfo(Events.StartTurn, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
     }
 
     private void EndPlayerTurnPostReaction(EndPlayerTurnGA endPlayerTurnGA)
     {
-        TriggerEventGA triggerEventGA = new(Events.EndTurn);
+        EventInfo eventInfo = new EventInfo(Events.EndTurn, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
+        
         GlobalResetActivationGA globalResetActivationGA = new();
         ActionSystem.Instance.AddReaction(globalResetActivationGA);
         EnemyTurnGA enemyTurnGA = new();
@@ -612,8 +582,10 @@ public class CombatSystem : Singleton<CombatSystem>
 
     private void EndEnemyTurnPostReaction(EndEnemyTurnGA endEnemyTurnGA)
     {
-        TriggerEventGA triggerEventGA = new(Events.EndEnemyTurn);
+        EventInfo eventInfo = new EventInfo(Events.EndTurn, Enemy_Player_ENUM.Enemy, KeyWordType.NULL);
+        TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
+
         DecountEnemyDecayGA decountEnemyDecayGA = new();
         ActionSystem.Instance.AddReaction(decountEnemyDecayGA);
         SpawnConstructGA spawnConstructGA = new();

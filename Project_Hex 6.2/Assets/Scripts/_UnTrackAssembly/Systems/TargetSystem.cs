@@ -571,17 +571,21 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.Player:
                         foreach (var perm in playerPermanents)
                         {
-                            if (perm.IsCore && !perm.UnTargetable) continue;
-                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            playerTargets.Add(perm);                            
+                            var CoreKeyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Core);
+                            if (CoreKeyword != null && !perm.UnTargetable)
+                            {
+                                playerTargets.Add(perm); 
+                            }                                                    
                         }
                         break;
                     case Enemy_Player_ENUM.Enemy:
                         foreach (var perm in enemyPermanents)
                         {
-                            if (perm.IsCore && !perm.UnTargetable) 
-                            if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            enemyTargets.Add(perm);                            
+                            var CoreKeyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Core);
+                            if (CoreKeyword != null && !perm.UnTargetable)
+                            {
+                                enemyTargets.Add(perm); 
+                            }                          
                         }
                         break;
                 }
@@ -1539,24 +1543,29 @@ public class TargetSystem : Singleton<TargetSystem>
                         raycastHit = hit;
                     }
                 }
+
                 if (hitTargetingLayerMask && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out EnemySlotView enemyView))
                 {
                     if (enemyView != null)
                     {
                         bool HasEffectsToActivate = false;
                         if (enemyView.IntentAction == null) return;
-                        if (enemyView.IntentAction.Events.Contains(Events.OnSelect) && enemyView.IntentAction.ActivateNumber >= 1)
+                        foreach (EventInfo eventInfo in enemyView.IntentAction.EventInfos)
                         {
-                            if(enemyView.IntentAction.ActivateLeft > 0)
+                            if (eventInfo.Events == Events.OnSelect && enemyView.IntentAction.ActivateNumber >= 1)
                             {
-                                HasEffectsToActivate = true;
+                                if(enemyView.IntentAction.ActivateLeft > 0)
+                                {
+                                    HasEffectsToActivate = true;
+                                }
                             }
                         }
                         
                         if (HasEffectsToActivate)
                         {
-                            TriggerEventGA triggerEnemyEventGA = new(Events.OnSelect, null, null, enemyView);
-                            ActionSystem.Instance.Perform(triggerEnemyEventGA);
+                            EventInfo eventInfo = new EventInfo(Events.OnSelect, Enemy_Player_ENUM.Enemy, KeyWordType.NULL);
+                            TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, enemyView);
+                            ActionSystem.Instance.Perform(triggerEventGA);
                         }                   
                     }
                 }
@@ -1567,20 +1576,24 @@ public class TargetSystem : Singleton<TargetSystem>
                         bool HasEffectsToActivate = false;
                         foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,permanentView,null))
                         {
-                            if (effect.Events.Contains(Events.OnSelect) && effect.ActivateNumber >= 1)
+                            foreach (EventInfo eventInfo in effect.EventInfos)
                             {
-                                var HollowKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);     
-                                if ((effect.ActivateLeft > 0 && HollowKeyword != null && effect.HollowEffect) || (effect.ActivateLeft > 0  && HollowKeyword == null && !effect.HollowEffect))
+                                if (eventInfo.Events == Events.OnSelect && effect.ActivateNumber >= 1)
                                 {
-                                    HasEffectsToActivate = true;
+                                    var HollowKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);     
+                                    if ((effect.ActivateLeft > 0 && HollowKeyword != null && effect.HollowEffect) || (effect.ActivateLeft > 0  && HollowKeyword == null && !effect.HollowEffect))
+                                    {
+                                        HasEffectsToActivate = true;
+                                    }                                    
                                 }
                             }                           
                         }                 
 
                         if (HasEffectsToActivate)
                         {
-                            TriggerEventGA triggerPermanentEventGA = new(Events.OnSelect, null, permanentView, null);
-                            ActionSystem.Instance.Perform(triggerPermanentEventGA);
+                            EventInfo eventInfo = new EventInfo(Events.OnSelect, Enemy_Player_ENUM.Player, KeyWordType.NULL);
+                            TriggerEventGA triggerEventGA = new(eventInfo, null, null, permanentView, null);
+                            ActionSystem.Instance.Perform(triggerEventGA);
                         }                        
                     }
                 }
@@ -1588,211 +1601,538 @@ public class TargetSystem : Singleton<TargetSystem>
         }
     }
 
-    public int GetDynamicAmount(DynamicAmount dynamicAmount, PermanentView permanentView = null, EnemySlotView enemySlotView = null, Card CardActionner = null)
+    public int GetDynamicAmount(DynamicAmountInfo dynamicAmountInfo, PermanentView permanentView = null, EnemySlotView enemySlotView = null, Card CardActionner = null)
     {
         int FinalAmount = 0;
     
-        switch (dynamicAmount)
+        switch (dynamicAmountInfo.DynamicAmount)
         {
-            case DynamicAmount.Vessel_Count:
-                FinalAmount = CombatSystem.Instance.Player_Permanents.Count + CombatSystem.Instance.Enemy_Permanents.Count;
-                break;
-
-            case DynamicAmount.Player_Vessel_Count:
-                FinalAmount = CombatSystem.Instance.Player_Permanents.Count;
-                break;
-
-            case DynamicAmount.Player_Weapon_Count:
-                int i = 0;
-                foreach (var perm in CombatSystem.Instance.Player_Permanents)
+            case DynamicAmount.Count:
+                FinalAmount = 0;
+                if (dynamicAmountInfo.Enemy_Player == Enemy_Player_ENUM.Player)
                 {
-                    if (perm.permanentArea == PermanentArea.Weapon)
+                    foreach (PermanentView Perma in CombatSystem.Instance.Player_Permanents)
                     {
-                        i++;
+                        if (dynamicAmountInfo.TestType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = Perma.KeyWords.FirstOrDefault(k => k.keyWordType == dynamicAmountInfo.TestType);
+                            if (KeywordMatch != null)
+                            {
+                                FinalAmount++;
+                            }
+                        }
+                        else
+                        {
+                            FinalAmount++;
+                        }
                     }
                 }
-                FinalAmount = i;
-                break;
-
-            case DynamicAmount.Player_Shield_Count:
-                i = 0;
-                foreach (var perm in CombatSystem.Instance.Player_Permanents)
+                else if (dynamicAmountInfo.Enemy_Player == Enemy_Player_ENUM.Enemy)
                 {
-                    if (perm.permanentArea == PermanentArea.Shield)
+                    foreach (EnemySlotView Perma in CombatSystem.Instance.Enemy_Permanents)
                     {
-                        i++;
+                        if (dynamicAmountInfo.TestType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = Perma.KeyWords.FirstOrDefault(k => k.keyWordType == dynamicAmountInfo.TestType);
+                            if (KeywordMatch != null)
+                            {
+                                FinalAmount++;
+                            }
+                        }
+                        else
+                        {
+                            FinalAmount++;
+                        }
                     }
                 }
-                FinalAmount = i;
-                break;
-
-            case DynamicAmount.Player_Support_Count:
-                i = 0;
-                foreach (var perm in CombatSystem.Instance.Player_Permanents)
+                else if (dynamicAmountInfo.Enemy_Player == Enemy_Player_ENUM.Card)
                 {
-                    if (perm.permanentArea == PermanentArea.Support)
+                    List<Card> CardList = new List<Card>();
+                    if (dynamicAmountInfo.CardLocation == CardLocation.Hand)
                     {
-                        i++;
+                        CardList = CardSystem.Instance.hand;
                     }
+                    else if (dynamicAmountInfo.CardLocation == CardLocation.Deck)
+                    {
+                        CardList = CardSystem.Instance.drawPile;
+                    }
+                    else if (dynamicAmountInfo.CardLocation == CardLocation.Discard)
+                    {
+                        CardList = CardSystem.Instance.discardPile;
+                    }
+                    else if (dynamicAmountInfo.CardLocation == CardLocation.Exhaust)
+                    {
+                        CardList = CardSystem.Instance.ExhaustPile;
+                    }
+                    else
+                    {
+                        CardList = CardSystem.Instance.hand;
+                        CardList = CardSystem.Instance.drawPile;
+                        CardList = CardSystem.Instance.discardPile;
+                    }
+
+                    foreach (Card card in CardList)
+                    {
+                        if (dynamicAmountInfo.TestType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = card.KeyWords.FirstOrDefault(k => k.keyWordType == dynamicAmountInfo.TestType);
+                            if (KeywordMatch != null)
+                            {
+                                FinalAmount++;
+                            }
+                        }
+                        else
+                        {
+                            FinalAmount++;
+                        }                     
+                    }                    
                 }
-                FinalAmount = i;
-                break;
-
-            case DynamicAmount.Enemy_Vessel_Count:
-                FinalAmount = CombatSystem.Instance.Enemy_Permanents.Count;
-                break;
-
-            case DynamicAmount.Enemy_Weapon_Count:
-                i = 0;
-                foreach (var perm in CombatSystem.Instance.Enemy_Permanents)
+                else
                 {
-                    if (perm.permanentArea == PermanentArea.Weapon)
-                    {
-                        i++;
-                    }
-                }
-                FinalAmount = i;
-                break;
-
-            case DynamicAmount.Enemy_Shield_Count:
-                i = 0;
-                foreach (var perm in CombatSystem.Instance.Enemy_Permanents)
-                {
-                    if (perm.permanentArea == PermanentArea.Shield)
-                    {
-                        i++;
-                    }
-                }
-                FinalAmount = i;
-                break;
-
-            case DynamicAmount.Enemy_Support_Count:
-                i = 0;
-                foreach (var perm in CombatSystem.Instance.Enemy_Permanents)
-                {
-                    if (perm.permanentArea == PermanentArea.Support)
-                    {
-                        i++;
-                    }
-                }
-                FinalAmount = i;
-                break;
-
-            case DynamicAmount.Player_Vessel_Shielded:
-                foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                {
-                    if (item.Shielded)
-                    {
-                        FinalAmount++;
-                    }
+                    FinalAmount = CombatSystem.Instance.Player_Permanents.Count;
                 }
                 break;
 
-            case DynamicAmount.Enemy_Vessel_Shielded:
-                foreach (EnemySlotView item in CombatSystem.Instance.Enemy_Permanents)
+            case DynamicAmount.CounterType:
+                FinalAmount = 0;
+                if (dynamicAmountInfo.CounterType.Intern)
                 {
-                    if (item.Shielded)
+                    if (permanentView != null)
                     {
-                        FinalAmount++;
+                        foreach (var counters in permanentView.InternCounters.counters)
+                        {
+                            if (counters.Key.CounterType == dynamicAmountInfo.CounterType.CounterType)
+                            {
+                                FinalAmount = counters.Value;
+                                break;
+                            }
+                        }
+                    }
+                    else if (enemySlotView != null)
+                    {
+                        foreach (var counters in enemySlotView.InternCounters.counters)
+                        {
+                            if (counters.Key.CounterType == dynamicAmountInfo.CounterType.CounterType)
+                            {
+                                FinalAmount = counters.Value;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var counters in CardActionner.InternCounters.counters)
+                        {
+                            if (counters.Key.CounterType == dynamicAmountInfo.CounterType.CounterType)
+                            {
+                                FinalAmount = counters.Value;
+                                break;
+                            }
+                        }                        
                     }
                 }
-                break;
-
-            case DynamicAmount.SpellCast_This_Turn:
-                FinalAmount = CombatSystem.Instance.GlobalCounters.Get(CounterType.SpellCast_This_Turn);
-                break;
-
-            case DynamicAmount.PermanentCast_This_Turn:
-                FinalAmount = CombatSystem.Instance.GlobalCounters.Get(CounterType.PermanentCast_This_Turn);
-                break;
-
-            case DynamicAmount.Artilery_Count:
-                foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
+                else
                 {
-                    var ArtilleryKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Artillery);
-                    if (ArtilleryKeyword != null)
+                    foreach (var counters in CombatSystem.Instance.GlobalCounters.counters)
                     {
-                        FinalAmount++;
-                    }
-                }
-                break;
-
-            case DynamicAmount.Decay_Count:
-                foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                {
-                    var decayKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Decay);
-                    if (decayKeyword != null)
-                    {
-                        FinalAmount++;
-                    }
-                }
-                break;
-
-            case DynamicAmount.Hollow_Count:
-                foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
-                {
-                    var HollowKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
-                    if (HollowKeyword != null)
-                    {
-                        FinalAmount++;
+                        if (counters.Key.CounterType == dynamicAmountInfo.CounterType.CounterType)
+                        {
+                            FinalAmount = counters.Value;
+                            break;
+                        }
                     }
                 }
                 break;
 
-            case DynamicAmount.Invoc_Count:
-                foreach (PermanentView item in CombatSystem.Instance.Player_Permanents)
+            case DynamicAmount.TargetParam:
+                FinalAmount = 0;
+                if (permanentView != null)
                 {
-                    var InvocKeyword = item.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
-                    if (InvocKeyword != null)
+                    switch (dynamicAmountInfo.BasicParam)
                     {
-                        FinalAmount++;
+                        case BasicParam.Life:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.currentLife;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.MaxLife;
+                            }
+                            break;
+
+                        case BasicParam.Armor:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.currentArmor;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.Armor;
+                            }
+                            break;
+
+                        case BasicParam.Power:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.currentPower;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.Power;
+                            }
+                            break;
+
+                        case BasicParam.Durability:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.Durability;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.Durability;
+                            }
+                            break;
+
+                        case BasicParam.Cost:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.cost;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.InitCost;
+                            }
+                            break;
+
+                        case BasicParam.NULL:
+                            break;
+                    }
+                }
+                else if (enemySlotView != null)
+                {
+                    switch (dynamicAmountInfo.BasicParam)
+                    {
+                        case BasicParam.Life:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = enemySlotView.currentLife;
+                            }
+                            else
+                            {
+                                FinalAmount = enemySlotView.MaxLife;
+                            }
+                            break;
+
+                        case BasicParam.Armor:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = enemySlotView.currentArmor;
+                            }
+                            else
+                            {
+                                FinalAmount = enemySlotView.PermanentData.Armor;
+                            }
+                            break;
+
+                        case BasicParam.Power:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = enemySlotView.currentPower;
+                            }
+                            else
+                            {
+                                FinalAmount = enemySlotView.PermanentData.Power;
+                            }
+                            break;
+
+                        case BasicParam.NULL:
+                            break;
+                    }
+                }
+                else if (CardActionner != null)
+                {
+                    switch (dynamicAmountInfo.BasicParam)
+                    {
+                        case BasicParam.Life:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Life;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.Life;
+                            }
+                            break;
+
+                        case BasicParam.Armor:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Armor;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.Armor;
+                            }
+                            break;
+
+                        case BasicParam.Power:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Power;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.Power;
+                            }
+                            break;
+
+                        case BasicParam.Durability:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Durability;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.Durability;
+                            }
+                            break;
+
+                        case BasicParam.Cost:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.cost;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.InitCost;
+                            }
+                            break;
+
+                        case BasicParam.NULL:
+                            break;
                     }
                 }
                 break;
 
-            case DynamicAmount.Mana_Count:
+            case DynamicAmount.SelfParam:
+                FinalAmount = 0;
+                if (permanentView != null)
+                {
+                    switch (dynamicAmountInfo.BasicParam)
+                    {
+                        case BasicParam.Life:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.currentLife;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.InitLife;
+                            }
+                            break;
+
+                        case BasicParam.Armor:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.currentArmor;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.InitArmor;
+                            }
+                            break;
+
+                        case BasicParam.Power:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.currentPower;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.InitPower;
+                            }
+                            break;
+
+                        case BasicParam.Durability:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.Durability;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.InitDurability;
+                            }
+                            break;
+
+                        case BasicParam.Cost:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.cost;
+                            }
+                            else
+                            {
+                                FinalAmount = permanentView.CardReferenceArchive.InitCost;
+                            }
+                            break;
+
+                        case BasicParam.NULL:
+                            break;
+                    }
+                }
+                else if (enemySlotView != null)
+                {
+                    switch (dynamicAmountInfo.BasicParam)
+                    {
+                        case BasicParam.Life:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = enemySlotView.currentLife;
+                            }
+                            else
+                            {
+                                FinalAmount = enemySlotView.MaxLife;
+                            }
+                            break;
+
+                        case BasicParam.Armor:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = enemySlotView.currentArmor;
+                            }
+                            else
+                            {
+                                FinalAmount = enemySlotView.PermanentData.Armor;
+                            }
+                            break;
+
+                        case BasicParam.Power:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = enemySlotView.currentPower;
+                            }
+                            else
+                            {
+                                FinalAmount = enemySlotView.PermanentData.Power;
+                            }
+                            break;
+
+                        case BasicParam.NULL:
+                            break;
+                    }
+                }
+                else if (CardActionner != null)
+                {
+                    switch (dynamicAmountInfo.BasicParam)
+                    {
+                        case BasicParam.Life:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Life;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.InitLife;
+                            }
+                            break;
+
+                        case BasicParam.Armor:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Armor;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.InitArmor;
+                            }
+                            break;
+
+                        case BasicParam.Power:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Power;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.InitPower;
+                            }
+                            break;
+
+                        case BasicParam.Durability:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.Durability;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.InitDurability;
+                            }
+                            break;
+
+                        case BasicParam.Cost:
+                            if (dynamicAmountInfo.CurrentParam)
+                            {
+                                FinalAmount = CardActionner.cost;
+                            }
+                            else
+                            {
+                                FinalAmount = CardActionner.InitCost;
+                            }
+                            break;
+
+                        case BasicParam.NULL:
+                            break;
+                    }
+                }
+                break;
+
+            case DynamicAmount.ShieldedCount:
+                FinalAmount = 0;
+                if (dynamicAmountInfo.Enemy_Player == Enemy_Player_ENUM.Player)
+                {
+                    foreach (PermanentView perma in CombatSystem.Instance.Player_Permanents)
+                    {
+                        if (perma.Shielded)
+                        {
+                            FinalAmount++;
+                        }
+                    }
+                }
+                else if (dynamicAmountInfo.Enemy_Player == Enemy_Player_ENUM.Enemy)
+                {
+                    foreach (EnemySlotView perma in CombatSystem.Instance.Enemy_Permanents)
+                    {
+                        if (perma.Shielded)
+                        {
+                            FinalAmount++;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (PermanentView perma in CombatSystem.Instance.Player_Permanents)
+                    {
+                        if (perma.Shielded)
+                        {
+                            FinalAmount++;
+                        }
+                    }  
+                    foreach (EnemySlotView perma in CombatSystem.Instance.Enemy_Permanents)
+                    {
+                        if (perma.Shielded)
+                        {
+                            FinalAmount++;
+                        }
+                    }                  
+                }
+                break;
+
+            case DynamicAmount.CurrentMana:
                 FinalAmount = ManaSystem.Instance.currentMana;
                 break;
 
-            case DynamicAmount.Mana_Spent_Count:
+            case DynamicAmount.ManaSpent:
                 FinalAmount = ManaSystem.Instance.Mana_Spent_Count;
-                break;
-
-            case DynamicAmount.Permanent_HP:
-                if (permanentView != null)
-                {
-                    FinalAmount = permanentView.currentLife;
-                }
-                else if (enemySlotView != null)
-                {
-                    FinalAmount = enemySlotView.currentLife;
-                }
-                break;
-
-            case DynamicAmount.Permanent_Armor:
-                if (permanentView != null)
-                {
-                    FinalAmount = permanentView.currentArmor;
-                }
-                else if (enemySlotView != null)
-                {
-                    FinalAmount = enemySlotView.currentArmor;
-                }
-                break;
-
-            case DynamicAmount.Permanent_Endurance:
-                if (permanentView != null)
-                {
-                    FinalAmount = permanentView.Durability;
-                }
-                else if (enemySlotView != null)
-                {
-                    FinalAmount = 0;
-                }
-                break;
-
-            case DynamicAmount.CardsInHand_Count:
-                FinalAmount = CardSystem.Instance.hand.Count;
                 break;
 
             case DynamicAmount.PayXValue:
@@ -1824,38 +2164,371 @@ public class TargetSystem : Singleton<TargetSystem>
             case TargetLimitations.NULL:
                 return true; // aucune contrainte
 
-
-            case TargetLimitations.Only_Player_Permanent:
-                return permanent != null && CombatSystem.Instance.Player_Permanents.Contains(permanent);
-
-            case TargetLimitations.Only_Enemy_Permanent:
-                return enemySlot != null && CombatSystem.Instance.Enemy_Permanents.Contains(enemySlot);
-
-            case TargetLimitations.Only_Type_Permanent:
+            case TargetLimitations.OnlyOwnerType:
                 if (permanent != null)
                 {
-                    var Keyword = permanent.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
-                    return Keyword != null;
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.keyWordType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = permanent.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                            if (KeywordMatch != null)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
                 }
-                if (enemySlot != null)
+                else if (enemySlot != null)
                 {
-                    var Keyword = enemySlot.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
-                    return Keyword != null;                    
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Enemy)
+                    {
+                        if (info.keyWordType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = enemySlot.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                            if (KeywordMatch != null)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
                 }
-                return false;
+                else if (Card != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Card)
+                    {
+                        if (info.keyWordType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = Card.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                            if (KeywordMatch != null)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+                break;
 
-            case TargetLimitations.PermanentIsNotType:
+            case TargetLimitations.ExceptOwnerType:
                 if (permanent != null)
                 {
-                    var Keyword = permanent.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
-                    return Keyword == null;
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner != Enemy_Player_ENUM.Player)
+                    {
+                        if (info.keyWordType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = permanent.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                            if (KeywordMatch == null)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
                 }
-                if (enemySlot != null)
+                else if (enemySlot != null)
                 {
-                    var Keyword = enemySlot.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
-                    return Keyword == null;
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner != Enemy_Player_ENUM.Enemy)
+                    {
+                        if (info.keyWordType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = enemySlot.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                            if (KeywordMatch == null)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
                 }
-                return false;
+                else if (Card != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner != Enemy_Player_ENUM.Card)
+                    {
+                        if (info.keyWordType != KeyWordType.NULL)
+                        {
+                            var KeywordMatch = Card.KeyWords.FirstOrDefault(k => k.keyWordType == info.keyWordType);
+                            if (KeywordMatch == null)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+                break;
+
+            case TargetLimitations.Param_More_Than_Value:
+                if (permanent != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (permanent.currentLife > info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (permanent.currentPower > info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Durability:
+                                    if (permanent.Durability > info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (permanent.currentArmor > info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Cost:
+                                    if (permanent.CardReferenceArchive.cost > info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else if (enemySlot != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (enemySlot.currentLife > info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (enemySlot.currentPower > info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (enemySlot.currentArmor > info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else if (Card != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (Card.Life > info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (Card.Power > info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (Card.Armor > info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Durability:
+                                    if (Card.Durability > info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Cost:
+                                    if (Card.cost > info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case TargetLimitations.Param_Less_Than_Value:
+                if (permanent != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (permanent.currentLife < info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (permanent.currentPower < info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Durability:
+                                    if (permanent.Durability < info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (permanent.currentArmor < info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Cost:
+                                    if (permanent.CardReferenceArchive.cost < info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else if (enemySlot != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (enemySlot.currentLife < info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (enemySlot.currentPower < info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (enemySlot.currentArmor < info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else if (Card != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (Card.Life < info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (Card.Power < info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (Card.Armor < info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Durability:
+                                    if (Card.Durability < info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Cost:
+                                    if (Card.cost < info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case TargetLimitations.Param_Equal_Value:
+                if (permanent != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (permanent.currentLife == info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (permanent.currentPower == info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Durability:
+                                    if (permanent.Durability == info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (permanent.currentArmor == info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Cost:
+                                    if (permanent.CardReferenceArchive.cost == info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else if (enemySlot != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (enemySlot.currentLife == info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (enemySlot.currentPower == info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (enemySlot.currentArmor == info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else if (Card != null)
+                {
+                    if (info.Owner == Enemy_Player_ENUM.NULL || info.Owner == Enemy_Player_ENUM.Player)
+                    {
+                        if (info.Param != BasicParam.NULL)
+                        {
+                            switch (info.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (Card.Life == info.ParamValue) return true;
+                                        break;
+                                case BasicParam.Power:
+                                    if (Card.Power == info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Armor:
+                                    if (Card.Armor == info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Durability:
+                                    if (Card.Durability == info.ParamValue) return true;
+                                    break;
+                                case BasicParam.Cost:
+                                    if (Card.cost == info.ParamValue) return true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                break;
 
             case TargetLimitations.Only_SelectablePermanent:
                 if (permanent != null)
@@ -1864,119 +2537,75 @@ public class TargetSystem : Singleton<TargetSystem>
                     {
                         foreach (Effect effect in permanent.CardReferenceArchive.Effects)
                         {
-                            if (effect.Events.Contains(Events.OnSelect))
+                            foreach (EventInfo item in effect.EventInfos)
                             {
-                                return true;
+                                if (item.Events == Events.OnSelect)
+                                {
+                                    return true;
+                                }
                             }
-                        }                        
+                        }
                     }
                 }
-                if (enemySlot != null)             
+                if (enemySlot != null)
                 {
                     foreach (Effect effect in enemySlot.PossibleIntent)
                     {
-                        if (effect.Events.Contains(Events.OnSelect))
+                        foreach (EventInfo item in effect.EventInfos)
                         {
-                            return true;
+                            if (item.Events == Events.OnSelect)
+                            {
+                                return true;
+                            }
                         }
-                    }                       
+                    }
                 }
                 return false;
-
-            case TargetLimitations.NO_Player_Core:
-                if (permanent != null)
-                    return !permanent.IsCore;
-                if (enemySlot != null)
-                    return true;
-                return false;
-
-            case TargetLimitations.NO_Enemy_Core:
-                if (permanent != null)
-                    return true;
-                if (enemySlot != null)
-                {
-                    return !enemySlot.IsCore;                    
-                }
-                return false;
-
-            case TargetLimitations.Permanent_HP:
-                if (permanent != null)
-                    return permanent.currentLife == info.IntValue;
-                if (enemySlot != null)
-                    return enemySlot.currentLife == info.IntValue;
-                return false;
-            case TargetLimitations.Permanent_HP_More_Than_Value:
-                if (permanent != null)
-                    return permanent.currentLife > info.IntValue;
-                if (enemySlot != null)
-                    return enemySlot.currentLife > info.IntValue;
-                return false;
-            case TargetLimitations.Permanent_HP_Less_Than_Value:
-                if (permanent != null)
-                    return permanent.currentLife < info.IntValue;
-                if (enemySlot != null)
-                    return enemySlot.currentLife < info.IntValue;
-                return false;
-
-            case TargetLimitations.Permanent_Endurance:
-                if (permanent != null)
-                    return permanent.Durability == info.IntValue;
-                return false;
-            case TargetLimitations.Permanent_Endurance_More_Than_Value:
-                if (permanent != null)
-                    return permanent.Durability > info.IntValue;
-                return false;
-            case TargetLimitations.Permanent_Endurance_Less_Than_Value:
-                if (permanent != null)
-                    return permanent.Durability < info.IntValue;
-                return false;
-
-            case TargetLimitations.Card_Cost_Value:
-                return Card != null && Mathf.Max(0, Card.cost + Card.BonusCost)== info.IntValue;
-
-            case TargetLimitations.Card_Cost_More_Than_Value:
-                return Card != null && Mathf.Max(0, Card.cost + Card.BonusCost) > info.IntValue;
-
-            case TargetLimitations.Card_Cost_Less_Than_Value:
-                return Card != null && Mathf.Max(0, Card.cost + Card.BonusCost) < info.IntValue;
 
             case TargetLimitations.Only_Activated:
                 if (permanent != null)
                 {
                     bool HasEffectsActivated = false;
-                    foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,permanent,null))
+                    foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null, permanent, null))
                     {
-                        if (effect.Events.Contains(Events.OnSelect) && effect.ActivateNumber >= 1)
+                        foreach (EventInfo item in effect.EventInfos)
                         {
-                            if (effect.ActivateLeft != effect.ActivateNumber)
+                            if (item.Events == Events.OnSelect && effect.ActivateNumber >= 1)
                             {
-                                HasEffectsActivated = true;
+                                if (effect.ActivateLeft != effect.ActivateNumber)
+                                {
+                                    HasEffectsActivated = true;
+                                }
                             }
                         }
                     }
-                    return HasEffectsActivated;       
+                    return HasEffectsActivated;
                 }
                 if (enemySlot != null)
                 {
                     bool HasEffectsToActivate = false;
                     foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null, null, enemySlot))
                     {
-                        if (effect.Events.Contains(Events.OnSelect) && effect.ActivateNumber >= 1)
+                        foreach (EventInfo item in effect.EventInfos)
                         {
-                            if (effect.ActivateLeft != effect.ActivateNumber)
+                            if (item.Events == Events.OnSelect && effect.ActivateNumber >= 1)
                             {
-                                HasEffectsToActivate = true;
+                                if (effect.ActivateLeft != effect.ActivateNumber)
+                                {
+                                    HasEffectsToActivate = true;
+                                }
                             }
-                        }                        
+                        }
                     }
 
-                    return HasEffectsToActivate;                
+                    return HasEffectsToActivate;
                 }
                 return false;
 
             default:
                 return false;
         }
+        return false;
     }
 
     public bool PassesAllLimitations(List<TargetLimitationInfo> limitations, Card Card, PermanentView playerPerm, EnemySlotView enemyPerm, bool checkEnoughtTarget = false, bool ForShieldEffect = false)

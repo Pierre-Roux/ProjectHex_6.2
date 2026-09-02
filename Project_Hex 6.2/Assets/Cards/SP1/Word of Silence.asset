@@ -21,9 +21,9 @@ MonoBehaviour:
   <PayX>k__BackingField: 0
   <SpriteImage>k__BackingField: {fileID: 21300000, guid: eeae6e620c49fd1449d6c8043182fa14, type: 3}
   <Money_Cost>k__BackingField: 20
-  KeyWords:
-  - rid: 3878124350565777565
-  <life>k__BackingField: 0
+  KeyWords: []
+  <Life>k__BackingField: 0
+  <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
   <Durability>k__BackingField: 0
   <MaxDurability>k__BackingField: 1
@@ -232,8 +232,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 2
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -251,7 +260,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -272,16 +285,25 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
-        targetLimitations: []
+        targetLimitations:
+        - rid: 4855037171066994794
     - rid: 3878124350565777487
       type: {class: EnableEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 2
-        Events: 02000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 35
+          TestType: 0
+          Owner: 1
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -299,7 +321,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 1
-        DurationType: 2
+        DurationType:
+          Events: 35
+          TestType: 0
+          Owner: 1
+          BasicParam: 0
         TriggerOnDurationEnd: 1
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -320,10 +346,13 @@ MonoBehaviour:
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        Description: '@ConditionsDeal @Amount@Multiply damage@TargetDuration@TargetNumber@TargetActivate'
         targetLimitations: []
-    - rid: 3878124350565777565
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+    - rid: 4855037171066994794
+      type: {class: TargetLimitationInfo, ns: , asm: Enums}
       data:
-        keyWordType: 8
-        keyWordValue: 0
+        targetLimitations: 2
+        Owner: 0
+        keyWordType: 6
+        Param: 0
+        ParamValue: -1
+        MandatoryLimitation: 0

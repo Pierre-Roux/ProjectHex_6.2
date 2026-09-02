@@ -106,7 +106,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (attackEnemyGA.playerTargets != null && attackEnemyGA.playerTargets.Count > 0)
         {
-            DealDamageGA dealDamageGA = new(attackEnemyGA.powerBased, attackEnemyGA.Damage, attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmount, attackEnemyGA.playerTargets, null);
+            DealDamageGA dealDamageGA = new(attackEnemyGA.powerBased, attackEnemyGA.Damage, attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmountInfo, attackEnemyGA.playerTargets, null);
             dealDamageGA.Actionner = attackEnemyGA.Actionner;
             dealDamageGA.SourceEffect = attackEnemyGA.SourceEffect;
             dealDamageGA.ActivateToolTip = false;
@@ -115,7 +115,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (attackEnemyGA.enemyTargets != null && attackEnemyGA.enemyTargets.Count > 0)
         {
-            DealDamageGA dealDamageGA = new(attackEnemyGA.powerBased, attackEnemyGA.Damage,attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmount, null, attackEnemyGA.enemyTargets);
+            DealDamageGA dealDamageGA = new(attackEnemyGA.powerBased, attackEnemyGA.Damage,attackEnemyGA.multiplyAmount, attackEnemyGA.DynamicAmountInfo, null, attackEnemyGA.enemyTargets);
             dealDamageGA.Actionner = attackEnemyGA.Actionner;
             dealDamageGA.SourceEffect = attackEnemyGA.SourceEffect;
             dealDamageGA.ActivateToolTip = false;
@@ -136,7 +136,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (healPlayerGA.playerTargets != null && healPlayerGA.playerTargets.Count > 0)
         {
-            HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmount, healPlayerGA.playerTargets, null);
+            HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmountInfo, healPlayerGA.playerTargets, null);
             healGA.Actionner = healPlayerGA.Actionner;
             healGA.SourceEffect = healPlayerGA.SourceEffect;
             healGA.ActivateToolTip = false;
@@ -145,7 +145,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (healPlayerGA.enemyTargets != null && healPlayerGA.enemyTargets.Count > 0)
         {
-            HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmount, null, healPlayerGA.enemyTargets);
+            HealGA healGA = new HealGA(healPlayerGA.HealAmount, healPlayerGA.multiplyAmount, healPlayerGA.DynamicAmountInfo, null, healPlayerGA.enemyTargets);
             healGA.Actionner = healPlayerGA.Actionner;
             healGA.SourceEffect = healPlayerGA.SourceEffect;
             healGA.ActivateToolTip = false;
@@ -166,7 +166,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (ArmorPlayerGA.playerTargets != null && ArmorPlayerGA.playerTargets.Count > 0)
         {
-            ArmorGA ArmorGA = new ArmorGA(ArmorPlayerGA.ArmorAmount, ArmorPlayerGA.multiplyAmount, ArmorPlayerGA.DynamicAmount, ArmorPlayerGA.playerTargets, null);
+            ArmorGA ArmorGA = new ArmorGA(ArmorPlayerGA.ArmorAmount, ArmorPlayerGA.multiplyAmount, ArmorPlayerGA.DynamicAmountInfo, ArmorPlayerGA.playerTargets, null);
             ArmorGA.Actionner = ArmorPlayerGA.Actionner;
             ArmorGA.SourceEffect = ArmorPlayerGA.SourceEffect;
             ArmorGA.ActivateToolTip = false;
@@ -175,7 +175,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         if (ArmorPlayerGA.enemyTargets != null && ArmorPlayerGA.enemyTargets.Count > 0)
         {
-            ArmorGA ArmorGA = new ArmorGA(ArmorPlayerGA.ArmorAmount, ArmorPlayerGA.multiplyAmount, ArmorPlayerGA.DynamicAmount, null, ArmorPlayerGA.enemyTargets);
+            ArmorGA ArmorGA = new ArmorGA(ArmorPlayerGA.ArmorAmount, ArmorPlayerGA.multiplyAmount, ArmorPlayerGA.DynamicAmountInfo, null, ArmorPlayerGA.enemyTargets);
             ArmorGA.Actionner = ArmorPlayerGA.Actionner;
             ArmorGA.SourceEffect = ArmorPlayerGA.SourceEffect;
             ArmorGA.ActivateToolTip = false;
@@ -198,6 +198,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
         {
             RetrieveExhaustedGA retrieveExhaustedGA = new RetrieveExhaustedGA(playerRetrieveExhaustedGA.cardTargets);
             retrieveExhaustedGA.SourceEffect = playerRetrieveExhaustedGA.SourceEffect;
+            retrieveExhaustedGA.Actionner = playerRetrieveExhaustedGA.Actionner;
             retrieveExhaustedGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(retrieveExhaustedGA);
         }
@@ -217,6 +218,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 ExhaustGA exhaustGA = new ExhaustGA(playerExhaustGA.playerTargets, null, null, playerExhaustGA.targetModeInfo);
                 exhaustGA.SourceEffect = playerExhaustGA.SourceEffect;
+                exhaustGA.Actionner = playerExhaustGA.Actionner;
                 exhaustGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(exhaustGA);
             }
@@ -225,6 +227,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 ExhaustGA exhaustGA = new ExhaustGA(null, null, playerExhaustGA.cardTargets, playerExhaustGA.targetModeInfo);
                 exhaustGA.SourceEffect = playerExhaustGA.SourceEffect;
+                exhaustGA.Actionner = playerExhaustGA.Actionner;
                 exhaustGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(exhaustGA);
             }
@@ -330,8 +333,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
             if (playerAlterPowerGA.passive)
             {
-                AlterPowerGA alterPowerGA = new AlterPowerGA(playerAlterPowerGA.Amount, playerAlterPowerGA.multiplyAmount, playerAlterPowerGA.DynamicAmount, playerAlterPowerGA.passive, playerAlterPowerGA.aditive, null, null, playerAlterPowerGA.targetModeInfo);
+                AlterPowerGA alterPowerGA = new AlterPowerGA(playerAlterPowerGA.Amount, playerAlterPowerGA.multiplyAmount, playerAlterPowerGA.DynamicAmountInfo, playerAlterPowerGA.passive, playerAlterPowerGA.aditive, null, null, null, playerAlterPowerGA.targetModeInfo);
                 alterPowerGA.SourceEffect = playerAlterPowerGA.SourceEffect;
+                alterPowerGA.Actionner = playerAlterPowerGA.Actionner;
                 alterPowerGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(alterPowerGA);
             }
@@ -339,16 +343,27 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 if (playerAlterPowerGA.playerTargets != null && playerAlterPowerGA.playerTargets.Count > 0)
                 {
-                    AlterPowerGA alterPowerGA = new AlterPowerGA(playerAlterPowerGA.Amount, playerAlterPowerGA.multiplyAmount, playerAlterPowerGA.DynamicAmount, playerAlterPowerGA.passive, playerAlterPowerGA.aditive, playerAlterPowerGA.playerTargets, null);
+                    AlterPowerGA alterPowerGA = new AlterPowerGA(playerAlterPowerGA.Amount, playerAlterPowerGA.multiplyAmount, playerAlterPowerGA.DynamicAmountInfo, playerAlterPowerGA.passive, playerAlterPowerGA.aditive, playerAlterPowerGA.playerTargets, null, null);
                     alterPowerGA.SourceEffect = playerAlterPowerGA.SourceEffect;
+                    alterPowerGA.Actionner = playerAlterPowerGA.Actionner;
                     alterPowerGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterPowerGA);
                 }
 
                 if (playerAlterPowerGA.enemyTargets != null && playerAlterPowerGA.enemyTargets.Count > 0)
                 {
-                    AlterPowerGA alterPowerGA = new AlterPowerGA(playerAlterPowerGA.Amount, playerAlterPowerGA.multiplyAmount, playerAlterPowerGA.DynamicAmount, playerAlterPowerGA.passive, playerAlterPowerGA.aditive, null, playerAlterPowerGA.enemyTargets);
+                    AlterPowerGA alterPowerGA = new AlterPowerGA(playerAlterPowerGA.Amount, playerAlterPowerGA.multiplyAmount, playerAlterPowerGA.DynamicAmountInfo, playerAlterPowerGA.passive, playerAlterPowerGA.aditive, null, playerAlterPowerGA.enemyTargets, null);
                     alterPowerGA.SourceEffect = playerAlterPowerGA.SourceEffect;
+                    alterPowerGA.Actionner = playerAlterPowerGA.Actionner;
+                    alterPowerGA.ActivateToolTip = false;
+                    ActionSystem.Instance.AddReaction(alterPowerGA);
+                }  
+
+                if (playerAlterPowerGA.cardTargets != null && playerAlterPowerGA.cardTargets.Count > 0)
+                {
+                    AlterPowerGA alterPowerGA = new AlterPowerGA(playerAlterPowerGA.Amount, playerAlterPowerGA.multiplyAmount, playerAlterPowerGA.DynamicAmountInfo, playerAlterPowerGA.passive, playerAlterPowerGA.aditive, null, playerAlterPowerGA.enemyTargets, null);
+                    alterPowerGA.SourceEffect = playerAlterPowerGA.SourceEffect;
+                    alterPowerGA.Actionner = playerAlterPowerGA.Actionner;
                     alterPowerGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterPowerGA);
                 }  
@@ -368,8 +383,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
             if (playerAlterStaminaGA.passive)
             {
-                AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, null, null, playerAlterStaminaGA.targetModeInfo);
+                AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmountInfo, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, null, null, playerAlterStaminaGA.targetModeInfo);
                 alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
+                alterStaminaGA.Actionner = playerAlterStaminaGA.Actionner;
                 alterStaminaGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(alterStaminaGA);
             }
@@ -377,24 +393,27 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 if (playerAlterStaminaGA.playerTargets != null && playerAlterStaminaGA.playerTargets.Count > 0)
                 {
-                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, playerAlterStaminaGA.playerTargets, null, null, playerAlterStaminaGA.targetModeInfo);
+                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmountInfo, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, playerAlterStaminaGA.playerTargets, null, null, playerAlterStaminaGA.targetModeInfo);
                     alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
+                    alterStaminaGA.Actionner = playerAlterStaminaGA.Actionner;
                     alterStaminaGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterStaminaGA);
                 }
 
                 if (playerAlterStaminaGA.enemyTargets != null && playerAlterStaminaGA.enemyTargets.Count > 0)
                 {
-                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, playerAlterStaminaGA.enemyTargets, null, playerAlterStaminaGA.targetModeInfo);
+                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmountInfo, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, playerAlterStaminaGA.enemyTargets, null, playerAlterStaminaGA.targetModeInfo);
                     alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
+                    alterStaminaGA.Actionner = playerAlterStaminaGA.Actionner;
                     alterStaminaGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterStaminaGA);
                 }
 
                 if (playerAlterStaminaGA.cardTargets != null && playerAlterStaminaGA.cardTargets.Count > 0)
                 {
-                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmount, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, null, playerAlterStaminaGA.cardTargets, playerAlterStaminaGA.targetModeInfo);
+                    AlterStaminaGA alterStaminaGA = new AlterStaminaGA(playerAlterStaminaGA.Amount, playerAlterStaminaGA.multiplyAmount, playerAlterStaminaGA.DynamicAmountInfo, playerAlterStaminaGA.passive, playerAlterStaminaGA.aditive, null, null, playerAlterStaminaGA.cardTargets, playerAlterStaminaGA.targetModeInfo);
                     alterStaminaGA.SourceEffect = playerAlterStaminaGA.SourceEffect;
+                    alterStaminaGA.Actionner = playerAlterStaminaGA.Actionner;
                     alterStaminaGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterStaminaGA);
                 }
@@ -414,8 +433,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
             if (playerAlterCardCostGA.passive)
             {
-                AlterCardCostGA alterCardCostGA = new AlterCardCostGA(playerAlterCardCostGA.Amount, playerAlterCardCostGA.multiplyAmount, playerAlterCardCostGA.DynamicAmount, playerAlterCardCostGA.passive,null, playerAlterCardCostGA.targetModeInfo);
+                AlterCardCostGA alterCardCostGA = new AlterCardCostGA(playerAlterCardCostGA.Amount, playerAlterCardCostGA.multiplyAmount, playerAlterCardCostGA.DynamicAmountInfo, playerAlterCardCostGA.passive,null, playerAlterCardCostGA.targetModeInfo);
                 alterCardCostGA.SourceEffect = playerAlterCardCostGA.SourceEffect;
+                alterCardCostGA.Actionner = playerAlterCardCostGA.Actionner;
                 alterCardCostGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(alterCardCostGA);
             }
@@ -423,8 +443,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 if (playerAlterCardCostGA.cardTargets != null && playerAlterCardCostGA.cardTargets.Count > 0)
                 {
-                    AlterCardCostGA alterCardCostGA = new AlterCardCostGA(playerAlterCardCostGA.Amount, playerAlterCardCostGA.multiplyAmount, playerAlterCardCostGA.DynamicAmount, playerAlterCardCostGA.passive, playerAlterCardCostGA.cardTargets, playerAlterCardCostGA.targetModeInfo);
+                    AlterCardCostGA alterCardCostGA = new AlterCardCostGA(playerAlterCardCostGA.Amount, playerAlterCardCostGA.multiplyAmount, playerAlterCardCostGA.DynamicAmountInfo, playerAlterCardCostGA.passive, playerAlterCardCostGA.cardTargets, playerAlterCardCostGA.targetModeInfo);
                     alterCardCostGA.SourceEffect = playerAlterCardCostGA.SourceEffect;
+                    alterCardCostGA.Actionner = playerAlterCardCostGA.Actionner;
                     alterCardCostGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(alterCardCostGA);
                 }
@@ -442,8 +463,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
-            AlterPowerGridGA alterPowerGridGA = new AlterPowerGridGA(playerAlterPowerGridGA.Amount, playerAlterPowerGridGA.multiplyAmount, playerAlterPowerGridGA.DynamicAmount);
+            AlterPowerGridGA alterPowerGridGA = new AlterPowerGridGA(playerAlterPowerGridGA.Amount, playerAlterPowerGridGA.multiplyAmount, playerAlterPowerGridGA.DynamicAmountInfo);
             alterPowerGridGA.SourceEffect = playerAlterPowerGridGA.SourceEffect;
+            alterPowerGridGA.Actionner = playerAlterPowerGridGA.Actionner;
             alterPowerGridGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(alterPowerGridGA);
         }
@@ -459,8 +481,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
-            AddACopyGa addACopyGa = new AddACopyGa(playerAddACopyGa.Amount, playerAddACopyGa.multiplyAmount, playerAddACopyGa.DynamicAmount, playerAddACopyGa.AffectedSide, playerAddACopyGa.TypeOfCopy, playerAddACopyGa.ConditionToCopy);
+            AddACopyGa addACopyGa = new AddACopyGa(playerAddACopyGa.Amount, playerAddACopyGa.multiplyAmount, playerAddACopyGa.DynamicAmountInfo, playerAddACopyGa.AffectedSide, playerAddACopyGa.TypeOfCopy);
             addACopyGa.SourceEffect = playerAddACopyGa.SourceEffect;
+            addACopyGa.Actionner = playerAddACopyGa.Actionner;
             addACopyGa.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(addACopyGa);
         }
@@ -478,15 +501,17 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
             if (playerLifeLossGA.playerTargets != null && playerLifeLossGA.playerTargets.Count > 0)
             {
-                LifeLossGA lifeLossGA = new LifeLossGA(playerLifeLossGA.Amount, playerLifeLossGA.multiplyAmount, playerLifeLossGA.DynamicAmount, playerLifeLossGA.playerTargets, null);
+                LifeLossGA lifeLossGA = new LifeLossGA(playerLifeLossGA.Amount, playerLifeLossGA.multiplyAmount, playerLifeLossGA.DynamicAmountInfo, playerLifeLossGA.playerTargets, null);
                 lifeLossGA.SourceEffect = playerLifeLossGA.SourceEffect;
+                lifeLossGA.Actionner = playerLifeLossGA.Actionner;
                 lifeLossGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(lifeLossGA);
             }
             if (playerLifeLossGA.enemyTargets != null && playerLifeLossGA.enemyTargets.Count > 0)
             {
-                LifeLossGA lifeLossGA = new LifeLossGA(playerLifeLossGA.Amount, playerLifeLossGA.multiplyAmount, playerLifeLossGA.DynamicAmount, null, playerLifeLossGA.enemyTargets);
+                LifeLossGA lifeLossGA = new LifeLossGA(playerLifeLossGA.Amount, playerLifeLossGA.multiplyAmount, playerLifeLossGA.DynamicAmountInfo, null, playerLifeLossGA.enemyTargets);
                 lifeLossGA.SourceEffect = playerLifeLossGA.SourceEffect;
+                lifeLossGA.Actionner = playerLifeLossGA.Actionner;
                 lifeLossGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(lifeLossGA);
             }
@@ -506,6 +531,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 DisableGA disableGA = new DisableGA(playerDisableGA.playerTargets, null);
                 disableGA.SourceEffect = playerDisableGA.SourceEffect;
+                disableGA.Actionner = playerDisableGA.Actionner;
                 disableGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(disableGA);
             }
@@ -513,6 +539,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 DisableGA disableGA = new DisableGA(null, playerDisableGA.enemyTargets);
                 disableGA.SourceEffect = playerDisableGA.SourceEffect;
+                disableGA.Actionner = playerDisableGA.Actionner;
                 disableGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(disableGA);
             }
@@ -532,6 +559,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 EnableGA enableGA = new EnableGA(playerEnableGA.playerTargets, null);
                 enableGA.SourceEffect = playerEnableGA.SourceEffect;
+                enableGA.Actionner = playerEnableGA.Actionner;
                 enableGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(enableGA);
             }
@@ -556,8 +584,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
             if (playerGainLifeGA.passive)
             {
-                GainLifeGA gainLifeGA = new GainLifeGA(playerGainLifeGA.Amount, playerGainLifeGA.multiplyAmount, playerGainLifeGA.DynamicAmount, playerGainLifeGA.passive, playerGainLifeGA.aditive, null, null, playerGainLifeGA.targetModeInfo);
+                GainLifeGA gainLifeGA = new GainLifeGA(playerGainLifeGA.Amount, playerGainLifeGA.multiplyAmount, playerGainLifeGA.DynamicAmountInfo, playerGainLifeGA.passive, playerGainLifeGA.aditive, null, null, playerGainLifeGA.targetModeInfo);
                 gainLifeGA.SourceEffect = playerGainLifeGA.SourceEffect;
+                gainLifeGA.Actionner = playerGainLifeGA.Actionner;
                 gainLifeGA.ActivateToolTip = false;
                 ActionSystem.Instance.AddReaction(gainLifeGA);
             }
@@ -565,16 +594,18 @@ public class PlayerSystem : Singleton<PlayerSystem>
             {
                 if (playerGainLifeGA.playerTargets != null && playerGainLifeGA.playerTargets.Count > 0)
                 {
-                    GainLifeGA gainLifeGA = new GainLifeGA(playerGainLifeGA.Amount, playerGainLifeGA.multiplyAmount, playerGainLifeGA.DynamicAmount, playerGainLifeGA.passive, playerGainLifeGA.aditive, playerGainLifeGA.playerTargets, null);
+                    GainLifeGA gainLifeGA = new GainLifeGA(playerGainLifeGA.Amount, playerGainLifeGA.multiplyAmount, playerGainLifeGA.DynamicAmountInfo, playerGainLifeGA.passive, playerGainLifeGA.aditive, playerGainLifeGA.playerTargets, null, null);
                     gainLifeGA.SourceEffect = playerGainLifeGA.SourceEffect;
+                    gainLifeGA.Actionner = playerGainLifeGA.Actionner;
                     gainLifeGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(gainLifeGA);                    
                 }
 
                 if (playerGainLifeGA.enemyTargets != null && playerGainLifeGA.enemyTargets.Count > 0)
                 {
-                    GainLifeGA gainLifeGA = new GainLifeGA(playerGainLifeGA.Amount, playerGainLifeGA.multiplyAmount, playerGainLifeGA.DynamicAmount, playerGainLifeGA.passive, playerGainLifeGA.aditive, null, playerGainLifeGA.enemyTargets);
+                    GainLifeGA gainLifeGA = new GainLifeGA(playerGainLifeGA.Amount, playerGainLifeGA.multiplyAmount, playerGainLifeGA.DynamicAmountInfo, playerGainLifeGA.passive, playerGainLifeGA.aditive, null, playerGainLifeGA.enemyTargets, null);
                     gainLifeGA.SourceEffect = playerGainLifeGA.SourceEffect;
+                    gainLifeGA.Actionner = playerGainLifeGA.Actionner;
                     gainLifeGA.ActivateToolTip = false;
                     ActionSystem.Instance.AddReaction(gainLifeGA);                    
                 }
@@ -593,8 +624,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
             yield return tween.WaitForCompletion();
             Attacker.transform.DOMoveY(Attacker.InitialPosition.y, 0.35f);
 
-            InvocGA invocGA = new(invocPGA.Amount, invocPGA.multiplyAmount, invocPGA.DynamicAmount, invocPGA.CardsToInvoc);
+            InvocGA invocGA = new(invocPGA.Amount, invocPGA.multiplyAmount, invocPGA.DynamicAmountInfo, invocPGA.CardsToInvoc);
             invocGA.SourceEffect = invocPGA.SourceEffect;
+            invocGA.Actionner = invocPGA.Actionner;
             invocGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(invocGA);
         }
@@ -612,6 +644,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
             SacGA sacGA = new(sacPGA.playerTargets, sacPGA.enemyTargets);
             sacGA.SourceEffect = sacPGA.SourceEffect;
+            sacGA.Actionner = sacPGA.Actionner;
             sacGA.ActivateToolTip = false;
             ActionSystem.Instance.AddReaction(sacGA);
         }

@@ -21,7 +21,8 @@ MonoBehaviour:
   <PayX>k__BackingField: 0
   <SpriteImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <Money_Cost>k__BackingField: 20
-  KeyWords: []
+  KeyWords:
+  - rid: 4855037171066994785
   <Life>k__BackingField: 3
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
@@ -233,8 +234,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 09000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 4
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -252,7 +262,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -268,15 +282,36 @@ MonoBehaviour:
         EffectID: 7430f5f6-16fc-45dc-93db-f2c10a7da2dd
         GainAmount: 1
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
     - rid: 3878124350565777511
       type: {class: HealEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -294,7 +329,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -310,7 +349,19 @@ MonoBehaviour:
         EffectID: 2def8fb3-8456-4237-a561-24109b292dbd
         amount: 2
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
           targetMode: 2
           PlayerOrEnemy: 1
@@ -319,3 +370,8 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
+    - rid: 4855037171066994785
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 18
+        keyWordValue: 0

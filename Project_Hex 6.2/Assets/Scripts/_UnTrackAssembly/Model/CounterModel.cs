@@ -4,30 +4,29 @@ using UnityEngine;
 [System.Serializable]
 public class CounterModel
 {
-    [SerializeField] 
-    public Dictionary<CounterType, int> counters = new();
+    [SerializeField] public Dictionary<CounterTypeInfo, int> counters = new();
 
-    public void Add(CounterType type, int amount = 1)
+    public void Add(CounterTypeInfo typeInfo, int amount = 1)
     {
-        if (!counters.ContainsKey(type))
-            counters[type] = 0;
-        counters[type] += amount;
+        if (!counters.ContainsKey(typeInfo))
+            counters[typeInfo] = 0;
+        counters[typeInfo] += amount;
     }
 
-    public int Get(CounterType type)
+    public int Get(CounterTypeInfo typeInfo)
     {
-        return counters.TryGetValue(type, out int value) ? value : 0;
+        return counters.TryGetValue(typeInfo, out int value) ? value : 0;
     }
 
-    public void Set(CounterType type, int value)
+    public void Set(CounterTypeInfo typeInfo, int value)
     {
-        counters[type] = value;
+        counters[typeInfo] = value;
     }
 
-    public void Reset(CounterType type)
+    public void Reset(CounterTypeInfo typeInfo)
     {
-        if (counters.ContainsKey(type))
-            counters[type] = 0;
+        if (counters.ContainsKey(typeInfo))
+            counters[typeInfo] = 0;
     }
 
     public void ClearAll()

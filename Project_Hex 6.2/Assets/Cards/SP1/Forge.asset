@@ -21,7 +21,8 @@ MonoBehaviour:
   <PayX>k__BackingField: 0
   <SpriteImage>k__BackingField: {fileID: 21300000, guid: 7e612236957d81c4a8f4c03ea65cbfb4, type: 3}
   <Money_Cost>k__BackingField: 20
-  KeyWords: []
+  KeyWords:
+  - rid: 4855037171066994773
   <Life>k__BackingField: 4
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
@@ -32,6 +33,8 @@ MonoBehaviour:
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3878124350565777587
+  - rid: 4855037171066994776
+  - rid: 4855037171066994777
   PlayCardSound:
     Guid:
       Data1: 0
@@ -232,8 +235,17 @@ MonoBehaviour:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 09000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 4
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -251,12 +263,16 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
-          rid: 3878124350565777596
+          rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
@@ -267,36 +283,45 @@ MonoBehaviour:
         EffectID: b78e57a4-e05e-4ec3-ada7-29ad96cb751c
         targetModeInfo:
           targetMode: 0
-          PlayerOrEnemy: 1
+          PlayerOrEnemy: 0
           permanentArea: 0
           keyWordType: 0
         TargetUpTo: 0
         targetNumber: 1
         targetLimitations:
         - rid: 3878124350565777591
-        - rid: 3878124350565777592
+        - rid: 4855037171066994778
     - rid: 3878124350565777591
       type: {class: TargetLimitationInfo, ns: , asm: Enums}
       data:
-        targetLimitations: 1
-        keyWordType: 0
-        IntValue: -1
-        MandatoryLimitation: 0
-    - rid: 3878124350565777592
-      type: {class: TargetLimitationInfo, ns: , asm: Enums}
+        targetLimitations: 2
+        Owner: 0
+        keyWordType: 6
+        Param: 0
+        ParamValue: -1
+        MandatoryLimitation: 1
+    - rid: 4855037171066994773
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
-        targetLimitations: 5
-        keyWordType: 0
-        IntValue: -1
-        MandatoryLimitation: 0
-    - rid: 3878124350565777596
+        keyWordType: 18
+        keyWordValue: 0
+    - rid: 4855037171066994776
       type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -314,12 +339,16 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
         LinkedEffect:
-          rid: 3878124350565777597
+          rid: -2
         Actionner: {fileID: 0}
         TargetForLinked_Player: []
         TargetForLinked_Enemy: []
@@ -330,15 +359,36 @@ MonoBehaviour:
         EffectID: 
         drawAmount: 1
         multiplyAmount: 1
-        DynamicAmount: 0
-    - rid: 3878124350565777597
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
+    - rid: 4855037171066994777
       type: {class: ManaGainEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 0
-        Events: 00000000
-        TypeOfCounter: 0
+        EventInfos:
+        - Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -356,7 +406,11 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         Duration: 0
-        DurationType: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos: []
@@ -372,4 +426,25 @@ MonoBehaviour:
         EffectID: 
         GainAmount: 1
         multiplyAmount: 1
-        DynamicAmount: 0
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
+    - rid: 4855037171066994778
+      type: {class: TargetLimitationInfo, ns: , asm: Enums}
+      data:
+        targetLimitations: 1
+        Owner: 1
+        keyWordType: 0
+        Param: 0
+        ParamValue: -1
+        MandatoryLimitation: 0

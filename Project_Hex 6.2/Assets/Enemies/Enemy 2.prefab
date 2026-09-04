@@ -472,6 +472,38 @@ PrefabInstance:
       value: -1918472180
       objectReference: {fileID: 0}
     - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: GainPowerSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: GainPowerSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: GainPowerSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: GainPowerSound.Guid.Data4
+      value: -1918472180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: LoseShieldSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: LoseShieldSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: LoseShieldSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: LoseShieldSound.Guid.Data4
+      value: -1918472180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: UnSelectedSound.Guid.Data1
       value: 1179687985
       objectReference: {fileID: 0}
@@ -485,6 +517,54 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
       propertyPath: UnSelectedSound.Guid.Data4
+      value: -1918472180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingDamageSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingDamageSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingDamageSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingDamageSound.Guid.Data4
+      value: -1918472180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingShieldSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingShieldSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingShieldSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: BeingShieldSound.Guid.Data4
+      value: -1918472180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: TakeLifeLossSound.Guid.Data1
+      value: 1179687985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: TakeLifeLossSound.Guid.Data2
+      value: 1325015437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: TakeLifeLossSound.Guid.Data3
+      value: 1335451572
+      objectReference: {fileID: 0}
+    - target: {fileID: 6647762482860982016, guid: 739a6da466d80c44eb76449eff2d8745, type: 3}
+      propertyPath: TakeLifeLossSound.Guid.Data4
       value: -1918472180
       objectReference: {fileID: 0}
     m_RemovedComponents: []

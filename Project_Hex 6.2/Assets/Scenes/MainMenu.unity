@@ -479,7 +479,6 @@ MonoBehaviour:
   ColorLessCardPool: {fileID: 11400000, guid: d64b38c0ee2ecf344b41828cd81ab792, type: 2}
   ChoosedCardPool: {fileID: 11400000, guid: c57fe205529918a41b9ad93c424374dc, type: 2}
   BossCardPool: {fileID: 11400000, guid: d57573a092d1b204299ffd02ae8c874f, type: 2}
-  StarterPool: {fileID: 11400000, guid: a429477e2f9c4ba46940150ad13ad4b7, type: 2}
   Stages:
   - {fileID: 11400000, guid: fb53cc78dd6a73846b156480a3d91eb5, type: 2}
   - {fileID: 11400000, guid: 579c7ff612d10e64b9a561db879abf84, type: 2}
@@ -8954,11 +8953,11 @@ MonoBehaviour:
   MusicEmitter: {fileID: 1083179117}
   BackgroundMusic:
     Guid:
-      Data1: -1600803259
-      Data2: 1270165136
-      Data3: 440442783
-      Data4: -150944410
-    Path: event:/Cards/Draw Card Sound
+      Data1: -1656504916
+      Data2: 1084090828
+      Data3: -872792900
+      Data4: 772559033
+    Path: event:/Music/Test Mix
   VictoryMusic:
     Guid:
       Data1: 0

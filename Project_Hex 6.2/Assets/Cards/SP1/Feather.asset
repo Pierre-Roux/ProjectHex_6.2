@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <ID_Code>k__BackingField: 
   <Title>k__BackingField: Feather
-  <Description>k__BackingField: Shield Core | When Feather is destroyed, Gain 2 Life
+  <Description>k__BackingField: 'Ward: Core | When Feather is destroyed, Gain 2 Life'
   <Rarity>k__BackingField: 0
   <cost>k__BackingField: 1
   <GridCost>k__BackingField: 1

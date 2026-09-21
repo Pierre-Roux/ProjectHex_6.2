@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: _UnTrackAssembly::CardData
   <ID_Code>k__BackingField: 
   <Title>k__BackingField: Inscribe
-  <Description>k__BackingField: Draw a card | Add 2 Armor to an Object
+  <Description>k__BackingField: Draw a card | Add 3 Armor to an Object
   <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 0
@@ -33,6 +33,7 @@ MonoBehaviour:
   <Effects>k__BackingField:
   - rid: 3878124325882822738
   - rid: 3878124325882822739
+  - rid: 2787020211373998080
   PlayCardSound:
     Guid:
       Data1: 0
@@ -227,6 +228,63 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 2787020211373998080
+      type: {class: ExhaustEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 1
+        Priority: 3
+        actionnerType: 0
+        EventInfos: []
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        Duration: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 
+        IncludeCardsInDeck: 0
+        targetModeInfo:
+          targetMode: 1
+          PlayerOrEnemy: 0
+          permanentArea: 0
+          keyWordType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
     - rid: 3878124325882822738
       type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
       data:
@@ -243,6 +301,7 @@ MonoBehaviour:
           TestType: 0
           Owner: 0
           SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -287,6 +346,7 @@ MonoBehaviour:
             TestType: 0
             Owner: 0
             SinceLoad: 0
+            Intern: 0
           TestType: 0
           Enemy_Player: 0
           BasicParam: 0
@@ -308,6 +368,7 @@ MonoBehaviour:
           TestType: 0
           Owner: 0
           SinceLoad: 0
+          Intern: 0
         CounterValue: 0
         ModuloValue: 0
         HollowEffect: 0
@@ -343,7 +404,7 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
-        amount: 2
+        amount: 3
         multiplyAmount: 1
         DynamicAmountInfo:
           DynamicAmount: 0
@@ -352,6 +413,7 @@ MonoBehaviour:
             TestType: 0
             Owner: 0
             SinceLoad: 0
+            Intern: 0
           TestType: 0
           Enemy_Player: 0
           BasicParam: 0

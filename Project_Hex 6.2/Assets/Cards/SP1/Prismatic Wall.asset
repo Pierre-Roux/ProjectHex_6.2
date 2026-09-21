@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <ID_Code>k__BackingField: 
   <Title>k__BackingField: Prismatic Wall
-  <Description>k__BackingField: 'Shield Core | Whenever Prismatic Wall is Destroyed:
+  <Description>k__BackingField: 'Ward: Core | Whenever Prismatic Wall is Destroyed:
     Invoke 1 [Prism]2'
   <Rarity>k__BackingField: 0
   <cost>k__BackingField: 3

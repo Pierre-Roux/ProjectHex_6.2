@@ -23,6 +23,7 @@ MonoBehaviour:
   <Money_Cost>k__BackingField: 0
   KeyWords:
   - rid: 3047188320285622476
+  - rid: 2787020325981519951
   <Life>k__BackingField: 3
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
@@ -227,6 +228,11 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 2787020325981519951
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 20
+        keyWordValue: 0
     - rid: 3047188320285622476
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:

@@ -377,7 +377,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 325, y: -120}
+  m_AnchoredPosition: {x: 325, y: -118}
   m_SizeDelta: {x: 600, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &892703696448500286
@@ -469,7 +469,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 14
+          m_IntArgument: 5
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -478,6 +478,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: NavEvent, _UnTrackAssembly
         m_MethodName: CloseSLide
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 937528758907772916}
+        m_TargetAssemblyTypeName: NavEvent, _UnTrackAssembly
+        m_MethodName: GainLife
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -679,7 +691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: _UnTrackAssembly::NavEvent
   NextSlide: {fileID: 5568155388329863433, guid: d98e40d69b0e08340a42f0b88dc77694, type: 3}
-  NextSlide2: {fileID: 0}
+  NextSlide2: {fileID: 2206390919039811421, guid: e0572ab8555caf04991a65da6018c329, type: 3}
   NavCardReward: {fileID: 11400000, guid: 5ae3c62743289e9418a393e89bfbf1b5, type: 2}
   CardReward: {fileID: 11400000, guid: a8f00c84be9e23d479b25e1299ad1ab2, type: 2}
 --- !u!1 &7952318450368495584

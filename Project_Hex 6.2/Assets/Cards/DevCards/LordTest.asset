@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: _UnTrackAssembly::CardData
   <ID_Code>k__BackingField: 
   <Title>k__BackingField: Lord
-  <Description>k__BackingField: 
+  <Description>k__BackingField: add 1 power passive
   <Rarity>k__BackingField: 0
   <cost>k__BackingField: 0
   <GridCost>k__BackingField: 0
@@ -28,7 +28,6 @@ MonoBehaviour:
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: bb7b6ce2f1a61144083daba5680fbcfe, type: 3}
-  <permanentArea>k__BackingField: 3
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 6565497967621701632
@@ -260,6 +259,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -276,6 +277,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 22128a00-437d-4abf-a022-9a5506a29dd1
@@ -300,7 +303,6 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 1
-          permanentArea: 1
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
@@ -338,6 +340,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -354,6 +358,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 68969c06-b0ec-452e-8697-e9921d57c19a
@@ -378,7 +384,6 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 1
-          permanentArea: 1
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1

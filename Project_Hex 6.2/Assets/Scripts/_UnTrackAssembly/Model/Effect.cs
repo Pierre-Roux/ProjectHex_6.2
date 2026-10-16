@@ -27,6 +27,8 @@ public abstract class Effect
     [Header("Enemy_Only")]
     [SerializeField] public String Intent_Title;
     [SerializeField] public string number;
+    [SerializeField] public bool DynamicTargeting;
+    [SerializeField] public List<PriorityInfo> PriorityList = new List<PriorityInfo>();
 
     [Header("On Delayed Events")]
 
@@ -56,13 +58,37 @@ public abstract class Effect
     [HideInInspector] public int PayXValue;
     [HideInInspector] public int ActivateLeft;
 
+    [HideInInspector] public List<PermanentView> PreTargetPermanentView;
+    [HideInInspector] public List<EnemySlotView> PreTargetEnemySlotView;
 
     [HideInInspector] public bool BypassEntryCondition = false;
     [HideInInspector] public bool Disabled = false;
     [HideInInspector] public string EffectID;
 
+    [HideInInspector] public virtual bool IsPassive => false;
+
     protected Effect()
     {
+    }
+
+    public void CopyEnemyDataTo(Effect clone)
+    {
+        if (clone == null) return;
+
+        clone.PriorityList = PriorityList != null
+            ? new List<PriorityInfo>(PriorityList)
+            : new List<PriorityInfo>();
+
+        if (this is EffectGroup source && clone is EffectGroup target
+            && source.EffectGroups != null && target.EffectGroups != null)
+        {
+            int count = Mathf.Min(source.EffectGroups.Count, target.EffectGroups.Count);
+            for (int i = 0; i < count; i++)
+            {
+                if (source.EffectGroups[i] != null)
+                    source.EffectGroups[i].CopyEnemyDataTo(target.EffectGroups[i]);
+            }
+        }
     }
 
     public abstract GameAction GetGameAction();

@@ -4,7 +4,6 @@ using DG.Tweening;
 using System.Collections.Generic;
 using FMODUnity;
 using System.Linq;
-using System.Collections;
 
 public class PermanentView : MonoBehaviour
 {
@@ -44,14 +43,16 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public int currentPower { get; set; }
     [HideInInspector] public int currentArmor { get; set; }
     [HideInInspector] public int MaxDurability { get; set; }
-    [HideInInspector] public int Durability { get; set; } 
+    [HideInInspector] public int Durability { get; set; }
     [HideInInspector] public int BaseMaxDurability { get; set; }
     [HideInInspector] public int CurrentHPBonus { get; set; }
     [HideInInspector] public Card CardReferenceArchive;
     [SerializeField] public bool IsDisabled = false;
     [HideInInspector] public bool IsDead = false;
+    [SerializeField] public bool IsVirtualDead = false;
+    [SerializeField] public List<EnemySlotView> VirtualAttacker = new List<EnemySlotView>();
+    [HideInInspector] public int VirtualHP = 0;
     [HideInInspector] public Vector3 InitialPosition { get; set; }
-    [HideInInspector] public PermanentArea permanentArea;
 
     [HideInInspector] public List<PermanentView> PlayerShielder;
     [HideInInspector] public List<EnemySlotView> EnemyShielder;
@@ -83,11 +84,11 @@ public class PermanentView : MonoBehaviour
         UpdateLifeText();
         currentArmor = CardReferenceArchive.Armor;
         UpdateArmorText();
+        VirtualHP = currentLife + currentArmor;
         BaseMaxDurability = cardReference.MaxDurability;
         MaxDurability = cardReference.MaxDurability;
         Durability = cardReference.Durability;
         UpdateMaxStam();
-        permanentArea = cardReference.data.permanentArea;
         deactivateAuraVisual();
         UpdateNameText(cardReference.Title);
 
@@ -225,31 +226,31 @@ public class PermanentView : MonoBehaviour
 
     private void OnEnable()
     {
-        if (combatSystem != null)
+        if (CombatSystem.Instance != null)
         {
-            combatSystem.PassivesChanged += UpdatePower;
-            combatSystem.PassivesChanged += UpdateMaxLife;
-            combatSystem.PassivesChanged += UpdateMaxStam;
-        }  
+            CombatSystem.Instance.PassivesChanged += UpdatePower;
+            CombatSystem.Instance.PassivesChanged += UpdateMaxLife;
+            CombatSystem.Instance.PassivesChanged += UpdateMaxStam;
+        }
     }
 
     private void OnDisable()
     {
-        if (combatSystem != null)
+        if (CombatSystem.Instance != null)
         {
-            combatSystem.PassivesChanged -= UpdatePower;
-            combatSystem.PassivesChanged -= UpdateMaxLife;
-            combatSystem.PassivesChanged -= UpdateMaxStam;
+            CombatSystem.Instance.PassivesChanged -= UpdatePower;
+            CombatSystem.Instance.PassivesChanged -= UpdateMaxLife;
+            CombatSystem.Instance.PassivesChanged -= UpdateMaxStam;
         }
     }
 
     public void UpdateLifeText()
     {
-        HealthText.text = Mathf.Max(0,currentLife).ToString();
+        HealthText.text = Mathf.Max(0, currentLife).ToString();
     }
     public void UpdatePowerText()
     {
-        PowerText.text = Mathf.Max(0,currentPower).ToString();
+        PowerText.text = Mathf.Max(0, currentPower).ToString();
     }
     public void UpdateArmorText()
     {
@@ -285,7 +286,7 @@ public class PermanentView : MonoBehaviour
             PermanentSpriteRenderer.color = c;
         }
     }
-    
+
     public void ActivateAuraVisual()
     {
         AuraSpriteRenderer.gameObject.SetActive(true);
@@ -304,7 +305,7 @@ public class PermanentView : MonoBehaviour
             var HollowKeyword = KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
             if (HollowKeyword == null)
             {
-                KeyWord NewKeyWord = new(KeyWordType.Hollow,0);
+                KeyWord NewKeyWord = new(KeyWordType.Hollow, 0);
                 KeyWords.Add(NewKeyWord);
 
                 UpdateHollowVisual();
@@ -312,7 +313,7 @@ public class PermanentView : MonoBehaviour
                 EventInfo eventInfo = new EventInfo(Events.WhenPermaGainType, Enemy_Player_ENUM.Player, KeyWordType.Hollow);
                 triggerEventGA = new(eventInfo, null, null, this, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
-                
+
                 eventInfo = new EventInfo(Events.TypeCountChanged, Enemy_Player_ENUM.Player, KeyWordType.Hollow);
                 triggerEventGA = new(eventInfo, null, null, null, null);
                 ActionSystem.Instance.AddReaction(triggerEventGA);
@@ -363,17 +364,17 @@ public class PermanentView : MonoBehaviour
 
             eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Player, KeyWordType.NULL, BasicParam.Power);
             triggerEventGA = new(eventInfo, null, null, this, null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);            
-        }  
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
 
-        UpdatePowerText(); 
+        UpdatePowerText();
     }
-    
+
     public void UpdateMaxLife()
     {
         if (CardReferenceArchive == null) return;
         int oldMaxLife = MaxLife;
-        int passiveBonus = CardReferenceArchive.CalculateBonusMaxLife(null,this);
+        int passiveBonus = CardReferenceArchive.CalculateBonusMaxLife(null, this);
         MaxLife = CardReferenceArchive.Life + passiveBonus;
 
         if (MaxLife <= 0)
@@ -406,7 +407,7 @@ public class PermanentView : MonoBehaviour
             currentLife = MaxLife;
         }
 
-        if (currentLife <= 0)
+        if (currentLife <= 0 && !IsDead)
         {
             DiePermanentGA diePermanentGA = new(IsCore, Durability, CardReferenceArchive, this);
             ActionSystem.Instance.AddReaction(diePermanentGA);
@@ -431,18 +432,18 @@ public class PermanentView : MonoBehaviour
 
             eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Player, KeyWordType.NULL, BasicParam.Life);
             triggerEventGA = new(eventInfo, null, null, this, null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);            
-        }  
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
 
         UpdateLifeText();
     }
-    
+
     public void UpdateMaxStam()
     {
         if (IsCore) return;
         if (CardReferenceArchive == null) return;
         int OldMaxDurability = MaxDurability;
-        int passiveBonus = CardReferenceArchive.CalculateBonusStam(null,this);
+        int passiveBonus = CardReferenceArchive.CalculateBonusStam(null, this);
         MaxDurability = BaseMaxDurability + passiveBonus;
 
         if (Durability > MaxDurability)
@@ -503,8 +504,8 @@ public class PermanentView : MonoBehaviour
 
             eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Player, KeyWordType.NULL, BasicParam.Durability);
             triggerEventGA = new(eventInfo, null, null, this, null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);            
-        }         
+            ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
     }
 
     public void TakeDamage(int Amount, Card CardActionner = null, GameObject Actionner = null)
@@ -537,7 +538,7 @@ public class PermanentView : MonoBehaviour
         {
             transform.DOShakePosition(0.2f, 0.5f);
 
-            eventInfo = new EventInfo(Events.OnSelfDamaged, Enemy_Player_ENUM.NULL, KeyWordType.NULL,BasicParam.NULL);
+            eventInfo = new EventInfo(Events.OnSelfDamaged, Enemy_Player_ENUM.NULL, KeyWordType.NULL, BasicParam.NULL);
             triggerEventGA = new(eventInfo, null, null, this, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
@@ -570,7 +571,7 @@ public class PermanentView : MonoBehaviour
 
         if (Amount > 0)
         {
-            eventInfo = new EventInfo(Events.WhenPermaLoseParam, Enemy_Player_ENUM.Player, KeyWordType.NULL,BasicParam.Life);
+            eventInfo = new EventInfo(Events.WhenPermaLoseParam, Enemy_Player_ENUM.Player, KeyWordType.NULL, BasicParam.Life);
             triggerEventGA = new(eventInfo, null, null, this, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
 
@@ -587,7 +588,7 @@ public class PermanentView : MonoBehaviour
                 RuntimeManager.PlayOneShot(BeingDamageSound);
                 DiePermanentGA diePermanentGA = new(IsCore, Durability, CardReferenceArchive, this);
                 ActionSystem.Instance.AddReaction(diePermanentGA);
-                
+
                 if (Pstriker != null)
                 {
                     if (Pstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Collateral) && KeyWords.Any(k => k.keyWordType == KeyWordType.Ward))
@@ -630,7 +631,7 @@ public class PermanentView : MonoBehaviour
 
     public void OnKillTrigger(PermanentView Pstriker, EnemySlotView Estriker, Card Cstriker)
     {
-        EventInfo eventInfo = new EventInfo(Events.OnSelfKill, Enemy_Player_ENUM.NULL, KeyWordType.NULL,BasicParam.NULL);
+        EventInfo eventInfo = new EventInfo(Events.OnSelfKill, Enemy_Player_ENUM.NULL, KeyWordType.NULL, BasicParam.NULL);
         TriggerEventGA triggerEventGA = new(eventInfo, null, Cstriker, Pstriker, Estriker);
         ActionSystem.Instance.AddReaction(triggerEventGA);
     }
@@ -641,19 +642,19 @@ public class PermanentView : MonoBehaviour
         if (IsCore) return;
         if (Pstriker != null)
         {
-            List<PermanentView> targets_Player = new List<PermanentView>{};
+            List<PermanentView> targets_Player = new List<PermanentView> { };
             foreach (PermanentView item in PlayerShielded)
             {
                 targets_Player.Add(item);
             }
-            List<EnemySlotView> targets_Enemy = new List<EnemySlotView>{};
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { };
             foreach (EnemySlotView item in EnemyShielded)
             {
                 targets_Enemy.Add(item);
             }
 
             CounterTypeInfo counterTypeInfo = new();
-            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL,Enemy_Player_ENUM.NULL,KeyWordType.NULL,counterTypeInfo,BasicParam.NULL,false,CardLocation.NULL);
+            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL, Enemy_Player_ENUM.NULL, KeyWordType.NULL, counterTypeInfo, BasicParam.NULL, false, CardLocation.NULL);
             DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, dynamicAmountInfo, targets_Player, targets_Enemy);
             dealDamageGA.Actionner = Pstriker.gameObject;
             dealDamageGA.SourceEffect = new DealDamageEffect();
@@ -664,19 +665,19 @@ public class PermanentView : MonoBehaviour
         }
         else if (Estriker != null)
         {
-            List<PermanentView> targets_Player = new List<PermanentView>{};
+            List<PermanentView> targets_Player = new List<PermanentView> { };
             foreach (PermanentView item in PlayerShielded)
             {
                 targets_Player.Add(item);
             }
-            List<EnemySlotView> targets_Enemy = new List<EnemySlotView>{};
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { };
             foreach (EnemySlotView item in EnemyShielded)
             {
                 targets_Enemy.Add(item);
             }
 
             CounterTypeInfo counterTypeInfo = new();
-            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL,Enemy_Player_ENUM.NULL,KeyWordType.NULL,counterTypeInfo,BasicParam.NULL,false,CardLocation.NULL);
+            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL, Enemy_Player_ENUM.NULL, KeyWordType.NULL, counterTypeInfo, BasicParam.NULL, false, CardLocation.NULL);
             DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, dynamicAmountInfo, targets_Player, targets_Enemy);
             dealDamageGA.Actionner = Estriker.gameObject;
             dealDamageGA.SourceEffect = new DealDamageEffect();
@@ -687,19 +688,19 @@ public class PermanentView : MonoBehaviour
         }
         else if (Cstriker != null)
         {
-            List<PermanentView> targets_Player = new List<PermanentView>{};
+            List<PermanentView> targets_Player = new List<PermanentView> { };
             foreach (PermanentView item in PlayerShielded)
             {
                 targets_Player.Add(item);
             }
-            List<EnemySlotView> targets_Enemy = new List<EnemySlotView>{};
+            List<EnemySlotView> targets_Enemy = new List<EnemySlotView> { };
             foreach (EnemySlotView item in EnemyShielded)
             {
                 targets_Enemy.Add(item);
             }
 
             CounterTypeInfo counterTypeInfo = new();
-            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL,Enemy_Player_ENUM.NULL,KeyWordType.NULL,counterTypeInfo,BasicParam.NULL,false,CardLocation.NULL);
+            DynamicAmountInfo dynamicAmountInfo = new(DynamicAmount.NULL, Enemy_Player_ENUM.NULL, KeyWordType.NULL, counterTypeInfo, BasicParam.NULL, false, CardLocation.NULL);
             DealDamageGA dealDamageGA = new(false, CollateralAmount, 1, dynamicAmountInfo, targets_Player, targets_Enemy);
             dealDamageGA.CardActionner = Cstriker;
             dealDamageGA.SourceEffect = new DealDamageEffect();
@@ -788,7 +789,7 @@ public class PermanentView : MonoBehaviour
         {
             EnemyShielder.Remove(enemyShielder);
         }
-        UpdateShield();        
+        UpdateShield();
     }
 
     public void UnShield(PermanentView playerShielder = null, EnemySlotView enemyShielder = null)
@@ -919,7 +920,7 @@ public class PermanentView : MonoBehaviour
         UpdateBonusStamAmount();
         UpdateMaxStam();
     }
-    
+
     public void UpdateBonusPowerAmount()
     {
         CardReferenceArchive.BonusPower = 0;
@@ -927,7 +928,7 @@ public class PermanentView : MonoBehaviour
         {
             if (Ga is AlterPowerGA)
             {
-                AlterPowerGA alterPowerGa = (AlterPowerGA) Ga;
+                AlterPowerGA alterPowerGa = (AlterPowerGA)Ga;
                 CardReferenceArchive.BonusPower += alterPowerGa.Amount;
             }
         }
@@ -945,7 +946,7 @@ public class PermanentView : MonoBehaviour
             }
         }
     }
-    
+
     public void UpdateBonusStamAmount()
     {
         CardReferenceArchive.BonusStam = 0;
@@ -965,7 +966,7 @@ public class PermanentView : MonoBehaviour
         if (Amount <= 0) return;
 
         transform.DOShakePosition(0.2f, 0.5f);
-        EventInfo eventInfo = new EventInfo(Events.OnSelfDamaged, Enemy_Player_ENUM.NULL, KeyWordType.NULL,BasicParam.NULL);
+        EventInfo eventInfo = new EventInfo(Events.OnSelfDamaged, Enemy_Player_ENUM.NULL, KeyWordType.NULL, BasicParam.NULL);
         TriggerEventGA triggerEventGA = new(eventInfo, null, null, this, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 
@@ -987,11 +988,11 @@ public class PermanentView : MonoBehaviour
 
             eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Player, KeyWordType.NULL, BasicParam.Life);
             triggerEventGA = new(eventInfo, null, null, this, null);
-            ActionSystem.Instance.AddReaction(triggerEventGA);            
+            ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
         currentLife -= Amount;
-        if (currentLife <= 0)
+        if (currentLife <= 0 && !IsDead)
         {
             DiePermanentGA diePermanentGA = new(IsCore, Durability, CardReferenceArchive, this);
             ActionSystem.Instance.AddReaction(diePermanentGA);
@@ -1004,10 +1005,10 @@ public class PermanentView : MonoBehaviour
 
         UpdateLifeText();
     }
-    
+
     public void Refresh()
     {
-        foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,this,null))
+        foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null, this, null))
         {
             foreach (EventInfo item in effect.EventInfos)
             {
@@ -1042,11 +1043,10 @@ public class PermanentView : MonoBehaviour
             c.a = 1f;
             PermanentSpriteRenderer.color = c;
         }
-        
-        if(SoundUp)
+
+        if (SoundUp)
         {
             RuntimeManager.PlayOneShot(UnSelectedSound);
         }
     }
-
 }

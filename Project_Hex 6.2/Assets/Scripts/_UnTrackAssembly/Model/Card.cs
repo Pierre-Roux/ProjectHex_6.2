@@ -9,7 +9,6 @@ public class Card
     public string Title;
     public string Description => data.Description;
     public Sprite SpriteImage => data.SpriteImage;
-    public PermanentArea permanentArea => data.permanentArea;
 
     public int Rarity { get; private set; }
     public bool IsSpell { get; private set; }
@@ -172,7 +171,7 @@ public class Card
         if (combatSystem == null) return 0;
         int passiveBonus = combatSystem.GetPassive(BasicParam.Power,Enemy_Player_ENUM.Player,card,permanentView,null);
         int finalDMG = BonusPower + passiveBonus;
-        
+
         return finalDMG;
     }
 

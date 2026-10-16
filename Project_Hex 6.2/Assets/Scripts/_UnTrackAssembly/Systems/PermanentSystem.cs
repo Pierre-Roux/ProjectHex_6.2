@@ -64,7 +64,7 @@ public class PermanentSystem : Singleton<PermanentSystem>
 
         for (int i = 0; i < nbCopie; i++)
         {
-            PermanentViewCreator.Instance.CreatePermanentViewCreator(cardToSummon, cardToSummon.permanentArea);
+            PermanentViewCreator.Instance.CreatePermanentViewCreator(cardToSummon);
         }
     
         foreach (CopyVarGroup varGroup in copyVarGroupUsed)
@@ -86,10 +86,6 @@ public class PermanentSystem : Singleton<PermanentSystem>
         ActionSystem.Instance.AddReaction(spendManaGA);
 
         eventInfo = new EventInfo(Events.WhenPlayType, Enemy_Player_ENUM.Player, KeyWordType.PermaCard);
-        triggerEventGA = new(eventInfo, null, null, null, null);
-        ActionSystem.Instance.AddReaction(triggerEventGA);
-
-        eventInfo = new EventInfo(Events.WhenPlayType, Enemy_Player_ENUM.Player, KeyWordType.SpellCard);
         triggerEventGA = new(eventInfo, null, null, null, null);
         ActionSystem.Instance.AddReaction(triggerEventGA);
 

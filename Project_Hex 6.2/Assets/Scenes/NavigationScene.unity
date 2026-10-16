@@ -2311,7 +2311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 2104546748}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -4290,6 +4290,10 @@ MonoBehaviour:
   cardViewPrefab: {fileID: 4876958082620138424, guid: c68f7dfa85d4e8645945b0060592f244, type: 3}
   cardViewPrefabUI: {fileID: 4876958082620138424, guid: 88033b708d8ff50438d34dc0af632c5d, type: 3}
   CardParent: {fileID: 0}
+  CardInfoScale: 0
+  CardInfoAnimSpeed: 0
+  CardInfoPos: {x: 0, y: 0, z: 0}
+  CardInfoRot: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1825422954
 GameObject:
   m_ObjectHideFlags: 0

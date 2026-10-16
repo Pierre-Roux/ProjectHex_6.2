@@ -18,6 +18,7 @@ public class AlterCostEffect : Effect
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
     [SerializeField] public bool passive;
+    public override bool IsPassive => passive;
 
     [Header("For Manual Target only")]
     [SerializeField] private bool TargetUpTo = true;

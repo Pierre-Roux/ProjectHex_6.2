@@ -4,6 +4,7 @@ using DG.Tweening;
 using FMODUnity;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -34,6 +35,8 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
     [HideInInspector] public bool IsReward;
     [HideInInspector] public bool IsShopCard;
+    [HideInInspector] public bool IsInfoCard;
+    [HideInInspector] public bool IsDeckViewCard;
     [HideInInspector] public bool RewardTaken;
     [HideInInspector] public ShopSlot shopSlot;
     [HideInInspector] public bool isDragging = false;
@@ -54,6 +57,8 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     [HideInInspector] public int CurrentPower;
     [HideInInspector] public int CurrentLife;
 
+    [HideInInspector] public SlotView slotView;
+    [HideInInspector] public PermanentView GhostView;
 
     public void Setup(Card card)
     {
@@ -115,11 +120,61 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
             Life.gameObject.SetActive(false);
             Power.gameObject.SetActive(false);
 
-            
+
         }
 
         if (AudioManager.Instance.IsValid(card.CardSelectedSound)) CardSelectedSound = card.CardSelectedSound;
         if (AudioManager.Instance.IsValid(card.CardUnSelectedSound)) CardUnSelectedSound = card.CardUnSelectedSound;
+    }
+    
+    // Utilisé pour afficher une carte enemy pour la bulle d'info
+    public void SetupEnemy(EnemyPermanentData data)
+    {
+        if (TryGetComponent<SortingGroup>(out var sr))
+        {
+            OriginalSortingOrder = sr.sortingOrder;
+        }
+
+        Title.text = data.Title;
+        name = Title.text;
+        Description.text = data.Description;
+
+        if (IsUI)
+        {
+            ImageUI.sprite = data.SpriteImage;
+            ImageUI.SetNativeSize();
+        }
+        else
+        {
+            ImageSpriteRenderer.sprite = data.SpriteImage;
+        }
+
+        // On cache les Text param inutiles
+        bool HasPower = false;
+        Life.gameObject.SetActive(true);
+        cost.gameObject.SetActive(false);
+        foreach (Effect effect in data.PossibleIntent)
+        {
+            if (ContainsPowerBasedDamage(effect))
+            {
+                HasPower = true;
+                break;
+            }
+        }
+
+        if (HasPower)
+        {
+            Power.gameObject.SetActive(true);
+            Power.text = Mathf.Max(0, data.Power).ToString();
+        }
+        else
+        {
+            Power.gameObject.SetActive(false);
+        }
+
+        Life.text = Mathf.Max(0, data.Life).ToString();
+        
+        
     }
 
     private bool ContainsPowerBasedDamage(Effect effect)
@@ -173,6 +228,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     private void UpdateCost()
     {
         int TotalCost = Card.cost + Card.CalculateBonusCost();
+        Debug.Log("Update cost " + Card.cost + " + " + Card.CalculateBonusCost());
         CurrentCost = TotalCost;
         UpdateCostText();
     }
@@ -209,14 +265,14 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     // UI HOVER SYSTEM
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!IsUI) return;
+        if (!IsUI || IsInfoCard) return;
         Wrapper.transform.DOKill(); 
         Wrapper.transform.DOScale(Vector3.one * hoverScale, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!IsUI) return;
+        if (!IsUI || IsInfoCard) return;
         Wrapper.transform.DOKill();
         Wrapper.transform.DOScale(Vector3.one, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
     }
@@ -224,7 +280,8 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     // Traitement des manipulations de carte sur l'UI
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!IsReward)
+        if (eventData.button != PointerEventData.InputButton.Left) return;
+        if (!IsReward && !IsInfoCard && !IsDeckViewCard)
         {
             if (IsChoiceCard && !IsInvalidChoice)
             {
@@ -249,7 +306,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                 Wrapper.transform.DOKill();
                 Wrapper.transform.DOLocalMove(Vector3.zero, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);
                 Wrapper.transform.DOLocalRotate(Vector3.zero, HoverScaleAnimationSpeed).SetEase(Ease.OutBack);          
-                Wrapper.SetActive(true);
+                Wrapper.SetActive(true);                  
             }
         }
         else if (IsReward)
@@ -270,6 +327,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (eventData.button != PointerEventData.InputButton.Left) return;
         if (isDragging && IsUI)
         {
             if (IsScryCard || IsReward)
@@ -328,6 +386,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
     void OnMouseDown()
     {
+        if (!Input.GetMouseButtonDown(0)) return;
         if (!IsReward)
         {
             if (ActionSystem.Instance.IsPerforming) return;
@@ -341,6 +400,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
     void OnMouseUp()
     {
+        if (!Input.GetMouseButtonUp(0)) return;
         if (isDragging)
         {
             StartCoroutine(ManageMouseUp());
@@ -473,30 +533,15 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                     if (hitDropArea)
                     {
                         GameObject Parent = null;
-                        switch (Card.permanentArea)
+                        if (SlotSystem.Instance.GetFreeSlot(Enemy_Player_ENUM.Player) == null)
                         {
-                            case PermanentArea.Weapon:
-                                Parent = CombatSystem.Instance.PlayerWeaponZone.gameObject;
-                                break;
-                            case PermanentArea.Shield:
-                                Parent = CombatSystem.Instance.PlayerShieldZone.gameObject;
-                                break;
-                            case PermanentArea.Support:
-                                Parent = CombatSystem.Instance.PlayerSupportZone.gameObject;
-                                break;
-                            default:
-                                Debug.LogError("No Type For Perm " + Card.data.name);
-                                break;
+                            // LimitReached
+                            returnCardToHand(true);
                         }
-                        if (Parent != null)
+                        else
                         {
-                            int childCount = Parent.transform.childCount;
-                            if (childCount >= CombatSystem.Instance.MaxPermPlayer)
-                            {
-                                // LimitReached
-                                returnCardToHand(true);
-                            }
-                            else
+                            Parent = slotView.gameObject;                       
+                            if (Parent != null)
                             {
                                 foreach (var effect in Card.Effects)
                                 {
@@ -510,6 +555,15 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                                         }
                                     }
                                 }
+
+                                if (GhostView != null)
+                                {
+                                    //EnemySystem.Instance.RemoveVisualTargeting();
+                                    CombatSystem.Instance.Player_Permanents.Remove(GhostView);
+                                    Destroy(GhostView.gameObject);
+                                    slotView = null;
+                                }
+
                                 isDragging = false;
                                 SummonGA summonGA = new(Card);
                                 ActionSystem.Instance.Perform(summonGA);
@@ -522,7 +576,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                                 CounterSystem.Instance.Add(counterTypeInfo);
                                 counterTypeInfo = new CounterTypeInfo(true, true, Enemy_Player_ENUM.Player,KeyWordType.NULL,CounterType.PermanentCast);
                                 CounterSystem.Instance.Add(counterTypeInfo);
-                            }
+                            }                            
                         }
                     }
                     else
@@ -542,6 +596,13 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
     public void returnCardToHand(bool ErrorSound = false)
     {
+        if (GhostView != null)
+        {
+            EnemySystem.Instance.RemoveVisualTargeting();
+            CombatSystem.Instance.Player_Permanents.Remove(GhostView);
+            Destroy(GhostView.gameObject);
+            slotView = null;
+        }
         isDragging = false;
         HandView handView = HandView.Instance;
         transform.DOKill();
@@ -594,7 +655,32 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
                 Vector3 mousePos = GetMouseWorldPositionOnZ(0);
                 DOTween.Kill(gameObject);
                 transform.DOMove(mousePos, 0.25f).SetEase(Ease.OutCubic);
-                transform.DORotate(Vector3.zero,0.25f);
+                transform.DORotate(Vector3.zero, 0.25f);
+                if (!Card.IsSpell)
+                {
+                    //Instanciate fantome
+                    if (slotView == null)
+                    {
+                        slotView = SlotSystem.Instance.GetFreeSlot(Enemy_Player_ENUM.Player);
+                        if (slotView != null)
+                        {
+                            GhostView = PermanentViewCreator.Instance.CreatePermanentViewCreator(Card, false, slotView, true);
+                            SpriteRenderer renderer = GhostView.GetComponentInChildren<SpriteRenderer>();
+
+                            CombatSystem.Instance.Player_Permanents.Add(GhostView);
+
+                            if (renderer != null)
+                            {
+                                Color color = renderer.color;
+                                color.a = 0.3f;
+                                renderer.color = color;
+                            }
+                            
+                            Debug.Log(" ------------------Ghost REMAP--------------------");
+                            EnemySystem.Instance.RemapTarget(false, true, GhostView);         
+                        }
+                    }
+                }
             }           
         }
     }

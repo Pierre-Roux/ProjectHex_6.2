@@ -22,9 +22,12 @@ public class SacEffect : Effect
 
     public SacEffect() { }
 
-    public SacEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
+    public SacEffect(string effectID, bool activateToolTip, int priority, bool dynamicTargeting, List<PermanentView> preTargetPermanentView, List<EnemySlotView> preTargetEnemySlotView, bool hollowEffect, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        DynamicTargeting = dynamicTargeting;
+        PreTargetPermanentView = preTargetPermanentView;
+        PreTargetEnemySlotView = preTargetEnemySlotView;
         HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
@@ -92,6 +95,15 @@ public class SacEffect : Effect
                 startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
+            if (DynamicTargeting)
+            {
+                SacGA sacGA = new(PreTargetPermanentView, PreTargetEnemySlotView);
+                sacGA.CardActionner = CardActionner;
+                sacGA.SourceEffect = this;
+                sacGA.ActivateToolTip = ActivateToolTip;
+                sacGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_SacSound : SFX;
+                return sacGA;
+            }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 SacGA sacGA = new(ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
@@ -138,7 +150,12 @@ public class SacEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -179,7 +196,12 @@ public class SacEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -224,12 +246,23 @@ public class SacEffect : Effect
             ? new List<EnemySlotView>(TargetForLinked_Enemy)
             : null;
 
+        var clonedPrePlayerTargets = PreTargetPermanentView != null
+            ? new List<PermanentView>(PreTargetPermanentView)
+            : null;
+            
+        var clonedPreEnemyTargets = PreTargetEnemySlotView != null 
+            ? new List<EnemySlotView>(PreTargetEnemySlotView) 
+            : null;
+
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new SacEffect(
             EffectID,
             ActivateToolTip,
             Priority,
+            DynamicTargeting,
+            clonedPrePlayerTargets,
+            clonedPreEnemyTargets,
             HollowEffect,
             ActivateNumber,
             ActivateLeft,

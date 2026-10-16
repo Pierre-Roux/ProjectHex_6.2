@@ -21,9 +21,9 @@ public class DeckViewSystem : Singleton<DeckViewSystem>
             {
                 cardView.gameObject.layer = LayerMask.NameToLayer("ExhaustedCardView");
                 // Ici IsReward n'est pas utilisé réellement en tant que Reward mais juste pour bloquer les fonctionalitées de la carte 
-                cardView.IsReward = true;
             }
             cardView.gameObject.GetComponent<SortingGroup>().sortingLayerName = "UI";
+            cardView.IsDeckViewCard = true;
         }
     }
 

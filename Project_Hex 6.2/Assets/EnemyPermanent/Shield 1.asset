@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Shield 1
   m_EditorClassIdentifier: 
   Title: Shield
+  Description: Shield Core
   PermanentImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
+  SpriteImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
   Life: 5
   Power: 0
   Armor: 0

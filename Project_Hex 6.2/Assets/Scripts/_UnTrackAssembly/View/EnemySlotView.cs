@@ -14,7 +14,9 @@ public class EnemySlotView : MonoBehaviour
     [SerializeField] public TMP_Text LifeText;
     [SerializeField] public TMP_Text PowerText;
     [SerializeField] TMP_Text ArmorText;
-    [SerializeField] public TMP_Text IntentText;
+    [SerializeField] public SpriteRenderer IntentLogo;
+    [SerializeField] public SpriteRenderer DownLogo;
+    [SerializeField] public SpriteRenderer LockLogo;
     [SerializeField] public SpriteRenderer spriteRenderer;
     [SerializeField] SpriteRenderer AuraSpriteRenderer;
     [SerializeField] public GameObject ShieldVisual;
@@ -46,10 +48,14 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public bool IsCore { get; set; }
     [HideInInspector] public bool IsDisabled = false;
     [HideInInspector] public bool IsDead = false;
+    [HideInInspector] public bool IsVirtualDead = false;
+    [HideInInspector] public PermanentView VirtualTarget = null;
+    [HideInInspector] public bool AsGoodTarget = false;
+    [HideInInspector] public int VirtualHP = 0;
+    [SerializeField] public bool TargetLocked = false;
     [HideInInspector] public Vector3 InitialPosition { get; set; }
     [HideInInspector] public int BonusPower { get; set; }
     [HideInInspector] public int BonusLife { get; set; }
-    [HideInInspector] public PermanentArea permanentArea;
 
     [HideInInspector] public List<PermanentView> PlayerShielder = new();
     [HideInInspector] public List<EnemySlotView> EnemyShielder = new();
@@ -92,6 +98,31 @@ public class EnemySlotView : MonoBehaviour
         LoopingSequence = PermanentData.LoopingSequence;
         deactivateAuraVisual();
 
+        // Gestion des logos
+        DownLogo.sprite = null;
+        foreach (Effect effect in PossibleIntent)
+        {
+            if (ContainsDeathTrigger(effect))
+            {
+                DownLogo.sprite = combatSystem.DeathTriggerSprite;
+                break;
+            }
+        }
+
+        var WardbreakKeyword = KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Collateral);
+        if (WardbreakKeyword != null)
+        {
+            DownLogo.sprite = combatSystem.WardbreakSprite;
+        }
+
+        if (DownLogo.sprite == null)
+        {
+            DownLogo.gameObject.SetActive(false);
+        }
+
+        UpdateLockLogo(false);
+
+        // Gestion de l'affichage des textes
         bool HasPower = false;
         foreach (Effect effect in PossibleIntent)
         {
@@ -135,13 +166,10 @@ public class EnemySlotView : MonoBehaviour
 
         if (IsCore)
         {
-            permanentArea = PermanentArea.NONE;
+            DownLogo.gameObject.SetActive(false);
+            IntentLogo.gameObject.SetActive(false);
             KeyWord keyWord = new(KeyWordType.Core, 0);
             KeyWords.Add(keyWord);
-        }
-        else
-        {
-            permanentArea = PermanentData.permanentArea;
         }
 
         //Audio
@@ -194,21 +222,52 @@ public class EnemySlotView : MonoBehaviour
         return false;
     }
 
+    private bool ContainsDeathTrigger(Effect effect)
+    {
+        foreach (EventInfo eventInfo in effect.EventInfos)
+        {
+            if (eventInfo.Events == Events.OnSelfDeath)
+            {
+                return true;
+            }
+        }
+
+        if (effect is EffectGroup effectGroup)
+        {
+            foreach (Effect childEffect in effectGroup.EffectGroups)
+            {
+                if (ContainsDeathTrigger(childEffect))
+                    return true;
+            }
+        }
+
+        if (effect is ChoiceEffect choiceEffect)
+        {
+            foreach (Effect childEffect in choiceEffect.EffectsForPlayerChoice)
+            {
+                if (ContainsDeathTrigger(childEffect))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     private void OnEnable()
     {
-        if (combatSystem != null)
+        if (CombatSystem.Instance != null)
         {
-            combatSystem.PassivesChanged += UpdatePower;
-            combatSystem.PassivesChanged += UpdateMaxLife;
-        }  
+            CombatSystem.Instance.PassivesChanged += UpdatePower;
+            CombatSystem.Instance.PassivesChanged += UpdateMaxLife;
+        }
     }
 
     private void OnDisable()
     {
-        if (combatSystem != null)
+        if (CombatSystem.Instance != null)
         {
-            combatSystem.PassivesChanged -= UpdatePower;
-            combatSystem.PassivesChanged -= UpdateMaxLife;
+            CombatSystem.Instance.PassivesChanged -= UpdatePower;
+            CombatSystem.Instance.PassivesChanged -= UpdateMaxLife;
         }
     }
 
@@ -272,7 +331,11 @@ public class EnemySlotView : MonoBehaviour
 
     public void UpdateIntent()
     {
-        if (PossibleIntent.Count <= 0) return;
+        if (PossibleIntent.Count <= 0)
+        {
+            IntentLogo.gameObject.SetActive(false);
+            return;
+        } 
         Effect selectedEffect = null;
 
         if (RDMSequence)
@@ -288,6 +351,7 @@ public class EnemySlotView : MonoBehaviour
         {
             if (IntentSequence.Count == 0)
             {
+                IntentLogo.gameObject.SetActive(false);
                 return;
             }
 
@@ -296,7 +360,10 @@ public class EnemySlotView : MonoBehaviour
                 if (LoopingSequence)
                     sequenceIndex = 0;
                 else
+                {
+                    IntentLogo.gameObject.SetActive(false);
                     return;
+                }
             }
 
             string currentKey = IntentSequence[sequenceIndex];
@@ -324,6 +391,7 @@ public class EnemySlotView : MonoBehaviour
         if (selectedEffect != null)
         {
             IntentAction = selectedEffect.Clone();
+            selectedEffect.CopyEnemyDataTo(IntentAction);
             if (IntentAction is EffectGroup)
             {
                 IntentAction.Actionner = this.gameObject;
@@ -332,70 +400,158 @@ public class EnemySlotView : MonoBehaviour
                 {
                     Effect.Actionner = this.gameObject;
                 }
-                UpdateIntentText(selectedEffect); 
+                UpdateIntentLogo(selectedEffect); 
             }
             else
             {
                 IntentAction.Actionner = this.gameObject;
-                UpdateIntentText(selectedEffect);                
+                UpdateIntentLogo(selectedEffect);                
             }
+        }
+    }
+
+    public void UpdateLockLogo(bool active)
+    {
+        if (active)
+        {
+            LockLogo.gameObject.SetActive(true);
         }
         else
         {
-            IntentText.text = "!";
+            LockLogo.gameObject.SetActive(false);
         }
     }
 
-    public void UpdateIntentText(Effect selectedEffect)
+    public void UpdateIntentLogoColor(bool Lock)
+    {
+        if (Lock)
+        {
+
+            IntentLogo.color = Color.red;
+        }
+        else
+        {
+            IntentLogo.color = Color.orange;
+        }
+    }
+
+    public void UpdateIntentLogo(Effect selectedEffect)
     {
         if (selectedEffect == null) return;
 
-        string intentText = selectedEffect.Intent_Title; // fallback
-
+        Sprite sprite = null;
         switch (selectedEffect)
         {
             case DealDamageEffect dmg:
-                int damagetext;
-                if (dmg.powerBased)
+                if (dmg.targetModeInfo.targetMode == TargetMode.All)
                 {
-                    damagetext = currentPower;
+                    sprite = combatSystem.DamageAOESprite;
+                }
+                else if (dmg.MultiHit > 1)
+                {
+                    sprite = combatSystem.DamageMultiSprite;
                 }
                 else
                 {
-                    damagetext = dmg.damageAmount;
+                    sprite = combatSystem.DamageMonoSprite;
                 }
-                intentText = $"Deal {damagetext} damage to {dmg.targetModeInfo.targetMode}";
                 break;
 
             case HealEffect heal:
-                intentText = $"Heal {heal.amount} HP to {heal.targetModeInfo.targetMode}";
+                sprite = combatSystem.HealSprite;
                 break;
 
             case ArmorEffect Armor:
-                intentText = $"Armor {Armor.amount} HP to {Armor.targetModeInfo.targetMode}";
-                break;
-
-            case DrawCardsEffect draw:
-                intentText = $"Draw {draw.drawAmount} cards";
+                sprite = combatSystem.BuffSprite;
                 break;
 
             case ShieldEffect shield:
-                intentText = $"Shield {shield.targetModeInfo.targetMode} ";
+                sprite = combatSystem.WardSprite;
                 break;
 
             case AlterPowerEffect alter:
-                intentText = $"Alter power by {alter.alterAmount} of {alter.targetModeInfo.targetMode}";
+                if (alter.alterAmount > 0)
+                {
+                    sprite = combatSystem.BuffSprite;
+                }
+                else
+                {
+                    sprite = combatSystem.DebuffSprite;
+                }
+                break;
+            case AlterPowerGridEffect alter:
+                if (alter.Amount > 0)
+                {
+                    sprite = combatSystem.BuffSprite;
+                }
+                else
+                {
+                    sprite = combatSystem.DebuffSprite;
+                }
+                break;
+            case AlterCostEffect alter:
+                if (alter.alterAmount > 0)
+                {
+                    sprite = combatSystem.BuffSprite;
+                }
+                else
+                {
+                    sprite = combatSystem.DebuffSprite;
+                }
+                break;
+            case AlterStaminaEffect alter:
+                if (alter.alterAmount > 0)
+                {
+                    sprite = combatSystem.BuffSprite;
+                }
+                else
+                {
+                    sprite = combatSystem.DebuffSprite;
+                }
+                break;
+            case GainHPEffect alter:
+                if (alter.GainAmount > 0)
+                {
+                    sprite = combatSystem.BuffSprite;
+                }
+                else
+                {
+                    sprite = combatSystem.DebuffSprite;
+                }
+                break;
+            case DisableEffect disable:
+                sprite = combatSystem.DebuffSprite;
+                break;
+            case EnableEffect enable:
+                sprite = combatSystem.BuffSprite;
+                break;
+            case InvocEffect invoc:
+                sprite = combatSystem.InvocSprite;
+                break;
+            case LifeLossEffect LifeLoss:
+                sprite = combatSystem.LifeLossSprite;
+                break;
+            case SacEffect Sac:
+                sprite = combatSystem.DebuffSprite;
                 break;
         }
 
-        IntentText.text = intentText;
+        if (sprite == null)
+        {
+            IntentLogo.gameObject.SetActive(false);
+        }
+        else
+        {
+            IntentLogo.gameObject.SetActive(true);
+            IntentLogo.sprite = sprite;
+            UpdateIntentLogoColor(false);
+        }
     }
-
     public int CalculateBonusPower()
     {
-        int passiveBonus = combatSystem.GetPassive(BasicParam.Power,Enemy_Player_ENUM.Enemy,null,null,this);
+        int passiveBonus = combatSystem.GetPassive(BasicParam.Power, Enemy_Player_ENUM.Enemy, null, null, this);
         int finalDMG = BonusPower + passiveBonus;
-        
+
         return finalDMG;
     }
 
@@ -443,7 +599,7 @@ public class EnemySlotView : MonoBehaviour
             currentLife = MaxLife;
         }
 
-        if (currentLife <= 0)
+        if (currentLife <= 0 && !IsDead)
         {
             DieEnemySlotGA dieEnemySlotGA = new(this);
             ActionSystem.Instance.AddReaction(dieEnemySlotGA);
@@ -755,7 +911,10 @@ public class EnemySlotView : MonoBehaviour
                     enemyShielder.GetComponent<EnemySlotView>().EnemyShielded.Add(this);
                 }
             }
-            UpdateShield();
+            if ((playerShielder != null) || (enemyShielder != null))
+            {
+                UpdateShield();
+            }
         }
     }
 
@@ -769,7 +928,10 @@ public class EnemySlotView : MonoBehaviour
         {
             EnemyShielder.Remove(enemyShielder);
         }
-        UpdateShield();        
+        if ((playerShielder != null) || (enemyShielder != null))
+        {
+            UpdateShield();
+        }       
     }
 
     public void UnShield(PermanentView playerShielder = null, EnemySlotView enemyShielder = null)
@@ -784,21 +946,27 @@ public class EnemySlotView : MonoBehaviour
             enemyShielder.GetComponent<EnemySlotView>().EnemyShielded.Remove(this);
             EnemyShielder.Remove(enemyShielder);
         }
-        UpdateShield();
+        if ((playerShielder != null) || (enemyShielder != null))
+        {
+            UpdateShield();
+        }
     }
 
     public void UpdateShield()
     {
-        if (PlayerShielder.Count != 0 || EnemyShielder.Count != 0)
+        if (ShieldVisual != null)
         {
-            ShieldVisual.SetActive(true);
-            Shielded = true;
-        }
-        else
-        {
-            RuntimeManager.PlayOneShot(LoseShieldSound);
-            ShieldVisual.SetActive(false);
-            Shielded = false;
+            if (PlayerShielder.Count != 0 || EnemyShielder.Count != 0)
+            {
+                ShieldVisual.SetActive(true);
+                Shielded = true;
+            }
+            else
+            {
+                RuntimeManager.PlayOneShot(LoseShieldSound);
+                ShieldVisual.SetActive(false);
+                Shielded = false;
+            }            
         }
     }
 
@@ -839,7 +1007,6 @@ public class EnemySlotView : MonoBehaviour
         {
             transform.DOShakePosition(0f, 0.1f);
         }
-        UpdateIntentText(IntentAction);
 
         UpdateBonusPowerAmount();
         UpdatePower();
@@ -927,7 +1094,7 @@ public class EnemySlotView : MonoBehaviour
         }
 
         currentLife -= Amount;
-        if (currentLife <= 0)
+        if (currentLife <= 0 && !IsDead)
         {
             DieEnemySlotGA dieEnemySlotGA = new(this);
             ActionSystem.Instance.AddReaction(dieEnemySlotGA);
@@ -979,7 +1146,7 @@ public class EnemySlotView : MonoBehaviour
         spriteRenderer.color = Color.white;
         if (SoundUp)
         {
-            RuntimeManager.PlayOneShot(UnSelectedSound);            
+            RuntimeManager.PlayOneShot(UnSelectedSound);
         }
     }
 }

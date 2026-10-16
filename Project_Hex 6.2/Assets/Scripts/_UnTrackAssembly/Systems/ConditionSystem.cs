@@ -644,7 +644,7 @@ public class ConditionSystem : Singleton<ConditionSystem>
                                         }
                                         else
                                         {
-                                            TestedParam = TargetPermanentView.CardReferenceArchive.Armor;
+                                            TestedParam = TargetPermanentView.CardReferenceArchive.Power;
                                         }
                                         if (TestedParam > Condition.TestValue)
                                         {
@@ -1378,52 +1378,12 @@ public class ConditionSystem : Singleton<ConditionSystem>
                             }                        
                             break;
 
+                        case DynamicCondition.ifTargetIsSelf:
+                            ConditionResult = Actionner != null && ((TargetPermanentView != null && TargetPermanentView.gameObject == Actionner) || (TargetEnemySlotView != null && TargetEnemySlotView.gameObject == Actionner));
+                            break;
+
                         case DynamicCondition.ifTargetIsNotSelf:
-                            if (TargetPermanentView != null)
-                            {
-                                PermanentView permanentView = Actionner.GetComponent<PermanentView>();
-                                if (permanentView != null)
-                                {
-                                    if (TargetPermanentView == permanentView)
-                                    {
-                                        ConditionResult = false;
-                                    }
-                                    else
-                                    {
-                                        ConditionResult = true;
-                                    }
-                                }
-                            }
-                            else if (TargetEnemySlotView != null)
-                            {
-                                EnemySlotView enemySlotView = Actionner.GetComponent<EnemySlotView>();
-                                if (enemySlotView != null)
-                                {
-                                    if (TargetEnemySlotView == enemySlotView)
-                                    {
-                                        ConditionResult = false;
-                                    }
-                                    else
-                                    {
-                                        ConditionResult = true;
-                                    }
-                                }                                
-                            }
-                            else if (TargetCard != null)
-                            {
-                                Card card = Actionner.GetComponent<Card>();
-                                if (card != null)
-                                {
-                                    if (TargetCard == card)
-                                    {
-                                        ConditionResult = false;
-                                    }
-                                    else
-                                    {
-                                        ConditionResult = true;
-                                    }
-                                }                                  
-                            }         
+                            ConditionResult = !(Actionner != null && ((TargetPermanentView != null && TargetPermanentView.gameObject == Actionner) || (TargetEnemySlotView != null && TargetEnemySlotView.gameObject == Actionner)));
                             break;
 
                         default:

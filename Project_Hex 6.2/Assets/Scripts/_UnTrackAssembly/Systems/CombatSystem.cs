@@ -27,15 +27,18 @@ public class CombatSystem : Singleton<CombatSystem>
 
     [SerializeField] public PowerGridUI PowerGridUI;
 
-    [SerializeField] public ZoneView PlayerWeaponZone;
-    [SerializeField] public ZoneView PlayerShieldZone;
-    [SerializeField] public ZoneView PlayerSupportZone;
-    [HideInInspector] public EnemyZoneView EnemyWeaponZone;
-    [HideInInspector] public EnemyZoneView EnemyShieldZone;
-    [HideInInspector] public EnemyZoneView EnemySupportZone;
+    [SerializeField] public Sprite DamageMonoSprite;
+    [SerializeField] public Sprite DamageMultiSprite;
+    [SerializeField] public Sprite DamageAOESprite;
+    [SerializeField] public Sprite LifeLossSprite;
+    [SerializeField] public Sprite HealSprite;
+    [SerializeField] public Sprite BuffSprite;
+    [SerializeField] public Sprite DebuffSprite;
+    [SerializeField] public Sprite WardSprite;
+    [SerializeField] public Sprite InvocSprite;
+    [SerializeField] public Sprite DeathTriggerSprite;
+    [SerializeField] public Sprite WardbreakSprite;
 
-    [HideInInspector] public int MaxPermPlayer;
-    [HideInInspector] public int MaxPermEnemy;
     [HideInInspector] public int MaxPowerGrid;
     [HideInInspector] public int CurrentPowerGrid;
 
@@ -71,6 +74,7 @@ public class CombatSystem : Singleton<CombatSystem>
 
             ActionSystem.SubscribeReaction<EndEnemyTurnGA>(EndEnemyTurnPostReaction, ReactionTiming.POST);
             ActionSystem.SubscribeReaction<EndPlayerTurnGA>(EndPlayerTurnPostReaction, ReactionTiming.POST);
+            ActionSystem.SubscribeReaction<SpawnConstructGA>(SpawnConstructPostReaction, ReactionTiming.POST);
 
             startFightSubscribed = true;
         }
@@ -91,6 +95,7 @@ public class CombatSystem : Singleton<CombatSystem>
 
             ActionSystem.UnsubscribeReaction<EndEnemyTurnGA>(EndEnemyTurnPostReaction, ReactionTiming.POST);
             ActionSystem.UnsubscribeReaction<EndPlayerTurnGA>(EndPlayerTurnPostReaction, ReactionTiming.POST);
+            ActionSystem.UnsubscribeReaction<SpawnConstructGA>(SpawnConstructPostReaction, ReactionTiming.POST);
 
             startFightSubscribed = false;
         }
@@ -122,8 +127,6 @@ public class CombatSystem : Singleton<CombatSystem>
 
         PlayerCore = CoreView;
 
-        MaxPermPlayer = 6;
-        MaxPermEnemy = 9;
         CardSystem.Instance.MaxHandCount = dataBase.MaxHandCount;
         CardSystem.Instance.NBCardDrawAtStartTurn = dataBase.NBCardDrawAtStartTurn;
         MaxPowerGrid = dataBase.MaxPowerGrid;
@@ -152,9 +155,7 @@ public class CombatSystem : Singleton<CombatSystem>
         EnemyView enemyView = SpawnedEnemy.GetComponent<EnemyView>();
         currentEnemy = enemyView;
         EnemySystem.Instance.enemyView = enemyView;
-        EnemySlotViewCreator.Instance.WeaponZone = EnemyWeaponZone = enemyView.WeaponZone;
-        EnemySlotViewCreator.Instance.ShieldZone = EnemyShieldZone = enemyView.ShieldZone;
-        EnemySlotViewCreator.Instance.SupportZone = EnemySupportZone = enemyView.SupportZone;
+        SlotSystem.Instance.EnemySlotGroupsGO = enemyView.EnemySlotGroupsGO;
         enemyView.Setup();
 
         ManaSystem.Instance.SetManaMax(DataBase.Instance.MaxMana);
@@ -205,7 +206,6 @@ public class CombatSystem : Singleton<CombatSystem>
         int TotalValue = 0;
         foreach (PassiveVarGroup passive in Passives)
         {
-            
             // on test d'abord si la nature du passif est la bonne
             if (passive.basicParam == basicParam)
             {
@@ -269,7 +269,6 @@ public class CombatSystem : Singleton<CombatSystem>
 
     public void AddPassive(GameObject owner, int value, BasicParam basicParam, TargetModeInfo targetModeInfo, List<DynamicConditionInfo> dynamicConditions)
     {
-        Debug.Log("add passive of " + owner.name);
         PassiveVarGroup passiveVarGroup = new PassiveVarGroup(owner, value, basicParam, targetModeInfo, dynamicConditions);
         Passives.Add(passiveVarGroup);
         PassivesChanged?.Invoke();
@@ -290,7 +289,6 @@ public class CombatSystem : Singleton<CombatSystem>
     // PERFORMER
     public IEnumerator DiePermanentPerformer(DiePermanentGA diePermanentGA)
     {
-        Debug.Log("PermanentDie : " + diePermanentGA.PermanentView.name + " core ? : " + diePermanentGA.IsCore);
         if (!diePermanentGA.IsCore)
         {
             var InvocKeyword = diePermanentGA.PermanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);
@@ -356,6 +354,7 @@ public class CombatSystem : Singleton<CombatSystem>
             {
                 if (diePermanentGA.PermanentView != null)
                 {
+                    Debug.Log(diePermanentGA.PermanentView.name + " die");
                     CurrentPowerGrid -= diePermanentGA.PermanentView.CardReferenceArchive.GridCost;
                     UpdatePowerGridText();
 
@@ -467,28 +466,27 @@ public class CombatSystem : Singleton<CombatSystem>
         yield return null;
         if (destroyPermanentGA.enemySlotView != null)
         {
+            SlotSystem.Instance.ClearSlot(null, destroyPermanentGA.enemySlotView);
             GameEventSystem.Instance.RemoveEffectsByActionner(destroyPermanentGA.enemySlotView.gameObject);
             Enemy_Permanents.Remove(destroyPermanentGA.enemySlotView);
             Destroy(destroyPermanentGA.enemySlotView.gameObject);
 
             yield return null;
-
-            EnemyWeaponZone.RepositionChildrenEnemySlotView();
-            EnemyShieldZone.RepositionChildrenEnemySlotView();
-            EnemySupportZone.RepositionChildrenEnemySlotViewCenterOut();
         }
 
         if (destroyPermanentGA.PermanentView != null)
         {
+            SlotSystem.Instance.ClearSlot(destroyPermanentGA.PermanentView, null);
             GameEventSystem.Instance.RemoveEffectsByActionner(destroyPermanentGA.PermanentView.gameObject);
             Player_Permanents.Remove(destroyPermanentGA.PermanentView);
+
+            if (!EnemySystem.Instance.EnemyTurnInProgress)
+            {
+                EnemySystem.Instance.OnPlayerPermanentRemoved(destroyPermanentGA.PermanentView);
+            }
+
             Destroy(destroyPermanentGA.PermanentView.gameObject);
-
             yield return null;
-
-            PlayerWeaponZone.RepositionChildrenPermanentView();
-            PlayerShieldZone.RepositionChildrenPermanentView();
-            PlayerSupportZone.RepositionChildrenPermanentViewCenterOut();
         }
     }
 
@@ -531,11 +529,16 @@ public class CombatSystem : Singleton<CombatSystem>
     private void StartFightPreReaction(StartFightGA startFightGA)
     {
         CurrentTurn = 0;
+
+        Debug.Log(" ------------------INIT REMAP--------------------");
+        EnemySystem.Instance.RemapTarget(false);
+
         List<Effect> effectList = startFightGA.enemyView.SetupEffects.OrderBy(e => e.Priority).ToList();
         foreach (Effect effect in effectList)
         {
             GameEventSystem.Instance.DoAction(effect);
         }
+
         DeckShuffleGA deckShuffleGA = new();
         ActionSystem.Instance.AddReaction(deckShuffleGA);
         PlayerTurnGA playerTurnGA = new();
@@ -593,8 +596,32 @@ public class CombatSystem : Singleton<CombatSystem>
 
         CurrentTurn++;
 
+        foreach (EnemySlotView enemySlotView in Enemy_Permanents)
+        {
+            enemySlotView.TargetLocked = false;
+            enemySlotView.VirtualTarget = null;
+        }
+
+        foreach (PermanentView permanentView in Player_Permanents)
+        {
+            permanentView.VirtualAttacker = new List<EnemySlotView>();
+            permanentView.IsVirtualDead = false;
+            permanentView.VirtualHP = permanentView.currentLife + permanentView.currentArmor;
+        }
+
         PlayerTurnGA playerTurnGA = new();
         ActionSystem.Instance.AddReaction(playerTurnGA);
+    }
+
+    private void SpawnConstructPostReaction(SpawnConstructGA spawnConstructGA)
+    {
+        foreach (EnemySlotView enemySlotView in Enemy_Permanents)
+        {
+            enemySlotView.UpdateLockLogo(false);
+            enemySlotView.UpdateIntentLogoColor(false);
+        }
+        EnemySystem.Instance.EnemyTurnInProgress = false;
+        EnemySystem.Instance.RemapTarget(false);
     }
 }
  

@@ -196,7 +196,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2490292341861307922
 RectTransform:
   m_ObjectHideFlags: 0
@@ -581,7 +581,6 @@ MonoBehaviour:
     Path: event:/UI/Unselection
   IsDisabled: 0
   IsDead: 0
-  permanentArea: 0
   PlayerShielder: []
   EnemyShielder: []
   PlayerShielded: []

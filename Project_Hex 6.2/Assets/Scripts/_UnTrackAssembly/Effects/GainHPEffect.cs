@@ -15,6 +15,7 @@ public class GainHPEffect : Effect
     [SerializeField] public DynamicAmountInfo DynamicAmountInfo;
     [SerializeField] public bool aditive = true;
     [SerializeField] public bool passive;
+    public override bool IsPassive => passive;
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
@@ -31,9 +32,12 @@ public class GainHPEffect : Effect
 
     public GainHPEffect() { }
 
-    public GainHPEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int gainAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
+    public GainHPEffect(string effectID, bool activateToolTip, int priority, bool dynamicTargeting, List<PermanentView> preTargetPermanentView, List<EnemySlotView> preTargetEnemySlotView, bool hollowEffect, int gainAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        DynamicTargeting = dynamicTargeting;
+        PreTargetPermanentView = preTargetPermanentView;
+        PreTargetEnemySlotView = preTargetEnemySlotView;
         HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
@@ -128,6 +132,15 @@ public class GainHPEffect : Effect
                     startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                     return startManualTargetingGA;
                 }
+                else if (DynamicTargeting)
+                {
+                    GainLifeGA gainLifeGA = new(GainAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, PreTargetPermanentView, PreTargetEnemySlotView, null);
+                    gainLifeGA.CardActionner = CardActionner;
+                    gainLifeGA.SourceEffect = this;
+                    gainLifeGA.ActivateToolTip = ActivateToolTip;
+                    gainLifeGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterIntegritySound : SFX;
+                    return gainLifeGA;
+                }
                 else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                 {
                     GainLifeGA gainLifeGA = new(GainAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, null);
@@ -186,7 +199,12 @@ public class GainHPEffect : Effect
                         List<PermanentView> playerTargets;
                         List<EnemySlotView> enemyTargets;
 
-                        if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                        if (DynamicTargeting)
+                        {
+                            playerTargets = PreTargetPermanentView;
+                            enemyTargets = PreTargetEnemySlotView;
+                        }
+                        else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                         {
                             playerTargets = ParentEffect.TargetForLinked_Player;
                             enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -239,7 +257,12 @@ public class GainHPEffect : Effect
                         List<PermanentView> playerTargets;
                         List<EnemySlotView> enemyTargets;
 
-                        if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                        if (DynamicTargeting)
+                        {
+                            playerTargets = PreTargetPermanentView;
+                            enemyTargets = PreTargetEnemySlotView;
+                        }
+                        else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                         {
                             playerTargets = ParentEffect.TargetForLinked_Player;
                             enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -290,12 +313,23 @@ public class GainHPEffect : Effect
             ? new List<EnemySlotView>(TargetForLinked_Enemy)
             : null;
 
+        var clonedPrePlayerTargets = PreTargetPermanentView != null
+            ? new List<PermanentView>(PreTargetPermanentView)
+            : null;
+            
+        var clonedPreEnemyTargets = PreTargetEnemySlotView != null 
+            ? new List<EnemySlotView>(PreTargetEnemySlotView) 
+            : null;
+
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new GainHPEffect(
             EffectID,
             ActivateToolTip,
             Priority,
+            DynamicTargeting,
+            clonedPrePlayerTargets,
+            clonedPreEnemyTargets,
             HollowEffect,
             GainAmount,
             multiplyAmount,

@@ -2,19 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEditor;
 using TMPro;
-using System.Runtime.CompilerServices;
 
 public class TargetSystem : Singleton<TargetSystem>
 {
     [SerializeField] private LayerMask TargetingLayerMask;
     [SerializeField] private LayerMask CardviewTargetingLayerMask;
     [SerializeField] private LayerMask CardviewExhaustTargetingLayerMask;
+    [SerializeField] private LayerMask PermaHoverTargetingLayerMask;
     [SerializeField] private TMP_Text TopPrompt;
     [SerializeField] public List<Card> DeckData;
     [SerializeField] public GameObject DisplayDeckZone;
-    [SerializeField] private GameObject CursorGameobject;
+    [SerializeField] private GameObject targetArrowPrefab;
+    [SerializeField] private Transform targetArrowParent;
+
     private bool TargetingActive;
     public bool CardTargetingActive;
     public bool ShieldEffectTargeting = false;
@@ -30,6 +31,14 @@ public class TargetSystem : Singleton<TargetSystem>
     private List<EnemySlotView> enemySlots = new();
     private List<PermanentView> permanents = new();
     private List<CardView> CardTargets = new();
+
+    private List<GameObject> CurrentArrows = new();
+    private GameObject hoveredObject;
+    private float hoverStartTime;
+    private bool hoverTriggered;
+    private CardView hoverCardView;
+
+    public Transform HoverCardParent;
 
     public void OnEnable()
     {
@@ -49,7 +58,15 @@ public class TargetSystem : Singleton<TargetSystem>
         List<PermanentView> playerTargets = new();
         List<EnemySlotView> enemyTargets = new();
 
-        //ActivateAuraForTargets(startManualTargetingGA.TargetLimitations);
+        if (hoverCardView != null)
+        {
+            foreach (GameObject arrow in CurrentArrows)
+            {
+                Destroy(arrow);
+            }
+            Destroy(hoverCardView.gameObject);
+            hoverCardView = null;
+        }
 
         if (startManualTargetingGA.ActionToRealiseAfterTargetting is ShieldGA || startManualTargetingGA.ActionToRealiseAfterTargetting is ShieldPlayerGA || startManualTargetingGA.ActionToRealiseAfterTargetting is ShieldEnemyGA)
         {
@@ -125,6 +142,15 @@ public class TargetSystem : Singleton<TargetSystem>
 
     public IEnumerator GetCardTargetsPerformer(StartCardTargetingGA startCardTargetingGA)
     {
+        if (hoverCardView != null)
+        {
+            foreach (GameObject arrow in CurrentArrows)
+            {
+                Destroy(arrow);
+            }
+            Destroy(hoverCardView.gameObject);
+            hoverCardView = null;
+        }
         TargetExhaust = false;
         List<CardView> cardViewTargets;
         TargetingNumber = InitTargetingNumber = startCardTargetingGA.TargetNumber;
@@ -273,10 +299,6 @@ public class TargetSystem : Singleton<TargetSystem>
                     RedirectionActive = true;
                 }
             }
-            else
-            {
-                RedirectionActive = false;
-            }
         }
 
         // ici On vient check si l'effet est un shiel effect pour ne pas target les permanents qui seraient des shield eux même
@@ -316,7 +338,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -331,7 +352,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -346,7 +366,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -358,7 +377,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -390,7 +408,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -427,7 +444,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -464,7 +480,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -476,7 +491,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -504,7 +518,7 @@ public class TargetSystem : Singleton<TargetSystem>
                                     permanentViewSelected = targetablePlayers[rnd];
                                 }
                             }
-                            else
+                            else 
                             {
                                 var rnd = Random.Range(0, targetablePlayers.Count);
                                 permanentViewSelected = targetablePlayers[rnd];
@@ -541,9 +555,9 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             enemyTargets.Add(enemySlotViewSelected);
                         }
-                        else
+                        else if (permanentViewSelected != null)
                         {
-                            var rnd = Random.Range(0, 1);
+                            var rnd = Random.Range(0, 2);
                             if (rnd == 0)
                             {
                                 playerTargets.Add(permanentViewSelected);
@@ -595,7 +609,6 @@ public class TargetSystem : Singleton<TargetSystem>
 
                 List<PermanentView> ValidPlayers = new();
                 List<EnemySlotView> ValidEnemies = new();
-                int maxTotal = 0;
                 List<PermanentView> highestTargetsP = new();
                 List<EnemySlotView> highestTargetsE = new();
 
@@ -606,7 +619,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -614,8 +626,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers.Add(perm);
                         }
-                        maxTotal = highestTargetsP.Max(p => p.currentLife);
-                        highestTargetsP = ValidPlayers.Where(p => p.currentLife == maxTotal).ToList();
+                        highestTargetsP = AllWithMax(ValidPlayers, p => p.currentLife);
                         if (highestTargetsP.Count > 0)
                         {
                             var selected = highestTargetsP[Random.Range(0, highestTargetsP.Count)];
@@ -628,7 +639,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -636,8 +646,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidEnemies.Add(perm);
                         }
-                        maxTotal = highestTargetsE.Max(p => p.currentLife);
-                        highestTargetsE = ValidEnemies.Where(p => p.currentLife == maxTotal).ToList();
+                        highestTargetsE = AllWithMax(ValidEnemies, p => p.currentLife);
                         if (highestTargetsE.Count > 0)
                         {
                             var selected = highestTargetsE[Random.Range(0, highestTargetsE.Count)];
@@ -654,7 +663,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -662,8 +670,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers.Add(perm);
                         }
-                        maxTotal = highestTargetsP.Max(p => p.currentLife);
-                        highestTargetsP = ValidPlayers.Where(p => p.currentLife == maxTotal).ToList();
+                        highestTargetsP = AllWithMax(ValidPlayers, p => p.currentLife);
                         if (highestTargetsP.Count > 0)
                         {
                             var selected = highestTargetsP[Random.Range(0, highestTargetsP.Count)];
@@ -674,7 +681,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -682,8 +688,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidEnemies.Add(perm);
                         }
-                        maxTotal = highestTargetsE.Max(p => p.currentLife);
-                        highestTargetsE = ValidEnemies.Where(p => p.currentLife == maxTotal).ToList();
+                        highestTargetsE = AllWithMax(ValidEnemies, p => p.currentLife);
                         if (highestTargetsE.Count > 0)
                         {
                             var selected = highestTargetsE[Random.Range(0, highestTargetsE.Count)];
@@ -698,9 +703,9 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             enemyTargets.Add(enemySlotViewSelected);
                         }
-                        else
+                        else if (permanentViewSelected != null)
                         {
-                            var rnd = Random.Range(0, 1);
+                            var rnd = Random.Range(0, 2);
                             if (rnd == 0)
                             {
                                 playerTargets.Add(permanentViewSelected);
@@ -725,7 +730,6 @@ public class TargetSystem : Singleton<TargetSystem>
             case TargetMode.LowHP:
                 List<PermanentView> ValidPlayers2 = new();
                 List<EnemySlotView> ValidEnemies2 = new();
-                int minTotal = 0;
                 List<PermanentView> LowestTargetsP = new();
                 List<EnemySlotView> LowestTargetsE = new();
 
@@ -736,7 +740,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -744,8 +747,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers2.Add(perm);
                         }
-                        minTotal = LowestTargetsP.Min(p => p.currentLife);
-                        LowestTargetsP = ValidPlayers2.Where(p => p.currentLife == minTotal).ToList();
+                        LowestTargetsP = AllWithMin(ValidPlayers2, p => p.currentLife);
                         if (LowestTargetsP.Count > 0)
                         {
                             var selected = LowestTargetsP[Random.Range(0, LowestTargetsP.Count)];
@@ -758,7 +760,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -766,8 +767,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidEnemies2.Add(perm);
                         }
-                        minTotal = LowestTargetsE.Min(p => p.currentLife);
-                        LowestTargetsE = ValidEnemies2.Where(p => p.currentLife == minTotal).ToList();
+                        LowestTargetsE = AllWithMin(ValidEnemies2, p => p.currentLife);
                         if (LowestTargetsE.Count > 0)
                         {
                             var selected = LowestTargetsE[Random.Range(0, LowestTargetsE.Count)];
@@ -784,7 +784,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -792,8 +791,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers2.Add(perm);
                         }
-                        minTotal = LowestTargetsP.Min(p => p.currentLife);
-                        LowestTargetsP = ValidPlayers2.Where(p => p.currentLife == minTotal).ToList();
+                        LowestTargetsP = AllWithMin(ValidPlayers2, p => p.currentLife);
                         if (LowestTargetsP.Count > 0)
                         {
                             var selected = LowestTargetsP[Random.Range(0, LowestTargetsP.Count)];
@@ -804,7 +802,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -812,8 +809,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidEnemies2.Add(perm);
                         }
-                        minTotal = LowestTargetsE.Min(p => p.currentLife);
-                        LowestTargetsE = ValidEnemies2.Where(p => p.currentLife == minTotal).ToList();
+                        LowestTargetsE = AllWithMin(ValidEnemies2, p => p.currentLife);
                         if (LowestTargetsE.Count > 0)
                         {
                             var selected = LowestTargetsE[Random.Range(0, LowestTargetsE.Count)];
@@ -828,9 +824,9 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             enemyTargets.Add(enemySlotViewSelected);
                         }
-                        else
+                        else if (permanentViewSelected != null)
                         {
-                            var rnd = Random.Range(0, 1);
+                            var rnd = Random.Range(0, 2);
                             if (rnd == 0)
                             {
                                 playerTargets.Add(permanentViewSelected);
@@ -854,7 +850,6 @@ public class TargetSystem : Singleton<TargetSystem>
 
             case TargetMode.HighCost:
                 List<PermanentView> ValidPlayers3 = new();
-                int maxCostTotal = 0;
                 List<PermanentView> highestcostTargetsP = new();
                 switch (TargetModeInfo.PlayerOrEnemy)
                 {
@@ -863,7 +858,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -871,8 +865,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers3.Add(perm);
                         }
-                        maxCostTotal = highestcostTargetsP.Max(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
-                        highestcostTargetsP = ValidPlayers3.Where(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost == maxCostTotal).ToList();
+                        highestcostTargetsP = AllWithMax(ValidPlayers3, p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
                         if (highestcostTargetsP.Count > 0)
                         {
                             var selected = highestcostTargetsP[Random.Range(0, highestcostTargetsP.Count)];
@@ -885,7 +878,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -893,8 +885,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers3.Add(perm);
                         }
-                        maxCostTotal = highestcostTargetsP.Max(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
-                        highestcostTargetsP = ValidPlayers3.Where(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost == maxCostTotal).ToList();
+                        highestcostTargetsP = AllWithMax(ValidPlayers3, p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
                         if (highestcostTargetsP.Count > 0)
                         {
                             var selected = highestcostTargetsP[Random.Range(0, highestcostTargetsP.Count)];
@@ -914,7 +905,6 @@ public class TargetSystem : Singleton<TargetSystem>
 
             case TargetMode.LowCost:
                 List<PermanentView> ValidPlayers4 = new();
-                int minCostTotal = 0;
                 List<PermanentView> lowestcostTargetsP = new();
                 switch (TargetModeInfo.PlayerOrEnemy)
                 {
@@ -923,7 +913,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -931,8 +920,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers4.Add(perm);
                         }
-                        minCostTotal = lowestcostTargetsP.Min(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
-                        lowestcostTargetsP = ValidPlayers4.Where(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost == minCostTotal).ToList();
+                        lowestcostTargetsP = AllWithMin(ValidPlayers4, p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
                         if (lowestcostTargetsP.Count > 0)
                         {
                             var selected = lowestcostTargetsP[Random.Range(0, lowestcostTargetsP.Count)];
@@ -945,7 +933,6 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (perm.UnTargetable) continue;
                             if (ShieldEffectTargeting && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (perm.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
@@ -953,8 +940,7 @@ public class TargetSystem : Singleton<TargetSystem>
                             }
                             ValidPlayers4.Add(perm);
                         }
-                        minCostTotal = lowestcostTargetsP.Min(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
-                        lowestcostTargetsP = ValidPlayers4.Where(p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost == minCostTotal).ToList();
+                        lowestcostTargetsP = AllWithMin(ValidPlayers4, p => p.CardReferenceArchive.cost + p.CardReferenceArchive.BonusCost);
                         if (lowestcostTargetsP.Count > 0)
                         {
                             var selected = lowestcostTargetsP[Random.Range(0, lowestcostTargetsP.Count)];
@@ -976,6 +962,20 @@ public class TargetSystem : Singleton<TargetSystem>
         return (playerTargets, enemyTargets);
     }
     
+    private static List<T> AllWithMax<T>(List<T> source, System.Func<T, int> selector)
+    {
+        if (source.Count == 0) return new List<T>();
+        int max = source.Max(selector);
+        return source.Where(x => selector(x) == max).ToList();
+    }
+
+    private static List<T> AllWithMin<T>(List<T> source, System.Func<T, int> selector)
+    {
+        if (source.Count == 0) return new List<T>();
+        int min = source.Min(selector);
+        return source.Where(x => selector(x) == min).ToList();
+    }
+
     public static List<Card> GetCardsTargets(TargetModeInfo TargetModeInfo, Card CardActionner, bool IncludeCardsInDeck = false, bool ExhaustCardList = false)
     {
         List<Card> cardsTargets = new();
@@ -1031,11 +1031,11 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.NULL:
                         foreach (var card in cardsList)
                         {
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
                                 if (Keyword == null) continue;
+                                cardsTargets.Add(card);
                             }
                             else
                             {
@@ -1047,11 +1047,11 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.Card:
                         foreach (var card in cardsList)
                         {
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
                                 if (Keyword == null) continue;
+                                cardsTargets.Add(card);
                             }
                             else
                             {
@@ -1068,11 +1068,11 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.NULL:
                         foreach (var card in cardsList)
                         {
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
                                 if (Keyword == null) continue;
+                                cardsTargets.Add(card);
                             }
                             else
                             {
@@ -1094,11 +1094,11 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.NULL:
                         foreach (var card in cardsList)
                         {
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
                                 if (Keyword == null) continue;
+                                cardsTargets.Add(card);
                             }
                             else
                             {
@@ -1122,11 +1122,11 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.NULL:
                         foreach (var card in cardsList)
                         {
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
                                 if (Keyword == null) continue;
+                                cardsTargets.Add(card);
                             }
                             else
                             {
@@ -1150,11 +1150,11 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.NULL:
                         foreach (var card in cardsList)
                         {
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
                                 if (Keyword == null) continue;
+                                cardsTargets.Add(card);
                             }
                             else
                             {
@@ -1178,11 +1178,11 @@ public class TargetSystem : Singleton<TargetSystem>
                     case Enemy_Player_ENUM.NULL:
                         foreach (var card in cardsList)
                         {
-                            if (TargetModeInfo.permanentArea != PermanentArea.NONE) if (card.permanentArea != TargetModeInfo.permanentArea) continue;
                             if (TargetModeInfo.keyWordType != KeyWordType.NULL)
                             {
                                 var Keyword = card.KeyWords.FirstOrDefault(k => k.keyWordType == TargetModeInfo.keyWordType);
                                 if (Keyword == null) continue;
+                                cardsTargets.Add(card);
                             }
                             else
                             {
@@ -1528,7 +1528,7 @@ public class TargetSystem : Singleton<TargetSystem>
             {
                 if (!CombatSystem.Instance.Interactable) return;
                 if (ActionSystem.Instance.IsPerforming) return;
-                
+
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit[] hits = Physics.RaycastAll(ray, 15f, TargetingLayerMask);
 
@@ -1554,19 +1554,19 @@ public class TargetSystem : Singleton<TargetSystem>
                         {
                             if (eventInfo.Events == Events.OnSelect && enemyView.IntentAction.ActivateNumber >= 1)
                             {
-                                if(enemyView.IntentAction.ActivateLeft > 0)
+                                if (enemyView.IntentAction.ActivateLeft > 0)
                                 {
                                     HasEffectsToActivate = true;
                                 }
                             }
                         }
-                        
+
                         if (HasEffectsToActivate)
                         {
                             EventInfo eventInfo = new EventInfo(Events.OnSelect, Enemy_Player_ENUM.Enemy, KeyWordType.NULL);
                             TriggerEventGA triggerEventGA = new(eventInfo, null, null, null, enemyView);
                             ActionSystem.Instance.Perform(triggerEventGA);
-                        }                   
+                        }
                     }
                 }
                 else if (hitTargetingLayerMask && raycastHit.collider != null && raycastHit.transform.TryGetComponent(out PermanentView permanentView))
@@ -1574,31 +1574,155 @@ public class TargetSystem : Singleton<TargetSystem>
                     if (permanents != null)
                     {
                         bool HasEffectsToActivate = false;
-                        foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null,permanentView,null))
+                        foreach (Effect effect in GameEventSystem.Instance.RetrieveEffectsFor(null, permanentView, null))
                         {
                             foreach (EventInfo eventInfo in effect.EventInfos)
                             {
                                 if (eventInfo.Events == Events.OnSelect && effect.ActivateNumber >= 1)
                                 {
-                                    var HollowKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);     
-                                    if ((effect.ActivateLeft > 0 && HollowKeyword != null && effect.HollowEffect) || (effect.ActivateLeft > 0  && HollowKeyword == null && !effect.HollowEffect))
+                                    var HollowKeyword = permanentView.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Hollow);
+                                    if ((effect.ActivateLeft > 0 && HollowKeyword != null && effect.HollowEffect) || (effect.ActivateLeft > 0 && HollowKeyword == null && !effect.HollowEffect))
                                     {
                                         HasEffectsToActivate = true;
-                                    }                                    
+                                    }
                                 }
-                            }                           
-                        }                 
+                            }
+                        }
 
                         if (HasEffectsToActivate)
                         {
                             EventInfo eventInfo = new EventInfo(Events.OnSelect, Enemy_Player_ENUM.Player, KeyWordType.NULL);
                             TriggerEventGA triggerEventGA = new(eventInfo, null, null, permanentView, null);
                             ActionSystem.Instance.Perform(triggerEventGA);
-                        }                        
+                        }
                     }
                 }
             }
+            
+            // Gestion DU Hover des permanent pour la bulle info
+            Ray rayHover = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hitsHover = Physics.RaycastAll(rayHover, 15f, PermaHoverTargetingLayerMask);
+            GameObject currentHover = null;
+
+            if (hitsHover.Length > 0)
+            {
+                currentHover = hitsHover[0].collider.gameObject;
+            }
+
+            // Changement d'objet
+            if (currentHover != hoveredObject)
+            {
+                hoveredObject = currentHover;
+                hoverStartTime = Time.time;
+                hoverTriggered = false;
+                if (hoverCardView != null)
+                {
+                    foreach (GameObject arrow in CurrentArrows)
+                    {
+                        Destroy(arrow);
+                    }
+                    Destroy(hoverCardView.gameObject);
+                    hoverCardView = null;
+                }
+            }
+
+            // Objet toujours survolé
+            if (hoveredObject != null && !hoverTriggered)
+            {
+                if (Time.time - hoverStartTime >= 0.5f)
+                {
+                    Vector3 mousePosition = Input.mousePosition;
+
+                    if (hoveredObject.GetComponent<PermanentView>() != null)
+                    {
+                        PermanentView Permanent = hoveredObject.GetComponent<PermanentView>();
+                        if (!Permanent.IsCore)
+                        {
+                            hoverCardView = CardViewCreator.Instance.CreateUICardView(Permanent.CardReferenceArchive, mousePosition, Quaternion.identity, HoverCardParent, true);
+                        }
+                    }
+                    else if (hoveredObject.GetComponent<EnemySlotView>() != null)
+                    {
+                        EnemySlotView Permanent = hoveredObject.GetComponent<EnemySlotView>();
+                        if (!Permanent.IsCore)
+                        {
+                            hoverCardView = CardViewCreator.Instance.CreateUICardView(null, mousePosition, Quaternion.identity, HoverCardParent, true, Permanent.PermanentData);
+                            // Gestion de la flèche
+                            if (Permanent.IntentAction != null)
+                            {
+                                foreach (Effect effect in GetIntentLeafEffects(Permanent))
+                                {
+                                    if (effect.IsPassive) continue;
+
+                                    List<PermanentView> arrowPlayers = new();
+                                    List<EnemySlotView> arrowEnemies = new();
+
+                                    if (effect.DynamicTargeting)
+                                    {
+                                        if (effect.PreTargetPermanentView != null) arrowPlayers.AddRange(effect.PreTargetPermanentView);
+                                        if (effect.PreTargetEnemySlotView != null) arrowEnemies.AddRange(effect.PreTargetEnemySlotView);
+                                    }
+                                    else if (effect.EffectTargetModeInfo != null && effect.EffectTargetModeInfo.targetMode != TargetMode.Self)
+                                    {
+                                        (arrowPlayers, arrowEnemies) = GetTargets(effect.EffectTargetModeInfo, Permanent.IntentAction.Actionner, effect);
+                                    }
+
+                                    foreach (PermanentView permanentView in arrowPlayers)
+                                    {
+                                        if (permanentView == null) continue; // détruit
+                                        CurrentArrows.Add(CreateTargetArrow(Permanent.gameObject, permanentView.gameObject));
+                                    }
+
+                                    foreach (EnemySlotView enemySlotView in arrowEnemies)
+                                    {
+                                        if (enemySlotView == null) continue; // détruit
+                                        CurrentArrows.Add(CreateTargetArrow(Permanent.gameObject, enemySlotView.gameObject));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    hoverTriggered = true;
+                }
+            }
         }
+    }
+
+    public static List<Effect> GetIntentLeafEffects(EnemySlotView enemy)
+    {
+        List<Effect> result = new();
+
+        if (enemy.IntentAction != null)
+            CollectLeafEffects(enemy.IntentAction, result);
+
+        return result;
+    }
+
+    private static void CollectLeafEffects(Effect effect, List<Effect> result)
+    {
+        if (effect is EffectGroup group)
+        {
+            if (group.EffectGroups == null) return;
+
+            foreach (Effect child in group.EffectGroups)
+            {
+                if (child != null)
+                    CollectLeafEffects(child, result);
+            }
+            return;
+        }
+
+        result.Add(effect);
+    }
+
+    private GameObject CreateTargetArrow(GameObject attacker,GameObject target)
+    {
+        GameObject arrow = Instantiate(targetArrowPrefab, targetArrowParent);
+        TargetArrowView targetArrowView = arrow.GetComponent<TargetArrowView>();
+        targetArrowView.Setup(attacker.transform,target.transform);
+
+        return arrow;
     }
 
     public int GetDynamicAmount(DynamicAmountInfo dynamicAmountInfo, PermanentView permanentView = null, EnemySlotView enemySlotView = null, Card CardActionner = null)
@@ -2706,7 +2830,7 @@ public class TargetSystem : Singleton<TargetSystem>
         // On regarde si il y a assez de cibles valide
         return (validTargets.Count * MultiHit) >= EffectTargetNumber;
     }
-    
+
     public void ActivateAuraForTargets(List<TargetLimitationInfo> limitations)
     {
         List<PermanentView> playerPermanents = CombatSystem.Instance.Player_Permanents;
@@ -2755,6 +2879,1216 @@ public class TargetSystem : Singleton<TargetSystem>
             }
         }
 
-        return;        
+        return;
     }
+
+    private static List<T> ApplyExclusion<T>(List<T> source, System.Predicate<T> exclude)
+    {
+        if (exclude == null) return source;
+
+        List<T> result = new List<T>(source.Count);
+        foreach (T item in source)
+        {
+            if (!exclude(item))
+                result.Add(item);
+        }
+        return result;
+    }
+
+    private static bool FailsPriorityConditions(PriorityInfo info, Effect effect, PermanentView player, EnemySlotView enemy)
+    {
+        return !ConditionSystem.Instance.TestCondition(
+            info.TargetConditions,
+            AtResolve: true,
+            TargetPermanentView: player,
+            TargetEnemySlotView: enemy,
+            Actionner: effect != null ? effect.Actionner : null);
+    }
+
+    public (List<PermanentView> playerTargets, List<EnemySlotView> enemyTargets) GetTargetbyPriority(PriorityInfo priorityInfo, Effect effect, System.Predicate<PermanentView> excludePlayer = null, System.Predicate<EnemySlotView> excludeEnemy = null)
+    {
+        List<PermanentView> ValidatePlayerTargets = new();
+        List<PermanentView> playerTargets = new();
+        List<EnemySlotView> ValidateEnemyTargets = new();
+        List<EnemySlotView> enemyTargets = new();
+
+        bool hasConditions = priorityInfo.TargetConditions != null && priorityInfo.TargetConditions.Count > 0;
+
+        System.Predicate<PermanentView> playerExclusion = null;
+        System.Predicate<EnemySlotView> enemyExclusion = null;
+
+        if (excludePlayer != null || hasConditions)
+        {
+            playerExclusion = playerCandidate =>
+                (excludePlayer != null && excludePlayer(playerCandidate))
+                || (hasConditions && FailsPriorityConditions(priorityInfo, effect, playerCandidate, null));
+        }
+
+        if (excludeEnemy != null || hasConditions)
+        {
+            enemyExclusion = enemyCandidate =>
+                (excludeEnemy != null && excludeEnemy(enemyCandidate))
+                || (hasConditions && FailsPriorityConditions(priorityInfo, effect, null, enemyCandidate));
+        }
+
+        List<PermanentView> playerPermanents = ApplyExclusion(CombatSystem.Instance.Player_Permanents, playerExclusion);
+        List<EnemySlotView> enemyPermanents = ApplyExclusion(CombatSystem.Instance.Enemy_Permanents, enemyExclusion);
+
+        List<PermanentView> TampontargetsP = new List<PermanentView>();
+        List<EnemySlotView> TampontargetsE = new List<EnemySlotView>();
+
+        bool ShieldEffect = false;
+        if (effect is ShieldEffect)
+        {
+            ShieldEffect = true;
+        }
+
+        switch (priorityInfo.priorityType)
+        {
+            case PriorityType.KeyWord:
+                switch (priorityInfo.Owner)
+                {
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == priorityInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            playerTargets.Add(perm);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == priorityInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            enemyTargets.Add(perm);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == priorityInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            playerTargets.Add(perm);
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.keyWordType != KeyWordType.NULL)
+                            {
+                                var Keyword = perm.KeyWords.FirstOrDefault(k => k.keyWordType == priorityInfo.keyWordType);
+                                if (Keyword == null) continue;
+                            }
+                            enemyTargets.Add(perm);
+                        }
+                        break;
+                }
+                break;
+            case PriorityType.Param_More_Than_Value:
+                switch (priorityInfo.Owner)
+                {
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                playerTargets.Add(perm);
+                            }
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:                                            
+                                        if (perm.currentLife > priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                enemyTargets.Add(perm);
+                            }
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:                                            
+                                        if (perm.currentLife > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                playerTargets.Add(perm);
+                            }
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife > priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                enemyTargets.Add(perm);
+                            }
+                        }
+                        break;
+                }
+                break;
+            case PriorityType.Param_Less_Than_Value:
+                switch (priorityInfo.Owner)
+                {
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if (perm.IsVirtualDead) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                playerTargets.Add(perm);
+                            }
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if (perm.IsVirtualDead) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:                                            
+                                        if (perm.currentLife < priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                enemyTargets.Add(perm);
+                            }
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if (perm.IsVirtualDead) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:                                            
+                                        if (perm.currentLife < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                playerTargets.Add(perm);
+                            }
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.UnTargetable) continue;
+                            if (perm.IsVirtualDead) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife < priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                enemyTargets.Add(perm);
+                            }
+                        }
+                        break;
+                }
+                break;
+            case PriorityType.Param_Equal_Value:
+                switch (priorityInfo.Owner)
+                {
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                playerTargets.Add(perm);
+                            }
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:                                            
+                                        if (perm.currentLife == priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor == priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower == priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                enemyTargets.Add(perm);
+                            }
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:                                            
+                                        if (perm.currentLife == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower == priorityInfo.ParamValue)
+                                        {
+                                            playerTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                playerTargets.Add(perm);
+                            }
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife == priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor == priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower == priorityInfo.ParamValue)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                enemyTargets.Add(perm);
+                            }
+                        }
+                        break;
+                }
+                break;
+            case PriorityType.Highest_Param:
+                PermanentView permanentViewHigh = null;
+                EnemySlotView enemySlotViewHigh = null;
+                switch (priorityInfo.Owner)
+                {
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (permanentViewHigh == null)
+                                {
+                                    permanentViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife > permanentViewHigh.currentLife)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > permanentViewHigh.currentArmor)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability > permanentViewHigh.Durability)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost > permanentViewHigh.CardReferenceArchive.cost)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > permanentViewHigh.currentPower)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        if (permanentViewHigh != null)
+                        {
+                            playerTargets.Add(permanentViewHigh);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (enemySlotViewHigh == null)
+                                {
+                                    enemySlotViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife > enemySlotViewHigh.currentLife)
+                                        {
+                                            enemySlotViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > enemySlotViewHigh.currentArmor)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > enemySlotViewHigh.currentPower)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        if (enemySlotViewHigh != null)
+                        {
+                            enemyTargets.Add(enemySlotViewHigh);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (permanentViewHigh == null)
+                                {
+                                    permanentViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife > permanentViewHigh.currentLife)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > permanentViewHigh.currentArmor)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability > permanentViewHigh.Durability)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost > permanentViewHigh.CardReferenceArchive.cost)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > permanentViewHigh.currentPower)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (enemySlotViewHigh == null)
+                                {
+                                    enemySlotViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife > enemySlotViewHigh.currentLife)
+                                        {
+                                            enemySlotViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor > enemySlotViewHigh.currentArmor)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower > enemySlotViewHigh.currentPower)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        if (enemySlotViewHigh != null && permanentViewHigh != null)
+                        {
+                            switch (priorityInfo.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (enemySlotViewHigh.currentLife > permanentViewHigh.currentLife)
+                                    {
+                                        enemyTargets.Add(enemySlotViewHigh);
+                                    }
+                                    else
+                                    {
+                                        playerTargets.Add(permanentViewHigh);
+                                    }
+                                    break;
+                                case BasicParam.Armor:
+                                    if (enemySlotViewHigh.currentArmor > permanentViewHigh.currentArmor)
+                                    {
+                                        enemyTargets.Add(enemySlotViewHigh);
+                                    }
+                                    else
+                                    {
+                                        playerTargets.Add(permanentViewHigh);
+                                    }
+                                    break;
+                                case BasicParam.Durability:
+                                    playerTargets.Add(permanentViewHigh);
+                                    break;
+                                case BasicParam.Cost:
+                                    playerTargets.Add(permanentViewHigh);
+                                    break;
+                                case BasicParam.Power:
+                                    if (enemySlotViewHigh.currentPower > permanentViewHigh.currentPower)
+                                    {
+                                        enemyTargets.Add(enemySlotViewHigh);
+                                    }
+                                    else
+                                    {
+                                        playerTargets.Add(permanentViewHigh);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else if (permanentViewHigh != null)
+                        {
+                            playerTargets.Add(permanentViewHigh);
+                        }
+                        else if (enemySlotViewHigh != null)
+                        {
+                            enemyTargets.Add(enemySlotViewHigh);
+                        }
+                        break;
+                }
+                break;
+            case PriorityType.Lowest_Param:
+                permanentViewHigh = null;
+                enemySlotViewHigh = null;
+                switch (priorityInfo.Owner)
+                {
+                    case Enemy_Player_ENUM.Player:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (permanentViewHigh == null)
+                                {
+                                    permanentViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife < permanentViewHigh.currentLife)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < permanentViewHigh.currentArmor)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability < permanentViewHigh.Durability)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost < permanentViewHigh.CardReferenceArchive.cost)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < permanentViewHigh.currentPower)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        if (permanentViewHigh != null)
+                        {
+                            playerTargets.Add(permanentViewHigh);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.Enemy:
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (enemySlotViewHigh == null)
+                                {
+                                    enemySlotViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife < enemySlotViewHigh.currentLife)
+                                        {
+                                            enemySlotViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < enemySlotViewHigh.currentArmor)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < enemySlotViewHigh.currentPower)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        if (enemySlotViewHigh != null)
+                        {
+                            enemyTargets.Add(enemySlotViewHigh);
+                        }
+                        break;
+
+                    case Enemy_Player_ENUM.NULL:
+                        foreach (var perm in playerPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (permanentViewHigh == null)
+                                {
+                                    permanentViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife < permanentViewHigh.currentLife)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < permanentViewHigh.currentArmor)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Durability:
+                                        if (perm.Durability < permanentViewHigh.Durability)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Cost:
+                                        if (perm.CardReferenceArchive.cost < permanentViewHigh.CardReferenceArchive.cost)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < permanentViewHigh.currentPower)
+                                        {
+                                            permanentViewHigh = perm;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        foreach (var perm in enemyPermanents)
+                        {
+                            if (perm.IsVirtualDead) continue;
+                            if (perm.UnTargetable) continue;
+                            if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                            if (priorityInfo.Param != BasicParam.NULL)
+                            {
+                                if (enemySlotViewHigh == null)
+                                {
+                                    enemySlotViewHigh = perm;
+                                    continue;
+                                }
+                                switch (priorityInfo.Param)
+                                {
+                                    case BasicParam.Life:
+                                        if (perm.currentLife < enemySlotViewHigh.currentLife)
+                                        {
+                                            enemySlotViewHigh = perm;
+                                        }
+                                        break;
+                                    case BasicParam.Armor:
+                                        if (perm.currentArmor < enemySlotViewHigh.currentArmor)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    case BasicParam.Power:
+                                        if (perm.currentPower < enemySlotViewHigh.currentPower)
+                                        {
+                                            enemyTargets.Add(perm);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        if (enemySlotViewHigh != null && permanentViewHigh != null)
+                        {
+                            switch (priorityInfo.Param)
+                            {
+                                case BasicParam.Life:
+                                    if (enemySlotViewHigh.currentLife < permanentViewHigh.currentLife)
+                                    {
+                                        enemyTargets.Add(enemySlotViewHigh);
+                                    }
+                                    else
+                                    {
+                                        playerTargets.Add(permanentViewHigh);
+                                    }
+                                    break;
+                                case BasicParam.Armor:
+                                    if (enemySlotViewHigh.currentArmor < permanentViewHigh.currentArmor)
+                                    {
+                                        enemyTargets.Add(enemySlotViewHigh);
+                                    }
+                                    else
+                                    {
+                                        playerTargets.Add(permanentViewHigh);
+                                    }
+                                    break;
+                                case BasicParam.Durability:
+                                    playerTargets.Add(permanentViewHigh);
+                                    break;
+                                case BasicParam.Cost:
+                                    playerTargets.Add(permanentViewHigh);
+                                    break;
+                                case BasicParam.Power:
+                                    if (enemySlotViewHigh.currentPower < permanentViewHigh.currentPower)
+                                    {
+                                        enemyTargets.Add(enemySlotViewHigh);
+                                    }
+                                    else
+                                    {
+                                        playerTargets.Add(permanentViewHigh);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else if (permanentViewHigh != null)
+                        {
+                            playerTargets.Add(permanentViewHigh);
+                        }
+                        else if (enemySlotViewHigh != null)
+                        {
+                            enemyTargets.Add(enemySlotViewHigh);
+                        }
+                        break;
+                }
+                break;
+            case PriorityType.Highest_rarity:
+                permanentViewHigh = null;
+                foreach (var perm in playerPermanents)
+                {
+                    if (perm.IsVirtualDead) continue;
+                    if (perm.UnTargetable) continue;
+                    if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                    if (permanentViewHigh == null)
+                    {
+                        permanentViewHigh = perm;
+                        continue;
+                    }
+                    if (perm.CardReferenceArchive.Rarity > permanentViewHigh.CardReferenceArchive.Rarity)
+                    {
+                        permanentViewHigh = perm;
+                    }
+                }
+                if (permanentViewHigh != null)
+                {
+                    playerTargets.Add(permanentViewHigh);
+                }
+                break;
+            case PriorityType.Lowest_rarity:
+                permanentViewHigh = null;
+                foreach (var perm in playerPermanents)
+                {
+                    if (perm.IsVirtualDead) continue;
+                    if (perm.UnTargetable) continue;
+                    if (ShieldEffect && perm.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.UnShieldable) != null) continue;
+                    if (permanentViewHigh == null)
+                    {
+                        permanentViewHigh = perm;
+                        continue;
+                    }
+                    if (perm.CardReferenceArchive.Rarity < permanentViewHigh.CardReferenceArchive.Rarity)
+                    {
+                        permanentViewHigh = perm;
+                    }
+                }
+                if (permanentViewHigh != null)
+                {
+                    playerTargets.Add(permanentViewHigh);
+                }
+                break;
+        }
+
+        return (playerTargets, enemyTargets);     
+    }    
 }

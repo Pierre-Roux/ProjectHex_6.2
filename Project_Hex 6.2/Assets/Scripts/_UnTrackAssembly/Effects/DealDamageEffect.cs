@@ -31,9 +31,12 @@ public class DealDamageEffect : Effect
 
     public DealDamageEffect() { }
 
-    public DealDamageEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, string description, bool PowerBased, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
+    public DealDamageEffect(string effectID, bool activateToolTip, int priority, bool dynamicTargeting, List<PermanentView> preTargetPermanentView, List<EnemySlotView> preTargetEnemySlotView, bool hollowEffect, string description, bool PowerBased, int DamageAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        DynamicTargeting = dynamicTargeting;
+        PreTargetPermanentView = preTargetPermanentView;
+        PreTargetEnemySlotView = preTargetEnemySlotView;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
         Description = description;
@@ -115,6 +118,15 @@ public class DealDamageEffect : Effect
                 startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
+            else if (DynamicTargeting)
+            {
+                DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, PreTargetPermanentView, PreTargetEnemySlotView);
+                dealDamageGA.CardActionner = CardActionner;
+                dealDamageGA.SourceEffect = this;
+                dealDamageGA.ActivateToolTip = ActivateToolTip;
+                dealDamageGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_DealDamageSound : SFX;
+                return dealDamageGA;
+            }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 DealDamageGA dealDamageGA = new(powerBased, damageAmount, multiplyAmount, DynamicAmountInfo, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
@@ -159,7 +171,12 @@ public class DealDamageEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -198,7 +215,12 @@ public class DealDamageEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -241,12 +263,23 @@ public class DealDamageEffect : Effect
             ? new List<EnemySlotView>(TargetForLinked_Enemy) 
             : null;
 
+        var clonedPrePlayerTargets = PreTargetPermanentView != null
+            ? new List<PermanentView>(PreTargetPermanentView)
+            : null;
+            
+        var clonedPreEnemyTargets = PreTargetEnemySlotView != null 
+            ? new List<EnemySlotView>(PreTargetEnemySlotView) 
+            : null;
+
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new DealDamageEffect(
             EffectID,
             ActivateToolTip,
             Priority,
+            DynamicTargeting,
+            clonedPrePlayerTargets,
+            clonedPreEnemyTargets,
             HollowEffect,
             Description,
             powerBased,

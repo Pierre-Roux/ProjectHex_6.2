@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Weapon 1
   m_EditorClassIdentifier: 
   Title: Weapon
+  Description: Deal 3 dmg
   PermanentImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
+  SpriteImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
   Life: 3
   Power: 3
   Armor: 0
   IsCore: 0
-  permanentArea: 1
   KeyWords:
   - rid: 4855037132895683281
   <PossibleIntent>k__BackingField:
@@ -191,6 +192,14 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: A
+        DynamicTargeting: 1
+        PriorityList:
+        - priorityType: 6
+          Owner: 1
+          keyWordType: 0
+          Param: 1
+          ParamValue: -1
+          TargetConditions: []
         Duration: 0
         DurationType:
           Events: 0
@@ -207,6 +216,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: df9b1d92-e1c7-4350-ac0e-2fd9c3657cd9
@@ -229,7 +240,6 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 4
           PlayerOrEnemy: 1
-          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1

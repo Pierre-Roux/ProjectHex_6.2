@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5540048281579956264
 RectTransform:
   m_ObjectHideFlags: 0
@@ -473,7 +473,6 @@ MonoBehaviour:
   BackGroundImage: {fileID: 4607058679234653461}
   Life: {fileID: 5088118266501438484}
   Power: {fileID: 3446904506183995770}
-  Durability: {fileID: 8369742019056598465}
   Wrapper: {fileID: 5509695041576057415}
   DropAreaLayer:
     serializedVersion: 2
@@ -500,6 +499,7 @@ MonoBehaviour:
     Path: event:/UI/Unselection
   IsReward: 0
   IsShopCard: 0
+  IsInfoCard: 0
   RewardTaken: 0
   shopSlot: {fileID: 0}
   isDragging: 0
@@ -510,6 +510,10 @@ MonoBehaviour:
   IsPayXValidate: 0
   WhaitForPayX: 0
   PayXValue: 0
+  CurrentCost: 0
+  CurrentPower: 0
+  CurrentLife: 0
+  slotView: {fileID: 0}
 --- !u!210 &8913936644941493630
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -28,7 +28,6 @@ public class CardData : ScriptableObject
     [field: SerializeField] public int Durability { get; private set; }
     [field: SerializeField] public int MaxDurability { get; private set; } = 1;
     [field: SerializeField] public Sprite PermanentImage { get; private set; }
-    [field: SerializeField] public PermanentArea permanentArea { get; private set; }
 
     [field: Header("Spell")]
     [field: SerializeField] public bool IsSpell { get; private set; }
@@ -85,7 +84,6 @@ public class CardData : ScriptableObject
         clone.Durability = Durability;
         clone.MaxDurability = MaxDurability;
         clone.PermanentImage = PermanentImage;
-        clone.permanentArea = permanentArea;
 
         // Spell
         clone.IsSpell = IsSpell;

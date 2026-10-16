@@ -1091,7 +1091,7 @@ public class EffectSystem : Singleton<EffectSystem>
                     foreach (var item in invocGA.CardsToInvoc)
                     {
                         Card card = new(item);
-                        PermanentView newPerm = PermanentViewCreator.Instance.CreatePermanentViewCreator(card, card.permanentArea);
+                        PermanentView newPerm = PermanentViewCreator.Instance.CreatePermanentViewCreator(card);
                         
                         if (newPerm != null)
                         {
@@ -1115,7 +1115,7 @@ public class EffectSystem : Singleton<EffectSystem>
                 {
                     foreach (var item in invocGA.EnemyToInvoc)
                     {
-                        EnemySlotView newEnemy = EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(item, item.permanentArea, false);
+                        EnemySlotView newEnemy = EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(item, false);
                         if (newEnemy != null)
                         {
                             var InvocKeyword = newEnemy.KeyWords.FirstOrDefault(k => k.keyWordType == KeyWordType.Invoc);

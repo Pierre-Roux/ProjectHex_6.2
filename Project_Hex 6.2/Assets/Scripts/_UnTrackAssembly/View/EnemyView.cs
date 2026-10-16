@@ -13,6 +13,7 @@ public class EnemyView : MonoBehaviour
     [SerializeField] public EnemyZoneView SupportZone;
     [SerializeField] public EnemySlotView CoreSlot;
     [HideInInspector] public List<Effect> SetupEffects = new();
+    [SerializeField] public GameObject EnemySlotGroupsGO;
 
     [field : SerializeReference, SR] public List<IntentConstruct> IntentConstructs { get; private set; }
     [SerializeField] public List<string> ConstructSequence = new();
@@ -26,7 +27,7 @@ public class EnemyView : MonoBehaviour
 
         foreach (EnemyPermanentData enemy in EnemyPreset)
         {
-            EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(enemy, enemy.permanentArea, true);
+            EnemySlotViewCreator.Instance.CreateEnemySlotViewCreator(enemy, true);
         }
     }
 }

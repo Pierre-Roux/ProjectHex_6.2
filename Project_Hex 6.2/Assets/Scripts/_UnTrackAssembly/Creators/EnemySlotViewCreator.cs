@@ -4,34 +4,23 @@ using UnityEngine;
 public class EnemySlotViewCreator : Singleton<EnemySlotViewCreator>
 {
     public EnemySlotView SlotPrefab;
-    [HideInInspector] public EnemyZoneView WeaponZone;
-    [HideInInspector] public EnemyZoneView ShieldZone;
-    [HideInInspector] public EnemyZoneView SupportZone;
-    public EnemySlotView CreateEnemySlotViewCreator(EnemyPermanentData data, PermanentArea type, bool setup = false)
+
+    public EnemySlotView CreateEnemySlotViewCreator(EnemyPermanentData data, bool setup = false, SlotView slotView = null)
     {
         GameObject Parent = null;
-        switch (type)
-        {
-            case PermanentArea.Weapon:
-                Parent = WeaponZone.gameObject;
-                break;
-            case PermanentArea.Shield:
-                Parent = ShieldZone.gameObject;
-                break;
-            case PermanentArea.Support:
-                Parent = SupportZone.gameObject;
-                break;
-            default:
-                Debug.Log("No Type For Enemy " + data.name);
-                break;
-        }
-        if (Parent == null) return null;
 
-        int childCount = Parent.transform.childCount;
-        if (childCount >= CombatSystem.Instance.MaxPermEnemy)
+        if (slotView != null)
         {
-            return null;
+            Parent = slotView.gameObject;
         }
+        else
+        {
+            slotView = SlotSystem.Instance.GetFreeSlot(Enemy_Player_ENUM.Enemy);
+            if (slotView != null)
+                Parent = slotView.gameObject;
+        }
+
+        if (Parent == null) return null;
 
         if (!setup)
         {
@@ -45,16 +34,14 @@ public class EnemySlotViewCreator : Singleton<EnemySlotViewCreator>
             }
         }
 
-        EnemySlotView enemySlotView = Instantiate(SlotPrefab, Vector3.zero, Quaternion.identity, Parent.transform);
+        EnemySlotView enemySlotView = Instantiate(SlotPrefab, Parent.transform.position, Quaternion.identity, Parent.transform);
         enemySlotView.PermanentData = data;
         enemySlotView.setup();
         enemySlotView.gameObject.name = data.name + " " + CombatSystem.Instance.Enemy_Permanents.Count;
 
-        CombatSystem.Instance.Enemy_Permanents.Add(enemySlotView);
+        slotView.enemySlotView = enemySlotView;
 
-        WeaponZone.RepositionChildrenEnemySlotView();
-        ShieldZone.RepositionChildrenEnemySlotView();
-        SupportZone.RepositionChildrenEnemySlotViewCenterOut();
+        CombatSystem.Instance.Enemy_Permanents.Add(enemySlotView);
 
         if (setup == true)
         {

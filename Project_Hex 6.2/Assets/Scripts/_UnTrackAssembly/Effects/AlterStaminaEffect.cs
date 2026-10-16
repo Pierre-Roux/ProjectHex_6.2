@@ -15,6 +15,7 @@ public class AlterStaminaEffect : Effect
     [SerializeField] public bool IncludeCardsInDeck;
     [SerializeField] public bool aditive = true;
     [SerializeField] public bool passive;
+    public override bool IsPassive => passive;
     [SerializeField] public TargetModeInfo targetModeInfo;
     [SerializeField] public override TargetModeInfo EffectTargetModeInfo => targetModeInfo;
 
@@ -30,9 +31,12 @@ public class AlterStaminaEffect : Effect
 
     public AlterStaminaEffect() { }
 
-    public AlterStaminaEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, bool includeCardsInDeck, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, List<Card> targetForLinked_Card, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
+    public AlterStaminaEffect(string effectID, bool activateToolTip, int priority, bool dynamicTargeting, List<PermanentView> preTargetPermanentView, List<EnemySlotView> preTargetEnemySlotView, bool hollowEffect, bool includeCardsInDeck, int AlterAmount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool Passive, bool Aditive, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, List<Card> targetForLinked_Card, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        DynamicTargeting = dynamicTargeting;
+        PreTargetPermanentView = preTargetPermanentView;
+        PreTargetEnemySlotView = preTargetEnemySlotView;
         HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
@@ -129,6 +133,15 @@ public class AlterStaminaEffect : Effect
                     return startManualTargetingGA;
                 }
             }
+            else if (DynamicTargeting)
+            {
+                AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, PreTargetPermanentView, PreTargetEnemySlotView, ParentEffect.TargetForLinked_Card, targetModeInfo);
+                alterStaminaGA.CardActionner = CardActionner;
+                alterStaminaGA.SourceEffect = this;
+                alterStaminaGA.ActivateToolTip = ActivateToolTip;
+                alterStaminaGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_AlterDurabilitySound : SFX;
+                return alterStaminaGA;
+            }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 AlterStaminaGA alterStaminaGA = new(alterAmount, multiplyAmount, DynamicAmountInfo, passive, aditive, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy, ParentEffect.TargetForLinked_Card, targetModeInfo);
@@ -201,7 +214,12 @@ public class AlterStaminaEffect : Effect
                     List<EnemySlotView> enemyTargets = new();
                     List<Card> cardTargets = new();
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -262,7 +280,12 @@ public class AlterStaminaEffect : Effect
                     List<EnemySlotView> enemyTargets = new();
                     List<Card> cardTargets = new();
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -321,9 +344,17 @@ public class AlterStaminaEffect : Effect
         var clonedEnemyTargets = TargetForLinked_Enemy != null
             ? new List<EnemySlotView>(TargetForLinked_Enemy)
             : null;
+
+        var clonedCardTargets = TargetForLinked_Card != null
+            ? new List<Card>(TargetForLinked_Card)
+            : null;
+
+        var clonedPrePlayerTargets = PreTargetPermanentView != null
+            ? new List<PermanentView>(PreTargetPermanentView)
+            : null;
             
-        var clonedCardTargets = TargetForLinked_Card != null 
-            ? new List<Card>(TargetForLinked_Card) 
+        var clonedPreEnemyTargets = PreTargetEnemySlotView != null 
+            ? new List<EnemySlotView>(PreTargetEnemySlotView) 
             : null;
 
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
@@ -332,6 +363,9 @@ public class AlterStaminaEffect : Effect
             EffectID,
             ActivateToolTip,
             Priority,
+            DynamicTargeting,
+            clonedPrePlayerTargets,
+            clonedPreEnemyTargets,
             HollowEffect,
             IncludeCardsInDeck,
             alterAmount,

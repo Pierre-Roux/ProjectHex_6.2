@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7673c6f485dfa54c802241195118466, type: 3}
   m_Name: Core
   m_EditorClassIdentifier: 
-  Title: 
+  Title: Core
+  Description: 
   PermanentImage: {fileID: 21300000, guid: f3ac8788ec4ac9d4fb8fa25adcfaf9d4, type: 3}
+  SpriteImage: {fileID: 21300000, guid: f3ac8788ec4ac9d4fb8fa25adcfaf9d4, type: 3}
   Life: 10
   Power: 0
   Armor: 0

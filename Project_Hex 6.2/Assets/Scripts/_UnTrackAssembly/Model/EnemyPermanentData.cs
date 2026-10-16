@@ -8,12 +8,13 @@ public class EnemyPermanentData : ScriptableObject
 {
     [field: Header("Mandatory")]
     [field: SerializeField] public string Title;
+    [field: SerializeField] public string Description;
     [field: SerializeField] public Sprite PermanentImage;
+    [field: SerializeField] public Sprite SpriteImage;
     [field: SerializeField] public int Life;
     [field: SerializeField] public int Power;
     [field: SerializeField] public int Armor;
     [field: SerializeField] public bool IsCore;
-    [field: SerializeField] public PermanentArea permanentArea;
     [field: SerializeReference, SR] public List<KeyWord> KeyWords = new();
 
     [field: Header("Effects")]

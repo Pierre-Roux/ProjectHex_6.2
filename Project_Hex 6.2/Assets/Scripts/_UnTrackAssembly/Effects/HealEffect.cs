@@ -25,9 +25,12 @@ public class HealEffect : Effect
 
     public HealEffect() { }
 
-    public HealEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
+    public HealEffect(string effectID, bool activateToolTip, int priority, bool dynamicTargeting, List<PermanentView> preTargetPermanentView, List<EnemySlotView> preTargetEnemySlotView, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice, List<DynamicConditionInfo> dynamicConditionInfos, TargetModeInfo TargetModeInfo, List<TargetLimitationInfo> TargetLimitations, int TargetNumber, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
+        DynamicTargeting = dynamicTargeting;
+        PreTargetPermanentView = preTargetPermanentView;
+        PreTargetEnemySlotView = preTargetEnemySlotView;
         HollowEffect = hollowEffect;
         ActivateToolTip = activateToolTip;
         EffectID = effectID;
@@ -108,6 +111,15 @@ public class HealEffect : Effect
                 startManualTargetingGA.ActivateToolTip = ActivateToolTip;
                 return startManualTargetingGA;
             }
+            else if (DynamicTargeting)
+            {
+                HealGA healGA = new(amount, multiplyAmount, DynamicAmountInfo, PreTargetPermanentView, PreTargetEnemySlotView);
+                healGA.CardActionner = CardActionner;
+                healGA.SourceEffect = this;
+                healGA.ActivateToolTip = ActivateToolTip;
+                healGA.SFX = !AudioManager.Instance.IsValid(SFX) ? AudioManager.Instance.Effect_HealSound : SFX;
+                return healGA;
+            }
             else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
             {
                 HealGA healGA = new(amount, multiplyAmount, DynamicAmountInfo, ParentEffect.TargetForLinked_Player, ParentEffect.TargetForLinked_Enemy);
@@ -154,7 +166,12 @@ public class HealEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -195,7 +212,12 @@ public class HealEffect : Effect
                     List<PermanentView> playerTargets;
                     List<EnemySlotView> enemyTargets;
 
-                    if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
+                    if (DynamicTargeting)
+                    {
+                        playerTargets = PreTargetPermanentView;
+                        enemyTargets = PreTargetEnemySlotView;
+                    }
+                    else if (targetModeInfo.targetMode == TargetMode.EffectParent_Targets)
                     {
                         playerTargets = ParentEffect.TargetForLinked_Player;
                         enemyTargets = ParentEffect.TargetForLinked_Enemy;
@@ -240,12 +262,23 @@ public class HealEffect : Effect
             ? new List<EnemySlotView>(TargetForLinked_Enemy) 
             : null;
 
+        var clonedPrePlayerTargets = PreTargetPermanentView != null
+            ? new List<PermanentView>(PreTargetPermanentView)
+            : null;
+            
+        var clonedPreEnemyTargets = PreTargetEnemySlotView != null 
+            ? new List<EnemySlotView>(PreTargetEnemySlotView) 
+            : null;
+
         Effect clonedLinked = LinkedEffect != null ? LinkedEffect.Clone() : null;
 
         return new HealEffect(
             EffectID,
             ActivateToolTip,
             Priority,
+            DynamicTargeting,
+            clonedPrePlayerTargets,
+            clonedPreEnemyTargets,
             HollowEffect,
             amount,
             multiplyAmount,

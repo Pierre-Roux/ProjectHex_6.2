@@ -22,7 +22,6 @@ public class TargetModeInfo
 {
     public TargetMode targetMode;
     public Enemy_Player_ENUM PlayerOrEnemy;
-    public PermanentArea permanentArea;
     public KeyWordType keyWordType;
 
     public TargetModeInfo(){}

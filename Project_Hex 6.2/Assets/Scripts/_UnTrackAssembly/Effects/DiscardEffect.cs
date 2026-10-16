@@ -17,13 +17,10 @@ public class DiscardEffect : Effect
 
     [field: SerializeReference, SR] private List<TargetLimitationInfo> targetLimitations;
     public override List<TargetLimitationInfo> EffectTargetLimitations => targetLimitations;
-    
-
-    private bool ConditionTested = false;
 
     public DiscardEffect(){}
 
-    public DiscardEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, bool discardAll, EventReference sfx, bool conditionTested,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
+    public DiscardEffect(string effectID, bool activateToolTip, int priority, bool hollowEffect, int Amount, int MultiplyAmount, bool payXEffect, int payXValue, int multiHit, int activateNumber, int activateLeft, bool orChoice,List<DynamicConditionInfo> dynamicConditionInfos, List<TargetLimitationInfo> TargetLimitations, bool targetUpTo, ActionnerType ActionnerType, List<EventInfo> Event, bool cancelOnDeath, GameObject actionner, Card cardActionner, String intent_Title, String Number, int duration, EventInfo durationType, bool triggerOnDurationEnd, Effect linkedEffect, List<PermanentView> targetForLinked_Player, List<EnemySlotView> targetForLinked_Enemy, DynamicAmountInfo dynamicAmountInfo, bool discardAll, EventReference sfx,CounterTypeInfo typeOfCounter, int counterValue, bool moduloValue)
     {
         Priority = priority;
         HollowEffect = hollowEffect;
@@ -56,7 +53,6 @@ public class DiscardEffect : Effect
         DynamicAmountInfo = dynamicAmountInfo;
         DiscardAll = discardAll;
         SFX = sfx;
-        ConditionTested = conditionTested;
         TypeOfCounter = typeOfCounter;
         CounterValue = counterValue;
         ModuloValue = moduloValue;
@@ -122,32 +118,15 @@ public class DiscardEffect : Effect
                 DiscardAmount = PayXValue;
             }
 
-            if (!ConditionTested)
+            if (DiscardAmount * multiplyAmount >= CardSystem.Instance.hand.Count)
             {
                 DiscardEffect DiscardallEffect = (DiscardEffect)Clone();
                 DiscardallEffect.DiscardAll = true;
-
-                DiscardEffect DiscardManuEffect = (DiscardEffect)Clone();
-                DiscardManuEffect.ConditionTested = true;
-
-                DynamicAmountInfo DynamicAmountInfo = new DynamicAmountInfo();
-                CounterTypeInfo counterTypeInfo = new CounterTypeInfo();
-                DynamicConditionInfo Condition = new(DiscardAmount * multiplyAmount, DynamicCondition.DynamicAmountInfOrEqualsToValue, DynamicAmountInfo, KeyWordType.NULL, counterTypeInfo, BasicParam.NULL, false);
-                List<DynamicConditionInfo> Conditions = new List<DynamicConditionInfo> { Condition };
-
-                if (ConditionSystem.Instance.TestCondition(Conditions, null, null, null))
-                {
-                    return DiscardallEffect.GetGameAction();
-                }
-                else
-                {
-                    return DiscardManuEffect.GetGameAction();
-                }
+                return DiscardallEffect.GetGameAction();
             }
             else
             {
                 DiscardAmount = DiscardAmount * multiplyAmount;
-
                 DiscardCardGA discardCardGA = new(new List<CardView>());
                 discardCardGA.SourceEffect = this;
                 discardCardGA.ActivateToolTip = false;
@@ -209,7 +188,6 @@ public class DiscardEffect : Effect
             DynamicAmountInfo,
             DiscardAll,
             SFX,
-            ConditionTested,
             TypeOfCounter,
             CounterValue,
             ModuloValue

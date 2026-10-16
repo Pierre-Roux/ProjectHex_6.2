@@ -228,7 +228,6 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
     private void UpdateCost()
     {
         int TotalCost = Card.cost + Card.CalculateBonusCost();
-        Debug.Log("Update cost " + Card.cost + " + " + Card.CalculateBonusCost());
         CurrentCost = TotalCost;
         UpdateCostText();
     }

@@ -625,8 +625,11 @@ public class PermanentView : MonoBehaviour
             RuntimeManager.PlayOneShot(BeingDamageSound);
         }
 
-        UpdateLifeText();
-        UpdateArmorText();
+        if (!IsDead)
+        {
+            UpdateLifeText();
+            UpdateArmorText();            
+        }
     }
 
     public void OnKillTrigger(PermanentView Pstriker, EnemySlotView Estriker, Card Cstriker)

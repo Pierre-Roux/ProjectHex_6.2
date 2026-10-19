@@ -8953,11 +8953,11 @@ MonoBehaviour:
   MusicEmitter: {fileID: 1083179117}
   BackgroundMusic:
     Guid:
-      Data1: -1600803259
-      Data2: 1270165136
-      Data3: 440442783
-      Data4: -150944410
-    Path: event:/Cards/Draw Card Sound
+      Data1: -1656504916
+      Data2: 1084090828
+      Data3: -872792900
+      Data4: 772559033
+    Path: event:/Music/Test Mix
   VictoryMusic:
     Guid:
       Data1: 0

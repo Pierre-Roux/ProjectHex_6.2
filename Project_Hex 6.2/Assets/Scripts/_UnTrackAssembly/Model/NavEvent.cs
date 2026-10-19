@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,22 +21,27 @@ public class NavEvent : MonoBehaviour
         dataBase = DataBase.Instance;
 
     }
+    private bool exiting;
+
     public void OpenNextSlide(int slideIndex)
     {
-        switch (slideIndex)
+        Exit(() =>
         {
-            case 0:
-                Instantiate(NextSlide, transform.position, Quaternion.identity, navigationSystem.EventSLideParent.transform);
-                break;
-            case 1:
-                Instantiate(NextSlide2, transform.position, Quaternion.identity, navigationSystem.EventSLideParent.transform);
-                break;
-            default:
-                Debug.Log("Slide non trouvé");
-                break;
-        }
+            switch (slideIndex)
+            {
+                case 0:
+                    Instantiate(NextSlide, transform.position, Quaternion.identity, navigationSystem.EventSLideParent.transform);
+                    break;
+                case 1:
+                    Instantiate(NextSlide2, transform.position, Quaternion.identity, navigationSystem.EventSLideParent.transform);
+                    break;
+                default:
+                    Debug.Log("Slide non trouvé");
+                    break;
+            }
 
-        Destroy(this.gameObject, 0.1f);
+            Destroy(gameObject, 0.1f);
+        });
     }
 
     public void GainLife(int Amount)
@@ -108,10 +115,32 @@ public class NavEvent : MonoBehaviour
 
     private void closeSlide(bool BecomeInteractable)
     {
-        navigationSystem.Interractable = BecomeInteractable;
+        Exit(() =>
+        {
+            navigationSystem.Interractable = BecomeInteractable;
 
-        navigationSystem.Redraw();
+            navigationSystem.Redraw();
 
-        Destroy(this.gameObject, 0.1f);
+            Destroy(gameObject, 0.1f);
+        });
+    }
+
+    private void Exit(Action exitAction)
+    {
+        if (exiting) return;
+        exiting = true;
+        StartCoroutine(ExitAfterDraft(exitAction));
+    }
+
+    private IEnumerator ExitAfterDraft(Action exitAction)
+    {
+        // On attend une frame : tous les listeners du bouton (DraftReward inclus) ont été exécutés,
+        // quel que soit leur ordre dans l'inspecteur.
+        yield return null;
+
+        // WaitingForDraft passe à true dans DraftReward, et à false à la fin du draft (carte prise ou panneau fermé).
+        yield return new WaitUntil(() => !RewardSystem.Instance.WaitingForDraft);
+
+        exitAction();
     }
 }

@@ -21,6 +21,8 @@ public class RewardSystem : Singleton<RewardSystem>
     [SerializeField] private Button ButtonMoneyReward;
     [SerializeField] private TMP_Text ButtonMoneyReward_text;
 
+    [HideInInspector] public bool WaitingForDraft = false;
+
     public List<CardData> PotentialRewards = new List<CardData>();
 
     public void Start()
@@ -47,6 +49,7 @@ public class RewardSystem : Singleton<RewardSystem>
 
     public void DraftReward(int amount)
     {
+        WaitingForDraft = true;
         ClearDraftReward();
         CardChoice.Clear();
         var selected = new HashSet<CardData>();
@@ -147,6 +150,7 @@ public class RewardSystem : Singleton<RewardSystem>
         else
         {
             CardRewardPanel.SetActive(false);
+            WaitingForDraft = false;
         }
 
         DataBase.Instance.DeckList.Add(card.data);
@@ -156,17 +160,19 @@ public class RewardSystem : Singleton<RewardSystem>
     {
         cardView.transform.DOMove(PilePoint.position, 0.20f);
         Tween tween = cardView.transform.DOScale(Vector3.zero, 0.15f);
-        //Tween tween = cardView.transform.DOMove(discardPilePoint.position, 0.15f);
         yield return tween.WaitForCompletion();
         Destroy(cardView.gameObject);
         CardRewardPanel.SetActive(false);
+        WaitingForDraft = false;
     }
 
     public void PickCardFromRewardPanel(CardView cardView)
     {
         GainCard(cardView.Card, cardView);
         if (!NavMode)
+        {
             ButtonCardReward.interactable = false;
+        }
     }
 
     public void OpenCardRewardPanel()
@@ -178,6 +184,7 @@ public class RewardSystem : Singleton<RewardSystem>
     public void CloseCardRewardPanel()
     {
         CardRewardPanel.SetActive(false);
+        WaitingForDraft = false; // draft terminé sans carte
     }
 
     public void AddEndFightMoney()

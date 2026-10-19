@@ -231,7 +231,7 @@ MonoBehaviour:
       type: {class: SacEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
-        Priority: 0
+        Priority: 1
         actionnerType: 2
         EventInfos:
         - Events: 0

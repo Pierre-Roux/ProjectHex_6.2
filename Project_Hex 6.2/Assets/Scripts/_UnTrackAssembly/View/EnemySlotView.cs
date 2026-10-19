@@ -273,6 +273,7 @@ public class EnemySlotView : MonoBehaviour
 
     private void UpdatePower()
     {
+        if (PermanentData == null) return;
         int oldPower = currentPower;
         CalculateBonusPower();
         currentPower = PermanentData.Power + BonusPower;
@@ -565,6 +566,7 @@ public class EnemySlotView : MonoBehaviour
 
     public void UpdateMaxLife()
     {
+        if (PermanentData == null) return;
         int oldMaxLife = MaxLife;
         int passiveBonus = CalculateBonusLife();
         MaxLife = PermanentData.Life + passiveBonus;

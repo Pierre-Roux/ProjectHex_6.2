@@ -227,6 +227,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
     private void UpdateCost()
     {
+        if (Card == null) return;
         int TotalCost = Card.cost + Card.CalculateBonusCost();
         CurrentCost = TotalCost;
         UpdateCostText();
@@ -234,6 +235,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
     private void UpdatePower()
     {
+        if (Card == null) return;
         int TotalPower = Card.Power + Card.CalculateBonusPower(Card, null);
         CurrentPower = TotalPower;
         UpdatePowerText();
@@ -241,6 +243,7 @@ public class CardView : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,I
 
     private void UpdateMaxLife()
     {
+        if (Card == null) return;
         int TotalLife = Card.Life + Card.CalculateBonusMaxLife(Card, null);
         CurrentLife = TotalLife;
         UpdateLifeText();

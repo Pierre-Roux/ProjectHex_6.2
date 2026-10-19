@@ -13,4 +13,13 @@ MonoBehaviour:
   m_Name: ColorLessCards
   m_EditorClassIdentifier: Assembly-CSharp::CardPool
   PoolName: 
-  CardDataList: []
+  CardDataList:
+  - {fileID: 11400000, guid: 21e7a7ab792dc8849acefb7ca337d6ab, type: 2}
+  - {fileID: 11400000, guid: a8f00c84be9e23d479b25e1299ad1ab2, type: 2}
+  - {fileID: 11400000, guid: a2429e58f7b5b8b44ad7ec156c0efafe, type: 2}
+  - {fileID: 11400000, guid: a9b1e36c4687fd0419cb1236ee01d1a1, type: 2}
+  - {fileID: 11400000, guid: a3acb0eaa36acd04bbe868ce51a902de, type: 2}
+  - {fileID: 11400000, guid: d70950d3e9a60a34aa4a7893bb49c62e, type: 2}
+  - {fileID: 11400000, guid: 607dc63e9acb06f419e5fd49ea3dff69, type: 2}
+  - {fileID: 11400000, guid: f4af776eb28e28343b68f05a92274157, type: 2}
+  - {fileID: 11400000, guid: 1a9fa10267cd94148b51616b2ca8bf3e, type: 2}

@@ -10,29 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d085891afe8800f40a7640c0f75f8972, type: 3}
-  m_Name: Dager
-  m_EditorClassIdentifier: 
+  m_Name: Marbled Prayer 2
+  m_EditorClassIdentifier: _UnTrackAssembly::CardData
   <ID_Code>k__BackingField: 
-  <Title>k__BackingField: Dager
-  <Description>k__BackingField: Deal 5 on activate
+  <Title>k__BackingField: Marbled Prayer
+  <Description>k__BackingField: Invoke 2 Statue
   <Rarity>k__BackingField: 0
   <cost>k__BackingField: 2
-  <GridCost>k__BackingField: 2
+  <GridCost>k__BackingField: 0
   <PayX>k__BackingField: 0
   <SpriteImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
-  <Money_Cost>k__BackingField: 0
-  KeyWords:
-  - rid: 4855037171066994795
-  <Life>k__BackingField: 4
-  <Power>k__BackingField: 5
+  <Money_Cost>k__BackingField: 20
+  KeyWords: []
+  <Life>k__BackingField: 0
+  <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
-  <Durability>k__BackingField: 3
-  <MaxDurability>k__BackingField: 3
-  <PermanentImage>k__BackingField: {fileID: 21300000, guid: 4abe199c38bbffd4c8819da12bdb3c6c, type: 3}
-  <permanentArea>k__BackingField: 1
-  <IsSpell>k__BackingField: 0
+  <Durability>k__BackingField: 0
+  <MaxDurability>k__BackingField: 1
+  <PermanentImage>k__BackingField: {fileID: 0}
+  <permanentArea>k__BackingField: 0
+  <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
-  - rid: 3047188320285622469
+  - rid: 3878124350565777501
   PlayCardSound:
     Guid:
       Data1: 0
@@ -227,14 +226,14 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3047188320285622469
-      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
+    - rid: 3878124350565777501
+      type: {class: InvocEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
-        actionnerType: 0
+        actionnerType: 2
         EventInfos:
-        - Events: 4
+        - Events: 0
           TestType: 0
           Owner: 0
           BasicParam: 0
@@ -279,8 +278,7 @@ MonoBehaviour:
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
-        powerBased: 1
-        damageAmount: 0
+        amount: 1
         multiplyAmount: 1
         DynamicAmountInfo:
           DynamicAmount: 0
@@ -295,16 +293,7 @@ MonoBehaviour:
           BasicParam: 0
           CardLocation: 0
           CurrentParam: 0
-        targetModeInfo:
-          targetMode: 0
-          PlayerOrEnemy: 0
-          permanentArea: 0
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
-        targetLimitations: []
-    - rid: 4855037171066994795
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 17
-        keyWordValue: 0
+        CardsToInvoc:
+        - {fileID: 11400000, guid: 358c30bca1838ed4f9d60569f0b2ea0c, type: 2}
+        - {fileID: 11400000, guid: 358c30bca1838ed4f9d60569f0b2ea0c, type: 2}
+        EnemyToInvoc: []

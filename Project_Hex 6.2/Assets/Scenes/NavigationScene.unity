@@ -2083,6 +2083,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a2cb3607441d4b41a6fcd79ce907a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: _UnTrackAssembly::RewardSystem
+  DraftStat: {fileID: 11400000, guid: 230a763e7859a0b48bb31366e0c82b22, type: 2}
   NavMode: 1
   PilePoint: {fileID: 372160339}
   CardRewardPanel: {fileID: 1489115511}
@@ -2090,6 +2091,7 @@ MonoBehaviour:
   ButtonCardReward: {fileID: 0}
   ButtonMoneyReward: {fileID: 0}
   ButtonMoneyReward_text: {fileID: 0}
+  WaitingForDraft: 0
   PotentialRewards: []
 --- !u!1 &817181859
 GameObject:

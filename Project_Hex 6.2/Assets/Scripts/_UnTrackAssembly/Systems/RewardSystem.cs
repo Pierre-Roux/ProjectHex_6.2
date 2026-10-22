@@ -7,7 +7,7 @@ using FMODUnity;
 using TMPro;
 public class RewardSystem : Singleton<RewardSystem>
 {
-
+    public StatRegister DraftStat;
     [SerializeField] public bool NavMode;
 
     [SerializeField] public Transform PilePoint;
@@ -72,6 +72,15 @@ public class RewardSystem : Singleton<RewardSystem>
         {
             amount = CardChoice.Count;
         }
+
+        Debug.Log("Total cardamount: " + PotentialRewards.Count + " Card selected from draft : ");
+        for (int i = 0; i < amount; i++)
+        {
+            Debug.Log(CardChoice[i].Title + "add TO Stat");
+            DraftStat.RegisterStat(CardChoice[i].Title);
+        }
+
+        DraftStat.ViewStats();
 
         Vector3 Pos = new Vector3(0, 0, 0);
         for (int i = 0; i < amount; i++)

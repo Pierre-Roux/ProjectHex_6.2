@@ -488,9 +488,9 @@ MonoBehaviour:
   MaxPowerGrid: 8
   NBCardDrawAtStartTurn: 6
   NavOptionNumber: 3
-  Common_Weigh: 75
-  Uncommon_Weigh: 24
-  Rare_Weigh: 1
+  Common_Weigh: 60
+  Uncommon_Weigh: 30
+  Rare_Weigh: 10
   CurrentPlayer: {fileID: 0}
   SelectedEnemy: {fileID: 0}
   INITIALDeckList: []

@@ -28,7 +28,6 @@ MonoBehaviour:
   <Durability>k__BackingField: 0
   <MaxDurability>k__BackingField: 0
   <PermanentImage>k__BackingField: {fileID: 0}
-  <permanentArea>k__BackingField: 0
   <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
   - rid: 3047188320285622472
@@ -231,7 +230,7 @@ MonoBehaviour:
       type: {class: DrawCardsEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
-        Priority: 0
+        Priority: 1
         actionnerType: 2
         EventInfos:
         - Events: 0
@@ -260,6 +259,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -276,6 +277,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
@@ -298,7 +301,7 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
-        Priority: 0
+        Priority: 2
         actionnerType: 2
         EventInfos:
         - Events: 0
@@ -327,6 +330,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -343,6 +348,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
@@ -365,7 +372,6 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
-          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1

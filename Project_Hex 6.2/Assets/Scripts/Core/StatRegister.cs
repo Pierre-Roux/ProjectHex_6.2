@@ -12,46 +12,26 @@ public class StatEntry
 [CreateAssetMenu(menuName = "Data/StatObject")]
 public class StatRegister : ScriptableObject
 {
-    public List<string> Stats = new List<string>();
-
     [SerializeField]
     public List<StatEntry> DisplayList = new List<StatEntry>();
 
     public void RegisterStat(string nameToRegister)
     {
-        Stats.Add(nameToRegister);
-    }
+        StatEntry entry = DisplayList.Find(
+            stat => stat.Key == nameToRegister
+        );
 
-    public void ViewStats()
-    {
-        foreach (string item in Stats)
+        if (entry != null)
         {
-            StatEntry entry = DisplayList.Find(
-                stat => stat.Key == item
-            );
-
-            if (entry != null)
-            {
-                entry.Value++;
-            }
-            else
-            {
-                DisplayList.Add(new StatEntry
-                {
-                    Key = item,
-                    Value = 1
-                });
-            }
+            entry.Value++;
         }
-
-        string displayMsg =
-            "----------- Stat Globales de draft -----------\n";
-
-        foreach (StatEntry entry in DisplayList)
+        else
         {
-            displayMsg += $"{entry.Key} : {entry.Value}\n";
+            DisplayList.Add(new StatEntry
+            {
+                Key = nameToRegister,
+                Value = 1
+            });
         }
-
-        Debug.Log(displayMsg);
     }
 }

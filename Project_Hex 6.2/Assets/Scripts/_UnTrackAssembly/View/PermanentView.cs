@@ -42,6 +42,8 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public int currentLife { get; set; }
     [HideInInspector] public int currentPower { get; set; }
     [HideInInspector] public int currentArmor { get; set; }
+    [HideInInspector] public int currentRiposte { get; set; }
+    [HideInInspector] public int MaxRiposte { get; set; }
     [HideInInspector] public int MaxDurability { get; set; }
     [HideInInspector] public int Durability { get; set; }
     [HideInInspector] public int BaseMaxDurability { get; set; }
@@ -83,6 +85,7 @@ public class PermanentView : MonoBehaviour
         UpdateLifeText();
         currentArmor = CardReferenceArchive.Armor;
         UpdateArmorText();
+        MaxRiposte = currentRiposte = CardReferenceArchive.NbRiposte;
         VirtualHP = currentLife + currentArmor;
         BaseMaxDurability = cardReference.MaxDurability;
         MaxDurability = cardReference.MaxDurability;
@@ -579,7 +582,7 @@ public class PermanentView : MonoBehaviour
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
-        if (!IsDead && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Core) == false && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Inert) == false)
+        if (!IsDead && currentRiposte > 0 && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Core) == false && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Inert) == false)
         {
             if (Estriker != null && Estriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Range) == false && currentPower > 0)
             {
@@ -589,7 +592,8 @@ public class PermanentView : MonoBehaviour
                 dealDamageGA.SourceEffect.DynamicConditionInfos = new List<DynamicConditionInfo>();
                 dealDamageGA.SourceEffect.Actionner = this.gameObject;
                 dealDamageGA.ActivateToolTip = false;
-                ActionSystem.Instance.AddReaction(dealDamageGA);                    
+                ActionSystem.Instance.AddReaction(dealDamageGA);       
+                currentRiposte--;             
             }
         }
 

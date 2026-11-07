@@ -44,6 +44,8 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public int currentLife { get; set; }
     [HideInInspector] public int currentPower { get; set; }
     [HideInInspector] public int currentArmor { get; set; }
+    [HideInInspector] public int currentRiposte { get; set; }
+    [HideInInspector] public int MaxRiposte { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public bool IsCore { get; set; }
     [HideInInspector] public bool IsDead = false;
@@ -90,6 +92,7 @@ public class EnemySlotView : MonoBehaviour
         UpdateLifeText();
         currentArmor = PermanentData.Armor;
         UpdateArmorText();
+        MaxRiposte = currentRiposte = PermanentData.NbRiposte;
         IsCore = PermanentData.IsCore;
         ShieldVisual.SetActive(false);
         RDMSequence = PermanentData.RDMSequence;
@@ -718,7 +721,7 @@ public class EnemySlotView : MonoBehaviour
             ActionSystem.Instance.AddReaction(triggerEventGA);
         }
 
-        if (!IsDead && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Core) == false && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Inert) == false)
+        if (!IsDead && currentRiposte > 0 && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Core) == false && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Inert) == false)
         {
             if (Pstriker != null && Pstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Range) == false && currentPower > 0)
             {
@@ -728,7 +731,8 @@ public class EnemySlotView : MonoBehaviour
                 dealDamageGA.SourceEffect.DynamicConditionInfos = new List<DynamicConditionInfo>();
                 dealDamageGA.SourceEffect.Actionner = this.gameObject;
                 dealDamageGA.ActivateToolTip = false;
-                ActionSystem.Instance.AddReaction(dealDamageGA);                    
+                ActionSystem.Instance.AddReaction(dealDamageGA);   
+                currentRiposte--;                 
             }
         }
 

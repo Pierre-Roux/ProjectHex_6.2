@@ -14,6 +14,7 @@ public class EnemyPermanentData : ScriptableObject
     [field: SerializeField] public int Life;
     [field: SerializeField] public int Power;
     [field: SerializeField] public int Armor;
+    [field: SerializeField] public int NbRiposte = 1;
     [field: SerializeField] public bool IsCore;
     [field: SerializeReference, SR] public List<KeyWord> KeyWords = new();
 

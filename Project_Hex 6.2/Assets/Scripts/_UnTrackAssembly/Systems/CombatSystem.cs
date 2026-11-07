@@ -600,6 +600,7 @@ public class CombatSystem : Singleton<CombatSystem>
         {
             enemySlotView.TargetLocked = false;
             enemySlotView.VirtualTarget = null;
+            enemySlotView.currentRiposte = enemySlotView.MaxRiposte;
         }
 
         foreach (PermanentView permanentView in Player_Permanents)
@@ -607,6 +608,7 @@ public class CombatSystem : Singleton<CombatSystem>
             permanentView.VirtualAttacker = new List<EnemySlotView>();
             permanentView.IsVirtualDead = false;
             permanentView.VirtualHP = permanentView.currentLife + permanentView.currentArmor;
+            permanentView.currentRiposte = permanentView.MaxRiposte;
         }
 
         PlayerTurnGA playerTurnGA = new();

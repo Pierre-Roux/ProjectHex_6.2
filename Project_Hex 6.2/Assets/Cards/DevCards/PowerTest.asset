@@ -24,8 +24,9 @@ MonoBehaviour:
   KeyWords:
   - rid: 4855037156220731475
   <Life>k__BackingField: 20
-  <Power>k__BackingField: 5
+  <Power>k__BackingField: 2
   <Armor>k__BackingField: 5
+  <NbRiposte>k__BackingField: 2
   <Durability>k__BackingField: 3
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: c4aad028314f29145a02b20f712f72c1, type: 3}

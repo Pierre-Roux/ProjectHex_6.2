@@ -26,6 +26,7 @@ public class Card
     [HideInInspector] public int BonusPower { get; set; }
     public int Armor { get; private set; }
     [HideInInspector] public int InitArmor { get; set; }
+    [HideInInspector]  public int NbRiposte { get; set; }
     public int Durability { get; set; }
     [HideInInspector] public int InitDurability { get; set; }
     [HideInInspector] public int BonusStam { get; set; }
@@ -89,6 +90,7 @@ public class Card
             InitLife = Life = cardData.Life;
             InitPower = Power = cardData.Power;
             InitArmor = Armor = cardData.Armor;
+            NbRiposte = cardData.NbRiposte;
             InitDurability = Durability = cardData.Durability;
             MaxDurability = cardData.MaxDurability;
             KeyWord keyWord = new(KeyWordType.PermaCard, 0);

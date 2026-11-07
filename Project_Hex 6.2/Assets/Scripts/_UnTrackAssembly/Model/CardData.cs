@@ -25,6 +25,7 @@ public class CardData : ScriptableObject
     [field: SerializeField] public int Life { get; private set; }
     [field: SerializeField] public int Power { get; private set; }
     [field: SerializeField] public int Armor { get; private set; }
+    [field: SerializeField] public int NbRiposte { get; private set; } = 1;
     [field: SerializeField] public int Durability { get; private set; }
     [field: SerializeField] public int MaxDurability { get; private set; } = 1;
     [field: SerializeField] public Sprite PermanentImage { get; private set; }
@@ -81,6 +82,7 @@ public class CardData : ScriptableObject
         clone.Life = Life;
         clone.Power = Power;
         clone.Armor = Armor;
+        clone.NbRiposte = NbRiposte;
         clone.Durability = Durability;
         clone.MaxDurability = MaxDurability;
         clone.PermanentImage = PermanentImage;

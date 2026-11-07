@@ -30,7 +30,6 @@ MonoBehaviour:
   <Durability>k__BackingField: 2
   <MaxDurability>k__BackingField: 2
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: def737b7c5ef4c34f9135b7590d24c5f, type: 3}
-  <permanentArea>k__BackingField: 2
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 2787020481617199209
@@ -267,6 +266,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -283,6 +284,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 5a6d1a75-3f8a-4add-a887-0a97933afa71
@@ -290,7 +293,6 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 2
           PlayerOrEnemy: 1
-          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
@@ -328,6 +330,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -344,6 +348,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 6af33f6c-69bb-4037-914e-8527bc57abc3
@@ -363,20 +369,9 @@ MonoBehaviour:
           CardLocation: 0
           CurrentParam: 0
         targetModeInfo:
-          targetMode: 0
+          targetMode: 1
           PlayerOrEnemy: 0
-          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        targetLimitations:
-        - rid: 2787020481617199212
-    - rid: 2787020481617199212
-      type: {class: TargetLimitationInfo, ns: , asm: Enums}
-      data:
-        targetLimitations: 1
-        Owner: 1
-        keyWordType: 0
-        Param: 0
-        ParamValue: -1
-        MandatoryLimitation: 0
+        targetLimitations: []

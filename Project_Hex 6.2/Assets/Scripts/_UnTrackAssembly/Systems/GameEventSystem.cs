@@ -531,11 +531,17 @@ public class GameEventSystem : Singleton<GameEventSystem>
         {
             if (effect.Actionner.GetComponent<PermanentView>() != null)
             {
-                Disabled = effect.Actionner.GetComponent<PermanentView>().IsDisabled;
+                if (effect.Actionner.GetComponent<PermanentView>().KeyWords.Exists(k => k.keyWordType == KeyWordType.Inert))
+                {
+                    Disabled = true;
+                }
             }
             else if (effect.Actionner.GetComponent<EnemySlotView>() != null)
             {
-                Disabled = effect.Actionner.GetComponent<EnemySlotView>().IsDisabled;
+                if (effect.Actionner.GetComponent<EnemySlotView>().KeyWords.Exists(k => k.keyWordType == KeyWordType.Inert))
+                {
+                    Disabled = true;
+                }
             }
         }
 

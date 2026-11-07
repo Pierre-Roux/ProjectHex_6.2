@@ -2984,6 +2984,72 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 606133815}
   m_CullTransparentMesh: 1
+--- !u!1001 &623292481
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 776000403}
+    m_Modifications:
+    - target: {fileID: 1826471339527598076, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+    - target: {fileID: 1826471339527598076, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_Name
+      value: Slot (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.72
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+--- !u!4 &623292482 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+  m_PrefabInstance: {fileID: 623292481}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &672738262
 GameObject:
   m_ObjectHideFlags: 0
@@ -3953,12 +4019,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 623292482}
   - {fileID: 5399205803526491034}
   - {fileID: 2120156138}
   - {fileID: 1471464630}
   - {fileID: 1475500801}
   - {fileID: 308970920}
   - {fileID: 1358899110}
+  - {fileID: 1343251919}
   m_Father: {fileID: 2109100551}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &783032403
@@ -4563,6 +4631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a2cb3607441d4b41a6fcd79ce907a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DraftStat: {fileID: 0}
   NavMode: 0
   PilePoint: {fileID: 1131278901}
   CardRewardPanel: {fileID: 1479466095}
@@ -4570,6 +4639,7 @@ MonoBehaviour:
   ButtonCardReward: {fileID: 2113872677}
   ButtonMoneyReward: {fileID: 895121125}
   ButtonMoneyReward_text: {fileID: 1495607780}
+  WaitingForDraft: 0
   PotentialRewards: []
 --- !u!1 &895121123
 GameObject:
@@ -6544,6 +6614,72 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1461848484}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1343251918
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 776000403}
+    m_Modifications:
+    - target: {fileID: 1826471339527598076, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+    - target: {fileID: 1826471339527598076, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_Name
+      value: Slot (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+--- !u!4 &1343251919 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4330348154994559213, guid: 7212d623e24110a4b8dee3110c559def, type: 3}
+  m_PrefabInstance: {fileID: 1343251918}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1349372751
 GameObject:
   m_ObjectHideFlags: 0
@@ -8191,6 +8327,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8259,6 +8396,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8335,6 +8473,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8411,6 +8550,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8478,6 +8618,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8555,6 +8696,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8613,6 +8755,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8687,6 +8830,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8745,6 +8889,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8814,6 +8959,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8880,6 +9026,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8938,6 +9085,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -8997,6 +9145,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9073,6 +9222,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9146,6 +9296,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9214,6 +9365,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9287,6 +9439,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9353,6 +9506,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9411,6 +9565,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9469,6 +9624,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9527,6 +9683,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9593,6 +9750,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -9652,6 +9810,7 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -12344,6 +12503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyView: {fileID: 0}
+  EnemyTurnInProgress: 0
 --- !u!1001 &2120156137
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -23,13 +23,12 @@ MonoBehaviour:
   <Money_Cost>k__BackingField: 20
   KeyWords:
   - rid: 4855037156220731475
-  <Life>k__BackingField: 50
+  <Life>k__BackingField: 20
   <Power>k__BackingField: 5
   <Armor>k__BackingField: 5
   <Durability>k__BackingField: 3
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: c4aad028314f29145a02b20f712f72c1, type: 3}
-  <permanentArea>k__BackingField: 1
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 6565497959204257885
@@ -265,6 +264,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -281,6 +282,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: e231a269-2f3a-40ae-bd9a-285fd2148160
@@ -303,7 +306,6 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 0
           PlayerOrEnemy: 0
-          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1

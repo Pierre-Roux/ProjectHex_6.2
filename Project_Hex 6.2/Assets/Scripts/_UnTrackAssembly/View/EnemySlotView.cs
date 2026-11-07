@@ -46,7 +46,6 @@ public class EnemySlotView : MonoBehaviour
     [HideInInspector] public int currentArmor { get; set; }
     [HideInInspector] public int MaxLife { get; set; }
     [HideInInspector] public bool IsCore { get; set; }
-    [HideInInspector] public bool IsDisabled = false;
     [HideInInspector] public bool IsDead = false;
     [HideInInspector] public bool IsVirtualDead = false;
     [HideInInspector] public PermanentView VirtualTarget = null;
@@ -717,6 +716,20 @@ public class EnemySlotView : MonoBehaviour
             eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Enemy, KeyWordType.NULL, BasicParam.Life);
             triggerEventGA = new(eventInfo, null, null, null, this);
             ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+
+        if (!IsDead && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Core) == false && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Inert) == false)
+        {
+            if (Pstriker != null && Pstriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Range) == false && currentPower > 0)
+            {
+                List<PermanentView> Pstrikers = new List<PermanentView>{Pstriker};
+                DealDamageGA dealDamageGA = new DealDamageGA(true,currentPower,1,new DynamicAmountInfo(),Pstrikers,null);
+                dealDamageGA.SourceEffect = new DealDamageEffect();
+                dealDamageGA.SourceEffect.DynamicConditionInfos = new List<DynamicConditionInfo>();
+                dealDamageGA.SourceEffect.Actionner = this.gameObject;
+                dealDamageGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(dealDamageGA);                    
+            }
         }
 
         currentLife -= Amount;

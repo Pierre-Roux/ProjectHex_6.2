@@ -5,8 +5,8 @@ public enum KeyWordType
     // KeywordFonctionel 
     Collateral,
     Decay,
-
-    _Mechanickeyword,
+    Range,
+    
     _Mechanickeyword2,
     _Mechanickeyword3,
 
@@ -31,8 +31,8 @@ public enum KeyWordType
     Object,
     Ersatz,
     Engram,
+    Inert,
 
-    _Attribute1,
     _Attribute2,
 
     // General

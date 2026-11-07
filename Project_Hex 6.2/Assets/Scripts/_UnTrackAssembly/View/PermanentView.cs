@@ -47,7 +47,6 @@ public class PermanentView : MonoBehaviour
     [HideInInspector] public int BaseMaxDurability { get; set; }
     [HideInInspector] public int CurrentHPBonus { get; set; }
     [HideInInspector] public Card CardReferenceArchive;
-    [SerializeField] public bool IsDisabled = false;
     [HideInInspector] public bool IsDead = false;
     [SerializeField] public bool IsVirtualDead = false;
     [SerializeField] public List<EnemySlotView> VirtualAttacker = new List<EnemySlotView>();
@@ -578,6 +577,20 @@ public class PermanentView : MonoBehaviour
             eventInfo = new EventInfo(Events.WhenPermaChangeParam, Enemy_Player_ENUM.Player, KeyWordType.NULL, BasicParam.Life);
             triggerEventGA = new(eventInfo, null, null, this, null);
             ActionSystem.Instance.AddReaction(triggerEventGA);
+        }
+
+        if (!IsDead && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Core) == false && this.KeyWords.Any(k => k.keyWordType == KeyWordType.Inert) == false)
+        {
+            if (Estriker != null && Estriker.KeyWords.Any(k => k.keyWordType == KeyWordType.Range) == false && currentPower > 0)
+            {
+                List<EnemySlotView> Estrikers = new List<EnemySlotView>{Estriker};
+                DealDamageGA dealDamageGA = new DealDamageGA(true,currentPower,1,new DynamicAmountInfo(),null,Estrikers);
+                dealDamageGA.SourceEffect = new DealDamageEffect();
+                dealDamageGA.SourceEffect.DynamicConditionInfos = new List<DynamicConditionInfo>();
+                dealDamageGA.SourceEffect.Actionner = this.gameObject;
+                dealDamageGA.ActivateToolTip = false;
+                ActionSystem.Instance.AddReaction(dealDamageGA);                    
+            }
         }
 
         currentLife -= Amount;

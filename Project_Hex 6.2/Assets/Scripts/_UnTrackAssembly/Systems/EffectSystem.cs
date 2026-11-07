@@ -932,7 +932,8 @@ public class EffectSystem : Singleton<EffectSystem>
                 if (target != null)
                 {
                     if (!conditionSystem.TestCondition(disableGA.SourceEffect.DynamicConditionInfos, null, null, null, null, null, null, true, null, target, null, disableGA.Actionner)) continue;
-                    target.IsDisabled = true;
+                    KeyWord keyWord = new KeyWord(KeyWordType.Inert,0);
+                    target.KeyWords.Add(keyWord);
                     foreach (Effect effect in target.ToggleableEffects)
                     {
                         if (effect.Disabled == false)
@@ -950,7 +951,8 @@ public class EffectSystem : Singleton<EffectSystem>
                 if (target != null)
                 {
                     if (!conditionSystem.TestCondition(disableGA.SourceEffect.DynamicConditionInfos, null, null, null, null, null, null, true, null, null, target, disableGA.Actionner)) continue;
-                    target.IsDisabled = true;
+                    KeyWord keyWord = new KeyWord(KeyWordType.Inert,0);
+                    target.KeyWords.Add(keyWord);
                     foreach (Effect effect in target.ToggleableEffects)
                     {
                         if (effect.Disabled == false)
@@ -971,7 +973,7 @@ public class EffectSystem : Singleton<EffectSystem>
                 if (target != null)
                 {
                     if (!conditionSystem.TestCondition(enableGA.SourceEffect.DynamicConditionInfos, null, null, null, null, null, null, true, null, target, null, enableGA.Actionner)) continue;
-                    target.IsDisabled = false;
+                    target.KeyWords.RemoveAll(k => k.keyWordType == KeyWordType.Inert);
                     foreach (Effect effect in target.ToggleableEffects)
                     {
                         if (effect.Disabled == true)
@@ -989,7 +991,7 @@ public class EffectSystem : Singleton<EffectSystem>
                 if (target != null)
                 {
                     if (!conditionSystem.TestCondition(enableGA.SourceEffect.DynamicConditionInfos, null, null, null, null, null, null, true, null, null, target, enableGA.Actionner)) continue;
-                    target.IsDisabled = false;
+                    target.KeyWords.RemoveAll(k => k.keyWordType == KeyWordType.Inert);
                     foreach (Effect effect in target.ToggleableEffects)
                     {             
                         if (effect.Disabled == true)         

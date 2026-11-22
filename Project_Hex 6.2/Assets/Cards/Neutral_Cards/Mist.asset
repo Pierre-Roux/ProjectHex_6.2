@@ -26,10 +26,10 @@ MonoBehaviour:
   <Life>k__BackingField: 8
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
+  <NbRiposte>k__BackingField: 1
   <Durability>k__BackingField: 1
   <MaxDurability>k__BackingField: 1
   <PermanentImage>k__BackingField: {fileID: 21300000, guid: 409d24fc0898ed64497bb3ef366576e0, type: 3}
-  <permanentArea>k__BackingField: 2
   <IsSpell>k__BackingField: 0
   <Effects>k__BackingField:
   - rid: 3047188320285622475
@@ -230,7 +230,7 @@ MonoBehaviour:
     - rid: 3047188320285622474
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 6
+        keyWordType: 16
         keyWordValue: 0
     - rid: 3047188320285622475
       type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
@@ -265,6 +265,8 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
+        DynamicTargeting: 0
+        PriorityList: []
         Duration: 0
         DurationType:
           Events: 0
@@ -281,6 +283,8 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
@@ -288,7 +292,6 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 1
-          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1

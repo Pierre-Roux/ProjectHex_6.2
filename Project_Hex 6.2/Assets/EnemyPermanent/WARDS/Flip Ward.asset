@@ -168,7 +168,7 @@ MonoBehaviour:
         Priority: 0
         actionnerType: 1
         EventInfos:
-        - Events: 37
+        - Events: 0
           TestType: 0
           Owner: 0
           BasicParam: 0
@@ -285,7 +285,7 @@ MonoBehaviour:
         PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 
+        EffectID: 4beec214-fb54-41e6-bf90-0fbe563bed77
         amount: 1
         multiplyAmount: 1
         DynamicAmountInfo:

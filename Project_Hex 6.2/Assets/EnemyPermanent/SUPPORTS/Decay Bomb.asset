@@ -175,7 +175,7 @@ MonoBehaviour:
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
         keyWordType: 2
-        keyWordValue: 0
+        keyWordValue: 2
     - rid: 7417296053948383316
       type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:

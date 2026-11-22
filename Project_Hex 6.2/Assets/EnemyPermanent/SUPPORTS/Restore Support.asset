@@ -209,7 +209,6 @@ MonoBehaviour:
         TriggerOnDurationEnd: 0
         CancelOnDeath: 1
         DynamicConditionInfos:
-        - rid: 7417296056359059457
         - rid: 7417296056359059458
         LinkedEffect:
           rid: -2
@@ -245,33 +244,6 @@ MonoBehaviour:
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
-    - rid: 7417296056359059457
-      type: {class: DynamicConditionInfo, ns: , asm: Enums}
-      data:
-        DynamicCondition: 28
-        CounterTypeInfo:
-          CounterType: 0
-          TestType: 0
-          Owner: 0
-          SinceLoad: 0
-          Intern: 0
-        TestType: 6
-        TestValue: 0
-        TestDynamicAmountInfo:
-          DynamicAmount: 0
-          CounterType:
-            CounterType: 0
-            TestType: 0
-            Owner: 0
-            SinceLoad: 0
-            Intern: 0
-          TestType: 0
-          Enemy_Player: 0
-          BasicParam: 0
-          CardLocation: 0
-          CurrentParam: 0
-        basicParam: 0
-        currentParam: 0
     - rid: 7417296056359059458
       type: {class: DynamicConditionInfo, ns: , asm: Enums}
       data:

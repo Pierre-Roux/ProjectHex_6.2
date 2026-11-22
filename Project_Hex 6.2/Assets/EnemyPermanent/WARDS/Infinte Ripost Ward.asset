@@ -193,7 +193,13 @@ MonoBehaviour:
         Intent_Title: 
         number: 
         DynamicTargeting: 0
-        PriorityList: []
+        PriorityList:
+        - priorityType: 1
+          Owner: 2
+          keyWordType: 18
+          Param: 0
+          ParamValue: 0
+          TargetConditions: []
         Duration: 0
         DurationType:
           Events: 0
@@ -217,7 +223,7 @@ MonoBehaviour:
         EffectID: 542cc247-cb9d-4fed-a286-5bb4aec3fe27
         CanBeDisable: 1
         targetModeInfo:
-          targetMode: 2
+          targetMode: 4
           PlayerOrEnemy: 2
           keyWordType: 0
         TargetUpTo: 1

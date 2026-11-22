@@ -16,7 +16,7 @@ MonoBehaviour:
   Tier: 1
   StageNavCardPool: {fileID: 11400000, guid: 4d658e19b99f9964c9ea3c6ebdc9e55d, type: 2}
   Enemies:
-  - {fileID: 5728494894741626448, guid: 8c6f90f68e3cad64093a6a1b8e1af2e7, type: 3}
+  - {fileID: 5728494894741626448, guid: a5b86cfd207b6ec4d9bd70993881f2c9, type: 3}
   Elite_Enemies:
   - {fileID: 5728494894741626448, guid: a5ed0e8721e6d8841b5ea2cee2e83acf, type: 3}
   Boss_Enemies:

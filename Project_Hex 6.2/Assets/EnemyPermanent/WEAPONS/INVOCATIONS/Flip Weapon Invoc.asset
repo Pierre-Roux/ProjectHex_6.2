@@ -24,7 +24,9 @@ MonoBehaviour:
   KeyWords:
   - rid: 4855037132895683281
   - rid: 7417296053948383309
+  - rid: 1132276486417154125
   <PossibleIntent>k__BackingField:
+  - rid: 1132276486417154128
   - rid: 3047188320285622479
   RDMSequence: 0
   <IntentSequence>k__BackingField:
@@ -161,6 +163,74 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 1132276486417154125
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 23
+        keyWordValue: 0
+    - rid: 1132276486417154128
+      type: {class: EnableEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 1
+        EventInfos:
+        - Events: 35
+          TestType: 0
+          Owner: 2
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: 
+        DynamicTargeting: 0
+        PriorityList: []
+        Duration: 1
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TriggerOnDurationEnd: 1
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 093e4f2f-8b0d-4c56-9c9e-5fcef1b35108
+        targetModeInfo:
+          targetMode: 1
+          PlayerOrEnemy: 0
+          keyWordType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
     - rid: 3047188320285622479
       type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:

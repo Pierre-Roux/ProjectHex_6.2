@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7673c6f485dfa54c802241195118466, type: 3}
-  m_Name: Shield 1
+  m_Name: Disable Weapon
   m_EditorClassIdentifier: 
-  Title: Shield
-  Description: Shield Core
-  PermanentImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
-  SpriteImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
+  Title: Disable Weapon
+  Description: Deal 2 DMG to a Vessel | If the Vessel has Ward, it gains Inert 1
+  PermanentImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
+  SpriteImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
   Life: 5
-  Power: 0
+  Power: 2
   Armor: 0
+  NbRiposte: 1
   IsCore: 0
-  permanentArea: 2
   KeyWords:
-  - rid: 3047188320285622364
+  - rid: 4855037132895683281
   <PossibleIntent>k__BackingField:
-  - rid: 3047188320285622363
+  - rid: 3047188320285622479
   RDMSequence: 0
-  <IntentSequence>k__BackingField: []
-  LoopingSequence: 0
+  <IntentSequence>k__BackingField:
+  - A
+  LoopingSequence: 1
   SummonEPermanentSound:
     Guid:
       Data1: 0
@@ -159,14 +160,14 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3047188320285622363
-      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
+    - rid: 3047188320285622479
+      type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 1
         EventInfos:
-        - Events: 0
+        - Events: 37
           TestType: 0
           Owner: 0
           BasicParam: 0
@@ -191,7 +192,15 @@ MonoBehaviour:
         ActivateNumber: 1
         ORChoice: 0
         Intent_Title: 
-        number: 
+        number: A
+        DynamicTargeting: 1
+        PriorityList:
+        - priorityType: 1
+          Owner: 1
+          keyWordType: 16
+          Param: 0
+          ParamValue: -1
+          TargetConditions: []
         Duration: 0
         DurationType:
           Events: 0
@@ -208,20 +217,46 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 542cc247-cb9d-4fed-a286-5bb4aec3fe27
-        CanBeDisable: 1
+        EffectID: df9b1d92-e1c7-4350-ac0e-2fd9c3657cd9
+        powerBased: 1
+        damageAmount: 0
+        multiplyAmount: 1
+        DynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
         targetModeInfo:
-          targetMode: 2
-          PlayerOrEnemy: 2
-          permanentArea: 0
+          targetMode: 5
+          PlayerOrEnemy: 1
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
-        targetLimitations: []
-    - rid: 3047188320285622364
+        targetLimitations:
+        - rid: 7417295963096350723
+    - rid: 4855037132895683281
       type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
       data:
-        keyWordType: 16
+        keyWordType: 17
         keyWordValue: 0
+    - rid: 7417295963096350723
+      type: {class: TargetLimitationInfo, ns: , asm: Enums}
+      data:
+        targetLimitations: 2
+        Owner: 0
+        keyWordType: 6
+        Param: 0
+        ParamValue: -1
+        MandatoryLimitation: 0

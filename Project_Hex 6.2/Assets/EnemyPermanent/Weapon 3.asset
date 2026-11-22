@@ -19,6 +19,7 @@ MonoBehaviour:
   Life: 3
   Power: 1
   Armor: 0
+  NbRiposte: 1
   IsCore: 0
   KeyWords:
   - rid: 4855037132895683281

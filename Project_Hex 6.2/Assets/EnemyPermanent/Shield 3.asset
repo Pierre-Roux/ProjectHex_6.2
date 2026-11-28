@@ -10,25 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7673c6f485dfa54c802241195118466, type: 3}
-  m_Name: Endurance Weapon
+  m_Name: Shield 3
   m_EditorClassIdentifier: 
-  Title: Endurance Weapon
-  Description: Deal 1 dmg
-  PermanentImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
-  SpriteImage: {fileID: 21300000, guid: 0a06cb942a6a99f429ab41907712d410, type: 3}
-  Life: 3
-  Power: 1
+  Title: Shield 3
+  Description: Shield Core 1 damage to player core on death
+  PermanentImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
+  SpriteImage: {fileID: 21300000, guid: 5608e7b1611ec334280ccbaca9cfc61a, type: 3}
+  Life: 5
+  Power: 0
   Armor: 0
-  NbRiposte: 1
   IsCore: 0
   KeyWords:
-  - rid: 4855037132895683281
+  - rid: 3047188320285622364
   <PossibleIntent>k__BackingField:
-  - rid: 3047188320285622479
+  - rid: 3047188320285622363
+  - rid: 46883613396172959
   RDMSequence: 0
   <IntentSequence>k__BackingField:
   - A
-  LoopingSequence: 1
+  LoopingSequence: 0
   SummonEPermanentSound:
     Guid:
       Data1: 0
@@ -160,104 +160,14 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 3047188320285622479
+    - rid: 46883613396172959
       type: {class: DealDamageEffect, ns: , asm: _UnTrackAssembly}
       data:
         ActivateToolTip: 1
         Priority: 0
         actionnerType: 1
         EventInfos:
-        - Events: 37
-          TestType: 0
-          Owner: 0
-          BasicParam: 0
-        TypeOfCounter:
-          CounterType: 0
-          TestType: 0
-          Owner: 0
-          SinceLoad: 0
-          Intern: 0
-        CounterValue: 0
-        ModuloValue: 0
-        HollowEffect: 0
-        PayXEffect: 0
-        MultiHit: 0
-        SFX:
-          Guid:
-            Data1: 0
-            Data2: 0
-            Data3: 0
-            Data4: 0
-          Path: 
-        ActivateNumber: 1
-        ORChoice: 0
-        Intent_Title: 
-        number: 0
-        DynamicTargeting: 1
-        PriorityList:
-        - priorityType: 6
-          Owner: 1
-          keyWordType: 0
-          Param: 5
-          ParamValue: 0
-          TargetConditions: []
-        Duration: 0
-        DurationType:
-          Events: 0
-          TestType: 0
-          Owner: 0
-          BasicParam: 0
-        TriggerOnDurationEnd: 0
-        CancelOnDeath: 1
-        DynamicConditionInfos: []
-        LinkedEffect:
-          rid: 7417296014503051337
-        Actionner: {fileID: 0}
-        TargetForLinked_Player: []
-        TargetForLinked_Enemy: []
-        PayXValue: 0
-        ActivateLeft: 0
-        PreTargetPermanentView: []
-        PreTargetEnemySlotView: []
-        BypassEntryCondition: 0
-        Disabled: 0
-        EffectID: df9b1d92-e1c7-4350-ac0e-2fd9c3657cd9
-        powerBased: 1
-        damageAmount: 0
-        multiplyAmount: 1
-        DynamicAmountInfo:
-          DynamicAmount: 0
-          CounterType:
-            CounterType: 0
-            TestType: 0
-            Owner: 0
-            SinceLoad: 0
-            Intern: 0
-          TestType: 0
-          Enemy_Player: 0
-          BasicParam: 0
-          CardLocation: 0
-          CurrentParam: 0
-        targetModeInfo:
-          targetMode: 4
-          PlayerOrEnemy: 1
-          keyWordType: 0
-        TargetUpTo: 1
-        targetNumber: 1
-        targetLimitations: []
-    - rid: 4855037132895683281
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 17
-        keyWordValue: 0
-    - rid: 7417296014503051337
-      type: {class: AlterStaminaEffect, ns: , asm: _UnTrackAssembly}
-      data:
-        ActivateToolTip: 1
-        Priority: 0
-        actionnerType: 1
-        EventInfos:
-        - Events: 0
+        - Events: 5
           TestType: 0
           Owner: 0
           BasicParam: 0
@@ -305,9 +215,9 @@ MonoBehaviour:
         PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
-        EffectID: 
-        CanBeDisable: 1
-        alterAmount: 0
+        EffectID: 2d551a90-e493-49a7-8a00-5622417c7899
+        powerBased: 0
+        damageAmount: 1
         multiplyAmount: 1
         DynamicAmountInfo:
           DynamicAmount: 0
@@ -322,13 +232,113 @@ MonoBehaviour:
           BasicParam: 0
           CardLocation: 0
           CurrentParam: 0
-        IncludeCardsInDeck: 0
-        aditive: 1
-        passive: 0
         targetModeInfo:
-          targetMode: 0
-          PlayerOrEnemy: 0
+          targetMode: 2
+          PlayerOrEnemy: 1
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
+    - rid: 3047188320285622363
+      type: {class: ShieldEffect, ns: , asm: _UnTrackAssembly}
+      data:
+        ActivateToolTip: 1
+        Priority: 0
+        actionnerType: 1
+        EventInfos:
+        - Events: 37
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TypeOfCounter:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
+        CounterValue: 0
+        ModuloValue: 0
+        HollowEffect: 0
+        PayXEffect: 0
+        MultiHit: 0
+        SFX:
+          Guid:
+            Data1: 0
+            Data2: 0
+            Data3: 0
+            Data4: 0
+          Path: 
+        ActivateNumber: 1
+        ORChoice: 0
+        Intent_Title: 
+        number: A
+        DynamicTargeting: 1
+        PriorityList:
+        - priorityType: 5
+          Owner: 2
+          keyWordType: 0
+          Param: 1
+          ParamValue: 0
+          TargetConditions:
+          - rid: 7182365291039948901
+        Duration: 0
+        DurationType:
+          Events: 0
+          TestType: 0
+          Owner: 0
+          BasicParam: 0
+        TriggerOnDurationEnd: 0
+        CancelOnDeath: 1
+        DynamicConditionInfos: []
+        LinkedEffect:
+          rid: -2
+        Actionner: {fileID: 0}
+        TargetForLinked_Player: []
+        TargetForLinked_Enemy: []
+        PayXValue: 0
+        ActivateLeft: 0
+        PreTargetPermanentView: []
+        PreTargetEnemySlotView: []
+        BypassEntryCondition: 0
+        Disabled: 0
+        EffectID: 542cc247-cb9d-4fed-a286-5bb4aec3fe27
+        CanBeDisable: 1
+        targetModeInfo:
+          targetMode: 2
+          PlayerOrEnemy: 2
+          keyWordType: 0
+        TargetUpTo: 1
+        targetNumber: 1
+        targetLimitations: []
+    - rid: 3047188320285622364
+      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
+      data:
+        keyWordType: 16
+        keyWordValue: 0
+    - rid: 7182365291039948901
+      type: {class: DynamicConditionInfo, ns: , asm: Enums}
+      data:
+        DynamicCondition: 28
+        CounterTypeInfo:
+          CounterType: 0
+          TestType: 0
+          Owner: 0
+          SinceLoad: 0
+          Intern: 0
+        TestType: 6
+        TestValue: 0
+        TestDynamicAmountInfo:
+          DynamicAmount: 0
+          CounterType:
+            CounterType: 0
+            TestType: 0
+            Owner: 0
+            SinceLoad: 0
+            Intern: 0
+          TestType: 0
+          Enemy_Player: 0
+          BasicParam: 0
+          CardLocation: 0
+          CurrentParam: 0
+        basicParam: 0
+        currentParam: 0

@@ -50,9 +50,10 @@ MonoBehaviour:
   isBoss: 0
   EnemyRewardCardPool: {fileID: 0}
   EnemyPreset:
-  - {fileID: 11400000, guid: 5635d768b784b6742802ee548b308f67, type: 2}
-  - {fileID: 11400000, guid: 9d5b782a612d45944a5e17125bb9a3ef, type: 2}
-  - {fileID: 11400000, guid: 9c1d44dd6541f284cafada455aeb115a, type: 2}
+  - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
+  - {fileID: 11400000, guid: df091b1a249354548958ed181e7f8ed3, type: 2}
+  - {fileID: 11400000, guid: be776f2f33e54a94ebd9209480f6bc5c, type: 2}
+  - {fileID: 11400000, guid: 7424eef50ed084b4095c0d2791fa686e, type: 2}
   WeaponZone: {fileID: 0}
   ShieldZone: {fileID: 0}
   SupportZone: {fileID: 0}

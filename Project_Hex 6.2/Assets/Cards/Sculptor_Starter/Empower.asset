@@ -21,15 +21,14 @@ MonoBehaviour:
   <PayX>k__BackingField: 0
   <SpriteImage>k__BackingField: {fileID: 0}
   <Money_Cost>k__BackingField: 0
-  KeyWords:
-  - rid: 7417295920407248973
+  KeyWords: []
   <Life>k__BackingField: 0
   <Power>k__BackingField: 0
   <Armor>k__BackingField: 0
-  <NbRiposte>k__BackingField: 1
   <Durability>k__BackingField: 0
   <MaxDurability>k__BackingField: 0
   <PermanentImage>k__BackingField: {fileID: 0}
+  <permanentArea>k__BackingField: 0
   <IsSpell>k__BackingField: 1
   <Effects>k__BackingField:
   - rid: 3878124325882822734
@@ -260,8 +259,6 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
-        DynamicTargeting: 0
-        PriorityList: []
         Duration: 0
         DurationType:
           Events: 42
@@ -278,8 +275,6 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
-        PreTargetPermanentView: []
-        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
@@ -304,6 +299,7 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 3
           PlayerOrEnemy: 1
+          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
@@ -341,8 +337,6 @@ MonoBehaviour:
         ORChoice: 0
         Intent_Title: 
         number: 
-        DynamicTargeting: 0
-        PriorityList: []
         Duration: 1
         DurationType:
           Events: 35
@@ -359,8 +353,6 @@ MonoBehaviour:
         TargetForLinked_Enemy: []
         PayXValue: 0
         ActivateLeft: 0
-        PreTargetPermanentView: []
-        PreTargetEnemySlotView: []
         BypassEntryCondition: 0
         Disabled: 0
         EffectID: 
@@ -385,12 +377,8 @@ MonoBehaviour:
         targetModeInfo:
           targetMode: 9
           PlayerOrEnemy: 1
+          permanentArea: 0
           keyWordType: 0
         TargetUpTo: 1
         targetNumber: 1
         targetLimitations: []
-    - rid: 7417295920407248973
-      type: {class: KeyWord, ns: , asm: _UnTrackAssembly}
-      data:
-        keyWordType: 14
-        keyWordValue: 0

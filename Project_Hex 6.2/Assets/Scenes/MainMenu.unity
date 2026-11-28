@@ -483,10 +483,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fb53cc78dd6a73846b156480a3d91eb5, type: 2}
   - {fileID: 11400000, guid: 579c7ff612d10e64b9a561db879abf84, type: 2}
   Money: 0
-  MaxMana: 3
+  MaxMana: 10
   MaxHandCount: 10
   MaxPowerGrid: 8
-  NBCardDrawAtStartTurn: 5
+  NBCardDrawAtStartTurn: 6
   NavOptionNumber: 3
   Common_Weigh: 60
   Uncommon_Weigh: 30
